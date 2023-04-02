@@ -8,16 +8,18 @@ from collections.abc import Mapping, Set
 import knotpy as kp
 
 __all__ = [
-    "ArcView",
-#    "DegreeView",
+    "RegionView",
 ]
 
 
 # NodeViews
-class ArcView(Mapping):
-    """ArcView class to act as pd.arcs for a planar diagram.
-    Iteration is over arcs.
+class RegionView(set):
+    """RegionView class
     """
+
+    def __init__(self, PG):
+        super().__init__()
+        PG._node
 
     #__slots__ = ("_nodes",)
     pass

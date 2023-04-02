@@ -7,19 +7,18 @@ import knotpy
 
 ### DATA -> SPATIAL GRAPH
 
-def pd_from_list(data, create_using=None):
+def pg_from_list(data, create_using=None):
     pd = knotpy.classical.empty_pd(0, create_using)
     return knotpy
     pass
 
 
-def to_pd(data, create_using=None):
+def to_pg(data, create_using=None):
     """Create planar diagram from data and store to create using. """
 
-       # if hasattr(data, "is_strict"):
     if isinstance(data, list):
         try:
-            return pd_from_list(data, create_using)
+            return pg_from_list(data, create_using)
         except:
             raise TypeError("create_using is not a valid knotpy type or instance")
 

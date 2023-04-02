@@ -2,14 +2,14 @@
 
 #__all__ = [""]
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planargraph import PlanarGraph
 
 
 def empty_pd(n=0, create_using=None):
     """Returns the empty planar diagram with n nodes and zero arcs."""
 
     if create_using is None:
-        pd = PlanarDiagram()
+        pd = PlanarGraph()
     elif type(create_using) is type:
         pd = create_using()
     elif not hasattr(create_using, "adj"):
@@ -23,8 +23,8 @@ def empty_pd(n=0, create_using=None):
     return pd
 
 
-def trivial_theta_curve(crate_using=None):
-    pd = PlanarDiagram()
-    pd.add_node(0, (0, 2, 1))
-    pd.add_node(1, (0, 1, 2))
-    return pd
+def trivial_theta_curve():
+    pg = PlanarGraph()
+    pg.add_node(0, (0, 2, 1))
+    pg.add_node(1, (0, 1, 2))
+    return pg
