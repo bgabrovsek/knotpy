@@ -144,7 +144,7 @@ def place(placements,radii,internal,center):
             place(placements,radii,internal,t)
 
 def testgrid(packing,k,z,r,q,g):
-    """Build grid of test points around q with grid size g"""
+    """Build grid of tests points around q with grid size g"""
     for i in (-2,-1,0,1,2):
         for j in (-2,-1,0,1,2):
             center = q + i*g + j*1j*g

@@ -8,8 +8,8 @@ def inverse_multi_dict(d):
             d_[value] = {key}
     return d_
 
-
 class Index(dict):
+    # TODO remove this
     """General index class."""
 
     def __init__(self, start=0):

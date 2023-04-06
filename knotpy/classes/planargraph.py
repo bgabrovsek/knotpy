@@ -3,62 +3,60 @@
 
 """
 PlanarDiagram class.
-"""
 
-"""
 TODO:
 make cached property, so we can call:
 nodes, adj,...
 compare operations,...
 canonical ...
-
 """
+
+
+from functools import cached_property, total_ordering
+import knotpy as kp
+from knotpy import convert
+from queue import Queue
+from copy import copy, deepcopy
+from knotpy.combinatorics import minimal_cyclic_rotation
+
+from knotpy.views import AttributeView, AdjacencyView
 
 __all__ = ['PlanarGraph']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-#from functools import cached_property
-import knotpy
-import knotpy as kp
-from knotpy import convert
-import queue
 
-
-class _CachedPropertyResetterAdj:
-    """For info on Data Descriptors see: https://docs.python.org/3/howto/descriptor.html
-    """
-
+class _PlanarGraphCachedPropertyAdjResetter:
     def __set__(self, obj, value):
         od = obj.__dict__
         od["_adj"] = value
-        if "adj" in od:
-            del od["adj"]
+        if "adj" in od: del od["adj"]
 
-
-class _CachedPropertyResetterNode:
-    """For info on Data Descriptors see: https://docs.python.org/3/howto/descriptor.html
-    """
+class _PlanarGraphCachedPropertyNodeAttributeResetter:
     def __set__(self, obj, value):
         od = obj.__dict__
-        od["_node"] = value
-        if "nodes" in od:
-            del od["nodes"]
+        od["_node_attr"] = value
+        if "nodes" in od: del od["nodes"]
+
+class _PlanarGraphCachedPropertyEndpointAttributeResetter:
+    def __set__(self, obj, value):
+        od = obj.__dict__
+        od["_endpoint_attr"] = value
+        if "endpoints" in od: del od["endpoints"]
 
 
+@total_ordering
 class PlanarGraph:
     """
     Class for a undirected planar multi graph diagram.
     """
 
-
-    _adj = _CachedPropertyResetterAdj()
-    _node = _CachedPropertyResetterNode()
-
+    _adj = _PlanarGraphCachedPropertyAdjResetter()
+    _node_attr = _PlanarGraphCachedPropertyNodeAttributeResetter()
+    _endpoint_attr = _PlanarGraphCachedPropertyEndpointAttributeResetter()
 
     adj_outer_factory = dict
-    adj_inner_factory = list  # could also be dict {0:ep0, 1:ep1,...}
-
+    adj_inner_factory = list
     graph_attr_factory = dict
     node_attr_outer_factory = dict
     node_attr_inner_factory = dict
@@ -69,11 +67,7 @@ class PlanarGraph:
     def __init__(self, incoming_planargraph_data=None, **attr):
         """Initialize with ..., or planar diagram attributes (name, ...)"""
 
-        #self._inc = dict()  # list of incident arcs in CCW order
-        #self._node = dict()  # dictionary of nodes
-        #self._arc = dict()  # dictionary of arcs
-
-        self._attr = self.graph_attr_factory()  # store graph attributes
+        self._graph_attr = self.graph_attr_factory()  # store graph attributes (without a View)
         self._node_attr = self.node_attr_outer_factory()  # dictionary of node attributes
         self._endpoint_attr = self.endpoint_attr_outer_factory()  # dictionary of endpoint attributes
         self._adj = self.adj_outer_factory()  # dictionary of lists of endpoints in CCW order
@@ -81,36 +75,66 @@ class PlanarGraph:
         if incoming_planargraph_data is not None:
             convert.to_pg(incoming_planargraph_data, create_using=self)
 
-        self._attr.update(attr)
+        self._graph_attr.update(attr)
+
+    @cached_property
+    def adj(self):
+        """Graph adjacency object holding the neighbors of each node.
+        """
+        return AdjacencyView(self._adj)
         pass
 
-    def add_node(self, node_for_adding, **attr):
+    @cached_property
+    def nodes(self):
+        return AttributeView(self._node_attr)
+
+    @cached_property
+    def endpoints(self):
+        return AttributeView(self._endpoint_attr)
+
+    def add_node(self, node_for_adding, degree=None, **attr):
         """
         Adds a single node 'node_for_adding' and updates the node attributes.
         :param node_for_adding: the node, that can be any hashable object, except None
         :param attr: keyword arguments, optional
+        :param degree: reserve entries for endpoints
         :return: none
         """
 
         node = node_for_adding
 
+        if node is None:
+            raise ValueError("None cannot be a node.")
+
         if node not in self._node_attr:
-            if node is None:
-                raise ValueError("None cannot be a node.")
             self._node_attr[node] = self.node_attr_inner_factory()
-            self._adj[node] = self.adj_inner_factory()
+            self._adj[node] = self.adj_inner_factory() if degree is None else self.adj_inner_factory([None] * degree)
+        elif degree is not None:
+            if degree < len(self._adj[node]):
+                raise ValueError("Cannot change the degree node to a lower value.")
+            elif degree > len(self._adj[node]):
+                self._adj[node] += [None] * (degree - len(self._adj[node]))  # assumes adj_inner_factory is list
+
 
         self._node_attr[node].update(attr)  # add attributes to node
 
-    def add_nodes(self, nodes_for_adding):
+    def add_nodes(self, nodes_for_adding, degrees=None):
         """Adds a list (iterable) of nodes to the graph.
         :param nodes_for_adding: iterable of nodes
+        :param degrees: reserve entries for endpoints
         :return: none
         """
-        for node in nodes_for_adding:
-            self.add_node(node)
+        if degrees is not None and len(nodes_for_adding) != len(degrees):
+            raise ValueError("The number of nodes should match the number of degrees.")
 
-    def add_single_endpoint(self, endpoint, adjacent_endpoint, **attr):
+        if degrees is None:
+            for node in nodes_for_adding:
+                self.add_node(node)
+        else:
+            for node, degree in zip(nodes_for_adding):
+                self.add_node(node, degree)
+
+    def _add_single_endpoint(self, endpoint, adjacent_endpoint, **attr):
         """
 
         :param endpoint: tuple
@@ -133,6 +157,7 @@ class PlanarGraph:
 
         self._endpoint_attr[endpoint].update(attr)
 
+
     def add_arc(self, u_endpoint, v_endpoint, **attr):
         """
         :param u_endpoint:
@@ -140,13 +165,11 @@ class PlanarGraph:
         :param attr:
         :return:
         """
-
-        self.add_single_endpoint(tuple(u_endpoint), tuple(v_endpoint), **attr)
-        self.add_single_endpoint(tuple(v_endpoint), tuple(u_endpoint), **attr)
+        self._add_single_endpoint(tuple(u_endpoint), tuple(v_endpoint), **attr)
+        self._add_single_endpoint(tuple(v_endpoint), tuple(u_endpoint), **attr)
 
     def add_arcs(self, endpoint_pairs_for_adding):
         """
-
         :param endpoint_pairs_for_adding:
         :return:
         """
@@ -156,17 +179,20 @@ class PlanarGraph:
     def clear(self):
         """Remove all data from planar diagram.
         """
-
-        self._attr.clear()
+        self._graph_attr.clear()
         self._node_attr.clear()
         self._endpoint_attr.clear()
         self._adj.clear()
 
-    def degree(self, v = None):
-        # TODO: implement as view
+
+    def degree(self, v=None):
+        # implement as a view, if needed
         if v is None:
-            return {v: self.degree(v) for v in self._node_attr}
+            return {v: len(self._adj[v]) for v in self._adj}
         return len(self._adj[v])
+
+    def degree_sequence(self):
+        return sorted(len(self._adj[v]) for v in self._adj)
 
     def regions(self):
         # TODO: change this to a cached property
@@ -191,160 +217,121 @@ class PlanarGraph:
 
         return regions
 
-    def canonical(self):
-        """Puts planar diagram in unique canonical form.
-        The diagram start with an endpoint on of a maximal degree vertex,
-        it continues to an adjacent endpoints and distributes the ordering from there on iteratively.
+    def reindex_nodes(self, node_reindex_dict=None):
+        """Renames the vertices according to dictionary reindex_dict. If no dictionary provided, the function will
+        reindex using natural numbers, 0, 1,...,n.
+        :param node_reindex_dict:
+        :return: reindexed graph if return_new_graph is True, self otherwise
         """
 
-        minimal_degree = min(kp.degree_sequence(self))
-        nodes_with_minimal_degree = [v for v in self._node_attr if self.degree(v) == minimal_degree]  # TODO: use node property
-        # TODO: optimize by viewing also 2nd degree (number of neighbour neighbours)
+        if node_reindex_dict is None:
+            node_reindex_dict = dict(zip(self._adj, range(len(self))))
 
+        # assume factories are dicts, TODO: take factory classes
+        self._node_attr = {node_reindex_dict[v]: self._node_attr[v] for v in self._node_attr}
+        self._endpoint_attr = {(node_reindex_dict[ep[0]], ep[1]): self._endpoint_attr[ep] for ep in self._endpoint_attr}
+        self._adj = {node_reindex_dict[v]: [(node_reindex_dict[u], pos) for u, pos in self._adj[v]] for v in self._adj}
+
+
+    def canonical(self, in_place=True):
+        """Puts itself in unique canonical form.
+        The diagram start with an endpoint on of a minimal degree vertex, it continues to an adjacent endpoints and
+        distributes the ordering from there on using breadth first search using CCW order of visited nodes.
+        At the moment, it is only implemented if the graph is connected.
+        TODO: In case of degree 2 vertices the canonical form might not be unique.
+        :param in_place:
+        :return: None
+        """
+
+        _debug = False
+
+        minimal_degree = min(self.degree_sequence())
+        nodes_with_minimal_degree = [v for v in self._node_attr if self.degree(v) == minimal_degree]
+        # TO-DO: optimize by viewing also 2nd degree (number of neighbour's neighbours)
+
+        # endpoints of minimal nodes
         starting_endpoints = [(v, pos) for v in nodes_with_minimal_degree for pos in range(minimal_degree)]
 
+        minimal_graph = None
+
+        if _debug: print("starting endpoints",starting_endpoints)
+
         for ep_start in starting_endpoints:
-
-            v, pos = ep_start
-
-            vertex_reindex_dict = {v: 0}
-
-            endpoints_fifo = queue.Queue
-            endpoints_fifo.put(ep_start)
-
-            while endpoints_fifo:
-                pass
+            if _debug: print("starting with", ep_start)
 
 
+            node_reindex_dict = dict()  # also holds as a "visited node" set
+            endpoint_queue = Queue()
+            endpoint_queue.put(ep_start)
 
-        #minimal_graph = None
+            while not endpoint_queue.empty():
+                v, pos = ep = endpoint_queue.get()
+                if _debug: print("popping endpoint", ep)
+                if v not in node_reindex_dict:  # new node visited
+                    node_reindex_dict[v] = len(node_reindex_dict)  # rename the node to next available integer
+                    v_deg = self.degree(v)
+                    # put all adjacent endpoints in queue in ccw order
+                    for relative_pos in range(1, v_deg):
+                        endpoint_queue.put((v, (pos + relative_pos) % v_deg))
 
+                # go to the adjacent endpoint and add it to the queue
+                adj_v, adj_pos = adj_ep = self._adj[v][pos]
+                if adj_v not in node_reindex_dict:
+                    endpoint_queue.put(adj_ep)
 
-        """
-        # start at a crossing of maximal degree
-        max_deg = max(self.degree())
-        max_deg_vertices = [vertex for vertex in range(len(self)) if self.degree(vertex) == max_deg]
+            if _debug: print(node_reindex_dict)
+            if len(node_reindex_dict) != len(self):
+                raise ValueError("Cannot put a non-connected graph into canonical form.")
 
-        # possible starting endpoints (vertices and edge positions)
-        starting_endpoints = [(vertex, pos) for pos in range(max_deg) for vertex in max_deg_vertices]
-        if _debug: print("start ep", starting_endpoints)
+            new_graph = copy(self)
+            new_graph.reindex_nodes(node_reindex_dict)
 
-        adj_ep_dict = self.endpoint_dict()
+            for v in new_graph._adj:
+                new_graph._canonically_rotate_node(v)
 
-        for endpoint_start in starting_endpoints:  # start at a endpoint
-
-            new_graph = PlanarGraph(tuple())
-
-            edge_start = self[endpoint_start]
-            if _debug: print("ep", endpoint_start, "edge", edge_start)
-
-            edge_renum = {edge_start: 0}  # keeps track new of edge names
-
-            used_vertices = set()  # here we store vertices to which we have already travelled
-            used_arcs = set()  # TODO: use faster structure?
-            
-            #available endpoints is a list of (i, endpoint), which are endpoints next on stack to process,
-            #the first integer is just for sorting, so that we always select the smallest next arc due to
-            #current enumeration.
-
-            available_endpoint = [(-1, endpoint_start),
-                                  (0, adj_ep_dict[endpoint_start])]  # do we need the adjacent one, probably yes.
-            # TODO: it would be faster if available_endpoint would be implemented by a BST or, even better, FIFO queue?
-            # TODO: probably dict would be better than list, since first index is unique?
-
-            new_edge_number = 1
-            new_graph_not_minimal, new_graph_is_minimal = False, False
-
-            while available_endpoint:
-
-                if _debug: print(available_endpoint)
-
-                # get minimal endpoint
-                ep = min(available_endpoint)  # ignore zero index
-                available_endpoint.remove(ep)
-                ep = ep[1]  # remove 1st int
-
-                used_arcs.add(self[ep])
-                vertex, pos = ep
-                if vertex not in used_vertices:
-                    used_vertices.add(vertex)
-                    deg = self.degree(vertex)
-                    for p in range(deg):  # start enumerating adjacent edges
-
-                        old_inc_edge = self[vertex][(pos + p) % deg]
-
-                        if old_inc_edge not in edge_renum:
-                            edge_renum[old_inc_edge] = new_edge_number
-                            adj_ep = adj_ep_dict[(vertex, (pos + p) % deg)]
-                            available_endpoint.append((new_edge_number, adj_ep))
-                            new_edge_number += 1
-
-                    new_graph.append(min_cyclic_rotation(tuple(edge_renum[e] for e in self[vertex])))
-
-                    if minimal_graph is None:
-                        new_graph_is_minimal = True  # if no minimal graph, this one is minimal
-
-                    if minimal_graph is not None and new_graph[-1] < minimal_graph[len(new_graph) - 1]:
-                        new_graph_is_minimal = True
-
-                    if not new_graph_is_minimal and minimal_graph is not None and new_graph[-1] > minimal_graph[
-                        len(new_graph) - 1]:
-                        new_graph_not_minimal = True
-                        break
-
-                # take care also of other adjacent node
-
-                if len(new_graph) == len(self):
-                    break
-
-            # add remaining nodes to the knot
-            if not new_graph_not_minimal and len(self) > len(new_graph):
-                additional_nodes = []  # nodes to add to the original graph
-                for vertex, edges in enumerate(self):
-                    if vertex not in used_vertices:
-                        if all(e in edge_renum for e in edges):  # continue only if all arcs already enumerated
-                            additional_nodes.nodes.append(min_cyclic_rotation((edge_renum[e] for e in edges)))
-                        else:
-                            new_graph_not_minimal = True
-                            print("new know has additional crossings", self, new_graph)
-                            break
-
-                additional_nodes.sort()
-                new_graph.nodes += additional_nodes
-
-                if (not new_graph_not_minimal) and (minimal_graph is None or new_graph < minimal_graph):
-                    minimal_graph = new_graph  # if we get a minimal knot after adding new nodes, change it
-
-            if not new_graph_not_minimal and len(self) > len(new_graph):
-                print("CANONICAL SHOULD HAVE MORE CROSSINGS.")
-
-            if (minimal_graph is None or not new_graph_not_minimal) and (len(self) == len(new_graph)):
-                if minimal_graph is not None and minimal_graph < new_graph:
-                    print(self, minimal_graph, "<", new_graph)
-                    raise ValueError("Canonical graph greater than minimal knot.")
+            if minimal_graph is None or new_graph < minimal_graph:
                 minimal_graph = new_graph
 
-        if minimal_graph is None: raise ValueError("Canonical graph of", self, "is None.")
-        if len(minimal_graph) != len(self): raise ValueError("Canonical graph not of same length than original knot.")
+        if in_place:
+            # copy all data from minimal_graph
+            self._node_attr = minimal_graph._node_attr
+            self._endpoint_attr = minimal_graph._endpoint_attr
+            self._adj = minimal_graph._adj
+        else:
+            return minimal_graph
 
-        minimal_graph_copy = PlanarGraph(minimal_graph)
+    def _canonically_rotate_node(self, node):
+        # TODO: if structure is not an undirected graph (not yet implemented), this method might be different.
 
-        return minimal_graph_copy
-        """
+        self._adj[node] = minimal_cyclic_rotation(self._adj[node])
+
+
     def __len__(self):
         return len(self._node_attr)
 
     def __eq__(self, other):
-        # also compares node and arc attributes,
-        # except the planar diagram name
-        if set(self._node_attr) != set(self._node):
-            pass
+        """We assert a total order on planar graphs. We also consider node and endpoint attributes.
+        From the graph attributes, we only consider the framing."""
+        # lexicographical ordering
+        return (
+            self.nodes == other.nodes and
+            self.adj == other.adj and
+            self.endpoints == other.endpoints and
+            self.framing == other.framing
+        )
+
+    def __le__(self, other):
+        return not (
+            self.nodes >= other.nodes or
+            self.adj >= other.adj or
+            self.endpoints >= other.endpoints or
+            self.framing >= other.framing
+        )
 
     @property
     def name(self):
-        """String identifier of planar diagram.
-        """
-        return self._attr.get("name", "")
+        """String identifier of planar diagram."""
+        return self._graph_attr.get("name", "")
 
     @property
     def number_of_nodes(self):
@@ -357,20 +344,19 @@ class PlanarGraph:
         return len(self._endpoint_attr)
     @property
     def framing(self):
-        """(Blackboard) framing number of planar diagram.
-        """
-        return self._attr.get("framing", 0)
+        """(Blackboard) framing number of planar diagram."""
+        return self._graph_attr.get("framing", 0)
 
     @name.setter
     def name(self, s):
         """Set planar diagram name.
         """
-        self._attr["name"] = s
+        self._graph_attr["name"] = s
 
     @framing.setter
     def framing(self, n):
         """Set (blackboard) framing of planar diagram."""
-        self._attr["framing"] = n
+        self._graph_attr["framing"] = n
 
     def __repr__(self):
         return "".join(
@@ -387,29 +373,47 @@ class PlanarGraph:
             [
                 type(self).__name__,
                 f" named {self.name}" if self.name else "",
-                f" with nodes {str(self._node_attr)},",
-                f" adjacencies {str(self._adj)}"
+                f" with nodes {str(tuple(self._adj))},",
+                f" adjacencies " + str(self.adj)
             ]
         )
+
+
 
 
 if __name__ == '__main__':
     g = PlanarGraph(name="Myname", color="peri", framing=3)
 
     g.add_nodes("ABC")
+    g.add_node("A",color=3)
     g.add_arcs([
         [("A", 0), ("B", 0)],
         [("B", 1), ("C", 0)],
-        [("C", 2), ("C", 1)]
+        [("A", 1), ("C", 1)]
     ])
-#    g.add_node('C', color="blue")
- #   g.add_arc((0,0),(1,0))
-  #  g.add_arc((1,1),('C',0))
- #   g.add_arc(('C',2), ('C',1), describe="loop")
-
 
     print(g)
+    g.reindex_nodes()
+    print(g)
+    g.canonical()
+    #print(g)
+    print("Regions:", g.regions())
 
-    print(g.regions())
+    for v in g.nodes:
+        print(v, g.nodes[v])
 
-    print(g.canonical())
+    print(tuple(g.nodes))
+
+    print()
+
+    f = PlanarGraph()
+    #f.add_nodes("abcd")
+    f.add_node(0)
+    f.add_node(1)
+    f.add_arc((1,0),(0,0))
+    print(f)
+    f.canonical()
+
+    print("can",f)
+
+    #print(g.canonical())

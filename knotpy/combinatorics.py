@@ -1,5 +1,12 @@
 from itertools import product, permutations, chain
-from lookup import *
+
+
+def minimal_cyclic_rotation(lst):
+    """Returns minimal cyclic rotation of l."""
+    return min(lst[i:] + lst[:i] for i in range(len(lst)))
+1
+
+
 #for x in product(permutations([1,2,3]), permutations([6,7])):
 #    print(x)
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Main test for PlanarDiagram class..
+Main tests for PlanarDiagram class..
 """
 from knotpy import *
 
