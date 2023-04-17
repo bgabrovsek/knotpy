@@ -8,6 +8,7 @@ __version__ = "0.0"
 from knotpy import classes
 from knotpy.classes import *
 from knotpy.classes.functions import *
-
+from knotpy.generate import *
+from knotpy.readwrite import *
 #from knotpy import generators
 #from knotpy.generators import *

@@ -3,6 +3,7 @@
 #__all__ = [""]
 
 from knotpy.classes.planargraph import PlanarGraph
+from knotpy.convert import *
 
 
 def empty_pd(n=0, create_using=None):
@@ -28,3 +29,41 @@ def trivial_theta_curve():
     pg.add_node(0, (0, 2, 1))
     pg.add_node(1, (0, 1, 2))
     return pg
+
+
+def parallel_edge(multiplicity):
+    """Returns a graph with two vertices and multiplicity edges between the two nodes."""
+    pg = PlanarGraph()
+    pg.add_node(0, multiplicity)
+    pg.add_node(1, multiplicity)
+    if multiplicity > 0:
+        for i in range(multiplicity):
+            pg.add_arc((0, i), (1, multiplicity-i-1))
+        return pg
+
+
+def empty_graph():
+    return PlanarGraph()
+
+
+def vertex_graph():
+    pg = PlanarGraph()
+    pg.add_node(0, degree=0)
+    return pg
+
+if __name__ == '__main__':
+    print(empty_graph())
+    print(vertex_graph())
+    print(to_em_notation(empty_graph()))
+    print(to_em_notation(vertex_graph()))
+
+
+"""
+for m in range(4, 6):
+    g = parallel_edge(m)
+    print(g)
+    em = to_em_notation(g)
+    print(from_notation(em))
+    pd = to_pd_notation(g)
+    print(from_notation(pd))
+"""

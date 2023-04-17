@@ -10,7 +10,8 @@ G.add_edge("b", "c", weight=2)
 G.add_edge("a", "c", weight=3)
 G.add_edge("c", "d", weight=4)
 
-print(G)
+print(G.__str__())
+print(G.__repr__())
 print("ok.")
 
 
