@@ -161,7 +161,7 @@ def generate_planar_graphs(N, filename = None, filename_all = None,  run_in_para
 
 def export_graphs(GRAPHS, title, filename):
     print("[EXPORT]", title, "to file", filename, "(count = " + str(len(GRAPHS)) + ")")
-    file = open(filename, 'a')
+    file = open(filename, 'data')
     if title:
         file.write("*** " + title+ " ***" + " (count = " + str(len(GRAPHS)) + ")\n")
     for g in GRAPHS:
@@ -213,7 +213,7 @@ def make_graphs_spatial(GRAPHS):
 
 
 def make_bonded_knots(SPATIAL):
-    """ convert a list of spatial_graphs to bonded knots, by selecting each possible path as a bond (i.e. color it)"""
+    """ convert data list of spatial_graphs to bonded knots, by selecting each possible path as data bond (i.e. color it)"""
     BONDED = BucketSet() # store final knots
     ticker = dot_counter(1000, 100, print_stats=True, unit="")
 
@@ -222,14 +222,14 @@ def make_bonded_knots(SPATIAL):
         diagrams = [K] # begin with only the knot in the list
 
         while diagrams:
-            d = diagrams.pop() # get a diagram from the list
+            d = diagrams.pop() # get data diagram from the list
             trivalent_nodes = [node for node in d.filter_nodes(TRIVALENTQ) if not node.color]
             if not trivalent_nodes: # if no trivalent bonds, it's done!
                 d.fix_orientation()
                 BONDED += d
                 continue
 
-            start_node = trivalent_nodes.pop() # select a trivalent node
+            start_node = trivalent_nodes.pop() # select data trivalent node
             for start_pos in (0,1,2): # select start position
                 dgrm = d.copy()
                 node = dgrm.nodes[d.nodes.index(start_node)]

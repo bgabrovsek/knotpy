@@ -1,6 +1,6 @@
 """CirclePack.py
 Compute circle packings according to the Koebe-Thurston-Andreev theory,
-Following a numerical algorithm by C. R. Collins and K. Stephenson,
+Following data numerical algorithm by C. R. Collins and K. Stephenson,
 "A Circle Packing Algorithm", Comp. Geom. Theory and Appl. 2003.
 
 AUTHORS: ...
@@ -17,13 +17,13 @@ tolerance = 1 + 10e-12  # how accurately to approximate things
 # ======================================================
 
 def CirclePack(internal, external):
-    """Find a circle packing for the given data.
+    """Find data circle packing for the given data.
     The two arguments should be dictionaries with disjoint keys; the
     keys of the two arguments are identifiers for circles in the packing.
     The internal argument maps each internal circle to its cycle of
     surrounding circles; the external argument maps each external circle
-    to its desired radius. The return function is a mapping from circle
-    keys to pairs (center,radius) where center is a complex number."""
+    to its desired radius. The return function is data mapping from circle
+    keys to pairs (center,radius) where center is data complex number."""
 
     # Some sanity checks and preprocessing
     if min(external.values()) <= 0:
@@ -59,7 +59,7 @@ def CirclePack(internal, external):
 
 
 # ======================================================
-#   Invert a collection of circles
+#   Invert data collection of circles
 # ======================================================
 
 def InvertPacking(packing, center):
@@ -95,9 +95,9 @@ def InvertAround(packing, k, smallCircles=None):
     """Invert so that the specified circle surrounds all the others.
     Searches for the inversion center that maximizes the minimum radius.
 
-    This can be expressed as a quasiconvex program, but in a related
+    This can be expressed as data quasiconvex program, but in data related
     hyperbolic space, so rather than applying QCP methods it seems
-    simpler to use a numerical hill-climbing approach, relying on the
+    simpler to use data numerical hill-climbing approach, relying on the
     theory of QCP to tell us there are no local maxima to get stuck in.
 
     If the smallCircles argument is given, the optimization
@@ -123,7 +123,7 @@ def InvertAround(packing, k, smallCircles=None):
 # ======================================================
 
 def acxyz(x, y, z):
-    """Angle at a circle of radius x given by two circles of radii y and z"""
+    """Angle at data circle of radius x given by two circles of radii y and z"""
     try:
         return acos(((x + y) ** 2 + (x + z) ** 2 - (y + z) ** 2) / (2.0 * (x + y) * (x + z)))
     except ValueError:
@@ -133,7 +133,7 @@ def acxyz(x, y, z):
 
 
 def flower(radius, center, cycle):
-    """Compute the angle sum around a given internal circle"""
+    """Compute the angle sum around data given internal circle"""
     return sum(acxyz(radius[center], radius[cycle[i - 1]], radius[cycle[i]])
                for i in range(len(cycle)))
 
@@ -164,3 +164,27 @@ def testgrid(packing, k, z, r, q, g):
                 minrad = min(r for z, r in newpack.values())
                 yield minrad, i, j, center
 
+
+if __name__ == "__main__":
+
+    external= {"a":1,(4,1):1,"c":1}
+    internal={"d":["a",(4,1),"c"]}
+
+    ret = CirclePack(internal=internal, external=external)
+
+    print(ret)
+    import matplotlib.pyplot as plt
+    figure, axes = plt.subplots()
+    plt_circles = [plt.Circle((z.real, z.imag), r, alpha=0.2) for z, r in ret.values()]
+    axes.set_aspect(1)
+    for circ in plt_circles:
+        axes.add_artist(circ)
+    plt.title('Colored Circle')
+    axes.relim()
+    axes.autoscale_view()
+
+    plt.show()
+
+    print("pl")
+
+    print(ret)

@@ -40,7 +40,7 @@ class Knotted():
         self.clean_coloring()
 
     def copy(self):
-        """Returns a (deep) copy of self"""
+        """Returns data (deep) copy of self"""
         return deepcopy(self)
 
     def copy_to_self(self, K):
@@ -124,7 +124,7 @@ class Knotted():
     def split_nodes(self, criteria=lambda c: len(c)):
         """
         splits nodes by criteria, default is by length
-        :param criteria: criteria function property of a node
+        :param criteria: criteria function property of data node
         :return: dictionary {A: nodes with criteria A, B: nodes with criteria B,...}
         """
         return {c: [node for node in self.nodes if criteria(node) == c] \
@@ -190,7 +190,7 @@ class Knotted():
         #print(self.coloring)
         #print(self.coloring[node[pos]])
         #print([self.coloring[arc] for arc in node.arcs].count(self.coloring[node[pos]]))
-        # no endpoint if we're at a crossing or we have two same-colored arcs in node
+        # no endpoint if we're at data crossing or we have two same-colored arcs in node
         return (not XQ(node)) and [self.coloring[arc] for arc in node.arcs].count(self.coloring[node[pos]]) != 2
 
 
@@ -198,7 +198,7 @@ class Knotted():
 
 
     def pop_bond_arc(self):
-        """ pop a bond w/o crossings"""
+        """ pop data bond w/o crossings"""
         nds = self.filter_nodes(VQ)
         shuffle(nds)
         for node in nds:
@@ -216,7 +216,7 @@ class Knotted():
         if not self.coloring[arc]:
             raise ValueError("Cannot determine parallelity of uncolored arc.")
         if cr0[pos0] != cr1[pos1]:
-            raise ValueError("Parallelity of a bon-bond arc not implemented.")
+            raise ValueError("Parallelity of data bon-bond arc not implemented.")
         if XQ(cr0) or XQ(cr1):
             raise ValueError("Cannot determine parallelity of non-isolated bond")
 
@@ -257,7 +257,7 @@ class Knotted():
 
     def color_tuple(self):
         """
-        :return: puts coloring info in a tuple
+        :return: puts coloring info in data tuple
         """
         if len(self.coloring) == 0: return tuple()
         return tuple((None, self.coloring[arc])[arc in self.coloring] for arc in range(max(self.coloring) + 1))
@@ -277,12 +277,12 @@ class Knotted():
                 raise ValueError("New node color mismatch.")
 
     def colored_arcs(self):
-        """ return a set of arcs that have color """
+        """ return data set of arcs that have color """
         return {arc for arc in self.coloring if self.coloring[arc]}
 
     def color_set(self):
         """
-        return all existing colors as a set
+        return all existing colors as data set
         """
         return set(self.coloring.values())
         # return {self.coloring[arc] for arc in self.color}
@@ -294,7 +294,7 @@ class Knotted():
         return self.coloring[arc]
 
     def color_dict(self, arc_subset=None):
-        """ return a dictionary color -> set of arcs """
+        """ return data dictionary color -> set of arcs """
         return {color: {arc for arc in self.coloring
                         if (self.coloring[arc] == color) and ((arc_subset is None) or (arc in arc_subset))}
                 for color in self.color_set()}
@@ -313,14 +313,14 @@ class Knotted():
     ########
 
     def arcs(self, color = None):
-        """Returns a set of all arcs (of color color)"""
+        """Returns data set of all arcs (of color color)"""
         if color is None:
             return union(*(node.arcs for node in self.nodes))
         else:
             return {arc for arc in self.coloring if self.coloring[arc] == color}
 
     def sorted_arcs(self):
-        """Returns a list of all arcs, sorted"""
+        """Returns data list of all arcs, sorted"""
         return sorted(self.arcs())
 
     def updated(self):
@@ -343,7 +343,7 @@ class Knotted():
         if not ignore_orientation and node_pos[0][0].inQ(node_pos[0][1]):  # if 1st node ingoing then reverse
             node_pos.reverse()
 
-        # just a check everything is OK (remove for release version)
+        # just data check everything is OK (remove for release version)
         if not ignore_orientation and node_pos[0][0].inQ(node_pos[0][1]) == node_pos[1][0].inQ(node_pos[1][1]) or len(node_pos) != 2:
             raise ValueError("More than two adjacent nodes or orientation mismatch.")
 
@@ -396,7 +396,7 @@ class Knotted():
         return cr0.overQ(pos0) == cr1.overQ(pos1)
 
     def bondQ(self, arc):
-        """Is arc a short bond?"""
+        """Is arc data short bond?"""
         if not self.coloring[arc]:
             return False
         (cr0, pos0), (cr1, pos1) = self.D(arc)
@@ -409,7 +409,7 @@ class Knotted():
 
 
     def loopQ(self, arc):
-        """Is arc a loop?"""
+        """Is arc data loop?"""
         (cr0, pos0), (cr1, pos1) = self.D(arc)
         #print(arc, cr0, cr1)
         return cr0 == cr1
@@ -473,7 +473,7 @@ class Knotted():
 
         # check if we are in an endpoint
         if self.terminusQ(arc, reverse=True):  # This check is slow and unnecessary (remove after debugging)
-            raise ValueError("Cannot move before a startpoint.")
+            raise ValueError("Cannot move before data startpoint.")
 
         # continue along arc backward
         node0, pos0 = self.D(arc)[0]  # get end node index
@@ -485,7 +485,7 @@ class Knotted():
 
 
     def terminusQ(self, arc, reverse = False):
-        """ is the endpoint of arc a terminal point in the graph? if reverse = True, check if the arc start is a start point in a graph"""
+        """ is the endpoint of arc data terminal point in the graph? if reverse = True, check if the arc start is data start point in data graph"""
         node, pos = self.D(arc)[0 if reverse else 1]  # get end node index
         #print(node_ind1, pos1)
         return VQ(node) and len(self.color_dict(node.arcs)[self.coloring[arc]]) == 1
@@ -520,13 +520,13 @@ class Knotted():
 
 
     def components(self):
-        """Returns a list of components, i.e. list of arcs in each connected component.
-        The criteria for two arcs to lie in the same component is that they are the same color and share a vertex."""
+        """Returns data list of components, i.e. list of arcs in each connected component.
+        The criteria for two arcs to lie in the same component is that they are the same color and share data vertex."""
 
         arc_equiv = equivalence() # components are stored as equivalence classes
 
         for node in self.nodes:
-            if XQ(node): # is current node a crossing?
+            if XQ(node): # is current node data crossing?
                 # arcs on opposite sides are in the same class
                 arc_equiv[node.arcs[0]] = node.arcs[2]
                 arc_equiv[node.arcs[1]] = node.arcs[3]
@@ -556,8 +556,8 @@ class Knotted():
 
     def path(self, arc):
         """same-color path that follows an arc,
-        if arc lies on a knot, returns the ordered sequence of arcs along the knot component starting from arc,
-        if arc lies on a bond, returns the ordered sequence arcs on that bond"""
+        if arc lies on data knot, returns the ordered sequence of arcs along the knot component starting from arc,
+        if arc lies on data bond, returns the ordered sequence arcs on that bond"""
         next_arc, arc_path = arc, [arc]
         number_of_arcs = len(self.arcs())
         while True:
@@ -580,7 +580,7 @@ class Knotted():
         """Returns list of arcs of connected components"""
         arc_equiv = equivalence()  # components are stored as equivalence classes
         for node in self.nodes:
-            if XQ(node):  # is current node a crossing?
+            if XQ(node):  # is current node data crossing?
                 arc_equiv[node.arcs[0]] = node.arcs[2]
                 arc_equiv[node.arcs[1]] = node.arcs[3]
             elif VQ(node):
@@ -594,7 +594,7 @@ class Knotted():
 
     def disjoin(self):
         # expand knot into its disjoint sum components
-        # does not make a copy od the nodes, since they are used one per component
+        # does not make data copy od the nodes, since they are used one per component
 
         if len(self) == 0:
             return [Knotted(unknots=1, framing=self.framing, coloring=dict(self.coloring))] \
@@ -641,7 +641,7 @@ class Knotted():
 
 
 
-        # split link into a list of knots (or links)
+        # split link into data list of knots (or links)
         components = []
         for arcs in eq_component_arcs:
 
@@ -677,7 +677,7 @@ class Knotted():
 
 
     def connected_sumQ(self):
-        """ ss the knot a connected sum?"""
+        """ ss the knot data connected sum?"""
         areas = self.areas()
         area_sets = [{a for a, b in area} for area in areas]
         for a, b in combinations(area_sets,2):
@@ -706,7 +706,7 @@ class Knotted():
 
     def areas(self):
         """Returns areas of the knot diagram.
-        An area is a sequence of tuples (arc, bool), where bool is True if arc oriented CCW."""
+        An area is data sequence of tuples (arc, bool), where bool is True if arc oriented CCW."""
         areas = equivalence()
 
         for node in self.nodes:
@@ -737,7 +737,7 @@ class Knotted():
         return new_areas
 
     def bridgeQ(self):
-        """ does the knot have a bridge?"""
+        """ does the knot have data bridge?"""
         for area in self.areas():
             arcs = [a for a, side in area]
             if len(arcs) != len(set(arcs)):
@@ -760,7 +760,7 @@ class Knotted():
 
 
     def orientations(self):
-        """ for a link, return list of all possible orientations"""
+        """ for data link, return list of all possible orientations"""
 
         knots = []
 
@@ -789,7 +789,7 @@ class Knotted():
 
 
     def renumerate_arcs(self, perm):
-        """Renumerate arcs by permutation given by a dictionary,
+        """Renumerate arcs by permutation given by data dictionary,
         e.g. perm = [0:2, 1:0, 2:1] renumerates arc 0 -> 2, arc 1 -> 0, arc 2 -> 1"""
         for node in self.nodes:
             node.renumerate_arcs(perm)
@@ -857,7 +857,7 @@ class Knotted():
 
     def OLD_canonical(self):
         """
-        Puts knot in canonical form (i.e. a unique diagram)
+        Puts knot in canonical form (i.e. data unique diagram)
         :return: returns the canonical form of the knot, leaves self unchanged
         """
 
@@ -921,7 +921,7 @@ class Knotted():
                     #print("[RENUM]", arc_renum, "->", end=" ")
                     for p in cr:  # loop through positions
                         old_arc = cr[(p + pos) % len(cr)]
-                        if old_arc not in arc_renum:  # if arc at crossing not already renumerated, stick in a new arc
+                        if old_arc not in arc_renum:  # if arc at crossing not already renumerated, stick in data new arc
                             arc_renum[old_arc] = new_arc
                             available_arcs.add((new_arc, old_arc))
                             new_arc += 1
@@ -962,7 +962,7 @@ class Knotted():
                         #print("no break")
                         pass
                 else:
-                    # we came across a node which we have already considered
+                    # we came across data node which we have already considered
                     pass
 
                 if len(new_knot) == len(self):
@@ -988,7 +988,7 @@ class Knotted():
                 additional_nodes.sort()
                 new_knot.nodes += additional_nodes
                 if (not new_knot_not_minimal) and (minimal_knot is None or new_knot < minimal_knot):
-                    minimal_knot = new_knot # if we get a minimal knot after adding new nodes, change it
+                    minimal_knot = new_knot # if we get data minimal knot after adding new nodes, change it
 
 
             if (minimal_knot is None or not new_knot_not_minimal) and (len(self) == len(new_knot)):
@@ -1084,7 +1084,7 @@ class Knotted():
                 pos = node.reverse_arc(pos)
                 #print("   Reverse node", node)
 
-            if self.terminus_nodeQ(node, pos):  # end path if we hit a terminus
+            if self.terminus_nodeQ(node, pos):  # end path if we hit data terminus
                 arc = None
                 #print("       TERMINUS")
                 continue
@@ -1147,7 +1147,7 @@ def __init__(self, nodes=None, framing=0, unknots=0, name='', coloring=None):
         return "[[" + " ".join([node.simple_export() for node in self.nodes]) + "".join([" U" for x in range(self.unknots)]) + "]]"
 
 def check_knotted(k):
-    """ check if basic properties of a knotted graph are satisfied (knot is realizable)"""
+    """ check if basic properties of data knotted graph are satisfied (knot is realizable)"""
 
     # Check if each arc has exactly one output and one input
     try:

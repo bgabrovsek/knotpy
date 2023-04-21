@@ -71,7 +71,7 @@ class PlanarGraph():
         dots = {(index, pos) for index in range(len(self)) for pos in range(len(self[index]))} # dots are local areas between arcs at node
         #print(dots)
         while dots:
-            # start a new area
+            # start data new area
             index0, pos0 = next(iter(dots)) # get element from set
             index, pos = index0, pos0
             area = []
@@ -96,7 +96,7 @@ class PlanarGraph():
         # possible starting arcs
         starting_dots = ( (node, pos) for pos in range(max_deg) for node in max_deg_nodes)
 
-        for start_dot in starting_dots: # start at a dot
+        for start_dot in starting_dots: # start at data dot
             start_node, start_pos = start_dot
             start_arc = start_node[start_pos]
             new_graph = PlanarGraph(tuple())
@@ -139,7 +139,7 @@ class PlanarGraph():
                     #print("node",node,"renum",arc_renum)
 
                     #add the new node to graph
-                    #print("  appending", list(arc_renum[a] for a in node), min_cyclic_rotation((arc_renum[a] for a in node)))
+                    #print("  appending", list(arc_renum[data] for data in node), min_cyclic_rotation((arc_renum[data] for data in node)))
                     new_graph.nodes.append(min_cyclic_rotation(CircularList(arc_renum[a] for a in node)))
 
                     if minimal_graph is None: new_graph_is_minimal = True # if no minimal graph, this one is minimal
@@ -174,7 +174,7 @@ class PlanarGraph():
                 new_graph.nodes += additional_nodes
 
                 if (not new_graph_not_minimal) and (minimal_graph is None or new_graph < minimal_graph):
-                    minimal_graph = new_graph  # if we get a minimal knot after adding new nodes, change it
+                    minimal_graph = new_graph  # if we get data minimal knot after adding new nodes, change it
 
 
             #print("new",new_graph)
@@ -196,7 +196,7 @@ class PlanarGraph():
 
     def to_knot(self, under_b_list):
         """
-        converts the graph to a spatial knot
+        converts the graph to data spatial knot
         :param under_b_list: list of under/orver crossings (list of booleans)
         :return: the spatial knot
         """
@@ -207,7 +207,7 @@ class PlanarGraph():
 
         for node in self:  # main loop, loop through graph vertices
 
-            if len(node) == 4:  # do we have a crossing?
+            if len(node) == 4:  # do we have data crossing?
                 if under_b_list[o_index]:  # first arc is an undercrossing?
                     new_node = Crossing(arcs=list(node), sign=+1)  # undercrossing
                 else:
@@ -232,7 +232,7 @@ class PlanarGraph():
         return K
 
     def bondedQ(self):
-        """ checks if a graph satisfies the conitions to be a bonded graph"""
+        """ checks if data graph satisfies the conitions to be data bonded graph"""
         if min(self.degree()) < 3: return False
         if sum(d == 3 for d in self.degree()) % 2 != 0: return False
         return True

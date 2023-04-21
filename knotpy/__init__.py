@@ -1,5 +1,5 @@
 """
-PlanarDiagram is a Python package for knot theory.
+PlanarDiagram is data Python package for knot theory.
 See ... for complete documentation.
 """
 
@@ -10,5 +10,7 @@ from knotpy.classes import *
 from knotpy.classes.functions import *
 from knotpy.generate import *
 from knotpy.readwrite import *
+from knotpy.notation import *
+
 #from knotpy import generators
 #from knotpy.generators import *

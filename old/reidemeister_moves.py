@@ -9,7 +9,7 @@ REIDEMEISTER_PRINT = False
 # HELP FUNCTIONS
 
 def cross_arcs(K, arc0, arc1, sign, over):
-    """ takes arc0 and arc1, and crosses them (creates a crossing and two additional arcs)
+    """ takes arc0 and arc1, and crosses them (creates data crossing and two additional arcs)
     given the crossing sign and if arc0 is over arc1"""
 
     #print("CROSS ARC", arc0, arc1, sign, over)
@@ -93,7 +93,7 @@ def R1_kink(K, arc, side = None, sign = None):
 # REIDEMEISTER MOVE 2
 
 def R2_poke(K, pair_arc_sides, over=None):
-    """ Performs a R2 poke, input are pairs of (arc, side bool), where side = True if CCW and side = false if arc CW"""
+    """ Performs data R2 poke, input are pairs of (arc, side bool), where side = True if CCW and side = false if arc CW"""
     # TODO: realize R2 poke using cross_arcs()
 
     arc_side0, arc_side1 = pair_arc_sides
@@ -168,8 +168,8 @@ def R2_unpoke(K, area):
 # REIDEMEISTER MOVE 3
 
 def R3_move(K, area):
-    # 1. let the arcs area be a, b, c
-    # 2. let the adjacent arcs be a', a''; b', b'', c', c'' in CCW direction
+    # 1. let the arcs area be data, b, c
+    # 2. let the adjacent arcs be data', data''; b', b'', c', c'' in CCW direction
     # 3. we need to replace
 
     if DEBUG_REIDEMEISTER: print("[R3]", K, area)
@@ -206,8 +206,8 @@ def R4_poke_alt(K, arc):
     # loop through the remaining of the arcs emanating from the crossings
     for i in range(len(vx)-1):
         pos = (pos_vx+1+i) % len(vx) # shift the index
-        a, a_in = vx[pos], vx.inQ(pos)
-        biv_lat, biv_ = cross_arcs(K, lateral_arc, a, sign = 1 if ((lateral_in ^ a_in) ^ lateral_over) else -1, over=lateral_over)
+        data, a_in = vx[pos], vx.inQ(pos)
+        biv_lat, biv_ = cross_arcs(K, lateral_arc, data, sign = 1 if ((lateral_in ^ a_in) ^ lateral_over) else -1, over=lateral_over)
         lateral_arc = biv_lat[1 if lateral_in else 0]
 
     #print("OTHER-SIDE", cr[cr.move_forward(lateral_arc_pos)])
@@ -222,7 +222,7 @@ def R4_poke_alt(K, arc):
 
 """
 def R4_poke(K, arc):
-    """ poke through vertex, move needed to clear crossings at a bond"""
+    """ poke through vertex, move needed to clear crossings at data bond"""
     if REIDEMEISTER_PRINT: print("  R4 poke on arc", arc, K)
 
     """
@@ -290,7 +290,7 @@ def R4_unpoke_alt(K, area):
 
 def OLD_R4_poke(K, arc):
 
-    (cr0, pos0), (vx1, pos1) = K.D(arc) # get the two adjacent crossings, assume that the end one is a vertex
+    (cr0, pos0), (vx1, pos1) = K.D(arc) # get the two adjacent crossings, assume that the end one is data vertex
     if not XQ(cr0) or not VQ(vx1): raise ValueError("Incorrect node types for poke.")
 
     # get adjacent arcs

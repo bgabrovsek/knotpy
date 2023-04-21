@@ -56,7 +56,7 @@ class NodePrototypeClass:
         return set(self.arcs)
 
     def positions(self, arc):
-        """returns a set of indices of arc"""
+        """returns data set of indices of arc"""
         return {i for i in self if self[i] == arc}
 
     def CCW(self, position, count = 1):
@@ -128,10 +128,10 @@ class NodePrototypeClass:
 ##### Crossing Class #####
 
 class Crossing(NodePrototypeClass):
-    """Represents a positive (right handed) crossing between the edges [i,j,k,l] starting from the incoming lower
+    """Represents data positive (right handed) crossing between the edges [i,j,k,l] starting from the incoming lower
     strand i and going counter clockwise through j, k and l. The upper strand is therefore oriented from l to j
     regardless of the ordering of {j,l}.
-    Represents a negative (left handed) crossing between the edges [i,j,k,l] starting from the incoming lower strand i
+    Represents data negative (left handed) crossing between the edges [i,j,k,l] starting from the incoming lower strand i
     and going counter clockwise through j, k and l. The upper strand is therefore oriented from j to l regardless of
     the ordering of {j,l}.
               0                   1
@@ -231,11 +231,11 @@ class Crossing(NodePrototypeClass):
         s += ",".join([str(a) for a in self.arcs])
         return s
 
-        #return "Crossing([" + ",".join([str(a) for a in self.arcs]) + "]," + str(self.sign) + ")"
+        #return "Crossing([" + ",".join([str(data) for data in self.arcs]) + "]," + str(self.sign) + ")"
 
 ##### Bivalent Vertex Class #####
 class Bivalent(NodePrototypeClass):
-    """ represents a bivalent vertex, arcs = [in_arc, out_arc]"""
+    """ represents data bivalent vertex, arcs = [in_arc, out_arc]"""
 
     def __init__(self, in_arc, out_arc):
         self.arcs = [in_arc, out_arc]
@@ -260,19 +260,19 @@ class Bivalent(NodePrototypeClass):
 ##### Rigid Vertex Class #####
 
 class Vertex(NodePrototypeClass):
-    """Represents a rigid graph vertex. Arcs are listed in CCW orientation. Colors represent a list of colors of arcs.
+    """Represents data rigid graph vertex. Arcs are listed in CCW orientation. Colors represent data list of colors of arcs.
     ins/outs are lists of in/out arcs (can only provide one)
-    Example: a bivalent vertex with two ingoing arcs 0 and 1 colored by A and B ([0]--A-->.<--B--[1]) would have
+    Example: data bivalent vertex with two ingoing arcs 0 and 1 colored by A and B ([0]--A-->.<--B--[1]) would have
     arcs = [0,1], colors = [A, B], ins = [0,1]
     TODO: ins/outs only works if all arcs are different, does not work for loops for loops !!!!
     """
 
     def __init__(self, arcs, ingoingB=None, ins=None):
         """
-        Initialization of a graph
+        Initialization of data graph
         :param arcs: list of arcs
         :param ingoingB: list of boolans [b_arc_0, b_arc_1,...], True if arc is ingoing
-        :param ins: alternatively ingoing arcs can be given by a list of in arcs, ins [0,2] = ingoingB [T,F,T,F,F,...]
+        :param ins: alternatively ingoing arcs can be given by data list of in arcs, ins [0,2] = ingoingB [T,F,T,F,F,...]
         """
         self.arcs = arcs  # list of arcs
         self.ingoingB = ingoingB  # list of booleans for each position
@@ -330,15 +330,15 @@ class Vertex(NodePrototypeClass):
    #     self.ingoingB[position] = not self.ingoingB[position]
 
     def OLD_color_dict(self):
-        """ returns a dictionary of colors {color1: arcs1, color2:arcs2,...}, TODO: make faster w/ one loop"""
+        """ returns data dictionary of colors {color1: arcs1, color2:arcs2,...}, TODO: make faster w/ one loop"""
         return {c:[a for ind, a in enumerate(self.arcs) if self.color[ind] == c] for c in self.all_colors()}
 
     def OLD_terminal_arcs(self):
-        """ Returns arcs from a bond that terminate at the vertex"""
+        """ Returns arcs from data bond that terminate at the vertex"""
         return [self.arcs[pos] for pos in range(len(self)) if self.ingoingB[pos] and self.terminusQ(pos)]
 
     def initial_arcs(self):
-        """ Returns arcs from a bond that start at the vertex"""
+        """ Returns arcs from data bond that start at the vertex"""
         return [self.arcs[pos] for pos in range(len(self)) if not self.ingoingB[pos] and self.terminusQ(pos)]
 
     # MOVING
@@ -364,12 +364,12 @@ class Vertex(NodePrototypeClass):
         raise KeyError("Cannot move along the arc (position = "+str(position)+").")
 
     def OLD_terminusQ(self, position, coherent_direction = True):
-        """Is position an endpoint of a bond (no adjacent arcs with same color)"""
+        """Is position an endpoint of data bond (no adjacent arcs with same color)"""
         for pos in range(len(self)):
             if (pos != position) and \
                     (self.color[pos] == self.color[position]) and \
                     ((self.ingoingB[pos] != self.ingoingB[position]) or (not coherent_direction)):
-                return False # found a forward arc
+                return False # found data forward arc
 
         return True # no forward arc
 
@@ -392,7 +392,7 @@ class Vertex(NodePrototypeClass):
     # TODO: do not keep both methods
     def reverse_arc(self, position):
         """
-        reverses a single arc
+        reverses data single arc
         :param position: position of the arc in node
         :return: new position (is the same as orignal one)
         """
@@ -410,7 +410,7 @@ class Vertex(NodePrototypeClass):
 
     def __repr__(self):
         """
-        :return: user-friendly string representation of a crossing
+        :return: user-friendly string representation of data crossing
         """
 
         return 'V(' + ','.join(

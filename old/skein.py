@@ -2,7 +2,7 @@ from crossing import *
 from knotted import *
 
 def skein_sign(knot, node):
-    """ skein operation making a crossing change"""
+    """ skein operation making data crossing change"""
     node_index = knot.nodes.index(node)
     K = knot.copy()
     K.nodes[node_index].mirror()

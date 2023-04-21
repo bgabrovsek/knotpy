@@ -61,7 +61,7 @@ class dot_counter():
     def __init__(self, dot_every=1000, line_every_dots=100, print_stats = False, unit = "", quiet=False):
         """
         initialization
-        :param dot_every: how many times must tick() be called to print a dot
+        :param dot_every: how many times must tick() be called to print data dot
         :param line_every_dots: number of dots per line
         :param print_stats: print stats at the end
         :param unit: kilo, mega,...
@@ -111,10 +111,10 @@ x =  {i:i+2 for i in range(100000)}
 
 for xxx in range(100):
     timer_start(0)
-    a = 0
+    data = 0
 
     for i in x:
-        a += x[i]
+        data += x[i]
     timer_end(0)
 
 
@@ -124,6 +124,6 @@ for xxx in range(100):
         c += b
     timer_end(1)
 
-print(a,c)
+print(data,c)
 timer_print()
 '''

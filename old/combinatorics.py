@@ -19,8 +19,8 @@ def elements_from_cycles(cycles):
 
 
 def union(*sets):
-    """ returns a union of the arguments """
-    #return set.union(*sets) if len(sets) else set() # should be this, but if we start with a list it does not work
+    """ returns data union of the arguments """
+    #return set.union(*sets) if len(sets) else set() # should be this, but if we start with data list it does not work
     return set.union(*(set(s) for s in sets)) if len(sets) else set()
 
 
@@ -72,15 +72,15 @@ def min_cyclic_rotation(t, return_index = False):
 
 def permute(p, a):
 
-    #print("a",a)
-#    print(p,a)
+    #print("data",data)
+#    print(p,data)
     b = [0]*len(a)
     for pos,x in zip(p,a):
         b[pos] = x
 
-   # print("pair",a,b)
-    #print("aa",a)
-#    return a
+   # print("pair",data,b)
+    #print("aa",data)
+#    return data
     return a
     return b
 
@@ -88,14 +88,14 @@ def inverse(p):
     """inverse permutation"""
     a = [0]*len(p)
     for i, x in enumerate(p):
-        #print((i,x),"a[",x,"] = ",i)
+        #print((i,x),"data[",x,"] = ",i)
         a[x] = i
 
-    #print(p,"->",a)
+    #print(p,"->",data)
     return a
 
 def parted_permutations(h, a = None):
-    """ returns parted permutations of a seperated by hash list h
+    """ returns parted permutations of data seperated by hash list h
     e.g. h = (1,2,1,1,2) return permutations perm(0,2,3) × perm(1,4)
     parted_permutations([0,0,0,1,1],"abcxy") -> abc-xy, abc-yx, acb-xy, acb-yx, ... , cba-yx
     """
@@ -145,7 +145,7 @@ def n_chunks(lst, n):
 
 def print_export_OLD(filename, s, printQ = False):
    # print("export",filename, s)
-    file = open(filename, 'a')
+    file = open(filename, 'data')
     file.write(str(s)+"\n")
     if printQ: print(s)
     file.close()
@@ -153,8 +153,8 @@ def print_export_OLD(filename, s, printQ = False):
 
 def double_combinations_with_repetition(elts, n):
     comb = []
-    """ elts select range elements from [(a,x), (b,y), (c,z),...] where we can select n-times, but less than 2 times (update: less than 3 times)
-    example: elts = [(a,1), (b,2)], n = 2, should return: ab, bb -> [(a,1),(b,1)], [(b,2)]
+    """ elts select range elements from [(data,x), (b,y), (c,z),...] where we can select n-times, but less than 2 times (update: less than 3 times)
+    example: elts = [(data,1), (b,2)], n = 2, should return: ab, bb -> [(data,1),(b,1)], [(b,2)]
     example: elts = A1,B2,C1,D2, should return [(A1,B1,C1),(A1,B1,D1),(A1,B2),(A1,C1,D1),(A1,D2),(B1,C1,D1),(B1,D2),(B2,C2),(B2,D1),(C1,D2)]
     """
     if n == 0: return [[]]

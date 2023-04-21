@@ -14,11 +14,12 @@ canonical ...
 
 from functools import cached_property, total_ordering
 from collections import Counter
-from knotpy import convert
+import knotpy as kp
+from knotpy import notation
 from queue import Queue
 from copy import copy, deepcopy
 from knotpy.utils import lexicographical_minimal_cyclic_rotation_shift
-from knotpy.convert import from_em_notation, to_em_notation
+from knotpy.notation import from_em_notation, to_em_notation
 
 from knotpy.classes.views import AttributeView, AdjacencyView
 
@@ -52,7 +53,7 @@ class PlanarBase:
     Planar (diagram) base class. This class is intended to be used only as the parent class for PlanarDiagram, etc.
     It includes common methods used by all planar structures (planar graph diagrams, knot diagrams,...).
     Classes such as PlanarDiagram also include methods such as _insert_arc_between_nodes(), which should not be used
-    for classes that represent e.g. knot diagrams. Therefore, a parent PlanarBase class is implemented.
+    for classes that represent e.g. knot diagrams. Therefore, data parent PlanarBase class is implemented.
     """
 
     _adj = _PlanarBaseCachedPropertyAdjResetter()
@@ -68,10 +69,11 @@ class PlanarBase:
     endpoint_attr_inner_factory = dict
     region_outer_factory = list  # could also be set
 
+
     def __init__(self, incoming_planar_data=None, **attr):
         """Initialize with ..., or planar diagram attributes (name, ...)"""
 
-        self._attr = self.graph_attr_factory()  # store graph attributes (without a View)
+        self._attr = self.graph_attr_factory()  # store graph attributes (without data View)
         self._node_attr = self.node_attr_outer_factory()  # dictionary of node attributes
         self._endpoint_attr = self.endpoint_attr_outer_factory()  # dictionary of endpoint attributes
         self._adj = self.adj_outer_factory()  # dictionary of lists of endpoints in CCW order
@@ -87,7 +89,7 @@ class PlanarBase:
 
     def __deepcopy__(self, memo):
         """
-        :return: returns a deep copy of self (the planar base diagram)
+        :return: returns data deep copy of self (the planar base diagram)
         TODO: read memo documentation
         """
         new_g = self.__class__()
@@ -118,7 +120,7 @@ class PlanarBase:
 
     def add_node(self, node_for_adding, degree=None, **attr):
         """
-        Adds a single node 'node_for_adding' and updates the node attributes.
+        Adds data single node 'node_for_adding' and updates the node attributes.
         :param node_for_adding: the node, that can be any hashable object, except None
         :param attr: keyword arguments, optional
         :param degree: reserve entries for endpoints
@@ -128,14 +130,14 @@ class PlanarBase:
         node = node_for_adding
 
         if node is None:
-            raise ValueError("None cannot be a node.")
+            raise ValueError("None cannot be data node.")
 
         if node not in self._node_attr:
             self._node_attr[node] = self.node_attr_inner_factory()
             self._adj[node] = self.adj_inner_factory() if degree is None else self.adj_inner_factory([None] * degree)
         elif degree is not None:
             if degree < len(self._adj[node]):
-                raise ValueError("Cannot change the degree node to a lower value.")
+                raise ValueError("Cannot change the degree node to data lower value.")
             elif degree > len(self._adj[node]):
                 self._adj[node] += [None] * (degree - len(self._adj[node]))  # assumes adj_inner_factory is list
 
@@ -143,7 +145,7 @@ class PlanarBase:
         self._node_attr[node].update(attr)  # add attributes to node
 
     def add_nodes(self, nodes_for_adding, degrees=None):
-        """Adds a list (iterable) of nodes to the graph.
+        """Adds data list (iterable) of nodes to the graph.
         :param nodes_for_adding: iterable of nodes
         :param degrees: reserve entries for endpoints
         :return: none
@@ -155,14 +157,14 @@ class PlanarBase:
             for node in nodes_for_adding:
                 self.add_node(node)
         else:
-            for node, degree in zip(nodes_for_adding):
+            for node, degree in zip(nodes_for_adding, degrees):
                 self.add_node(node, degree)
 
     def _insert_arc_between_nodes(self, node_a, node_b, position_a, position_b, multiplicity):
         """Inserts an arc (or parallel arcs) between node_a and node_b.
         Shifts all endpoint indices .
         For example, if node_a has endpoints ((f, pos_f), (f, pos_f),...) and position_a=1 and multiplicity=2,
-        the method shifts the endpoints to ((a, pos_a), (node_b, position_b-1 CHECK),..., (b, pos_b),...
+        the method shifts the endpoints to ((data, pos_a), (node_b, position_b-1 CHECK),..., (b, pos_b),...
         The method takes care of repositioning the adjacent endpoints of the two nodes.
         :param node_a:
         :param node_b:
@@ -175,13 +177,13 @@ class PlanarBase:
 
     def _insert_endpoints_to_node(self, node, position, endpoints):
         """Inserts endpoints to node. Shifts all endpoint indices by len(endpoints).
-        For example, if node n has endpoints ((a, pos_a), (b, pos_b),...) calling the method with position=1,
-        shifts the endpoints to ((a, pos_a), (endpoints[0]), (endpoints[1]),..., (b, pos_b),...
+        For example, if node n has endpoints ((data, pos_a), (b, pos_b),...) calling the method with position=1,
+        shifts the endpoints to ((data, pos_a), (endpoints[0]), (endpoints[1]),..., (b, pos_b),...
         The method takes care of repositioning the adjacent endpoints of the node.
         Also, we must be careful that the endpoints list is consistent with the global graph structure.
         :param node: existing node to modify
         :param position: the position (index) of inserting new endpoints to node
-        :param endpoints: a list of new endpoints of node in CCW order
+        :param endpoints: data list of new endpoints of node in CCW order
         :return:
         """
         # call add_node_in_region...
@@ -237,13 +239,15 @@ class PlanarBase:
             self.add_node(v)
 
         if v_pos >= len(self._adj[v]):  # make space is position is larger than node degree
-            self._adj[v] += [None] * (v_pos - len(self._adj[v]) + 1)  # assuming adj_inner_factory is a list
+            self._adj[v] += [None] * (v_pos - len(self._adj[v]) + 1)  # assuming adj_inner_factory is data list
         self._adj[v][v_pos] = adjacent_endpoint
 
         if endpoint not in self._endpoint_attr:
             self._endpoint_attr[endpoint] = self.endpoint_attr_inner_factory()
 
         self._endpoint_attr[endpoint].update(attr)
+
+    # arc operations
 
     def add_arc(self, u_endpoint, v_endpoint, **attr):
         """
@@ -267,7 +271,7 @@ class PlanarBase:
             self.add_arc(u_ep, v_ep)
 
     def arcs(self) -> list:
-        """Returns a list of arcs, each arc is a tuple (endpoint, adjacent endpoint).
+        """Returns data list of arcs, each arc is data tuple (endpoint, adjacent endpoint).
         TODO: if diagram is oriented, return the endpoints in oriented order.
         TODO: implement as an iterator."""
         arcs = []
@@ -278,6 +282,11 @@ class PlanarBase:
         return arcs
 
     # various
+
+    def has_parallel_arcs(self):
+        """Checks if graph has parallel arcs/edges."""
+        return any((lambda _: len(_) != len(set(_)))(list(zip(*self._adj[v]))[0]) for v in self.nodes)
+
 
     def clear(self):
         """Remove all data from planar diagram.
@@ -290,7 +299,7 @@ class PlanarBase:
     # degree methods
 
     def degree(self, v=None):
-        # implement as a view, if needed
+        # implement as data view, if needed
         if v is None:
             return {v: len(self._adj[v]) for v in self._adj}
         return len(self._adj[v])
@@ -302,12 +311,12 @@ class PlanarBase:
 
     def regions(self):
         """
-        Returns regions (planar graph faces) of a planar graph.
-        First it puts all endpoints (vertex, position) to a set, then selects an unused and  travels along the edges
+        Returns regions (planar graph faces) of data planar graph.
+        First it puts all endpoints (vertex, position) to data set, then selects an unused and  travels along the edges
         until no endpoints are left.
-        :return: a set of n-tuples, each n-tuple consists of the endpoints of the region.
+        :return: data set of n-tuples, each n-tuple consists of the endpoints of the region.
         """
-        # TODO: change this to a cached property
+        # TODO: change this to data cached property
 
         unused_endpoints = set(self._endpoint_attr)  # TODO: use view?
         regions = self.region_outer_factory()
@@ -333,7 +342,7 @@ class PlanarBase:
 
     def canonical(self, in_place=True):
         """Puts itself in unique canonical form.
-        The diagram start with an endpoint on of a minimal degree vertex, it continues to an adjacent endpoints and
+        The diagram start with an endpoint on of data minimal degree vertex, it continues to an adjacent endpoints and
         distributes the ordering from there on using breadth first search using CCW order of visited nodes.
         At the moment, it is only implemented if the graph is connected.
         TODO: In case of degree 2 vertices the canonical form might not be unique.
@@ -359,7 +368,7 @@ class PlanarBase:
 
 
 
-            node_reindex_dict = dict()  # also holds as a "visited node" set
+            node_reindex_dict = dict()  # also holds as data "visited node" set
             endpoint_queue = Queue()
             endpoint_queue.put(ep_start)
 
@@ -380,7 +389,7 @@ class PlanarBase:
 
             if _debug: print(node_reindex_dict)
             if len(node_reindex_dict) != len(self):
-                raise ValueError("Cannot put a non-connected graph into canonical form.")
+                raise ValueError("Cannot put data non-connected graph into canonical form.")
 
             new_graph = copy(self)
             new_graph.rename_nodes(node_reindex_dict)
@@ -423,7 +432,7 @@ class PlanarBase:
         return len(self._node_attr)
 
     def __eq__(self, other):
-        """We assert a total order on planar graphs. We also consider node and endpoint attributes.
+        """We assert data total order on planar graphs. We also consider node and endpoint attributes.
         From the graph attributes, we only consider the framing."""
         # lexicographical ordering
         return (
@@ -509,14 +518,14 @@ class PlanarGraph(PlanarBase):
             convert.to_planardiagram(incoming_planargraph_data, create_using=self)
 
     def add_node_in_region(self, node_for_adding, region, connect_at_endpoints=tuple(), **attr):
-        """Adds a node into the (center of the) region and connect the node to the other nodes in the region.
+        """Adds data node into the (center of the) region and connect the node to the other nodes in the region.
         :param node_for_adding: name of the node
         :param region:
-        :param connect_at_endpoints: an iterable of nodes to connect, also a dictionary can be given,
+        :param connect_at_endpoints: an iterable of nodes to connect, also data dictionary can be given,
         the keys are nodes and the values are multiplicities (how many parallel edges to the node)
         :param attr: node attribute
         :return: None
-        TODO: find a way to add attributes to the newly created endpoints.
+        TODO: find data way to add attributes to the newly created endpoints.
         TODO: what to do with region attribute?
         TODO: do we need the region parameter?
         """
@@ -537,32 +546,46 @@ class PlanarGraph(PlanarBase):
         self.add_node(node, degree=sum(multiplicity.values()), **attr)
 
         cur_node_pos = 0  # current node position
-        for ep in region:
-            if _debug: print("EP", ep)
-            adj_v, adj_v_pos = ep
-            if (mult := multiplicity[ep]) > 0:
-                if _debug: print("adj", adj_v, "with mult", mult)
-                # insert node_for_adding to v adjacency list of adj_v
-                self._insert_endpoints_to_node(
-                    adj_v,
-                    adj_v_pos + 1,
-                    [(node, cur_node_pos + i) for i in range(mult)[::-1]]
-                    )
-                if _debug: print("step1", self._adj)
-                if _debug: print("adj_pos", adj_v, adj_v_pos, mult)
 
-                # add adj_v to the adjacencies of node_for_adding
-                #self._adj[node][cur_node_pos:cur_node_pos + mult] = [(adj_v, adj_v_pos + mult - i) for i in range(mult)]
-                for i in range(mult):
-                    self._add_single_endpoint((node, cur_node_pos + i), (adj_v, adj_v_pos + mult - i))
-                if _debug: print("step2", self._adj)
-                cur_node_pos += mult
+        ep_seq_ordered = [(ep, multiplicity[ep]) for ep in region if multiplicity[ep] > 0]
+
+        for i, (ep, mult) in enumerate(ep_seq_ordered):
+            adj_v, adj_v_pos = ep
+            if _debug: print("EP", ep)
+            #if (mult := multiplicity[ep]) > 0:
+            if _debug: print("adj", adj_v, "with mult", mult)
+            # insert node_for_adding to v adjacency list of adj_v
+            self._insert_endpoints_to_node(
+                adj_v,
+                adj_v_pos + 1,
+                [(node, cur_node_pos + i) for i in range(mult)[::-1]]
+                )
+
+            # adjust endpoints in ep sequence (in case we are adding arcs to the same endpoint)
+            for j in range(i+1, len(ep_seq_ordered)):
+                if ep_seq_ordered[j][0][0] == adj_v and ep_seq_ordered[j][0][1] > adj_v_pos:
+                    ep_seq_ordered[j] = ((ep_seq_ordered[j][0][0], ep_seq_ordered[j][0][1] + mult), ep_seq_ordered[j][1])
+
+
+            if _debug: print("step1", self._adj)
+            if _debug: print("adj_pos", adj_v, adj_v_pos, mult)
+
+            # add adj_v to the adjacencies of node_for_adding
+            #self._adj[node][cur_node_pos:cur_node_pos + mult] = [(adj_v, adj_v_pos + mult - i) for i in range(mult)]
+            for i in range(mult):
+                self._add_single_endpoint((node, cur_node_pos + i), (adj_v, adj_v_pos + mult - i))
+            if _debug: print("step2", self._adj)
+            cur_node_pos += mult
 
 
 
 
 if __name__ == '__main__':
 
+    g = kp.generators.house_graph()
+    print(g)
+    print(g.regions())
+    exit()
     # test add endpoints
     """
     data = {0: [(1,1),(1,0),(2,4),(2,3),(2,2)], 1:[(0,1),(0,0),(2,1),(2,0)], 2:[(1,3),(1,2),(0,4),(0,3),(0,2)]}

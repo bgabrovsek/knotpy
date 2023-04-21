@@ -1,16 +1,16 @@
 
-# class representing a equivalence class
-# add singleten class [a] by self += a or add equivalence a = b
+# class representing data equivalence class
+# add singleten class [data] by self += data or add equivalence data = b
 
 
 """
 Usage:
 
-a = equivalence([2,3])
-a += 1
-a[1] = 5
-a[2] = 4
-a[7] = 6
+data = equivalence([2,3])
+data += 1
+data[1] = 5
+data[2] = 4
+data[7] = 6
 
 yields equivalence classes {1,5}, {2,4}, {3}, {6,7}
 
@@ -40,7 +40,7 @@ class equivalence:
     # add element as new eq. class
     def __iadd__(self, item):
 
-        # if adding a list, every element in the list are of equial eq. class
+        # if adding data list, every element in the list are of equial eq. class
         if isinstance(item, tuple) or isinstance(item, list):
            for i in item:
                self[item[0]] = i
@@ -105,17 +105,17 @@ class equivalence:
 
 
 """
-a = equivalence([2,3])
-a += 1
-a[1] = 5
-a[2] = 4
-a[7] = 6
+data = equivalence([2,3])
+data += 1
+data[1] = 5
+data[2] = 4
+data[7] = 6
 
-a+=1
-a+=7
+data+=1
+data+=7
 
-a[8] = 8
-a+= [7,9,10]
+data[8] = 8
+data+= [7,9,10]
 
-print(a)
-print(a.get_classes())"""
+print(data)
+print(data.get_classes())"""

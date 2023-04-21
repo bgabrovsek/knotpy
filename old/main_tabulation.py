@@ -11,7 +11,7 @@ def primeQ(K):
 
     # CHECK IF CONNECTED SUM
     if K.connected_sumQ():
-        print("is a connected sum.", end= " ")
+        print("is data connected sum.", end= " ")
         return False
 
     # CHECK IF SPLIT
@@ -28,11 +28,11 @@ def primeQ(K):
         return False
 
     if K.bridgeQ():
-        print("has a bridge arc", end = " ")
+        print("has data bridge arc", end = " ")
         return False
 
     if K.bridge_crossingQ():
-        print("has a bridge crossing", end = " ")
+        print("has data bridge crossing", end = " ")
         return False
 
     return True

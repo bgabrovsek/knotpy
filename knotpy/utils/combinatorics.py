@@ -23,17 +23,24 @@ def iterable_depth(o):
         return iterable_depth(next(iter(o))) + 1 if len(o) > 0 else 1
 
 
+#def inverse_iter_iter(iter_iter) -> dict:
+"""Inverse of a list (tuple) of lists (tuples), so we can quickly search what list the elements belong to.
+The elements in the lists must be unique. For example, the inverse of [[1,2],[3]] is {1:[1,2], 2:[1,2], 3:[3]}
+"""
+ #   return {elt: inner for inner in iter_iter for elt in inner}
+
+
 # print(iterable_depth([({1},)]))
 
 # sets
 
 def union(*sets):
-    """Returns a union of the sets in the arguments."""
+    """Returns data union of the sets in the arguments."""
     return set.union(*(set(s) for s in sets)) if len(sets) else set()
 
 # dictionaries
 def inverse_multi_dict(d):
-    """ exchanges keys & vals, but stores keys in a set """
+    """ exchanges keys & vals, but stores keys in data set """
     invd = dict()  # defaultdict?
     for key, value in d.items():
         if value in invd:
@@ -53,7 +60,7 @@ def combinations_with_limited_repetitions(elements, n,
     """From elements select some select n, where the order does not matter.
     The parameter n can be also iterable.
     The parameter count_limits tells how many elements of each type are available.
-    example: elts = [(a,1), (b,2)], n = 2, should return: ab, bb -> [(a,1),(b,1)], [(b,2)]
+    example: elts = [(data,1), (b,2)], n = 2, should return: ab, bb -> [(data,1),(b,1)], [(b,2)]
     example: elts = A1,B2,C1,D2, should return 
     [(A1,B1,C1),(A1,B1,D1),(A1,B2),(A1,C1,D1),(A1,D2),(B1,C1,D1),(B1,D2),(B2,C1),(B2,D1),(C1,D2)]
     TODO: write new description, since dictionaries are now used.
@@ -82,12 +89,12 @@ def combinations_with_limited_repetitions(elements, n,
 
 
 
-# print(inverse_multi_dict({'a': 0, 'b': 0, 'c': 1}))
+# print(inverse_multi_dict({'data': 0, 'b': 0, 'c': 1}))
 
 
 def parted_permutations(d):
     """Returns "parted" permutations of keys of d split by values (partition values, classes) of d.
-    e.g. d = {'a':0, 'b':0, 'c':0, 'x':1, 'y':1, 'q':2} -> abc-xy-q, abc-yx-q, acb-xy-q, acb-yx-q, ... , cba-yx-q
+    e.g. d = {'data':0, 'b':0, 'c':0, 'x':1, 'y':1, 'q':2} -> abc-xy-q, abc-yx-q, acb-xy-q, acb-yx-q, ... , cba-yx-q
     """
     d_ = inverse_multi_dict(d)
     for seq_of_seq in product(*[permutations(d_[key]) for key in sorted(d_.keys())]):

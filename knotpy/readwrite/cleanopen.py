@@ -5,7 +5,7 @@ from pathlib import Path
 from collections import defaultdict
 
 
-# To handle new extensions, define a function accepting a `path` and `mode`.
+# To handle new extensions, define data function accepting data `path` and `mode`.
 # Then add the extension to _dispatch_dict.
 fopeners = {
     ".gz": gzip.open,
@@ -15,15 +15,18 @@ fopeners = {
 _dispatch_dict = defaultdict(lambda: open, **fopeners)  # type: ignore
 
 
-def clean_open_file(path, mode="r", decorator=None):
-    """Ensure clean opening of files."""
-
+def prepend_to_extension(path, decoration=None):
     name, ext = splitext(path)
-    if decorator is not None:
-        path = name + "-" + str(decorator) + ext
+    if decoration is not None:
+        path = name + "-" + str(decoration) + ext
+    return path
 
+
+def clean_open_file(path, mode="r"):
+    """Ensure clean opening of files."""
     f = open(path, mode)
-    return f, path
+    return f
+
 
 def clean_close_file(f):
     f.close()

@@ -4,52 +4,103 @@ Format:
 """
 
 __all__ = [
-    "savetxt"
+    "savetxt",
+    "loadtxt"
 ]
 
 import networkx as nx
-from knotpy.readwrite import clean_open_file, clean_close_file
-from knotpy.convert import to_em_notation, guess_notation_str, to_pd_notation
-
-_notation_converters = {
-    "em": to_em_notation,
-    "pd": to_pd_notation
-}
+from knotpy.readwrite.cleanopen import clean_open_file, clean_close_file
+from knotpy.notation import to_notation_dispatcher, from_notation_dispatcher
+from pathlib import Path
 
 
-def savetxt(g, path, notation="em", condensed=True, encoding="utf-8", decorator=None):
-    """Writes either a graph or a list/set of graph to path in EM notation.
-    :param g:
+def savetxt(graph, path, notation="em", ccw=True, separator=",", prepended_node_count=False, encoding="utf-8",
+            comment=None):
+    """
+    :param graph: one or more graphs as iterable
     :param path:
     :param notation:
-    :param condensed: without spaces if True
+    :param ccw:
+    :param separator:
+    :param prepended_node_count:
     :param encoding:
-    :param decorator:
+    :param comment: will be prepended as first line, should contain, e.g. a "#"
     :return:
     """
-    _debug = True
-    notation = guess_notation_str(notation)
 
-    f, actual_path = clean_open_file(path, mode="wb", decorator=decorator)
+    _debug = False
 
-    try:
+    graphs = graph if type(graph).__name__ in ("list", "set", "tuple", "dict") else [graph]
+    f = clean_open_file(path, mode="wb")
 
-        graphs = g if (isinstance(g, list) or isinstance(g, set)) else [g]
+    to_dispatched = to_notation_dispatcher(notation)
+    dispatcher_args = dict()
+    if not ccw and ccw is not None: dispatcher_args["ccw"] = False
+    if separator is not None: dispatcher_args["separator"] = separator
+    if prepended_node_count: dispatcher_args["prepended_node_count"] = True
 
-        for counter, g in enumerate(graphs):  # using g is not nice
-            conv_obj = _notation_converters[notation](g)
+    if comment is not None:
+        f.write((str(comment) + "\n").encode(encoding))
 
-            line = str(conv_obj) + ("\n" if counter < len(graphs)-1 else "")
-            if condensed:
-                line = line.replace(" ", "")
+    for g in graphs:
+        line = to_dispatched(g, **dispatcher_args) + "\n"
+        f.write(line.encode(encoding))
 
-            f.write(line.encode(encoding))
+    clean_close_file(f)
 
-    except Exception as e:
-        raise Exception(e)
+    if _debug: print(f"Wrote {len(graphs)} lines to {path}.")
 
-    finally:
-        clean_close_file(f)
 
-    if _debug: print(f"wrote to {actual_path}.")
+def loadtxt(path, notation="em", ccw=True, comment="#", separator=",", prepended_node_count=False, max_rows=None,
+            encoding="utf-8"):
+    """
+    :param path:
+    :param notation:
+    :param ccw:
+    :param comment:
+    :param separator:
+    :param prepended_node_count:
+    :param max_rows:
+    :param encoding:
+    :return:
+    """
 
+    _debug = False
+
+    f = clean_open_file(path, mode="rb")
+    graphs = []
+
+    for line in f:
+        line = line.decode(encoding).strip()
+        if _debug: print(line)
+
+        if max_rows is not None and len(graphs) >= max_rows:
+            break
+
+        if line.find(comment) > -1:
+            line = line[:line.find(comment)].strip()
+        if len(line) == 0:
+            continue
+
+        from_dispatched = from_notation_dispatcher(notation)
+        dispatcher_args = dict()
+        if ccw is False: dispatcher_args["ccw"] = ccw
+        if separator is not None: dispatcher_args["separator"] = separator
+        if prepended_node_count: dispatcher_args["prepended_node_count"] = True
+
+        graph = from_dispatched(line, **dispatcher_args)
+        graphs.append(graph)
+
+        if _debug:
+            print(graphs[-1])
+
+    clean_close_file(f)
+    if _debug: print(f"Read {len(graphs)} lines from {path}.")
+
+    return graphs if len(graphs) != 1 else graphs[0]
+
+
+if __name__ == '__main__':
+    data_dir = Path("/Users/bostjan/Dropbox/Code/knotpy/data")
+    graphs = loadtxt(data_dir / "plantri-7.txt", notation="pl", prepended_node_count=True, ccw=False)
+    savetxt(graphs, data_dir / "test_plantri-7.txt", notation="pl", prepended_node_count=True, ccw=False)

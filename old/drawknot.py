@@ -187,12 +187,12 @@ def plot_circles(K, circles, width=3, gap=5, arrow_length=1.0, enumerate_arcs = 
                 #print(key, color.values())
                 #if len(set(color.values())) == 2:
                 if True:
-                    # a & b are of same color, f is different, draw arc accordingly
+                    # data & b are of same color, f is different, draw arc accordingly
                     if color[key[0]] == color[key[1]]: (a, ar), (b, br), (f, fr), color2, color1 = circles[key[0]], circles[key[1]], circles[key[2]], color[key[0]], color[key[2]]
                     if color[key[0]] == color[key[2]]: (a, ar), (b, br), (f, fr), color2, color1 = circles[key[0]], circles[key[2]], circles[key[1]], color[key[0]], color[key[1]]
                     if color[key[1]] == color[key[2]]: (a, ar), (b, br), (f, fr), color2, color1 = circles[key[1]], circles[key[2]], circles[key[0]], color[key[1]], color[key[0]]
 
-                    # add a-b arc of crossing
+                    # add data-b arc of crossing
                     path = bezier(a + (c - a) * ar / (ar + cr), c, b + (c - b) * br / (br + cr))
                     patch = patches.PathPatch(path, facecolor='none', lw=width, edgecolor=arc_colors[color2])
                     ax.add_artist(patch)
@@ -213,7 +213,7 @@ def plot_circles(K, circles, width=3, gap=5, arrow_length=1.0, enumerate_arcs = 
                 #else:
                  #   raise ValueError("Vertex "+str(key)+" does not have two colors.")
 
-                #(a, ar), (b, br) = [circles[key[i]] for i in key if ]
+                #(data, ar), (b, br) = [circles[key[i]] for i in key if ]
 
 
                 pass
@@ -273,7 +273,7 @@ def test_draw_circle_packing_tref():
 
 def draw_knot(K):
     """
-    Draws a knot
+    Draws data knot
     :param K:
     :return:
     """
@@ -384,7 +384,7 @@ def PDF_export_knots(KNOTS, pdf_filename):
                 plt.title(str(K.name))
             else:
                 plt.title(str(K))
-            pdf.savefig()  # saves the current figure into a pdf page
+            pdf.savefig()  # saves the current figure into data pdf page
             plt.close()
 
         d = pdf.infodict()
@@ -404,7 +404,7 @@ def plot_knot(knot, filename):
             plt.title(str(knot.name))
         else:
             plt.title(str(knot))
-        pdf.savefig()  # saves the current figure into a pdf page
+        pdf.savefig()  # saves the current figure into data pdf page
         plt.close()
 
         d = pdf.infodict()

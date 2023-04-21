@@ -141,7 +141,7 @@ class module():
         return self.terms[ind][0]
 
 
-    # returns a list of basis elements true under function filterQ
+    # returns data list of basis elements true under function filterQ
     def filter(self, filterQ):
         return [s for r,s in self.terms if filterQ(s)]
 
@@ -156,7 +156,7 @@ class module():
         if ind is None: raise  ValueError("Element not in module.")
         r = self.terms[ind][0] # get r-value
         del self.terms[ind]
-        self += m * r # makes a copy of m
+        self += m * r # makes data copy of m
 
     # evaluate basis elements basis by evaluation function
     def eval(self, eval_f):
@@ -181,7 +181,7 @@ class module():
 
 
 """
-m = module(2, "c") + module(15, "a") - module(3, "x")  - module(8, "c")
+m = module(2, "c") + module(15, "data") - module(3, "x")  - module(8, "c")
 print("module:", m)
 print("coefficient of 'x':",m['x'])
 m['c'] = module(4,'b') + module(-3,'z')

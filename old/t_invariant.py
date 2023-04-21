@@ -11,7 +11,7 @@ def T(knot):
     for i, k in enumerate([knot1, knot2, knot3]):
         vertex = k.filter_nodes(VQ)[0]  # select first vertex
 
-        # arcs (join a and b)
+        # arcs (join data and b)
         a, b, c = i, (i+1) % 3, (i+2) % 3
 
         # reroute arcs

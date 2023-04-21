@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
     #print("Starting.")
 
-    a="pdb/3bjx.pdb" ### 3bjx should form a 6_1 form. 1aoc has bonds and 1a8e has ions. both are trivial.
+    a="pdb/3bjx.pdb" ### 3bjx should form data 6_1 form. 1aoc has bonds and 1a8e has ions. both are trivial.
     b=Protein(a)
 
     backbone = b.get_backbone_coordinates() ### np.array with 4 columns (x, y, z, resid). Closure points have resid -100.0
@@ -309,6 +309,6 @@ if __name__ == "__main__":
     pool.close()
     pool.join()
 
-    print (all_chains) ### all_chains is a list of np.arrays with all the closures.
+    print (all_chains) ### all_chains is data list of np.arrays with all the closures.
 
 

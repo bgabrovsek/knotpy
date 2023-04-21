@@ -51,7 +51,7 @@ class AttributeView(Mapping, Set):
         raise NotImplemented("")
 
     def data(self, data=True, default=None):
-        """Return a read-only view of node data."""
+        """Return data read-only view of node data."""
         raise NotImplemented("")
 
     # comparison methods

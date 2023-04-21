@@ -22,11 +22,11 @@ DEBUG_HOMFLYPT = False
 
 def choose_overpath_skein_node(K):
     """
-    choose a node s.t. it is good to perform a skein
+    choose data node s.t. it is good to perform data skein
     """
     components = K.components()
     min_len = min([len(c) for c in components])
-    component = choice([c for c in components if len(c) == min_len])  # choose a component with minimal length
+    component = choice([c for c in components if len(c) == min_len])  # choose data component with minimal length
 
     # list of tuples (crossing, position) for the component
     #print(K, "\n","COMP",component)
@@ -50,7 +50,7 @@ def HOMFLYPT_polynomial(knot, depth = 0):
                         or (1/v) * L+ - v * L- = z * L0
     """
 
-    # make a copy of the knot
+    # make data copy of the knot
     knot_copy = knot.copy()
     # simplify and split components
     components = reidemeister_walk.simplify_and_split(knot_copy)
@@ -67,16 +67,16 @@ def HOMFLYPT_polynomial(knot, depth = 0):
         K = components[0]  # take the compoennt
         if unknotQ(K): return 1  # unknot has value 1
 
-        # select 2-region and make a crossing change
+        # select 2-region and make data crossing change
         areas = reidemeister_walk.find_areas(K, 2, alternating=True)
 
         if not len(areas):
             # there are no 2-areas
             if len(K.components()) == 1:
-                # if we have a 1-component knot and no 3-areas, we cannot perform a skein reduction to simplify
+                # if we have data 1-component knot and no 3-areas, we cannot perform data skein reduction to simplify
                 if depth > 30:
-                    raise ValueError("Knot has no 2-region to perform a skein reduction.","\n",K,K.bondedQ(),"\n")
-                # try performing a R3 move to obtain some 2-areas
+                    raise ValueError("Knot has no 2-region to perform data skein reduction.","\n",K,K.bondedQ(),"\n")
+                # try performing data R3 move to obtain some 2-areas
                 if not reidemeister_walk.random_R3_move(K):
                     raise ValueError("Cannot perform R3,",K)
                 return HOMFLYPT_polynomial(K, depth+1)
@@ -88,9 +88,9 @@ def HOMFLYPT_polynomial(knot, depth = 0):
             node = choose_overpath_skein_node(K)
         else:
             # there are 2-areas
-            area = choice(areas)  # choose a 2-area
+            area = choice(areas)  # choose data 2-area
             nodes = area_nodes(K, area)
-            node = nodes[choice((0, 1))]  # choose a crossing in the 2-area
+            node = nodes[choice((0, 1))]  # choose data crossing in the 2-area
 
         #if depth == 0:
         #    print(node)
@@ -176,7 +176,7 @@ def HSM(knot, refined=False, rigid=False, colored=None, depth=0):
     """
 
     """
-    Computes the HOMFLYPT skein module of a bonded knot.
+    Computes the HOMFLYPT skein module of data bonded knot.
     :param K: bonded knot
     :return: the HOMFLYPT skein module
     """
@@ -195,7 +195,7 @@ def HSM(knot, refined=False, rigid=False, colored=None, depth=0):
 
     hsm = 1
 
-    # get a bond
+    # get data bond
     arc, bond_color = K.pop_bond_arc()
 
     if arc is None:
