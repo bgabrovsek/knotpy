@@ -4,8 +4,7 @@ As with dicts, the graph should not be updated while iterating through the view.
 """
 from collections.abc import Mapping, Set
 from functools import total_ordering
-import knotpy as kp
-from knotpy.utils import cmp_dict_dict, cmp_dict_list
+from knotpy.utils.combinatorics import cmp_dict_dict, cmp_dict_list
 
 __all__ = [
     "AttributeView",
@@ -18,10 +17,10 @@ class AttributeView(Mapping, Set):
     __slots__ = ("_attr",)
 
     def __getstate__(self):
-        return {"_attr": self._attr}
+        return {"attr": self._attr}
 
     def __setstate__(self, state):
-        self._attr = state["_attr"]
+        self._attr = state["attr"]
 
     def __init__(self, attributes):
         self._attr = attributes
@@ -57,8 +56,8 @@ class AttributeView(Mapping, Set):
     # comparison methods
 
     _convert = {
-        '__eq__': lambda self, other: self._attr == other._attr,
-        '__ne__': lambda self, other: self._attr != other._attr,
+        '__eq__': lambda self, other: self.attr == other.attr,
+        '__ne__': lambda self, other: self.attr != other.attr,
         '__lt__': lambda self, other: self.py3cmp(other) < 0,
         '__le__': lambda self, other: self.py3cmp(other) <= 0,
         '__gt__': lambda self, other: self.py3cmp(other) > 0,
@@ -144,5 +143,4 @@ class AdjacencyView(Mapping, Set):
                 f"{v}" + u" \u2192 ({0})".format(" ".join([str(e[0]) for e in u])) for v, u in sorted(self._adj.items())
             ]
         )
-
 

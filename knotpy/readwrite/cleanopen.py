@@ -1,9 +1,11 @@
 import gzip
 import bz2
 from os.path import splitext
-from pathlib import Path
 from collections import defaultdict
 
+__all__ = ['clean_open_file', 'clean_close_file']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 # To handle new extensions, define data function accepting data `path` and `mode`.
 # Then add the extension to _dispatch_dict.

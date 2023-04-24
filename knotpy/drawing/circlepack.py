@@ -6,9 +6,7 @@ Following data numerical algorithm by C. R. Collins and K. Stephenson,
 AUTHORS: ...
 """
 
-
-
-from math import pi, acos, asin, sin, e
+from math import pi, acos, sin, e
 
 tolerance = 1 + 10e-12  # how accurately to approximate things
 

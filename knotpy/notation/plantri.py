@@ -6,8 +6,13 @@ See https://users.cecs.anu.edu.au/~bdm/plantri/
 """
 
 import string
-import knotpy as kp
 from collections import defaultdict
+from knotpy.classes.planargraph import PlanarGraph
+
+
+__all__ = ['from_plantri_notation', 'to_plantri_notation']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 def ascii_to_numerical(g):
     """Renames the nodes a, b, c,... -> 0, 1, 2,... in place."""
@@ -76,11 +81,12 @@ def from_plantri_notation(data, separator=",", prepended_node_count=False, ccw=T
 
     if _debug: print(data)
 
-    data = ("" if separator == " " else " ").join(data.split())  # clean up string
+    data = (" " if separator == " " else "").join(data.split())  # clean up string
+    #if _debug: print(data)
     data = data.lower().split(separator)  # only works up to 26 vertices
     nodes = string.ascii_lowercase[:len(data)]
 
-    g = kp.PlanarGraph() if create_using is None else create_using
+    g = PlanarGraph() if create_using is None else create_using
 
     g.add_nodes(nodes, degrees=[len(word) for word in data])
 

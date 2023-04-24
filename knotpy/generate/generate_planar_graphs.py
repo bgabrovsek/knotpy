@@ -2,13 +2,13 @@
 Generate planar graphs tables up to n nodes.
 """
 from itertools import chain
+from copy import deepcopy
+from pathlib import Path
+
 import knotpy as kp
 from knotpy.utils import iterable_depth, combinations_with_limited_repetitions
-from knotpy.generators import parallel_edge, empty_graph, vertex_graph
-from knotpy.notation import to_em_notation
-from copy import deepcopy
-import os
-from pathlib import Path
+from knotpy.generate.simple import parallel_edge
+from knotpy.notation.em import to_em_notation
 from knotpy.readwrite.cleanopen import prepend_to_extension
 
 

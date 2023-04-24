@@ -1,7 +1,10 @@
 import knotpy as kp
 from pathlib import Path
+from glob import glob
+
 
 data_dir = Path("/Users/bostjan/Dropbox/Code/knotpy/sandbox/polyhedra/data")
+
 
 N = 12  # max nodes
 

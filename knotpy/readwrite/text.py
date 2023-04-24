@@ -3,15 +3,16 @@ Format:
 ...
 """
 
-__all__ = [
-    "savetxt",
-    "loadtxt"
-]
-
-import networkx as nx
-from knotpy.readwrite.cleanopen import clean_open_file, clean_close_file
-from knotpy.notation import to_notation_dispatcher, from_notation_dispatcher
 from pathlib import Path
+from glob import glob
+
+from knotpy.readwrite.cleanopen import clean_open_file, clean_close_file
+from knotpy import to_notation_dispatcher, from_notation_dispatcher
+
+__all__ = ['savetxt', 'loadtxt']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 
 
 def savetxt(graph, path, notation="em", ccw=True, separator=",", prepended_node_count=False, encoding="utf-8",
@@ -54,7 +55,7 @@ def savetxt(graph, path, notation="em", ccw=True, separator=",", prepended_node_
 def loadtxt(path, notation="em", ccw=True, comment="#", separator=",", prepended_node_count=False, max_rows=None,
             encoding="utf-8"):
     """
-    :param path:
+    :param path: can also be a Unix style pathname pattern expansion, e.g. "knots-*.txt"
     :param notation:
     :param ccw:
     :param comment:
@@ -67,35 +68,41 @@ def loadtxt(path, notation="em", ccw=True, comment="#", separator=",", prepended
 
     _debug = False
 
-    f = clean_open_file(path, mode="rb")
     graphs = []
 
-    for line in f:
-        line = line.decode(encoding).strip()
-        if _debug: print(line)
+    for filename in sorted(glob(str(path))):
 
-        if max_rows is not None and len(graphs) >= max_rows:
-            break
+        f = clean_open_file(filename, mode="rb")
 
-        if line.find(comment) > -1:
-            line = line[:line.find(comment)].strip()
-        if len(line) == 0:
-            continue
+        count = 0
+        for line in f:
+            line = line.decode(encoding).strip()
+            if _debug: print(line)
 
-        from_dispatched = from_notation_dispatcher(notation)
-        dispatcher_args = dict()
-        if ccw is False: dispatcher_args["ccw"] = ccw
-        if separator is not None: dispatcher_args["separator"] = separator
-        if prepended_node_count: dispatcher_args["prepended_node_count"] = True
+            if max_rows is not None and len(graphs) >= max_rows:
+                break
 
-        graph = from_dispatched(line, **dispatcher_args)
-        graphs.append(graph)
+            if line.find(comment) > -1:
+                line = line[:line.find(comment)].strip()
+            if len(line) == 0:
+                continue
 
-        if _debug:
-            print(graphs[-1])
+            from_dispatched = from_notation_dispatcher(notation)
+            dispatcher_args = dict()
+            if ccw is False: dispatcher_args["ccw"] = ccw
+            if separator is not None: dispatcher_args["separator"] = separator
+            if prepended_node_count: dispatcher_args["prepended_node_count"] = True
 
-    clean_close_file(f)
-    if _debug: print(f"Read {len(graphs)} lines from {path}.")
+            graph = from_dispatched(line, **dispatcher_args)
+            graphs.append(graph)
+            count += 1
+
+            if _debug:
+                print(graphs[-1])
+
+        clean_close_file(f)
+        if _debug: print(f"Read {len(graphs)} lines from {path}.")
+        print(f"Read {count} lines from {filename}.")
 
     return graphs if len(graphs) != 1 else graphs[0]
 

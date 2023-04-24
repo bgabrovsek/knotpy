@@ -4,10 +4,8 @@
 """
 Main tests for PlanarDiagram class..
 """
-from knotpy import *
 
-#from igraph import *
-
+import knotpy as kp
 
 if __name__ == '__main__':
-    print("main.py not yet implemented.")
+    print("Hello.")

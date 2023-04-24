@@ -1,2 +1,3 @@
-from .planargraph import PlanarBase, PlanarGraph
-#from networkx.classes import graphviews
+from .planarbase import *
+#from .planargraph import *
+from .views import *

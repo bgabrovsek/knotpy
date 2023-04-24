@@ -1,2 +1,2 @@
-from knotpy.utils.combinatorics import *
-from knotpy.utils.decorators import *
+from .combinatorics import *
+from .equivalence import *

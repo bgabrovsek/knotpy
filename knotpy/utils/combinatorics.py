@@ -1,6 +1,11 @@
 from itertools import product, permutations, chain
 
 
+__all__ = ['lexicographical_minimal_cyclic_rotation_shift', 'iterable_depth', 'union', 'inverse_multi_dict',
+           'combinations_with_limited_repetitions', 'parted_permutations', 'cmp_dict_list', 'cmp_dict_dict']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 # lists, tuples
 
 
@@ -144,6 +149,8 @@ def cmp_dict_dict(dict1, dict2):
     except Exception as e:
         raise Exception(e)
     return 0  # they are the same
+
+
 
 
 """

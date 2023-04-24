@@ -1,6 +1,12 @@
-#from knotpy.utils import iterable_depth
 
-import knotpy as kp
+from knotpy.notation.em import to_em_notation, from_em_notation
+from knotpy.notation.pd import to_pd_notation, from_pd_notation
+from knotpy.notation.plantri import to_plantri_notation, from_plantri_notation
+
+
+__all__ = ['to_notation_dispatcher', 'from_notation_dispatcher']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 _notation_aliases = {
         "em": ["em", "ewing millett", "ewing-millett", "ewing/millett"],
@@ -18,9 +24,9 @@ def to_notation_dispatcher(notation):
         raise ValueError(f"Unknown notation '{notation}'.")
 
     return {
-        "em": kp.notation.to_em_notation,
-        "pd": kp.notation.to_pd_notation,
-        "plantri": kp.notation.to_plantri_notation,
+        "em": to_em_notation,
+        "pd": to_pd_notation,
+        "plantri": to_plantri_notation,
     }[_reversed_aliases[notation]]
 
 
@@ -31,9 +37,9 @@ def from_notation_dispatcher(notation):
         raise ValueError(f"Unknown notation '{notation}'.")
 
     return {
-        "em": kp.notation.from_em_notation,
-        "pd": kp.notation.from_pd_notation,
-        "plantri": kp.notation.from_plantri_notation,
+        "em": from_em_notation,
+        "pd": from_pd_notation,
+        "plantri": from_plantri_notation,
     }[_reversed_aliases[notation]]
 
 

@@ -6,7 +6,12 @@ This notation should be used as data default notation, since it is the most simi
 See "Ewing, B. & Millett, K. C. in The mathematical heritage of CF Gauss 225–266 (World Scientific, 1991)".
 """
 
-import knotpy as kp
+from knotpy.classes.planargraph import PlanarGraph
+
+
+__all__ = ['to_em_notation', 'from_em_notation']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 
 def to_em_notation(pg):
@@ -22,7 +27,7 @@ def from_em_notation(data):
     if isinstance(data, str):
         pd = eval(data)
 
-    pg = kp.PlanarGraph()
+    pg = PlanarGraph()
     for node in data:
         pg.add_node(node, len(data[node]))
         for pos, adj_endpoint in enumerate(data[node]):

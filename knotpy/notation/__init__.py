@@ -1,4 +1,7 @@
-from knotpy.notation.dispatcher import *
-from knotpy.notation.em import *
-from knotpy.notation.pd import *
-from knotpy.notation.plantri import *
+
+
+from .dispatcher import *
+from .em import *
+from .pd import *
+from .plantri import *
+from .adj_list import *

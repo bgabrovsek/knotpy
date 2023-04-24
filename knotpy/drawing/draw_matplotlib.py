@@ -1,13 +1,18 @@
-import knotpy as kp
-import matplotlib
-from collections import defaultdict
-from circlepack import CirclePack
+
+from itertools import chain
+
 from matplotlib.path import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from itertools import chain
-import matplotlib.colors as mcolors
+from matplotlib.backends.backend_pdf import PdfPages
 
+from circlepack import CirclePack
+import knotpy as kp
+
+
+__all__ = ['draw']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 def _bezier_function(z0, z1, z2, derivative=0):
     """Return Bézier curve as a function, or its derivative."""
@@ -46,21 +51,13 @@ def _repr(d):
                 ("]" if isinstance(d, list) else ")")
     return ""
 
-def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
-    _debug = True
+def circlepack_layout(g):
+
+    _debug = False
 
     external_node_radius = 1.0  # radius of external circles corresponding to nodes
     external_arc_radius = 0.5  # radius of external circles corresponding to arcs
 
-    default_node_color = "black"
-    default_arc_color = "steelblue"
-    default_circle_alpha = 0.2
-    default_circle_color = "cadetblue"
-
-    #external_circles = dict()  # radii of external circles, keys are circles, values are radii
-    #internal_circles = dict()  # neighbourhood circles of internal circles {circle key: list of ordered surrounding circles}
-    #ext_nodes, ext_arcs = dict(), dict()
-    #int_nodes, int_arcs, int_regs = defaultdict(list), defaultdict(list), defaultdict(list)
 
     if _debug: print("Graph", g)
 
@@ -115,14 +112,25 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
-    circles = CirclePack(internal=internal_circles,
-                         external=external_circles)
+    return CirclePack(internal=internal_circles,
+                      external=external_circles)
 
-    print(circles)
+
+def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
+
+    default_node_color = "black"
+    default_arc_color = "steelblue"
+    default_circle_alpha = 0.2
+    default_circle_color = "cadetblue"
+
+    circles = circlepack_layout(g)
 
     # plot
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
+    ax.axis('off')
+
+    arcs = g.arcs()
 
     # plot circles
     if draw_circles:
@@ -151,22 +159,78 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
                                   color=g.nodes[node].get("color", default_node_color))
         ax.add_patch(circle_patch)
 
+    if len(str(g.name)) > 0:
+        ax.set_title(str(g.name))
 
     plt.autoscale()
-    plt.show()
+    #plt.show()
+    #plt.savefig("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/figs/x.png")
 
     return None
 
 
-if __name__ == '__main__':
-    g = kp.from_plantri_notation("bcde,aedf,afgh,ahbe,adb,bhgc,cfh,cgfd")
-    for v in g.nodes:
-        if g.degree(v) == 3:
-            g._node_attr[v]["color"] = "brown"
+def export_pdf(graphs, filename, author=None):
+    # TODO: autodetect extension
+    pdf = PdfPages(filename)
+    for g in graphs:
+        draw(g)
+        pdf.savefig()  # saves the current figure into a pdf page
+        plt.show()
+        plt.close()
 
-    # g = kp.from_plantri_notation("bed,ac,bde,ca,ac")
-    # g = kp.from_plantri_notation("bc,ac,ab")
-    draw(g)
+    if author is not None:
+        pdf.infodict()["Author"] = author
+
+    pdf.close()
+
+
+
+
+if __name__ == '__main__':
+
+    nots =  ["bcdef, afec, abed, ace, adcbf, aeb",
+    "bcde, aef, afed, ace, adcfb, bec",
+    "bcde, aef, afd, ace, adfb, bec",
+    "bcd, ade, aef, afb, bfc, ced",
+    "bcd, aec, abefd, acf, bfc, ced",
+    "bcde, aef, afd, acfe, adfb, bedc",
+    "bcdef, afc, abfed, ace, adc, acb",
+    "bcde, aef, afd, acf, afb, bedc",
+    "bcde, aefc, abfd, acfe, adfb, bedc"]
+
+    graphs = kp.loadtxt("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
+                        notation="plantri", prepended_node_count=True)
+
+    print("Number of graphs:", len(graphs))
+
+    g1= kp.from_plantri_notation("bcde, aec, abfd, acfg, aghb, chgd, dfhe, egf")
+    g2= kp.from_plantri_notation("bcde, afgc, abhd, ache, adgf, beg, bfeh, cgd")
+
+    print(g1)
+    print(g2)
+
+    print()
+    g1.canonical()
+    g2.canonical()
+
+    print(str(kp.to_adjacency_list(g1)).replace(" ",""))
+    print(str(kp.to_adjacency_list(g2)).replace(" ",""))
+
+    exit()
+
+    print("Number of graphs:", len(set(graphs)))
+
+    exit()
+
+    for i, g in enumerate(graphs):
+        g.name = f"Graph {i} ({len(g)} nodes)"
+        for v in g.nodes:
+            if g.degree(v) == 3:
+                g.nodes[v]["color"] = "brown"
+
+    export_pdf(graphs,
+               "/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/figs/poly.pdf")
+    #draw(g, draw_circles=True)
 
     # circle pack
     pass

@@ -1,4 +1,12 @@
 
+from collections import defaultdict
+
+from knotpy.classes.planargraph import PlanarGraph
+from knotpy.generate.simple import empty_graph
+
+__all__ = ['from_pd_notation', 'to_pd_notation']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 
 
@@ -36,7 +44,7 @@ def from_pd_notation(data):
         for pos, arc in enumerate(data[node]):
             arc_dict[arc].append((node, pos))
 
-    pg = kp.PlanarGraph()
+    pg = PlanarGraph()
 
     if _debug: print("ad", arc_dict)
 
@@ -74,8 +82,9 @@ def to_pd(data, create_using=None):
 
 
 def pg_from_list(data, create_using=None):
-    pd = kp.classical.empty_pd(0, create_using)
-    return pd
+    raise NotImplementedError()
+    #pd = kp.classical.empty_pd(0, create_using)
+    #return pd
     pass
 
 
@@ -105,32 +114,4 @@ def to_planardiagram(data, create_using=None):
 
 
 if __name__ == '__main__':
-    g = from_ascii_planar_code_notation("6 bcde,aefc,abfd,acfe,adfb,bedc")
-    print(g)
-    ascii_to_numerical(g)
-    print(g)
-    numerical_to_ascii(g)
-    print(g)
-
-    print(g.has_parallel_arcs())
-
-    print(to_ascii_planar_code_notation(g))
-    ascii_to_numerical(g)
-    print(to_ascii_planar_code_notation(g))
-
-"""
-def node_from_list(data, create_using=None):
-    data = simple.empty_node(0, create_using)
-    return knotpy
     pass
-
-def to_node(data, create_using=None):
-    # if hasattr(data, "is_strict"):
-    if isinstance(data, list):
-        try:
-            return node_from_list(data, create_using)
-        except:
-            raise TypeError("create_using is not data valid node type or instance")
-
-    pass
-"""
