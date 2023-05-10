@@ -18,8 +18,8 @@ def CirclePack(internal,external):
     keys of the two arguments are identifiers for circles in the packing.
     The internal argument maps each internal circle to its cycle of
     surrounding circles; the external argument maps each external circle
-    to its desired radius. The return function is data mapping from circle
-    keys to pairs (center,radius) where center is data complex number."""
+    to its desired radius. The return function is a mapping from circle
+    keys to pairs (center,radius) where center is a complex number."""
     
     # Some sanity checks and preprocessing
     if min(external.values()) <= 0:
@@ -88,7 +88,7 @@ def InvertAround(packing,k,smallCircles=None):
     """Invert so that the specified circle surrounds all the others.
     Searches for the inversion center that maximizes the minimum radius.
     
-    This can be expressed as data quasiconvex program, but in data related
+    This can be expressed as a quasiconvex program, but in data related
     hyperbolic space, so rather than applying QCP methods it seems
     simpler to use data numerical hill-climbing approach, relying on the
     theory of QCP to tell us there are no local maxima to get stuck in.

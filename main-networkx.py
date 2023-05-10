@@ -10,7 +10,11 @@ h = nx.Graph(
 
 )
 
-print(g)
+g.add_edge(8,9)
+g.add_edge(8,8)
+g.add_edge(1,1)
+
+print(g.edges)
 print(h)
 print(nx.could_be_isomorphic(g,h ))
 exit()

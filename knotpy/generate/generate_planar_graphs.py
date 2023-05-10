@@ -1,9 +1,13 @@
 """
 Generate planar graphs tables up to n nodes.
+
+TODO: move this to sandbox
+
 """
 from itertools import chain
 from copy import deepcopy
 from pathlib import Path
+
 
 import knotpy as kp
 from knotpy.utils import iterable_depth, combinations_with_limited_repetitions
@@ -15,7 +19,7 @@ from knotpy.readwrite.cleanopen import prepend_to_extension
 
 
 def _nodes_to_graphs(graphs, maximal_degree=None):
-    """ add planar node to planar graphs in all possible ways, the result will be data union of all planar graphs with
+    """ add planar node to planar graphs in all possible ways, the result will be a union of all planar graphs with
     an added vertex
     :param graph:
     :param maximal_degree:
@@ -30,7 +34,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
 
         if _debug: print(g)
         for region in g.regions():  # choose the area to put the new vertex in
-            # an area is data list of endpoints, an endpoint is data pair of (vertex, position of arc)
+            # an area is a list of endpoints, an endpoint is a pair of (vertex, position of arc)
             avail_num_endpoints = [maximal_degree - g.degree(ep[0]) for ep in region]  # how many edges can we still attach?
             for endpoints in chain(
                     *(combinations_with_limited_repetitions(region, n, avail_num_endpoints)
@@ -50,7 +54,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
                                          connect_at_endpoints=endpoints)
                 if _debug: print("  After adding node (EM)", to_em_notation(new_g))
                 if _debug: print("  After adding node (ADJ)", new_g._adj)
-                new_g.canonical()
+                new_g = kp.canonical(new_g)
                 if _debug: print("  Canonical", new_g)
                 new_graphs.add(new_g)
 
@@ -76,13 +80,13 @@ def generate_planar_graphs(maximal_number_of_nodes,
                            run_in_parallel=True):
     """Generates planar grap
     :param maximal_number_of_nodes: maximal number of nodes that we wish to generate graph.
-    :param degree_sequences: list of degree sequences of graphs. Can also be data dictionary, where keys are degrees and
+    :param degree_sequences: list of degree sequences of graphs. Can also be a dictionary, where keys are degrees and
     values are number of points with that degree.
     :param maximal_degree: maximal degree of the nodes (e.g. 4 for knots), if not given, max of degree sequence is used.
     :param output_filename:
     :param allow_parallel_arcs:
     :param output_ignore_degree_sequences_filename: if this parameter is provided, all graphs will be saved during the
-     process of generation (not only the ones that have data matching degree sequence)
+     process of generation (not only the ones that have a matching degree sequence)
     :param start_with_planar_graphs: the algorithm will start generating graphs using this list of planar.
     This can be used to continue computations from one step where all graphs up to some degree have already
     been generated.
@@ -98,17 +102,17 @@ def generate_planar_graphs(maximal_number_of_nodes,
     if maximal_number_of_nodes < 2:
         raise ValueError("Graph generation should have at least 2 nodes.")
 
-    # force deg_seq, so it is data list of (degree-sorted) lists
+    # force deg_seq, so it is a list of (degree-sorted) lists
     if deg_seqs is not None:
         if len(deg_seqs) == 0:
             raise ValueError("Cannot generate diagrams with empty degree information. Use None if you do not wish to \
                              specify the degree sequence.")
         if iterable_depth(deg_seqs) == 0:
-            raise ValueError("The degree_sequence parameter should be (at least) data list or dictionary.")
+            raise ValueError("The degree_sequence parameter should be (at least) a list or dictionary.")
         if iterable_depth(deg_seqs) == 1:
             deg_seqs = [deg_seqs]
 
-        # if deg_seq is given as data dict, convert to sorted list
+        # if deg_seq is given as a dict, convert to sorted list
         deg_seqs = [sorted(deg for deg in sorted(seq) for _ in range(seq[deg]))
                     if isinstance(seq, dict)
                     else sorted(seq)
@@ -118,7 +122,7 @@ def generate_planar_graphs(maximal_number_of_nodes,
 
         print(deg_seqs)
 
-    # force maximal_degree to have data value
+    # force maximal_degree to have a value
         if maximal_degree is None:
             maximal_degree = max(max(seq) for seq in deg_seqs)
 
@@ -146,7 +150,7 @@ def generate_planar_graphs(maximal_number_of_nodes,
         graphs = _nodes_to_graphs(graphs, maximal_degree)
 
         if output_ignore_degree_sequences_filename is not None:
-            kp.savetxt(
+            kp.savetxt_multiple(
                 sort_graphs(graphs),
                 prepend_to_extension(output_ignore_degree_sequences_filename, number_of_nodes),
                 "em"
@@ -159,9 +163,9 @@ def generate_planar_graphs(maximal_number_of_nodes,
             #for g in graphs:
             #    print(g.degree_sequence(), g.degree_sequence() in deg_seqs)
 
-            kp.savetxt(sort_graphs(matching_graphs),
-                       prepend_to_extension(output_filename, number_of_nodes),
-                       notation)
+            kp.savetxt_multiple(sort_graphs(matching_graphs),
+                                prepend_to_extension(output_filename, number_of_nodes),
+                                notation)
 
 
         #print(output_filename)
@@ -177,7 +181,7 @@ def sort_graphs(graphs):
     :param graphs: iterable of graphs
     :return: list of sorted graphs
     """
-    return sorted(graphs, key=lambda g: (g.number_of_nodes, g.number_of_arcs, g.degree_sequence(), g))
+    return sorted(graphs, key=lambda g: (g.number_of_nodes, g.number_of_arcs, kp.degree_sequence(g), g))
 
 
 if __name__ == '__main__':
@@ -197,7 +201,7 @@ if __name__ == '__main__':
     # degree sequences_for
 
     graphs = generate_planar_graphs(
-        maximal_number_of_nodes=N,
+        maximal_number_of_nodes=6,
         degree_sequences=degree_seqs,
         maximal_degree=4,
         allow_parallel_arcs=False,

@@ -19,7 +19,7 @@ def elements_from_cycles(cycles):
 
 
 def union(*sets):
-    """ returns data union of the arguments """
+    """ returns a union of the arguments """
     #return set.union(*sets) if len(sets) else set() # should be this, but if we start with data list it does not work
     return set.union(*(set(s) for s in sets)) if len(sets) else set()
 

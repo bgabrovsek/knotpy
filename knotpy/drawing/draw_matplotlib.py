@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.backends.backend_pdf import PdfPages
 
-from circlepack import CirclePack
+from .circlepack import CirclePack
 import knotpy as kp
 
 
-__all__ = ['draw']
+__all__ = ['draw', 'export_pdf']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -175,7 +175,7 @@ def export_pdf(graphs, filename, author=None):
     for g in graphs:
         draw(g)
         pdf.savefig()  # saves the current figure into a pdf page
-        plt.show()
+        #plt.show()
         plt.close()
 
     if author is not None:
@@ -198,8 +198,8 @@ if __name__ == '__main__':
     "bcde, aef, afd, acf, afb, bedc",
     "bcde, aefc, abfd, acfe, adfb, bedc"]
 
-    graphs = kp.loadtxt("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
-                        notation="plantri", prepended_node_count=True)
+    graphs = kp.loadtxt_multiple("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
+                                 notation="plantri", prepended_node_count=True)
 
     print("Number of graphs:", len(graphs))
 

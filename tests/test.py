@@ -1,13 +1,10 @@
+class Vertex(list):
+    def __init__(self, data):
+        super(Vertex, self).__init__(data)
+        self.name = "vertex"
 
-a = {4,5,65,1,4,2}
-print(sorted(a, key=lambda x: x))
-
-
-def xx2x(c, ):
-
-
-def xxx(a, b):
-
+c = Vertex([1,2,3])
+print(c)
 
 #print(min(range(len(data)), key=lambda i: data[i]))
 

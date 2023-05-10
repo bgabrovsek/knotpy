@@ -10,3 +10,6 @@ from .notation import *
 from .classes import *
 from .generate import *
 from .readwrite import *
+from .algorithms import *
+from .invariants import *
+from .drawing import *

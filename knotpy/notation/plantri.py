@@ -7,8 +7,8 @@ See https://users.cecs.anu.edu.au/~bdm/plantri/
 
 import string
 from collections import defaultdict
-from knotpy.classes.planargraph import PlanarGraph
-
+from knotpy.classes.old.planargraph import PlanarGraph
+from knotpy.algorithms.arc_algorithms import has_parallel_arcs
 
 __all__ = ['from_plantri_notation', 'to_plantri_notation']
 __version__ = '0.1'
@@ -16,12 +16,12 @@ __author__ = 'Boštjan Gabrovšek'
 
 def ascii_to_numerical(g):
     """Renames the nodes a, b, c,... -> 0, 1, 2,... in place."""
-    g.rename_nodes({c: ord(c) - ord('data') for c in g.nodes})
+    g.rename_nodes({c: ord(c) - ord('a') for c in g.nodes})
 
 
 def numerical_to_ascii(g):
     """Renames the nodes 0, 1, 2,... -> data, b, c,... in place."""
-    g.rename_nodes({i: chr(i + ord('data')) for i in g.nodes})
+    g.rename_nodes({i: chr(i + ord('a')) for i in g.nodes})
 
 
 def to_plantri_notation(g, separator=",", prepended_node_count=False, ccw=True):
@@ -37,7 +37,7 @@ def to_plantri_notation(g, separator=",", prepended_node_count=False, ccw=True):
     if ccw is None:
         ccw = True
 
-    if g.has_parallel_arcs():
+    if has_parallel_arcs(g):
         raise NotImplementedError("Parallel edges are not yet implemented for the ascii planar code notation.")
 
     # check if vertices are alphabetic (ascii)
@@ -52,7 +52,7 @@ def to_plantri_notation(g, separator=",", prepended_node_count=False, ccw=True):
     if are_alphabetic:
         result += separator.join(["".join(list(zip(*g.adj[v]))[0][::2 * bool(ccw) - 1]) for v in sorted(g.nodes)])
     else:
-        result += separator.join(["".join([chr(i + ord('data')) for i in list(zip(*g.adj[v]))[0]][::2 * bool(ccw) - 1])
+        result += separator.join(["".join([chr(i + ord('a')) for i in list(zip(*g.adj[v]))[0]][::2 * bool(ccw) - 1])
                                   for v in sorted(g.nodes)])
 
     return result
@@ -88,7 +88,7 @@ def from_plantri_notation(data, separator=",", prepended_node_count=False, ccw=T
 
     g = PlanarGraph() if create_using is None else create_using
 
-    g.add_nodes(nodes, degrees=[len(word) for word in data])
+    g._add_nodes_from(nodes, degrees=[len(word) for word in data])
 
     _o = lambda c: ord(c) - ord('a')  # 'a'->0, 'b'->1, ...
 
@@ -105,7 +105,7 @@ def from_plantri_notation(data, separator=",", prepended_node_count=False, ccw=T
             if not ccw:
                 v_pos = len(data[_o(v)]) - v_pos - 1
                 u_pos = len(data[_o(u)]) - u_pos - 1
-            g.add_arc((v, v_pos), (u, u_pos))
+            g._set_arc(((v, v_pos), (u, u_pos)))
 
     return g
 

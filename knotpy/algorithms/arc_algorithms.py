@@ -4,7 +4,7 @@ __all__ = ['has_parallel_arcs']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-from knotpy.generate.simple import house_graph
+#from knotpy.generate.simple import house_graph
 
 
 

@@ -1,3 +1,3 @@
-from .planarbase import *
-#from .planargraph import *
-from .views import *
+from .planardiagram import *
+from .knot import *
+from knotpy.classes.old.views import *

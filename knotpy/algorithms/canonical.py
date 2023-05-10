@@ -1,6 +1,8 @@
 from queue import Queue
 from copy import deepcopy
 
+from knotpy.algorithms.node_algorithms import degree_sequence
+
 __all__ = ['canonical']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -8,9 +10,9 @@ __author__ = 'Boštjan Gabrovšek'
 
 # canonical methods
 
-def canonical(g, in_place=True):
+def canonical(g, in_place=False):
     """Puts itself in unique canonical form.
-    The diagram start with an endpoint on of data minimal degree vertex, it continues to an adjacent endpoints and
+    The diagram start with an endpoint on of a minimal degree vertex, it continues to an adjacent endpoints and
     distributes the ordering from there on using breadth first search using CCW order of visited nodes.
     At the moment, it is only implemented if the graph is connected.
     TODO: In case of degree 2 vertices the canonical form might not be unique.
@@ -20,7 +22,7 @@ def canonical(g, in_place=True):
 
     _debug = False
 
-    minimal_degree = min(g.degree_sequence())
+    minimal_degree = min(degree_sequence(g))
     nodes_with_minimal_degree = [v for v in g._node_attr if g.degree(v) == minimal_degree]
     # TO-DO: optimize by viewing also 2nd degree (number of neighbour's neighbours)
 
@@ -34,7 +36,7 @@ def canonical(g, in_place=True):
     for ep_start in starting_endpoints:
         if _debug: print("starting with", ep_start)
 
-        node_reindex_dict = dict()  # also holds as data "visited node" set
+        node_reindex_dict = dict()  # also holds as a "visited node" set
         endpoint_queue = Queue()
         endpoint_queue.put(ep_start)
 
@@ -55,7 +57,7 @@ def canonical(g, in_place=True):
 
         if _debug: print(node_reindex_dict)
         if len(node_reindex_dict) != len(g):
-            raise ValueError("Cannot put data non-connected graph into canonical form.")
+            raise ValueError("Cannot put da non-connected graph into canonical form.")
 
         new_graph = deepcopy(g)
         new_graph.rename_nodes(node_reindex_dict)
