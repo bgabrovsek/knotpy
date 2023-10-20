@@ -1,0 +1,2 @@
+# 1 graph
+9 bcde,aefc,abgh,ahie,adfb,beig,cfih,cgid,dhgf

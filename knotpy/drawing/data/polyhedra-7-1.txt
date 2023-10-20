@@ -1,0 +1,3 @@
+# 2 graphs
+7 bcde,aefg,agd,acgf,afb,bedg,bfdc
+7 bcde,afgc,abgd,acge,adf,beg,bfdc

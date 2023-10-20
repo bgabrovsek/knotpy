@@ -1,18 +1,91 @@
 import re
+import string
 
-
-__all__ = ['multi_replace']
+__all__ = ["abcABC", 'multi_replace']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-def multi_replace(s: str, replacements: dict) -> str:
-    """Performs multiple string replacements
-    :param s: input string
-    :param replacements: dictionary of string replacements
-    :return: string with replacements
+abcABC = string.ascii_lowercase + string.ascii_uppercase
+
+# def multi_replace(s: str, replacements: dict) -> str:
+#     """Performs multiple string replacements
+#     :param s: input string
+#     :param replacements: dictionary of string replacements
+#     :return: string with replacements
+#     """
+#
+#     rep = dict((re.escape(k), v) for k, v in replacements.items())
+#     pattern = re.compile("|".join(rep.keys()))
+#     return pattern.sub(lambda m: rep[re.escape(m.group(0))], s)
+
+
+def multi_replace(text, *replacements):
+    """Replace substrings with other strings, until there are no substrings left.
+    :param text: input string
+    :param replacements: list of tuples or dicts
+    :return: replaced string
+
+    Example:
+    multi_replace("AAAABC", ("AA", "a"), "Bb", {"C": "c"})
+    returns
+    "abc"
+    """
+    for repl in replacements:
+        if isinstance(repl, dict):
+            for key, val in repl.items():
+                while key in text:
+                    text = text.replace(key, val)
+        else:
+            key, val = repl[0], repl[1]
+            while key in text:
+                text = text.replace(key, val)
+    return text
+
+#print(multi_replace("AAAABC", ("AA", "A"), "Bb", {"C": "c"}))
+
+
+def nested_split(text: str, max_depth=None) -> list:
+    """ Splits a string into a list of lists.
+    Example: "a,(b,c,(d,e))" -> ['a', ['b', 'c', ['d', 'e']]]
+    :param text: string list
+    :param max_depth:
+    :return: list of lists
     """
 
-    rep = dict((re.escape(k), v) for k, v in replacements.items())
-    pattern = re.compile("|".join(rep.keys()))
-    return pattern.sub(lambda m: rep[re.escape(m.group(0))], s)
+    if max_depth is None:
+        max_depth = 10000
+
+    # clean up string
+    text = text.strip()
+    while "  " in text:
+        text = text.replace("  ", " ")
+    #text = multi_replace(text, {";": ",", "(": "[", ")": "]"})
+    text = text.replace(";", ",")
+    text = text.replace(", ", ",")
+    text = text.replace(" ", ",")
+
+    pattern = re.compile(r"(,|\[|\]|\(|\))")  # split by ",", "[", and "]", TODO: fix RE
+
+    list_stack = [[]]  # if item  starts by [({, we add a sublist to the stack
+
+    for item in pattern.split(text):
+        if not len(item) or item == ",":
+            continue
+        if item == "[" or item == "(":
+            list_stack[-1].append(list())
+            list_stack.append(list_stack[-1][-1])
+        elif item == "]" or item == ")":
+            list_stack.pop()
+        else:
+            list_stack[-1].append(item)
+
+    return list_stack[0]
+
+
+def _test():
+    print(nested_split("v    c  (8,   9,([9],0,1)) (8,9,0)"))
+
+
+if __name__ == "__main__":
+    _test()

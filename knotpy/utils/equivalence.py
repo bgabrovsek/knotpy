@@ -1,8 +1,4 @@
 
-__all__ = ['EquivalenceRelation']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
-
 class EquivalenceRelation(dict):
     """Partitions a set of objects into equivalence classes.
     Each key/item of the dictionary is the object and the values are sets that represent the class"""
@@ -33,14 +29,15 @@ class EquivalenceRelation(dict):
 
 
 if __name__ == "__main__":
+    # four equivalent classes
     e = EquivalenceRelation([0,1,2])
     e += 3
     e += 4
     print(e.classes())
 
-    e[0] = 3
+    e[0] = 3  # join classes 0 and 3
     print(e.classes())
-    e[3] = 4
+    e[3] = 4  # join classes 4 and 3
     print(e.classes())
     e[1] = 2
     print(e.classes())

@@ -5,110 +5,112 @@ See https://users.cecs.anu.edu.au/~bdm/plantri/
     https://users.cecs.anu.edu.au/~bdm/plantri/plantri-guide.txt.
 """
 
-import string
+from string import ascii_letters
 from collections import defaultdict
-from knotpy.classes.old.planargraph import PlanarGraph
+from knotpy.classes.planargraph import PlanarGraph
 from knotpy.algorithms.arc_algorithms import has_parallel_arcs
 
 __all__ = ['from_plantri_notation', 'to_plantri_notation']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-def ascii_to_numerical(g):
-    """Renames the nodes a, b, c,... -> 0, 1, 2,... in place."""
-    g.rename_nodes({c: ord(c) - ord('a') for c in g.nodes})
+# TODO: call only once
+# {0: 'a', 1: 'b', ...}
+_numerical_to_ascii = dict(enumerate(ascii_letters))
+# {'a': 0, 'b': 1, ...}
+_ascii_to_numerical = dict(map(reversed, enumerate(ascii_letters)))
 
 
-def numerical_to_ascii(g):
-    """Renames the nodes 0, 1, 2,... -> data, b, c,... in place."""
-    g.rename_nodes({i: chr(i + ord('a')) for i in g.nodes})
-
-
-def to_plantri_notation(g, separator=",", prepended_node_count=False, ccw=True):
+def to_plantri_notation(g, separator=",", ccw=False):
     """
-
-    :param g: PlanarDiagram class
+    :param g: PlanarGraph class
     :param separator:
-    :param prepended_node_count:
     :param ccw:
-    :return: plantri planar acci code, example "6 bcde,aefc,abfd,acfe,adfb,bedc"
+    :return: plantri planar acci code, example "bcde,aefc,abfd,acfe,adfb,bedc"
     """
 
-    if ccw is None:
-        ccw = True
+    prepended_node_count = False  # do not prepend the node count
 
     if has_parallel_arcs(g):
         raise NotImplementedError("Parallel edges are not yet implemented for the ascii planar code notation.")
 
-    # check if vertices are alphabetic (ascii)
-    are_alphabetic = set(g.nodes) == {*string.ascii_lowercase[:g.number_of_nodes]}
-    are_numeric = set(g.nodes) == {*range(g.number_of_nodes)}
+    # convert to ascii nodes ('a', 'b', ...)
+    if g.number_of_nodes > len(ascii_letters):
+        raise ValueError(f"Number of nodes cannot exceed {len(ascii_letters)}")
 
-    if not are_alphabetic and not are_numeric:
-        raise ValueError("Can only save graph in ascii format if vertices are lower case characters or "
-                         "integers between 0 and 25 (in order).")
+    node_dict = dict(zip(sorted(g.nodes), ascii_letters))  # TODO: implement mixed-type nodes
 
     result = f"{g.number_of_nodes} " if prepended_node_count else ""
-    if are_alphabetic:
-        result += separator.join(["".join(list(zip(*g.adj[v]))[0][::2 * bool(ccw) - 1]) for v in sorted(g.nodes)])
-    else:
-        result += separator.join(["".join([chr(i + ord('a')) for i in list(zip(*g.adj[v]))[0]][::2 * bool(ccw) - 1])
-                                  for v in sorted(g.nodes)])
+    result += separator.join(
+        [
+            "".join([node_dict[ep.node] for ep in g.nodes[v]])
+            for v in sorted(g.nodes)
+        ]
+    )
 
     return result
 
 
-def from_plantri_notation(data, separator=",", prepended_node_count=False, ccw=True, create_using=None):
+def from_plantri_notation(data: str, separator=",", ccw=True, node_type=str):
     """Creates a planar graph from an Plantri ASCII planar code string data.
     :param data: plantri ASCII planar ASCII code, example "6 bcde,aefc,abfd,acfe,adfb,bedc"
     :param separator:
-    :param prepended_node_count:
     :param ccw:
-    :param create_using:
+    :param node_type:
+    #:param create_using:
     :return:
+    TODO: create using?
     TODO: Resolve ambiguities (?)
     """
 
-    _debug = False
+    data = " ".join(data.split())
 
-    assert isinstance(data, str), "The data parameter should be a string."
-    assert len(separator) == 1, "The separator must be a single character."
+    # ignore prepended node count
+    if '0' <= data[0] <= '9':
+        data = data[data.find(" ") + 1:]
 
-    data = data.strip()
-    if prepended_node_count:
-        n = int(data[:(space_index := data.find(" "))])
-        data = data[space_index + 1:].strip()
+    if separator != " ":
+        "".join(data.split())  # clean up string
 
-    if _debug: print(data)
+    data = data.split(separator)
+    nodes = ascii_letters[:len(data)]
 
-    data = (" " if separator == " " else "").join(data.split())  # clean up string
-    #if _debug: print(data)
-    data = data.lower().split(separator)  # only works up to 26 vertices
-    nodes = string.ascii_lowercase[:len(data)]
+    g = PlanarGraph()
+    g.add_vertices_from(nodes, degrees=[len(word) for word in data])
 
-    g = PlanarGraph() if create_using is None else create_using
 
-    g._add_nodes_from(nodes, degrees=[len(word) for word in data])
+    if len(nodes) == 1 and len(data[0]) == 4:
+        g.set_arc(((nodes[0],0), (nodes[0],1)))
+        g.set_arc(((nodes[0],2), (nodes[0],3)))
+        return g
 
-    _o = lambda c: ord(c) - ord('a')  # 'a'->0, 'b'->1, ...
+    #print(nodes)
 
-    # we create a double dictionary of nodes: occurrences[v][u] contains the positions of node u in the word of node v
+    # create a double dictionary of nodes: occurrences[v][u] contains the positions of node u in the word of node v
     occurrences = {node: defaultdict(list) for node in nodes}
     for node, word in zip(nodes, data):
         for pos, letter in enumerate(word):
             occurrences[node][letter].append(pos)
 
+    #print(occurrences)
     for v, word in zip(nodes, data):
-        if _debug: print(f"{v}:{word}")
         for v_pos, u in enumerate(word):
             u_pos = occurrences[u][v][(-occurrences[v][u].index(v_pos)) % len(occurrences[u][v])]  # reverse cyclic order
             if not ccw:
-                v_pos = len(data[_o(v)]) - v_pos - 1
-                u_pos = len(data[_o(u)]) - u_pos - 1
-            g._set_arc(((v, v_pos), (u, u_pos)))
+                v_pos = len(data[_ascii_to_numerical[v]]) - v_pos - 1
+                u_pos = len(data[_ascii_to_numerical[u]]) - u_pos - 1
+            g.set_arc(((v, v_pos), (u, u_pos)))
 
     return g
 
 
 if __name__ == '__main__':
-    print(from_plantri_notation("3 cbbb,acaa,ab", prepended_node_count=True, ccw=False))
+    g = PlanarGraph()
+    g.add_vertices_from(["a","b","c"])
+    g.set_arcs_from([ [("a",0),("b",0)], [("b",1),("c",0)]  ])
+    print(g)
+    n = to_plantri_notation(g)
+    print(n)
+    h = from_plantri_notation(n)
+    print(h)
+    #print(from_plantri_notation("3 cbbb,acaa,ab", prepended_node_count=True, ccw=False))

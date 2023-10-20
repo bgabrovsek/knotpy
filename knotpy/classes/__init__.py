@@ -1,3 +1,6 @@
 from .planardiagram import *
+from .planargraph import *
 from .knot import *
-from knotpy.classes.old.views import *
+from .orientedknot import *
+from .spatialgraph import *
+from .node import *

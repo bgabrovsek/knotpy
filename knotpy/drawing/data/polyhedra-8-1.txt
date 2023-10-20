@@ -1,0 +1,7 @@
+# 6 graphs
+8 bcde,aedf,afgh,ahbe,adb,bhgc,cfh,cgfd
+8 bcde,afgc,abgh,ahe,adhf,behg,bfc,cfed
+8 bcde,aec,abfd,acfg,aghb,chgd,dfhe,egf
+8 bcde,aefc,abfd,acge,adhb,bhgc,dfh,egf
+8 bcde,aefc,abfg,aghe,adhb,bhc,chd,dgfe
+8 bcde,afgc,abhd,ache,adgf,beg,bfeh,cgd

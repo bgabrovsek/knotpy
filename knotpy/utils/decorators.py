@@ -13,6 +13,40 @@ from sympy import symbols, Symbol
 
 #@knottted_structure(Crossing, Node)
 
+def total_order_py3(cls):
+    """Create a class with total order from the cmp method py3_cmp()
+    :param cls: decorated class
+    :return: self
+    """
+
+    def __eq__(self, other):
+        return self.py3_cmp(other) == 0
+
+    def __ne__(self, other):
+        return self.py3_cmp(other) != 0
+
+    def __lt__(self, other):
+        return self.py3_cmp(other) < 0
+
+    def __le__(self, other):
+        return self.py3_cmp(other) <= 0
+
+    def __gt__(self, other):
+        return self.py3_cmp(other) > 0
+
+    def __ge__(self, other):
+        return self.py3_cmp(other) >= 0
+
+    setattr(cls, '__eq__', __eq__)
+    setattr(cls, '__ne__', __ne__)
+    setattr(cls, '__gt__', __gt__)
+    setattr(cls, '__ge__', __ge__)
+    setattr(cls, '__lt__', __lt__)
+    setattr(cls, '__le__', __le__)
+
+    return cls
+
+
 def single_variable_invariant(default_variable):
     """Decorator for a single-variable invariant that converts the second argument of the invariant to a sympy symbol.
     The invariant is therefore of the form "def invariant_func(obj, variable, ...)". If function (invariant) is called

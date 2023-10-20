@@ -1,0 +1,2 @@
+# 1 graph
+6 bcde,aefc,abfd,acfe,adfb,bedc

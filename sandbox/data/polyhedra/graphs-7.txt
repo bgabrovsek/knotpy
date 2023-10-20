@@ -1,0 +1,14 @@
+7 agb,dfe,bcd,abef,cgf,ceg,adc
+7 ade,bfc,agb,cfd,aefg,ceg,bcd
+7 afg,bcd,bec,bgf,agb,adef,ced
+7 ceg,aefg,bgfc,bcd,ade,agb,cfed
+7 agb,dfe,bcd,abef,bgfc,ceg,adec
+7 aeb,bdgf,bcd,abfg,ceg,cfe,adec
+7 bcd,adec,abfg,bgf,cfed,agb,ceg
+7 agb,adef,bcd,bec,afeg,bgcf,ced
+7 aeb,adef,bcd,bgc,afge,bdcg,cfe
+7 bcd,agb,adef,cfed,bgf,begc,afg
+7 bcd,ageb,adef,ced,bec,bdgf,afg
+7 bcd,afgb,adec,dfe,bgfc,cegd,abef
+7 bcd,adec,abfg,bdgf,ceg,cfed,ageb
+7 bcd,ageb,adef,cfed,begc,bdgf,afg

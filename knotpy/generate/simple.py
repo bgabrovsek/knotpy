@@ -4,7 +4,7 @@
 
 
 from knotpy.classes.knot import Knot
-
+from knotpy.classes.planardiagram import PlanarDiagram
 
 __all__ = ['empty_knot']
 __version__ = '0.1'
@@ -19,13 +19,12 @@ def empty_knot(create_using=None):
 
     if create_using is None:
         g = Knot()
-    elif type(create_using) is type:
+    elif isinstance(create_using, type):
         g = create_using()
-    elif not hasattr(create_using, "._nodes"):
-        raise TypeError("create_using is not a valid KnotPy type or instance")
+    elif isinstance(create_using, PlanarDiagram):
+        g = type(create_using)()
     else:
-        create_using.clear()
-        g = create_using
+        raise TypeError("create_using is not a valid KnotPy type or instance")
     return g
 #
 #

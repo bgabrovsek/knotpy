@@ -1,9 +1,11 @@
-from knotpy.classes.planardiagram import PlanarDiagram
 from copy import deepcopy
+
+from knotpy.classes.planardiagram import PlanarDiagram
+
 
 def mirror(k: PlanarDiagram) -> PlanarDiagram:
     if not k.is_knotted:
-        return k  # deepcopy?
+        return deepcopy(k)
     mirror_k = deepcopy(k)
     for node in mirror_k.nodes:
         node.mirror()

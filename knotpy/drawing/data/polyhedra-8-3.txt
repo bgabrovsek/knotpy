@@ -1,0 +1,16 @@
+# 15 graphs
+8 bcde,afc,abd,acf,agh,bhgd,efh,egf
+8 bcd,aec,abf,agh,bhgf,ceg,dfeh,dge
+8 bcde,afc,abf,age,adh,bhgc,dfh,egf
+8 bcde,afg,aghd,ace,adh,bhg,bfc,cfe
+8 bcde,aef,agd,ach,ahfb,beg,cfh,dge
+8 bcde,afc,abf,afg,agh,bhdc,dhe,egf
+8 bcde,afg,ahd,ach,ahgf,beg,bfe,ced
+8 bcde,afg,ahed,ace,adc,bhg,bfh,cgf
+8 bcde,afc,abfg,ahe,adh,bgc,cfh,dge
+8 bcde,aefg,agd,ach,ahb,bhg,bfc,dfe
+8 bcde,afg,agd,ace,adh,bhg,bfhc,egf
+8 bcde,aef,afg,agh,ahb,bhgc,cfd,dfe
+8 bcde,afg,agh,ahe,adf,beg,bfhc,cgd
+8 bcde,aef,afg,age,adhb,bhc,chd,egf
+8 bcd,aec,abfd,acg,bhf,cehg,dfh,egf

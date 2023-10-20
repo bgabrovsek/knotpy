@@ -1,0 +1,4 @@
+# 3 graphs
+7 bcde,afc,abf,age,adg,bgc,dfe
+7 bcde,afg,agd,ace,adf,beg,bfc
+7 bcd,aef,afg,age,bdf,begc,cfd

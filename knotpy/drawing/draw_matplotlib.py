@@ -1,3 +1,5 @@
+"""Draw a planar graph from a PlanarGraph object.
+"""
 
 from itertools import chain
 
@@ -6,23 +8,33 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.backends.backend_pdf import PdfPages
 
-from .circlepack import CirclePack
 import knotpy as kp
+import knotpy.drawing
+from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.drawing.circlepack import CirclePack
 
-
-__all__ = ['draw', 'export_pdf']
+__all__ = ['draw', 'export_pdf', "circlepack_layout"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
+
 def _bezier_function(z0, z1, z2, derivative=0):
-    """Return Bézier curve as a function, or its derivative."""
+    """Return Bézier curve through control points z0, z1, z2. The curve is as the function or its derivative.
+    :param z0: control point
+    :param z1: control pointcirclepack.py
+draw_matplotlib.py
+    :param z2: control point
+    :param derivative: order of derivative
+    :return:
+    """
+
     if derivative == 0:
         return lambda t: (1 - t) * ((1 - t) * z0 + t * z1) + t * ((1 - t) * z1 + t * z2)
     if derivative == 1:
         return lambda t: 2 * (1 - t) * (z1 - z0) + 2 * t * (z2 - z1)
     if derivative == 2:
         return lambda t: 2 * (z2 - 2 * z1 + z0)
-    return None
+    raise NotImplementedError("derivatives higher than 2 not implemented")
 
 
 def bezier(*z, straight_lines=False):
@@ -51,64 +63,47 @@ def _repr(d):
                 ("]" if isinstance(d, list) else ")")
     return ""
 
-def circlepack_layout(g):
+
+def circlepack_layout(k):
+    """Return a layout for knot k. A layout is"""
 
     _debug = False
-
     external_node_radius = 1.0  # radius of external circles corresponding to nodes
     external_arc_radius = 0.5  # radius of external circles corresponding to arcs
 
+    if _debug: print("Graph is", k)
 
-    if _debug: print("Graph", g)
+    regions = list(kp.regions(k))
+    if _debug: print("Regions are", regions)
 
-    regions = g.regions()
     external_region = min(regions, key=lambda r: (-len(r), r))  # sort by longest, then by lexicographical order
-
-    # sorted(g.regions(), key=lambda r: (-len(r), r)) # sort by longest, then by lexicographical order
-    if _debug: print("Internal regions", _repr(regions))
-    if _debug: print("External regions", _repr(external_region))
-
-    arcs = g.arcs()
-    ep_to_arc_dict = {ep: arc for arc in arcs for ep in arc}
-    ep_to_reg_dict = {ep: reg for reg in regions for ep in reg}
-    if _debug: print("Arcs", arcs)
+    if _debug: print("External region is", external_region)
 
     regions.remove(external_region)
 
-    """for ep in external_region:
-        ext_nodes[ep[0]] = external_node_radius
-        ext_arcs[ep_to_arc_dict[ep]] = external_arc_radius"""
+    # sorted(g.regions(), key=lambda r: (-len(r), r)) # sort by longest, then by lexicographical order
+    if _debug: print("Internal regions are", regions)
 
-    external_circles = {ep[0]: external_node_radius for ep in external_region} | \
+    arcs = list(k.arcs)
+    if _debug: print("Arcs are", arcs)
+
+    ep_to_arc_dict = {ep: arc for arc in arcs for ep in arc}
+    ep_to_reg_dict = {ep: reg for reg in (regions + [external_region]) for ep in reg}
+
+    # add external nodes and arcs to the set of external circles
+    external_circles = {ep.node: external_node_radius for ep in external_region} | \
                        {ep_to_arc_dict[ep]: external_arc_radius for ep in external_region}  # nodes & arcs
 
-    # int_regs = {region: list(chain(*zip([(ep[0], ep_to_arc_dict[ep]) for ep in region]))) for region in regions}
+    # region -> arc / node
+    internal_circles = {region: list(chain(*((ep_to_arc_dict[ep], ep.node) for ep in region))) for region in regions}
 
-    """for region in regions:  # internal regions
-        for ep in region:
-            int_regs[region].append(ep[0])  # connect region to node
-            int_regs[region].append(ep_to_arc_dict[ep])  # connect region to arc"""
-
-    internal_circles = {region: list(chain(*((ep[0], ep_to_arc_dict[ep]) for ep in region))) for region in regions}
-
-    """
-    for v in g.nodes:
-        for v_pos, ep in enumerate(g.adj[v]):
-            int_nodes[v].append(ep_to_arc_dict[(v, v_pos)])
-            int_nodes[v].append(ep_to_reg_dict[(v, v_pos)])"""
-
+    # node -> region / arc
     internal_circles |= {v: list(chain(
-        *((ep_to_arc_dict[(v, v_pos)], ep_to_reg_dict[(v, v_pos)]) for v_pos, ep in enumerate(g.adj[v]))
-    )) for v in g.nodes}
+        *((ep_to_arc_dict[ep], ep_to_reg_dict[ep]) for ep in k.nodes[v])
+    )) for v in k.nodes}
 
-
-    """for arc in arcs:
-        int_arcs[arc].append(arc[0][0])
-        int_arcs[arc].append(ep_to_reg_dict[arc[1]])
-        int_arcs[arc].append(arc[1][0])
-        int_arcs[arc].append(ep_to_reg_dict[arc[0]])"""
-
-    internal_circles |= {arc: [arc[0][0], ep_to_reg_dict[arc[1]], arc[1][0], ep_to_reg_dict[arc[0]]] for arc in arcs}
+    # arc -> region / node
+    internal_circles |= {arc: [ep_to_reg_dict[arc[1]], arc[0].node, ep_to_reg_dict[arc[0]], arc[1].node] for arc in arcs}
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
@@ -116,11 +111,13 @@ def circlepack_layout(g):
                       external=external_circles)
 
 
-def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
+def draw(g, node_size=0.25, line_width=3.5, draw_circles=True):
+    #print()
+    #print("Drawing graph", g)
 
     default_node_color = "black"
     default_arc_color = "steelblue"
-    default_circle_alpha = 0.2
+    default_circle_alpha = 0.15
     default_circle_color = "cadetblue"
 
     circles = circlepack_layout(g)
@@ -130,7 +127,8 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
     ax.set_aspect('equal')
     ax.axis('off')
 
-    arcs = g.arcs()
+    arcs = g.arcs.keys()
+    #print("Arcs are", arcs)
 
     # plot circles
     if draw_circles:
@@ -143,9 +141,9 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
 
     # plot arcs
     for arc in arcs:
-        z0 = circles[arc[0][0]][0]
+        z0 = circles[arc[0].node][0]
         z1 = circles[arc][0]
-        z2 = circles[arc[1][0]][0]
+        z2 = circles[arc[1].node][0]
         path = bezier(z0, z1, z2)
         ax.add_patch(patches.PathPatch(path,
                                        facecolor='none',
@@ -156,7 +154,7 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
     for node in g.nodes:
         center, radius = circles[node]
         circle_patch = plt.Circle((center.real, center.imag), node_size / 2,
-                                  color=g.nodes[node].get("color", default_node_color))
+                                  color=g.nodes[node].attr.get("color", default_node_color))
         ax.add_patch(circle_patch)
 
     if len(str(g.name)) > 0:
@@ -170,9 +168,13 @@ def draw(g, node_size=0.25, line_width=3.5, draw_circles=False):
 
 
 def export_pdf(graphs, filename, author=None):
+    # TODO: detect if one or more grpahs
     # TODO: autodetect extension
     pdf = PdfPages(filename)
-    for g in graphs:
+    for g in [graphs] if isinstance(graphs, PlanarDiagram) else graphs:
+
+        #print(g)
+        #print(list(kp.regions(g)))
         draw(g)
         pdf.savefig()  # saves the current figure into a pdf page
         #plt.show()
@@ -188,48 +190,51 @@ def export_pdf(graphs, filename, author=None):
 
 if __name__ == '__main__':
 
-    nots =  ["bcdef, afec, abed, ace, adcbf, aeb",
-    "bcde, aef, afed, ace, adcfb, bec",
-    "bcde, aef, afd, ace, adfb, bec",
-    "bcd, ade, aef, afb, bfc, ced",
-    "bcd, aec, abefd, acf, bfc, ced",
-    "bcde, aef, afd, acfe, adfb, bedc",
-    "bcdef, afc, abfed, ace, adc, acb",
-    "bcde, aef, afd, acf, afb, bedc",
-    "bcde, aefc, abfd, acfe, adfb, bedc"]
+    nots =  ["bcdef, afec, abed, ace, adcbf, aeb",]
+    # "bcde, aef, afed, ace, adcfb, bec",
+    # "bcde, aef, afd, ace, adfb, bec",
+    # "bcd, ade, aef, afb, bfc, ced",
+    # "bcd, aec, abefd, acf, bfc, ced",
+    # "bcde, aef, afd, acfe, adfb, bedc",
+    # "bcdef, afc, abfed, ace, adc, acb",
+    # "bcde, aef, afd, acf, afb, bedc",
+    # "bcde, aefc, abfd, acfe, adfb, bedc"]
+    #
+    # graphs = kp.loadtxt_multiple("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
+    #                              notation="plantri", prepended_node_count=True)
+    #
+    # print("Number of graphs:", len(graphs))
+    #
+    # g1= kp.from_plantri_notation("bcde, aec, abfd, acfg, aghb, chgd, dfhe, egf")
+    # g2= kp.from_plantri_notation("bcde, afgc, abhd, ache, adgf, beg, bfeh, cgd")
+    #
+    # print(g1)
+    # print(g2)
+    #
+    # print()
+    # g1.canonical()
+    # g2.canonical()
+    #
+    # print(str(kp.to_adjacency_list(g1)).replace(" ",""))
+    # print(str(kp.to_adjacency_list(g2)).replace(" ",""))
+    #
+    # exit()
+    #
+    # print("Number of graphs:", len(set(graphs)))
+    #
+    # exit()
+    #
+    # for i, g in enumerate(graphs):
+    #     g.name = f"Graph {i} ({len(g)} nodes)"
+    #     for v in g.nodes:
+    #         if g.degree(v) == 3:
+    #             g.nodes[v]["color"] = "brown"
 
-    graphs = kp.loadtxt_multiple("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
-                                 notation="plantri", prepended_node_count=True)
+    graphs = [kp.from_plantri_notation(n.replace(" ",""), ccw=True) for n in nots]
 
-    print("Number of graphs:", len(graphs))
-
-    g1= kp.from_plantri_notation("bcde, aec, abfd, acfg, aghb, chgd, dfhe, egf")
-    g2= kp.from_plantri_notation("bcde, afgc, abhd, ache, adgf, beg, bfeh, cgd")
-
-    print(g1)
-    print(g2)
-
-    print()
-    g1.canonical()
-    g2.canonical()
-
-    print(str(kp.to_adjacency_list(g1)).replace(" ",""))
-    print(str(kp.to_adjacency_list(g2)).replace(" ",""))
-
-    exit()
-
-    print("Number of graphs:", len(set(graphs)))
-
-    exit()
-
-    for i, g in enumerate(graphs):
-        g.name = f"Graph {i} ({len(g)} nodes)"
-        for v in g.nodes:
-            if g.degree(v) == 3:
-                g.nodes[v]["color"] = "brown"
-
+    #print(graphs)
     export_pdf(graphs,
-               "/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/figs/poly.pdf")
+               "/Users/bostjan/Dropbox/test.pdf")
     #draw(g, draw_circles=True)
 
     # circle pack

@@ -1,0 +1,9 @@
+6 bcdef,afec,abed,ace,adcbf,aeb
+6 bcde,aef,afed,ace,adcfb,bec
+6 bcde,aef,afd,ace,adfb,bec
+6 bcd,ade,aef,afb,bfc,ced
+6 bcd,aec,abefd,acf,bfc,ced
+6 bcde,aef,afd,acfe,adfb,bedc
+6 bcdef,afc,abfed,ace,adc,acb
+6 bcde,aef,afd,acf,afb,bedc
+6 bcde,aefc,abfd,acfe,adfb,bedc

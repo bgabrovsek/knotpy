@@ -25,8 +25,9 @@ import string
 import re
 
 import knotpy as kp
-from knotpy.classes.old.planargraph import PlanarGraph
+from old.old.planargraph import PlanarGraph
 from knotpy.generate.simple import empty_knot
+from knotpy.classes.node import Crossing, Vertex
 
 
 __all__ = ['to_em_notation', 'from_em_notation', 'to_condensed_em_notation', 'from_condensed_em_notation']
@@ -75,7 +76,7 @@ def to_condensed_em_notation(g, separator=",") -> str:
     node_dict = dict(zip(nodes, string.ascii_letters[:len(g.nodes)]))
 
     return separator.join(
-        ["".join(node_dict[u] + str(u_pos) for u, u_pos in g.adj[v]) for v in nodes]
+        ["".join(node_dict[u] + str(u_pos) for u, u_pos in g.nodes[v]) for v in nodes]
     )
 
 
@@ -83,16 +84,16 @@ def from_condensed_em_notation(data: str, separator=",", create_using=None):
     """Convert a condensed EM string to a planar diagram."""
 
     data = (" " if separator == " " else "").join(data.split())  # clean up string
-    g = empty_graph(create_using=create_using)
+    g = empty_knot(create_using=create_using)
     data = data.split(separator)
     for s, node in zip(data, string.ascii_letters[:len(data)]):
         adj_nodes = re.findall(r"[a-zA-Z]", s)
         adj_positions = re.findall(r"\d+", s)
 
-        g.add_node(node_for_adding=node, degree=len(adj_nodes))
+        g.add_node(node_for_adding=node, create_using=Vertex, degree=len(adj_nodes))
 
         for i, (v, v_pos) in enumerate(zip(adj_nodes, adj_positions)):
-            g._set_endpoint((node, i), (v, v_pos))
+            g.set_endpoint((node, i), (v, v_pos))
 
     return g
 

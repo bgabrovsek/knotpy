@@ -1,0 +1,3 @@
+# 2 graphs
+6 bcde,aef,afd,ace,adfb,bec
+6 bcde,aef,afd,acf,afb,bedc

@@ -1,0 +1,2 @@
+# 1 graph
+6 bcd,ade,aef,afb,bfc,ced

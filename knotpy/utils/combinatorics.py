@@ -1,8 +1,9 @@
 from itertools import product, permutations, chain
-
+from collections import defaultdict
 
 __all__ = ['lexicographical_minimal_cyclic_rotation_shift', 'iterable_depth', 'union', 'inverse_multi_dict',
-           'combinations_with_limited_repetitions', 'parted_permutations', 'cmp_dict_list', 'cmp_dict_dict']
+           'combinations_with_limited_repetitions', 'parted_permutations', 'cmp_dict_list', 'cmp_dict_dict',
+           'identitydict', 'cmp_dict', "inverse_dict"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -54,6 +55,14 @@ def inverse_multi_dict(d):
             invd[value] = {key, }
     return invd
 
+def inverse_dict(d):
+    """Exchange keys & vals, assume there are no duplicate vals."""
+    invd = dict()
+    for key, value in d.items():
+        if value in invd:
+            raise ValueError("Cannot make inverse dictionary of {d}.")
+        invd[value] = key
+    return invd
 
 # combinatorics
 
@@ -133,7 +142,7 @@ def cmp_dict_dict(dict1, dict2):
     """Compare dictionaries of dictionaries of iterables,
     returns 1 if self > other, -1 if self < other and 0 if self == other"""
     if len(dict1) != len(dict2):
-        return 2 * (len(dict1) > len(dict2))
+        return 2 * (len(dict1) > len(dict2)) - 1
     try:
         # compare keys
         if (outer_keys1 := sorted(dict1)) != (outer_keys2 := sorted(dict2)):
@@ -151,7 +160,30 @@ def cmp_dict_dict(dict1, dict2):
     return 0  # they are the same
 
 
+def cmp_dict(dict1, dict2, except_keys=None):
+    """Compare dictionaries of dictionaries of iterables,
+    returns 1 if self > other, -1 if self < other and 0 if self == other"""
+    except_keys = except_keys or set()
+    keys1 = sorted(set(dict1) - set(except_keys))
+    keys2 = sorted(set(dict2) - set(except_keys))
 
+    if keys1 != keys2:
+        return ((keys1 > keys2) << 1) - 1
+    try:
+        # compare dictionaries values
+        for key in keys1:
+            if (val1 := dict1[key]) != (val2 := dict2[key]):
+                return ((val1 > val2) << 1) - 1
+    except TypeError as e:
+        raise TypeError(f"Cannot compare planar structures with different instance types ({e}).")
+    except Exception as e:
+        raise Exception(e)
+    return 0  # they are the same
+
+
+class identitydict(defaultdict):
+    def __missing__(self, key):
+        return key
 
 """
 print(f"Minimal cyclic rotation of {(test_list := [4,3,0,1])} is {minimal_cyclic_rotation(test_list)}.")

@@ -1,0 +1,14 @@
+# 13 graphs
+9 bcde,afg,agh,ahi,aif,bei,bhc,cgd,dfe
+9 bcde,afg,agh,ahe,adi,big,bfc,cid,ehf
+9 bcd,aef,agd,ach,bif,beg,cfih,dgi,ehg
+9 bcde,afc,abg,ahe,adh,big,cfi,die,fhg
+9 bcde,afg,ahd,ace,adi,big,bfh,cgi,ehf
+9 bcd,aef,agd,ach,bhif,bei,cih,dge,egf
+9 bcde,aef,agd,ach,aib,big,cfh,dgi,ehf
+9 bcde,afg,ahd,ach,aif,beg,bfi,cid,ehg
+9 bcd,aef,agd,acg,bhif,bei,chd,egi,ehf
+9 bcde,afg,ahd,ach,ahi,big,bfi,ced,egf
+9 bcde,afg,ahd,ace,adh,big,bfi,cie,fhg
+9 bcd,aef,agd,ach,bhif,beg,cfi,die,ehg
+9 bcd,aef,agh,ahe,bdi,big,cfi,cid,ehgf

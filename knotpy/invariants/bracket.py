@@ -16,28 +16,44 @@ from collections import deque
 
 from knotpy.utils.decorators import single_variable_invariant
 from knotpy.algorithms.skein import smoothing_type_A, smoothing_type_B
+from knotpy.algorithms.region_algorithms import choose_kink
+from knotpy.manipulation.reidemeister import remove_kink
+from knotpy.manipulation.simplification import simplify
+
 
 @single_variable_invariant('A')
-def bracket_polynomial(k, variable='A') -> Expr:
+def bracket_polynomial(k, variable, reduce=True) -> Expr:
 
-    print(k)
     if k.is_oriented():
         raise NotImplemented("Oriented case not yet implemented")  # TODO: convert to unoriented version
 
     A = variable
     kauff_term = (-A**2 - 1 / A**2)
+    framing_term = (-A**(3))
     polynomial = Integer(0)
     stack = deque()
+    stack.append((Integer(1), k))
 
-    stack.append((Integer(1), k))  # framing!!
+    #print("ok")
 
     while stack:
+        #print("pop")
         poly, k = stack.pop()
+
+        if reduce:
+            simplify(k, in_place=True)
+
+        #print("k", k)
         if k.crossings:
-            cr = next(iter(k.crossings))
-            stack.append((poly * A, smoothing_type_A(k, cr)))
-            stack.append((poly / A, smoothing_type_B(k, cr)))
+            crossing = next(iter(k.crossings))
+            kA = smoothing_type_A(k, crossing)
+            kB = smoothing_type_B(k, crossing)
+            #print(kA)
+            #print(kB)
+            stack.append((poly * A, kA))
+            stack.append((poly / A, kB))
+
         else:
-            polynomial += poly * kauff_term ** (k.number_of_trivial_components - 1)
+            polynomial += poly * (kauff_term ** (k.number_of_nodes - 1)) * (framing_term ** k.framing)
 
     return expand(polynomial)

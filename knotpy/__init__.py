@@ -13,3 +13,6 @@ from .readwrite import *
 from .algorithms import *
 from .invariants import *
 from .drawing import *
+
+from .sanity import *
+from .convert import *

@@ -53,7 +53,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
                                          region=region,
                                          connect_at_endpoints=endpoints)
                 if _debug: print("  After adding node (EM)", to_em_notation(new_g))
-                if _debug: print("  After adding node (ADJ)", new_g._adj)
+                if _debug: print("  After adding node (ADJ)", new_g._inc)
                 new_g = kp.canonical(new_g)
                 if _debug: print("  Canonical", new_g)
                 new_graphs.add(new_g)
@@ -150,7 +150,7 @@ def generate_planar_graphs(maximal_number_of_nodes,
         graphs = _nodes_to_graphs(graphs, maximal_degree)
 
         if output_ignore_degree_sequences_filename is not None:
-            kp.savetxt_multiple(
+            kp.savetxt_multiple_obsolete(
                 sort_graphs(graphs),
                 prepend_to_extension(output_ignore_degree_sequences_filename, number_of_nodes),
                 "em"
@@ -163,9 +163,9 @@ def generate_planar_graphs(maximal_number_of_nodes,
             #for g in graphs:
             #    print(g.degree_sequence(), g.degree_sequence() in deg_seqs)
 
-            kp.savetxt_multiple(sort_graphs(matching_graphs),
-                                prepend_to_extension(output_filename, number_of_nodes),
-                                notation)
+            kp.savetxt_multiple_obsolete(sort_graphs(matching_graphs),
+                                         prepend_to_extension(output_filename, number_of_nodes),
+                                         notation)
 
 
         #print(output_filename)
@@ -186,7 +186,7 @@ def sort_graphs(graphs):
 
 if __name__ == '__main__':
 
-    data_dir = Path("/Users/bostjan/Dropbox/Code/knotpy/data")
+    data_dir = Path("/sandbox/data")
 
     N = 6
     # degree sequences should graphs have that are worth exporting?
