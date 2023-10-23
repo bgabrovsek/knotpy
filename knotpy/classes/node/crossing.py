@@ -7,6 +7,12 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@gmail.si>'
 
 class Crossing(Node):
     def __init__(self, incoming_node_data=None, degree=4, **attr):
+        """
+
+        :param incoming_node_data:
+        :param degree:
+        :param attr:
+        """
         degree = degree or 4
         if degree != 4:
             raise ValueError("Cannot create a crossing with degree not equal to four.")
@@ -26,3 +32,25 @@ class Crossing(Node):
 
     def __str__(self):
         return "X" + super().__str__()
+
+#
+#
+# class OrientedCrossing(Crossing):
+#     def __init__(self, incoming_node_data=None, degree=4, sign=1, **attr):
+#         """
+#         :param incoming_node_data:
+#         :param degree:
+#         :param sign:
+#         :param attr:
+#         """
+#         degree = degree or 4
+#         if degree != 4:
+#             raise ValueError("Cannot create a crossing with degree not equal to four.")
+#         super().__init__(incoming_node_data, degree=degree, **attr)
+#         self.sign = sign
+#
+#     def mirror(self):
+#         raise NotImplementedError()
+#
+#
+#

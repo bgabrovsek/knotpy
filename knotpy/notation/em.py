@@ -25,7 +25,7 @@ import string
 import re
 
 import knotpy as kp
-from old.old.planargraph import PlanarGraph
+from knotpy.classes.planargraph import PlanarGraph
 from knotpy.generate.simple import empty_knot
 from knotpy.classes.node import Crossing, Vertex
 
