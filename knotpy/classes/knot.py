@@ -15,8 +15,9 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
 class Knot(PlanarDiagram):
 
-    # init the descriptor instance, parameter keys are node types, values are cached propery names
-    _nodes: dict = _NodeCachedPropertyResetter(Crossing="crossings", BivalentVertex="bivalent_vertices")
+    # init the descriptor instance, parameter keys are node types, values are cached property names
+    _nodes: dict = _NodeCachedPropertyResetter(Crossing="crossings",
+                                               BivalentVertex="bivalent_vertices")
 
     def __init__(self, **attr):
         self._nodes = dict()
@@ -65,23 +66,31 @@ class Knot(PlanarDiagram):
         link_components = link_components_endpoints(self)
         pass
 
-    def is_oriented(self):
+
+
+    @staticmethod
+    def is_oriented():
         return False
 
-    def is_knotted(self):
+    @staticmethod
+    def is_knotted():
         return True
 
     @staticmethod
-    def to_unoriented_class(self):
-        return Knot
+    def to_unoriented_class():
+        return kp.Knot
 
     @staticmethod
-    def to_oriented_class(self):
+    def to_oriented_class():
         return kp.OrientedKnot
 
     @property
     def number_of_crossings(self):
         return len(self._nodes)
+
+
+class OrientedKnot(Knot):
+    pass
 
 def _tests():
 

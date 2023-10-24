@@ -148,6 +148,27 @@ class Node(ABC): #Node(ABC, list):
     def is_bivalent(self):
         pass
 
+    @abstractmethod
+    def jump_over(self, position):
+        """Return the adjacent endpoint of (node, position) that is connected (is on the same strand or component) of
+        the endpoint at the input position. For the position i, the jump is at position (i + 2) mod 4.
+        :param position:
+        :return: for a crossing-type node return adjacent position
+        """
+        pass
+
+    # @abstractmethod
+    # def strand_positions(self):
+    #     """Return the list of positions of endpoints that are connected (on the same strand/component),
+    #     e.g. for knots, the endpoints at positions (0, 2) and (1, 3) are on the same strand/component;
+    #     for vertices there are no common strands.
+    #     Strand positions are useful when orienting a diagram, since the arcs on a common strand must be coherently
+    #     oriented.
+    #     :return: a list of tuples, each element representing the integer position of the endpoints on the same strand,
+    #     if the endpoints are independent strands, they are not included in the list
+    #     """
+    #     pass
+
     def __str__(self):
         """Used mostly for debugging. Actual node is usually printed via NodeView."""
         return "({})".format(

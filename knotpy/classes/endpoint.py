@@ -57,3 +57,6 @@ class OutgoingEndpoint(Endpoint):
     def __str__(self):
         return f"out({self.node},{self.position})"
 
+
+if __name__ == "__main__":
+    pass

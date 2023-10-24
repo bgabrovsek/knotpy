@@ -42,11 +42,11 @@ class PlanarGraph(PlanarDiagram):
     def is_knotted(self):
         return False
 
-    @staticmethod
+    #@staticmethod
     def to_unoriented_class(self):
         return PlanarGraph
 
-    @staticmethod
+    #@staticmethod
     def to_oriented_class(self):
         raise NotImplementedError()
 

@@ -6,11 +6,13 @@
 - "disjoint components": are the components that do not share a common node (crossing or vertex),
 
 - "connected sum components" are the factors of a composite knot diagram.
+
+- "strand" a strand is either a closed component or a path between
 """
 
 __all__ = ['disjoint_components_nodes', 'number_of_disjoint_components', 'disjoint_components',
            'is_connected_sum', 'is_connected_sum_third_order', 'add_unknot_in_place',
-           'number_of_link_components']
+           'number_of_link_components', "strands", "number_of_strands", "path_from_endpoint"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -21,14 +23,18 @@ from itertools import combinations, permutations
 
 import knotpy as kp
 from knotpy.algorithms.node_algorithms import name_for_new_node
-from knotpy.classes.endpoint import Endpoint
+from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
 
 
 #  Link components
 
-def add_unknot_in_place(k):
+def add_unknot_in_place(k: PlanarDiagram):
+    """Add unknot to k (in place).
+    :param k:
+    :return:
+    """
     node = name_for_new_node(k)
     try:
         k.add_bivalent_vertex(node)
@@ -38,10 +44,22 @@ def add_unknot_in_place(k):
 
 
 def number_of_link_components(k: PlanarDiagram):
+    """ Return the number of link components.
+    :param k:
+    :return:
+    """
     return len(link_components_endpoints(k))
 
 
 def link_components_endpoints(k: PlanarDiagram):
+    """
+    A link
+    :param k:
+    :return:
+    """
+
+    #TODO: do not use "Crossing", but rather
+
     er = EquivalenceRelation(k.endpoints)
 
     # endpoints from arcs are on the same component
@@ -62,21 +80,103 @@ def link_components_endpoints(k: PlanarDiagram):
     pass
 
 
-def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint):
+def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
+    """Return the path (strand or part of a strand) starting from the endpoint. A path stops at a vertex-like node or
+    is a closed component.
+    :param k:
+    :param endpoint:
+    :return:
+    """
+
+    if not isinstance(endpoint, Endpoint):
+        raise TypeError(f"Endpoint {endpoint} should be of type Endpoint")
+
+    if isinstance(endpoint, IngoingEndpoint):
+        raise NotImplementedError("Path from ingoing endpoint not yet implemented")  # TODO: in this case, we should first jump over crossing
+
     path = []
+    ep = endpoint
+
     while True:
-        path.append(endpoint)
-        node_ = k.nodes[endpoint.node]
-        if node_.is_crossing():
-            endpoint = node_[(endpoint.position + 2) & 3]
-        elif node_.is_bivalent_vertex():
-            endpoint = node_[(endpoint.position + 1) & 1]
-        else:
-            # the path ends if we come across a vertex
+        path.append(ep)
+        # jump to twin
+        twin_ep = k.twin(ep)
+        path.append(twin_ep)
+        # jump over crossing
+        ep = k.jump_over_node(twin_ep)
+        # is it a terminal (vertex-like node?)
+        if ep is None or ep is endpoint:
             break
-        if endpoint == path[0]:
-            break
+
     return path
+
+
+# def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint):
+#     path = []
+#     while True:
+#         path.append(endpoint)
+#         node_ = k.nodes[endpoint.node]
+#         if node_.is_crossing():
+#             endpoint = node_[(endpoint.position + 2) & 3]
+#         elif node_.is_bivalent_vertex():
+#             endpoint = node_[(endpoint.position + 1) & 1]
+#         else:
+#             # the path ends if we come across a vertex
+#             break
+#         if endpoint == path[0]:
+#             break
+#     return path
+
+def number_of_strands(k: PlanarDiagram) -> int:
+    """Return the number of strands of the diagram.
+    :param k:
+    :return:
+    """
+    return len(strands(k))  # TODO: make faster using EquivalenceRelation
+
+
+def strands(k: PlanarDiagram) -> list:
+    """Return a list of (ordered) strands of the diagram. A strand is an (ordered) list of endpoints of alternating
+    endpoints, the first two pairs are twins, the third element is an adjacent endpoint over the crossing.
+    The strands start from vertex-like nodes if they exist, otherwise from a crossing-like node. A crossing-like node is
+    detected by a non-None return value of jump_over(0). The strands follow orientation if the diagram is oriented.
+    :param k: PlanarDiagram instance
+    :return: list of (ordered) strands
+    """
+
+    list_of_strands = []
+    unused_endpoints = set(k.endpoints)
+
+    terminals = {node for node in k.nodes if k.nodes[node].degree() and k.nodes[node].jump_over(0) is None}
+    #crossings = {node for node in k.nodes if k.nodes[node].degree() and k.nodes[node].jump_over(0) is not None}
+
+    # first follow strands from the terminals
+    for node in terminals:
+        for ep in k.nodes[node]:
+            if ep in unused_endpoints and not isinstance(ep, IngoingEndpoint):  # skip ingoing to follow orientation
+                strand = path_from_endpoint(k, ep)
+                strand_set = set(strand)
+                if not strand_set.issubset(unused_endpoints):  # sanity check
+                    raise ValueError(f"Endpoints {strand} should be unused")
+                unused_endpoints -= strand_set  # remove them from unused
+                list_of_strands.append(strand)
+
+    # if there are still endpoints available, they come from closed components
+    while unused_endpoints:
+        strand = path_from_endpoint(k, next(iter(unused_endpoints)))
+        strand_set = set(strand)
+        if not strand_set.issubset(unused_endpoints):  # sanity check
+            raise ValueError(f"Endpoints {strand} should be unused")
+        unused_endpoints -= strand_set  # remove them from unused
+        list_of_strands.append(strand)
+
+    return list_of_strands
+
+
+
+
+
+
 
 
 # Disjoint components

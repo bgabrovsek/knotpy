@@ -25,6 +25,8 @@ from knotpy.classes.endpoint import Endpoint
 from knotpy.classes.node import Node
 from knotpy.classes.views import NodeView, EndpointView, ArcView
 
+import warnings
+
 __all__ = ['PlanarDiagram', '_NodeCachedPropertyResetter']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -57,7 +59,18 @@ class PlanarDiagram(ABC):
 
     _nodes: dict = _NodeCachedPropertyResetter()
 
-    def __init__(self, **attr):
+    def __init__(self,  incoming_diagram_data=None, **attr):
+        """
+        :param incoming_diagram_data:
+        :param attr:
+        """
+        # if isinstance(incoming_diagram_data, PlanarDiagram):
+        #     pass
+        # elif incoming_diagram_data is None:
+        #     self._nodes = dict()
+        # else:
+        #     raise TypeError("incoming_diagram_data must be of type PlanarGraph" )
+
         self._nodes = dict()
         self.attr = dict()  # store graph attributes (without a View)
         self.attr.update(attr)
@@ -68,7 +81,13 @@ class PlanarDiagram(ABC):
         self.attr = dict()
 
     def copy(self, copy_using=None):
-        copy_using = copy_using or type(self)
+        """
+        Return shallow copy of the diagram.
+        :param copy_using:
+        :return:
+        """
+
+        copy_using = copy_using or type(self)  # TODO: type or instance
         k = copy_using()  # new instance
 
         k.attr.update(self.attr)  # update knot attributes
@@ -147,10 +166,20 @@ class PlanarDiagram(ABC):
         return ArcView(self._nodes)
 
     def __getitem__(self, item):
-        if isinstance(item, Endpoint):
-            return self._nodes[item.node][item.position]
-        else:
+
+        if item in self._nodes:
             return self._nodes[item]
+
+        raise KeyError(f"Node {item} not found")
+
+        #
+        # print("__getitem__ is deprecated in PlanarDiagram class.")
+        # #warnings.warn("This function is deprecated and will be removed in the future.", DeprecationWarning)
+        #
+        # if isinstance(item, Endpoint):
+        #     return self._nodes[item.node][item.position]
+        # else:
+        #     return self._nodes[item]
 
     # node operations
 
@@ -171,6 +200,8 @@ class PlanarDiagram(ABC):
             raise ValueError(f"None cannot be a {create_using.__name__.lower()}")
 
         if node not in self._nodes:
+            if not isinstance(create_using, type):
+                create_using = type(create_using)
             self._nodes[node] = create_using(degree=degree)
         elif type(self._nodes[node]) is not create_using:
             raise NotImplementedError("Node type change not implemented")
@@ -276,6 +307,7 @@ class PlanarDiagram(ABC):
 
         #print(type(adjacent_endpoint), isinstance(adjacent_endpoint, Endpoint))
 
+        # TODO: avoid else
         # adjacent endpoint
         if isinstance(adjacent_endpoint, Endpoint):
             create_using = create_using or type(adjacent_endpoint)
@@ -286,13 +318,13 @@ class PlanarDiagram(ABC):
             # the new attributes
             adjacent_endpoint = type(create_using)(*adjacent_endpoint, **(create_using.attr | attr))
 
-            pass
         else:
             create_using = create_using or Endpoint
             adjacent_endpoint = create_using(*adjacent_endpoint, **attr)
 
         #print("a", self._nodes[node])
 
+        # insert missing positions missing in the node
         for i in range(node_pos + 1 - len(self._nodes[node])):
             self._nodes[node].append(Node)
 
@@ -310,8 +342,41 @@ class PlanarDiagram(ABC):
 
         #print(self._nodes[node])
 
+
+    def twin(self, endpoint):
+        """Return the opposite endpoint (twin) of an endpoint. Both endpoints form an arc.
+        :param endpoint: Endpoint instance or pair (node, position)
+        :return: twin endpoint instance
+        """
+        node, position = endpoint
+        return self._nodes[node][position]
+
+    def get_endpoint_from_pair(self, endpoint_pair):
+        """Returns the Endpoint instance of the pair (node, position).
+        :param endpoint_pair: a pair (node, position)
+        :return: Endpoint instance
+        """
+
+        # the endpoint instance is the twin of the twin
+        return self.twin(self.twin(endpoint_pair))
+
+    def jump_over_node(self, endpoint):
+        """
+
+        :param endpoint: Endpoint instance or pair (node, position)
+        :return: endpoint or None
+        """
+        node, position = endpoint
+        jump_position = self._nodes[node].jump_over(position)
+        if jump_position is None:
+            return None
+        return self.get_endpoint_from_pair((node, jump_position))
+
+
     def get_endpoint(self, node, position):  # TODO: should this be private?
         """Return the endpoint Endpoint(node, position)"""
+        warnings.warn("This function is deprecated and will be removed in the future.", DeprecationWarning)
+        print("This function is deprecated and will be removed in the future.")
         adj_endpoint = self._nodes[node][position]
         return self[adj_endpoint]  # return the adjacent endpoint of the adjacent endpoint
 
@@ -364,22 +429,24 @@ class PlanarDiagram(ABC):
     def remove_arcs_from(self, arcs_for_removing):
         self.remove_endpoints_from(chain(*arcs_for_removing))
 
+    @staticmethod
     @abstractmethod
-    def is_oriented(self):
-        pass
-
-    @abstractmethod
-    def is_knotted(self):
+    def is_oriented():
         pass
 
     @staticmethod
     @abstractmethod
-    def to_unoriented_class(self):
+    def is_knotted():
         pass
 
-    #@staticmethod
+    @staticmethod
     @abstractmethod
-    def to_oriented_class(self):
+    def to_unoriented_class():
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def to_oriented_class():
         pass
 
     @property

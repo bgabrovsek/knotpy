@@ -30,6 +30,14 @@ class Crossing(Node):
     def is_bivalent(self):
         return False
 
+    def jump_over(self, position):
+        """Return the adjacent endpoint of (node, position) that is connected (is on the same strand or component) of
+        the endpoint at the input position. For the position i, the jump is at position (i + 2) mod 4.
+        :param position:
+        :return: for a crossing-type node return adjacent position
+        """
+        return (position + 2) % 4
+
     def __str__(self):
         return "X" + super().__str__()
 
