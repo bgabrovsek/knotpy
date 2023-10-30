@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 project = 'knotpy'
-copyright = '2023, Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
+copyright = '2023, Boštjan Gabrovšek'
 author = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
 
@@ -24,6 +24,9 @@ templates_path = ['_templates']
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# If true, the current module name will be prepended to all description
+# unit titles (such as .. function::).
+add_module_names = False
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'pydata_sphinx_theme'
