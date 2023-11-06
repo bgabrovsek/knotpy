@@ -1,10 +1,9 @@
 Reference
 =========
 
-.. currentmodule:: knotpy
+.. autosummary::
+   :recursive:
+   :toctree: generated
+   :template: custom-module-template.rst
 
-.. toctree::
-   :maxdepth: 2
-
-   classes/index
-   
+   knotpy
