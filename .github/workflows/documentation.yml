@@ -1,6 +1,8 @@
 name: "Deploy Sphinx documentation to GitiHub Pages"
 
-on: [pull_request, push]
+on:
+  push:
+    branches: [main]
 
 permissions:
   contents: write
