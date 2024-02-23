@@ -1,19 +1,3 @@
-"""
-The PlanarDiagram class provides the basic abstract class for all planar objects (planar graph, knots, knotted graphs,
-...).
-
-A PlanarDiagram class consists of:
-  - the diagram class with optional attributes,
-  - nodes (vertices), that are any hashable objects with optional attributes,
-  - endpoints, that represent part of the edge/arc emanating from the node and is a tuple (node, node_position), with
-    optional attributes
-
-In addition, we use the following terminology:
-  - arcs are tuples of endpoints,
-  - regions are the faces of the planar graph and are represented as a sequence of endpoints.
-"""
-
-
 from functools import cached_property, total_ordering
 from abc import ABC, abstractmethod
 from copy import deepcopy
@@ -55,12 +39,24 @@ class _NodeCachedPropertyResetter:
 
 @total_order_py3
 class PlanarDiagram(ABC):
-    """The PlanarDiagram class is intended to be used only as the parent class for Knot, PlanarGraph, etc."""
+    """The PlanarDiagram class provides the basic abstract class for all planar objects (planar graph, knots, knotted
+    graphs, ...).  It is intended to be used only as the parent class for Knot, PlanarGraph, etc.
+        
+    A PlanarDiagram class consists of:
+    - the diagram class with optional attributes,
+    - nodes (vertices), that are any hashable objects with optional attributes,
+    - endpoints, that represent part of the edge/arc emanating from the node and is a tuple (node, node_position), with optional attributes
+
+    In addition, we use the following terminology:
+    - arcs are tuples of endpoints,
+    - regions are the faces of the planar graph and are represented as a sequence of endpoints.
+    """
 
     _nodes: dict = _NodeCachedPropertyResetter()
 
     def __init__(self,  incoming_diagram_data=None, **attr):
-        """
+        """Initialize a planar diagram.
+
         :param incoming_diagram_data:
         :param attr:
         """
@@ -83,6 +79,7 @@ class PlanarDiagram(ABC):
     def copy(self, copy_using=None):
         """
         Return shallow copy of the diagram.
+
         :param copy_using:
         :return:
         """
@@ -111,6 +108,7 @@ class PlanarDiagram(ABC):
 
     def py3_cmp(self, other, compare_attr=False):
         """Compare diagrams. Replaces obsolete __cmp__ method.
+
         :param other:
         :param compare_attr: do we compare also the node attributes (name, color, ...)
         :return: 1 if self > other, -1 if self < other, and 0 otherwise.
@@ -185,6 +183,7 @@ class PlanarDiagram(ABC):
 
     def add_node(self, node_for_adding, create_using: type, degree=None, **attr):
         """Add a node of type create_using with optional degree and attributes.
+
         :param node_for_adding: any hashable object
         :param create_using: the node type
         :param degree: optional degree of the node
@@ -211,11 +210,12 @@ class PlanarDiagram(ABC):
 
     def add_nodes_from(self, nodes_for_adding, create_using=None, **attr):
         """Add or update a bunch (iterable) of nodes and update attributes.
+        
         :param nodes_for_adding: an iterable of nodes, which can be any hashable object. If a dictionary of is given,
-        where the values are Node classes,  the newly added nodes will inherit the degree and attributes of nodes in
-        the dict.
+            where the values are Node classes,  the newly added nodes will inherit the degree and attributes of nodes in
+            the dict.
         :param create_using: if nodes_for_adding does not consist of a dictionary of Node instances, the node type must
-        be given in this parameter (e.g. Vertex, Crossing,...)
+            be given in this parameter (e.g. Vertex, Crossing,...)
         :param attr: the nodes attribute will be updated with these values.
         :return: None
         """
@@ -233,6 +233,7 @@ class PlanarDiagram(ABC):
         """Permute the positions of endpoints of the node and take care of adjacent nodes. For example, if we rotate a
         4-valent node by 90 degrees, the positions change from (0, 1, 2, 3) to (3, 0, 1, 2), so the permutation
         should be {0: 3, 1: 0, 2: 1, 3: 2}.
+        
         :param node: the node of which endpoints we permute
         :param ccw_shift: a dict or list object
         :return:
@@ -262,6 +263,7 @@ class PlanarDiagram(ABC):
 
     def remove_node(self, node_for_removing, remove_incident_endpoints=True):
         """Remove the node.
+        
         :param node_for_removing:
         :param remove_incident_endpoints: use with care, if False, it breaks the planar structure
         :return: planar diagram without node
@@ -291,12 +293,13 @@ class PlanarDiagram(ABC):
 
     def set_endpoint(self, endpoint_for_setting, adjacent_endpoint, create_using=None, **attr):
         """Set the endpoint to the adjacent endpoint and update the endpoint attributes.
+        
         :param endpoint_for_setting: Endpoint object or tuple (crossing name, position)
         :param adjacent_endpoint: overwrite the endpoint with adjacent_endpoint (Endpoint object or tuple
-        (crossing name, position))
+            (crossing name, position))
         :param create_using: if the type is not Endpoint (or IngoingEndpoint or OutgoingEndpoint), the class should be
-        given, be default Endpoint is assumed if endpoint_for_setting is given as a tuple. If an Endpoint instance is
-        given instead of a class, the instance type is used with attributes copied.
+            given, be default Endpoint is assumed if endpoint_for_setting is given as a tuple. If an Endpoint instance is
+            given instead of a class, the instance type is used with attributes copied.
         :param attr: additional attributes of the endpoint are added
         :return: None
         """
@@ -345,6 +348,7 @@ class PlanarDiagram(ABC):
 
     def twin(self, endpoint):
         """Return the opposite endpoint (twin) of an endpoint. Both endpoints form an arc.
+        
         :param endpoint: Endpoint instance or pair (node, position)
         :return: twin endpoint instance
         """
@@ -353,6 +357,7 @@ class PlanarDiagram(ABC):
 
     def get_endpoint_from_pair(self, endpoint_pair):
         """Returns the Endpoint instance of the pair (node, position).
+        
         :param endpoint_pair: a pair (node, position)
         :return: Endpoint instance
         """
@@ -417,6 +422,7 @@ class PlanarDiagram(ABC):
 
     def set_arcs_from(self, arcs_for_adding, **attr):
         """Set the list of arcs.
+        
         :param arcs_for_adding: a iterable of tuples (v_endpoint, u_endpoint)
         :return: None
         """

@@ -1,0 +1,4 @@
+# Sphinx generated documentation
+_build/
+reference/generated
+reference/classes/generated

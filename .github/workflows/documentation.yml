@@ -1,0 +1,27 @@
+name: "Deploy Sphinx documentation to GitiHub Pages"
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  pages:
+    runs-on: ubuntu-20.04
+    steps:
+    - id: deployment
+      uses: sphinx-notes/pages@v3
+      with:
+        publish: false
+    - uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ steps.deployment.outputs.artifact }}
+
+# Only run one instance of this GitHub action
+# See: https://github.com/marketplace/actions/sphinx-to-github-pages#cancel-any-in-progress-job
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
