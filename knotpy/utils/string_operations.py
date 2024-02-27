@@ -83,6 +83,33 @@ def nested_split(text: str, max_depth=None) -> list:
     return list_stack[0]
 
 
+def string_to_nested_tuple_with_prefixes(text: str, default_prefix=None):
+    """Turns a string containing elements to a sequence of tuples
+    E.g. X[1, 9, 2, 8], X[3, 10, 4, 11] -> (("X",(1,9,2,8),...)
+    [[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]] -> ((default_prefix, (4,2,5,1)), ...)
+    """
+    text = multi_replace(
+        text,{
+            ")": "]",
+            "(": "[",
+            " ": "",
+            ";": ","
+        }
+    )
+
+    if (len(text) >= 1 and text[0] != "[") :#or (len(text) >= 2 and text[:2] != "[["):
+        text = "[" + text + "]"
+
+    print(text)
+#
+#
+# string_to_nested_tuple_with_prefixes("X[1, 9, 2, 8], X[3, 10, 4, 11]")
+# string_to_nested_tuple_with_prefixes("[[4,2,   5,1],  [8,6,1,5],[6,3,7,4],[2,7,3,8]]")
+# string_to_nested_tuple_with_prefixes("(X[1, 9, 2, 8], X[3, 10, 4, 11])")
+# string_to_nested_tuple_with_prefixes("[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]")
+#
+# exit()
+
 def _test():
     print(nested_split("v    c  (8,   9,([9],0,1)) (8,9,0)"))
 

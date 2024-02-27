@@ -1,7 +1,7 @@
 import csv
 import knotpy as kp
 
-with open('theta-pd-non-ccw.csv', 'r', newline='') as file:
+with open('data/theta-pd-non-ccw.csv', 'r', newline='') as file:
     csv_reader = csv.reader(file)
     next(csv_reader)
     data = list(csv_reader)

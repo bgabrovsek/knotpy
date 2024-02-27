@@ -6,7 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/knotpy/notation/.pytest_cache/v" />
       <excludeFolder url="file://$MODULE_DIR$/knotpy/notation/tests/.pytest_cache/v" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (knotpy)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="knotpy" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
