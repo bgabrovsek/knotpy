@@ -251,7 +251,7 @@ def btable(M, l):
 
 
 def isobondle(M, l, N, t):
-    ### Test whether the bondles (M,l) and (N,t) are isomorphic ###
+    ### Test whether the bondles (Eva) (M,l) and (N,t) are isomorphic ###
     hom = homlist(M, N)
     aM = autlist(M)
     aN = autlist(N)
@@ -305,17 +305,17 @@ def bondles(n):
 #
 # print("bonds")
 # print(1)
-# b = bondles(1)
+# b = bondles (Eva)(1)
 # for x in b:
 #     print(x)
 #
 # print(2)
-# b = bondles(2)
+# b = bondles (Eva)(2)
 # for x in b:
 #     print(x)
 #
 # print(3)
-# b = bondles(3)
+# b = bondles (Eva)(3)
 # for x in b:
 #     print(x)
 #
@@ -477,52 +477,32 @@ def pdhomfill(PD, N, l, phi):  # N is a quandle matrix, l is a bondle structure
     else:
         return out
 
-# from topoly_pd import *
-
-PD_codes = [
-#    [[1, 1, 6, 2, 5], [1, 7, 3, 8, 2], [1, 4, 1, 5, 8], [-3, 3, 4, 6, 7]],
-#    [[-2,6,7,1,0], [-1,1,7,2,8], [-1,8,2,9,3],[-1,3,9,4,10],[-1,10,4,11,5],[-1,5,11,6,0]],
- #   [[-2,1,0,6,7,], [-1,1,7,2,8], [-1,8,2,9,3],[-1,3,9,4,10],[-1,10,4,11,5],[-1,5,11,6,0]],
- #   [[-3,10,2,1,11],[-1,5,11,6,0],[-1,0,6,1,7],[-1,7,2,8,3],[-1,3,8,4,9],[-1,9,4,10,5]],
-   [[-3,0,4,3,1],[-1,7,1,8,2],[-1,2,8,3,9],[-1,9,4,10,5],[-1,5,10,6,11],[-1,11,6,0,7]],
-    [[-3,  3, 1,0, 4], [-1, 7, 1, 8, 2], [-1, 2, 8, 3, 9], [-1, 9, 4, 10, 5], [-1, 5, 10, 6, 11], [-1, 11, 6, 0, 7]],
-    #   [[-3, 3, 1,0, 4], [-1, 7, 1, 8, 2], [-1, 2, 8, 3, 9], [-1, 9, 4, 10, 5], [-1, 5, 10, 6, 11], [-1, 11, 6, 0, 7]]
-
-]
+from topoly_pd import *
 
 for b in bondles(3):
-    print("Bondle", b)
-    for pd in PD_codes:
-        #print("  PD:", pd)
-        print("   HOM:", pdhomlist(pd, *b))
-
-#     print("BONDLE", b)
-#     N = 0
-#     for tip in PD_types:
-#         #print("\n", tip, "\n", "-"*18)
-#         for theta_name in PD_types[tip]:
-#             print(theta_name, end=" ")
-#             text = PD[theta_name]
-#             #print(pdhomlist(PD, *b))
+    print("BONDLE", b)
+    N = 0
+    for tip in PD_types:
+        #print("\n", tip, "\n", "-"*18)
+        for theta_name in PD_types[tip]:
+            print(theta_name, end=" ")
+            text = PD[theta_name]
+            #print(pdhomlist(PD, *b))
 
 
+for b in bondles(3):
+    h = pdhomlist(PD, ((1, 3, 2), (3, 2, 1), (2, 1, 3)), [1, 1, 1])
+    print(h)
+
+print()
+PD = [[1, 1, 6, 2, 5], [1, 7, 3, 8, 2], [1, 4, 1, 5, 8], [-3, 3, 4, 6, 7]]
+h = pdhomlist(PD, ((1, 3, 2), (3, 2, 1), (2, 1, 3)), [1, 1, 1])
+print(h)
+
+h = pdhomlist(PD, ((1, 1, 1), (3, 2, 2), (2, 3, 3)), [3, 1, 2])
+
+print(h)
 #
-# PD1 = [[1, 1, 6, 2, 5], [1, 7, 3, 8, 2], [1, 4, 1, 5, 8], [-3, 3, 4, 6, 7]]
-# PD2 = ((1, 3, 2), (3, 2, 1), (2, 1, 3))
-#
-#
-# print(pdhomlist(PD1, ((1, 3, 2), (3, 2, 1), (2, 1, 3)), [1, 1, 1]))
-# print(pdhomlist(PD2, ((1, 3, 2), (3, 2, 1), (2, 1, 3)), [1, 1, 1]))
-#
-# for b in bondles(3):
-#     h = pdhomlist(PD1, ((1, 3, 2), (3, 2, 1), (2, 1, 3)), b)
-#     print(h)
-#
-#
-# h = pdhomlist(PD2, ((1, 1, 1), (3, 2, 2), (2, 3, 3)), [3, 1, 2])
-#
-# print(h)
-# #
 # from pprint import pprint
 #
-#pprint(bondles(3))
+#pprint(bondles (Eva)(3))

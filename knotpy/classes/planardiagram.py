@@ -307,7 +307,7 @@ class PlanarDiagram(ABC):
         # endpoint for setting
         node, node_pos = endpoint_for_setting
 
-
+        print(create_using)
         #print(type(adjacent_endpoint), isinstance(adjacent_endpoint, Endpoint))
 
         # TODO: avoid else

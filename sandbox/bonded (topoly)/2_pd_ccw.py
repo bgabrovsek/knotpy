@@ -1,23 +1,34 @@
 """
-Load PD codes a .csv file and exports them as a .knots file.
+Load PD codes from a CSV file and exports them as a .knots file.
 """
 
+print("loly")
+
 import csv
-from itertools import chain, combinations
-from copy import deepcopy
-
-from knotpy import from_pd_notation, to_pd_notation
+# from itertools import chain, combinations
+# from copy import deepcopy
+#
+# from knotpy import from_pd_notation, to_pd_notation
 from knotpy import SpatialGraph
-import knotpy as kp
+# import knotpy as kp
 
-with open('theta-pd-non-ccw.csv', 'r', newline='') as file:
+_DEBUG = True
+
+with open('data/theta-pd-non-ccw.csv', 'r', newline='') as file:
     csv_reader = csv.reader(file)
     next(csv_reader)
     data = list(csv_reader)
+    if _DEBUG:
+        print("Loaded", len(data), "thetas.")
+
+
 
 # just print the codes that are ok.
 for count, (name, pd) in enumerate(data):
     k = from_pd_notation(pd, str, SpatialGraph)
+
+    if _DEBUG:
+        print("Converted", pd, "to", k)
 
     #print("PD", pd, "->", k)
     if kp.check_region_sanity(k) or len(k) <= 2:

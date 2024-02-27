@@ -49,13 +49,20 @@ class Endpoint:
 
 
 class IngoingEndpoint(Endpoint):
+
     def __str__(self):
-        return f"in({self.node},{self.position})"
+        if isinstance(self.node, str):
+            return f"{self.node}{self.position}i"  # ⇢⇠⤍➤⤞
+        else:
+            return f"({self.node},{self.position})i"
 
 
 class OutgoingEndpoint(Endpoint):
     def __str__(self):
-        return f"out({self.node},{self.position})"
+        if isinstance(self.node, str):
+            return f"{self.node}{self.position}o"  # ⇢⇠⤍➤⤞
+        else:
+            return f"({self.node},{self.position})o"
 
 
 if __name__ == "__main__":

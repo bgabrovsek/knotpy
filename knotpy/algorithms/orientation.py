@@ -50,6 +50,8 @@ def _orient_by_strands(k: PlanarDiagram, strands: list):
     :return:
     """
 
+    print("s", strands)
+
     # initialize an oriented version of the diagram
     new_k = k.to_oriented_class()(**k.attr)
     for node in k.nodes:
@@ -78,15 +80,15 @@ def all_orientations(k: PlanarDiagram) -> list:
     strands = components.strands(k)
     #fb_strands = (strands, [list(reversed(s)) for s in strands])  # forward/backwards strands
     fb_strands = [(s, list(reversed(s))) for s in strands]
-    print(fb_strands)
+    #print(fb_strands)
     """Create a new strand sequence from the orientations [0,...,0,0], [0,...,0,1], [0,...,1,0],... where 0 donates
     a forward orientation and 1 denotes a backward orientation."""
     strand_orientations = it.product((0, 1), repeat=len(strands))
-    print(list(it.product((0, 1), repeat=len(strands))))
+    #print(list(it.product((0, 1), repeat=len(strands))))
 
     return [
         _orient_by_strands(k=k,
-                           strands=[s[o] for s in fb_strands])
+                           strands=[s[so] for s, so in zip(fb_strands, o)])
         for o in strand_orientations
     ]
 
