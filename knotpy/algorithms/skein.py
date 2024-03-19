@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from knotpy.algorithms.components import add_unknot_in_place
-from knotpy.algorithms.region_algorithms import kinks
+from knotpy.algorithms.structure import kinks
 
 
 # _skein_aliases = {"0": ["0", "l0", "l_0", "zero", "a", "type a"],

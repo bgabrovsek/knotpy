@@ -3,7 +3,6 @@
 import string
 from collections import defaultdict
 
-from knotpy.utils.combinatorics import inverse_dict
 # from knotpy.generate.simple import house_graph
 
 __all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node"]

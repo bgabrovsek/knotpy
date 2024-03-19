@@ -3,7 +3,7 @@ from functools import cached_property
 import knotpy as kp
 from knotpy.classes.knot import Knot
 from knotpy.classes.planardiagram import PlanarDiagram, _NodeCachedPropertyResetter
-from knotpy.classes.node import Crossing, Bond, BivalentVertex
+from knotpy.classes.node import Crossing, Bond #, BivalentVertex
 from knotpy.classes.views import FilteredNodeView
 
 __all__ = ['Knot']

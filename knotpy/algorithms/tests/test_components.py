@@ -10,7 +10,7 @@ class TestComponents:
 
     def test_knot(self):
         trefoil = kp.from_pd_notation("[[1,5,2,4],[3,1,4,6],[5,3,6,2]]", "knotinfo")
-        assert len(list(kp.regions(trefoil))) == 5
+        assert len(list(kp.faces(trefoil))) == 5
 
 
 

@@ -39,7 +39,7 @@ print("\nKnot notation\n")
 
 k = example_spatial_graph()
 print("In:", k)
-print("Out:", text := kp.to_knot_notation(k))
-print("Out:", kp.to_knot_notation(k, attributes=False))
+print("Out:", text := kp.to_knotpy_notation(k))
+print("Out:", kp.to_knotpy_notation(k, attributes=False))
 # print("Out:", kp.from_knot_notation(text))
 

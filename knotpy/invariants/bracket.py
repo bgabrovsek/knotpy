@@ -11,26 +11,27 @@ __all__ = ['bracket_polynomial']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
-from sympy import Expr, expand, Integer
+from sympy import Expr, expand, Integer, symbols, Symbol
 from collections import deque
 
-from knotpy.utils.decorators import single_variable_invariant
 from knotpy.algorithms.skein import smoothing_type_A, smoothing_type_B
-from knotpy.algorithms.region_algorithms import choose_kink
+from knotpy.algorithms.faces import choose_kink
 from knotpy.manipulation.reidemeister import remove_kink
 from knotpy.manipulation.simplification import simplify
 
+_A = symbols("A")
+_kauffman_term = (-_A ** 2 - _A ** (-2))
+_framing_term = - _A ** 3
 
-@single_variable_invariant('A')
-def bracket_polynomial(k, variable, reduce=True) -> Expr:
+#@single_variable_invariant('A')
+def bracket_polynomial(k, variable="A") -> Expr:
 
     if k.is_oriented():
         raise NotImplemented("Oriented case not yet implemented")  # TODO: convert to unoriented version
 
-    A = variable
-    kauff_term = (-A**2 - 1 / A**2)
-    framing_term = (-A**(3))
-    polynomial = Integer(0)
+    A = variable if isinstance(variable, Symbol) else symbols(variable)
+
+    poly = Integer(0)
     stack = deque()
     stack.append((Integer(1), k))
 

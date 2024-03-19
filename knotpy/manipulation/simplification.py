@@ -1,6 +1,6 @@
 from copy import deepcopy
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.region_algorithms import choose_kink, choose_poke
+from knotpy.algorithms.faces import choose_kink, choose_poke
 from knotpy.manipulation.reidemeister import remove_kink, remove_poke
 
 

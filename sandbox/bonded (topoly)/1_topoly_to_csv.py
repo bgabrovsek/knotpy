@@ -3,9 +3,11 @@ Load PD codes for thetas from data_topoly_pd.py and save it to a .csv file.
 """
 
 import csv
-from data_topoly_pd import PD
+from data.data_topoly_pd import PD
+from pathlib import Path
 
-csv_output_file = 'data/theta-pd-non-ccw.csv'
+data_folder = Path("data")
+csv_output_file = data_folder / 'theta-pd-non-ccw.csv'
 
 count = 0
 with open(csv_output_file, 'w') as file:

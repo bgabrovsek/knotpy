@@ -33,7 +33,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
         if _debug: print("--- (new graph) ---")
 
         if _debug: print(g)
-        for region in g.regions():  # choose the area to put the new vertex in
+        for region in g.faces():  # choose the area to put the new vertex in
             # an area is a list of endpoints, an endpoint is a pair of (vertex, position of arc)
             avail_num_endpoints = [maximal_degree - g.degree(ep[0]) for ep in region]  # how many edges can we still attach?
             for endpoints in chain(
@@ -58,7 +58,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
                 if _debug: print("  Canonical", new_g)
                 new_graphs.add(new_g)
 
-                num_reg = len(new_g.regions())
+                num_reg = len(new_g.faces())
                 """if new_g.number_of_nodes - new_g.number_of_arcs + num_reg != 2:
                     print("Error")
                     exit()
