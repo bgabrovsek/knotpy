@@ -1,183 +1,510 @@
 """Draw a planar graph from a PlanarGraph object.
 """
 
-from itertools import chain
-
-from matplotlib.path import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.collections import PatchCollection, LineCollection, PolyCollection
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.colors import to_rgb
+from collections import defaultdict
+
+from tqdm import tqdm
+import math
+import cmath
 
 import knotpy as kp
-import knotpy.drawing
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.drawing.circlepack import CirclePack
+from knotpy.classes.spatialgraph import SpatialGraph
+from knotpy.drawing.layout import circlepack_layout, bezier
+from knotpy.algorithms.structure import loops, bridges
+from knotpy.utils.geometry import Circle, CircularArc, Line, Segment
+from knotpy.utils.geometry import (perpendicular_arc, is_angle_between, antipode, tangent_line, middle, bisector, bisect, split,
+                                   perpendicular_arc_through_point)
+
+from knotpy.notation.native import from_knotpy_notation
+from knotpy.notation import to_pd_notation
+from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
+
+from knotpy.classes.node import Vertex, Crossing
+from knotpy.manipulation.phantom import is_node_phantom
+
 
 __all__ = ['draw', 'export_pdf', "circlepack_layout"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-def _bezier_function(z0, z1, z2, derivative=0):
-    """Return Bézier curve through control points z0, z1, z2. The curve is as the function or its derivative.
-    :param z0: control point
-    :param z1: control pointcirclepack.py
-draw_matplotlib.py
-    :param z2: control point
-    :param derivative: order of derivative
+
+# default plotting properties
+# node
+DEFAULT_NODE_SIZE = 0.2
+DEFAULT_NODE_COLOR = "black"
+PHANTOM_NODE_COLOR = "gray"
+PHANTOM_NODE_ALPHA = 0.5
+# arcs
+DEFAULT_LINE_WIDTH = 3.5
+DEFAULT_LINE_COLOR = "steelblue"
+DEFAULT_BRAKE_WIDTH = 0.15  # arc break marking the under-passing
+# text
+DEFAULT_TEXT_COLOR = "black"
+DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_SIZE_PIXELS = DEFAULT_FONT_SIZE * 72 / 100 / 100  # default 100 DPI
+# circles
+DEFAULT_CIRCLE_ALPHA = 0.15
+DEFAULT_CIRCLE_COLOR = "cadetblue"
+# edge colors
+EDGE_COLORS = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray',
+               'tab:olive', 'tab:cyan']
+
+# arrows
+ARROW_LENGTH = 0.25
+ARROW_WIDTH = 0.25
+ARROW_FLOW = 0.5  # arrow slant so it appears more natural, 0 = tangent
+DEFAULT_ARROW_COLOR = DEFAULT_LINE_COLOR
+
+
+class Arrow:
+    """Class representing a graphical arrow"""
+    def __init__(self, pointy_end: complex, direction: complex):
+        """
+        :param pointy_end: the position of the pointy end of the arrow (end point)
+        :param direction: direction of arrow from start point to end point
+        """
+        self.point = pointy_end
+        self.direction = direction / abs(direction)
+
+    def triangle(self):
+        point0 = self.point
+        point_ = self.point - self.direction * ARROW_LENGTH
+        point1 = point_ + 1j * self.direction * 0.5 * ARROW_WIDTH
+        point2 = point_ - 1j * self.direction * 0.5 * ARROW_WIDTH
+        return [(point0.real, point0.imag), (point1.real, point1.imag), (point2.real, point2.imag)]
+
+
+def to_color(item):
+    return EDGE_COLORS[item % len(EDGE_COLORS)] if isinstance(item, int) else item
+
+
+def average_color(color1, color2):
+    rgb1, rgb2 = to_rgb(to_color(color1)), to_rgb(to_color(color2))
+    return (rgb1[0] + rgb2[0])/2, (rgb1[1] + rgb2[1])/2, (rgb1[2] + rgb2[2])/2
+
+
+def _plot_vertices(k, circles, with_labels, ax):
+    """Plot vertices as points or circles with label
+    :param k: planar graph
+    :param circles: dictionary containing vertices as keys and (position, radius) as value
+    :param with_labels: set True to draw node labels
+    :param ax: pyplot axis
     :return:
     """
 
-    if derivative == 0:
-        return lambda t: (1 - t) * ((1 - t) * z0 + t * z1) + t * ((1 - t) * z1 + t * z2)
-    if derivative == 1:
-        return lambda t: 2 * (1 - t) * (z1 - z0) + 2 * t * (z2 - z1)
-    if derivative == 2:
-        return lambda t: 2 * (z2 - 2 * z1 + z0)
-    raise NotImplementedError("derivatives higher than 2 not implemented")
+    for node in k.vertices:
+        circle = circles[node]
+        xy = (circle.center.real, circle.center.imag) if isinstance(circle, Circle) else (circle.real, circle.imag)
+        if with_labels and not is_node_phantom(k, node):
+            circle_patch_out = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3 + DEFAULT_LINE_WIDTH / 100 * 1.5,
+                                          color=k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR), zorder=2)
+            circle_patch_in = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3,
+                                         color="white", zorder=3)
+            ax.add_patch(circle_patch_out)
+            ax.add_patch(circle_patch_in)
+            ax.text(*xy,
+                    s=str(node),
+                    ha="center",
+                    va="center",
+                    fontsize=DEFAULT_FONT_SIZE,
+                    color=DEFAULT_TEXT_COLOR,
+                    zorder=4)
 
-
-def bezier(*z, straight_lines=False):
-    """Draw a Bézier curve of degree 1 or 2.
-    :param z: list of coordinates as complex numbers
-    :param straight_lines: Bézier curve degree (False = 2, True = 1)
-    :return:
-    """
-    vertices = [(w.real, w.imag) for w in z]
-    codes = [Path.MOVETO] + [Path.LINETO if straight_lines else Path.CURVE3] * (len(z) - 1)
-    return Path(vertices, codes)
-
-
-def _repr(d):
-    """Nicely print data (region, arc, endpoint/) for debugging."""
-    if isinstance(d, int) or isinstance(d, float): return str(d)
-    if isinstance(d, str): return d
-    if isinstance(d, dict):
-        return "{" + ", ".join([_repr(k) + "->" + _repr(v) for k, v in d.items()]) + "}"
-    if isinstance(d, list) or isinstance(d, tuple):
-        if len(d) == 2 and isinstance(d[1], int):  # guess endpoint
-            return _repr(d[0]) + _repr(d[1])
         else:
-            return ("[" if isinstance(d, list) else "(") + \
-                " ".join(_repr(i) for i in d) + \
-                ("]" if isinstance(d, list) else ")")
-    return ""
+            color = k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR)
+            if is_node_phantom(k, node):
+                color = PHANTOM_NODE_COLOR
+            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=color, zorder=3)
+            ax.add_patch(circle_patch)
 
 
-def circlepack_layout(k):
-    """Return a layout for knot k. A layout is"""
-
-    _debug = False
-    external_node_radius = 1.0  # radius of external circles corresponding to nodes
-    external_arc_radius = 0.5  # radius of external circles corresponding to arcs
-
-    if _debug: print("Graph is", k)
-
-    regions = list(kp.regions(k))
-    if _debug: print("Regions are", regions)
-
-    external_region = min(regions, key=lambda r: (-len(r), r))  # sort by longest, then by lexicographical order
-    if _debug: print("External region is", external_region)
-
-    regions.remove(external_region)
-
-    # sorted(g.regions(), key=lambda r: (-len(r), r)) # sort by longest, then by lexicographical order
-    if _debug: print("Internal regions are", regions)
-
-    arcs = list(k.arcs)
-    if _debug: print("Arcs are", arcs)
-
-    ep_to_arc_dict = {ep: arc for arc in arcs for ep in arc}
-    ep_to_reg_dict = {ep: reg for reg in (regions + [external_region]) for ep in reg}
-
-    # add external nodes and arcs to the set of external circles
-    external_circles = {ep.node: external_node_radius for ep in external_region} | \
-                       {ep_to_arc_dict[ep]: external_arc_radius for ep in external_region}  # nodes & arcs
-
-    # region -> arc / node
-    internal_circles = {region: list(chain(*((ep_to_arc_dict[ep], ep.node) for ep in region))) for region in regions}
-
-    # node -> region / arc
-    internal_circles |= {v: list(chain(
-        *((ep_to_arc_dict[ep], ep_to_reg_dict[ep]) for ep in k.nodes[v])
-    )) for v in k.nodes}
-
-    # arc -> region / node
-    internal_circles |= {arc: [ep_to_reg_dict[arc[1]], arc[0].node, ep_to_reg_dict[arc[0]], arc[1].node] for arc in arcs}
-
-    internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
-
-    return CirclePack(internal=internal_circles,
-                      external=external_circles)
+def _plot_circles(circles, ax):
+    """Plot circles obtained by the circle packing theorem to draw the diagram.
+    :param circles:  dictionary containing vertices/edges/areas as keys and (position, radius) as value
+    :param ax: pyplot axis
+    :return:
+    """
+    #TODO: plot all at once
+    # plot circles
+    for circle in circles.values():
+        circle_patch = plt.Circle((circle.center.real, circle.center.imag), circle.radius,
+                                  alpha=DEFAULT_CIRCLE_ALPHA,
+                                  facecolor=DEFAULT_CIRCLE_COLOR,
+                                  ls="none")
+        ax.add_patch(circle_patch)
 
 
-def draw(g, node_size=0.25, line_width=3.5, draw_circles=True):
+def _plot_arc(k, circles):
+    """The middle "arc" part that is a path through the arc circle and starts and ends on the intersection of the arc
+    circle and the adjacent tangent node circles.
+    :param k:
+    :param circles:
+    :return:
+    """
+    result_curves = []
+    for arc in k.arcs.keys():
+        ep0, ep1 = arc
+        # compute the arc that is perpendicular to the arc circle
+        g_arc = perpendicular_arc(circles[arc], circles[ep0.node], circles[ep1.node])
+        color1 = k.nodes[ep0].get("color", DEFAULT_LINE_COLOR)
+        color2 = k.nodes[ep1].get("color", DEFAULT_LINE_COLOR)
+        if color1 != color2:
+            print("Warning: different colored twin edges not yet supported.")
+        color = average_color(color1, color2)
+
+        # TODO: if endpoints are different color, split arcs in half using the bisect() method
+        result_curves.append((g_arc, color))
+    return result_curves
+
+
+def _vertex_endpoints_colors(k, v):
+    # return a list of colors of endpoints of v in order
+    return [to_color(k.nodes[ep].get("color", DEFAULT_LINE_COLOR)) for ep in k.endpoints[v]]
+
+
+def _closest_point_to_circle_index(circle, points):
+    # return the index of the circle that is closest to the point
+    distances = [abs(point - circle.center) for point in points]
+    return distances.index(max(distances))
+
+
+def _indices_by_value_count(lst):
+    """ Return sorted indices of the list, e.g. given [1,1,5,8,5,1], it will return  [(3,), (2,4), (0,1,5)],
+    i.e. indices 8, 5, 1 respectfully."""
+    counter = defaultdict(list)
+    for i, val in enumerate(lst):
+        counter[val].append(i)
+    return sorted(counter.values(), key=lambda t: len(t))
+
+
+def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False, arrow=False):
+    """ Plot the node endpoint presented by the arc. Also plot arrows, gaps, etc.
+    :param k: planar diagram
+    :param circles: circle-packing
+    :param arc: the geometric arc to draw
+    :param ep: endpoint to draw
+    :return:
+    """
+    return_curves = []
+    color = to_color(ep.get("color", DEFAULT_LINE_COLOR))
+
+    # get the two endpoints od the arc
+    pt0 = arc(arc.theta1) if isinstance(arc, CircularArc) else arc(0)
+    pt1 = arc(arc.theta2) if isinstance(arc, CircularArc) else arc(1)
+    # which arc endpoint is the one at the vertex/crossing, 0 or 1?
+    node_pt = 0 if abs(circles[ep.node].center - pt0) < abs(circles[ep.node].center - pt1) else pt1
+
+    if isinstance(arc, CircularArc):
+        if not gap:
+            return_curves.append((arc, color))
+            arrow_angle = ARROW_LENGTH / arc.radius  # circular arc length is s = theta * radius
+            if arrow and isinstance(ep, IngoingEndpoint):
+
+                if arrow and isinstance(ep, IngoingEndpoint):
+                    if node_pt == 0:
+                        a = Arrow(arc(arc.theta1 + arrow_angle*0.5),
+                                  arc(arc.theta1) - arc(arc.theta1 + arrow_angle))
+                        return_curves.append((a, color))
+                    else:
+                        a = Arrow(arc(arc.theta2 - arrow_angle*0.5),
+                                  arc(arc.theta2) - arc(arc.theta2 - arrow_angle))
+                        return_curves.append((a, color))
+
+        else:
+            gap_angle = DEFAULT_BRAKE_WIDTH / arc.radius  # circular arc length is s = theta * radius
+            arrow_angle = ARROW_LENGTH / arc.radius  # circular arc length is s = theta * radius
+            if arc.length() > DEFAULT_BRAKE_WIDTH:
+                if node_pt == 0:
+                    return_curves.append((CircularArc(arc.center, arc.radius, arc.theta1 + gap_angle, arc.theta2), color))
+                    if arrow and isinstance(ep, IngoingEndpoint):
+                        a = Arrow(arc(arc.theta1 + gap_angle - arrow_angle * 0.25),
+                                  arc(arc.theta1 + gap_angle) - arc(arc.theta1 + gap_angle + arrow_angle))
+                        return_curves.append((a, color))
+                else:
+                    return_curves.append((CircularArc(arc.center, arc.radius, arc.theta1, arc.theta2 - gap_angle), color))
+                    if arrow and isinstance(ep, IngoingEndpoint):
+                        a = Arrow(arc(arc.theta2 - gap_angle + arrow_angle * 0.25),
+                                  arc(arc.theta2 - gap_angle) - arc(arc.theta2 - gap_angle - arrow_angle))
+                        return_curves.append((a, color))
+
+    elif isinstance(seg := arc, Segment):
+        return_curves.append((seg, color))
+        if arrow and isinstance(ep, IngoingEndpoint):
+            arrow_t = ARROW_WIDTH / seg.length()
+            if node_pt == 0:
+                a = Arrow(arc(0), arc(0) - arc(arrow_t))
+                return_curves.append((a, color))
+            else:
+                a = Arrow(arc(1), arc(1) - arc(1-arrow_t))
+                return_curves.append((a, color))
+
+
+    else:
+        raise TypeError(f"Arc {arc} is of type {type(arc)}, but should be of type CircularArc or Segment")
+
+    return return_curves
+
+
+def _plot_all_endpoints(k, circles, new_vertices: dict):
+    result_curves = []
+
+    for v in k.nodes:
+        node = k.nodes[v]
+        arcs = k.arcs[v]
+        endpoints = k.endpoints[v]
+        colors = [to_color(k.nodes[ep].get("color", DEFAULT_LINE_COLOR)) for ep in endpoints]
+        # is the vertex smooth?
+        if isinstance(node, Vertex) and len(colors) == 3 and len(set(colors)) == 2:
+            """If geometry allows, create a 3-valent vertex, such that:
+             - the two same colored edges are represented by an arc perpendicular to the vertex circle
+             - the one single colored arc is a segment lying on the line through the edge and the antipodal point
+             Otherwise create a 3-valent vertex, such that:
+             - the two same colored edges are represented by an arc perpendicular to the vertex circle
+             - the single colored arc lies on a circular arc perpendicular to the circle and goes through the bisection
+               point of the "same colored arc" at step 1. This point is obtained as the intersection of the tangent line
+               at the single arc and the bisector line through the segment of the edge point and the bisector of the
+               "same colored arc"
+            """
+            """Connect 3-valent vertices with 2 colors such that the same colored vertices are smooth at crossing"""
+            [b], [a1, a2] = _indices_by_value_count(colors)  # indices of same (a1, a2) and different (b) arc
+            ep_b, ep_a1, ep_a2 = endpoints[b], endpoints[a1], endpoints[a2]
+            arc_b, arc_a1, arc_a2 = arcs[b], arcs[a1], arcs[a2]
+
+            """the two same colored edges are represented by an arc perpendicular to the vertex circle"""
+            # arcs that are the same color
+            same_arc = perpendicular_arc(circles[v], circles[arc_a1], circles[arc_a2], order := [])
+
+            boundary_b_point = circles[arc_b] * circles[v]  # intersection point on the circle boundary
+            boundary_b_point = boundary_b_point[0]
+            mid_arc_point = middle(same_arc)
+
+            diff_arc = perpendicular_arc_through_point(circles[v], boundary_b_point, mid_arc_point)
+
+            # draw the single endpoint that is of different color
+            result_curves += _plot_endpoint(k, circles, diff_arc, ep_b, gap=False, arrow=True)
+            # print(k)
+            # print(circles)
+            # print(diff_arc)
+            # print(ep_b)
+            # print()
+
+            same_arc1, same_arc2 = bisect(same_arc)
+            result_curves += _plot_endpoint(k, circles, same_arc1, ep_a1 if order[0] == 1 else ep_a2, gap=False, arrow=True)
+            result_curves += _plot_endpoint(k, circles, same_arc2, ep_a2 if order[1] == 2 else ep_a1, gap=False, arrow=True)
+
+            new_vertices[v] = mid_arc_point
+
+        # is it a non-smooth vertex?
+        elif isinstance(node, Vertex) and k.degree(v) == 2:
+            """if degree is 2, then plot an arc"""
+            arc1, arc2 = arcs
+            ep1, ep2 = endpoints
+            same_arc = perpendicular_arc(circles[v], circles[arc1], circles[arc2], order := [])
+            same_arc1, same_arc2 = bisect(same_arc)
+            mid_arc_point = middle(same_arc)
+            result_curves += _plot_endpoint(k, circles, same_arc1, ep1 if order[0] == 1 else ep2, gap=False, arrow=True)
+            result_curves += _plot_endpoint(k, circles, same_arc2, ep2 if order[1] == 2 else ep1, gap=False, arrow=True)
+            new_vertices[v] = mid_arc_point
+
+        elif isinstance(node, Vertex):
+            """Connect vertex-like endpoints by straight lines from the middle arc to the vertex node.
+            But skip 3-valent vertices where one arc is smooth (two arcs that have the same color, but is different from one
+            of the rest od the endpoints. TODO: make the average boundary point as the node position and and arcs"""
+            for arc in k.arcs[v]:  # loop through incident arcs
+                ep0, ep1 = arc
+                color = to_color(k.nodes[ep0].get("color", DEFAULT_LINE_COLOR))  # assume 1st endpoint is at vertex
+                int_point = circles[arc] * circles[v]  # intersection point
+                int_point = int_point[0]
+
+                result_curves.append((Segment(int_point, circles[v].center), color))
+
+
+        elif isinstance(node, Crossing):
+            """Connect crossing endpoints. Plot two circular arcs from the crossing to the endpoint. The over-arc is a single
+            circular arc, the under-arc splits into two sub-arcs, the gap represents the arc break emphasizing that the 
+            under-arc travels below the over-arc."""
+
+            # get circular arcs
+            over_arc = perpendicular_arc(circles[v], circles[arcs[1]], circles[arcs[3]], over_order := [])
+            under_arc = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[2]], under_order := [])
+            point = (over_arc * under_arc)[0]
+
+            over_arc1, over_arc3 = split(over_arc, point)
+            under_arc0, under_arc2 = split(under_arc, point)
+
+            result_curves += _plot_endpoint(k, circles, over_arc1, endpoints[1] if over_order[0] == 1 else endpoints[3], gap=False, arrow=False)
+            result_curves += _plot_endpoint(k, circles, over_arc3, endpoints[3] if over_order[1] == 2 else endpoints[1], gap=False, arrow=False)
+            result_curves += _plot_endpoint(k, circles, under_arc0, endpoints[0] if under_order[0] == 1 else endpoints[2], gap=True, arrow=True)
+            result_curves += _plot_endpoint(k, circles, under_arc2, endpoints[2] if under_order[0] == 1 else endpoints[0], gap=True, arrow=True)
+    return result_curves
+
+
+def _plot_arcs(k, circles, ax):
+    """ Plot diagram arcs obtained by the circle-packing theorem. An arc is a path from a node to a node.
+    :param k: planar graph
+    :param circles: dictionary containing vertices (or arcs or areas) as keys and (position, radius) as values
+    :param ax: pyplot axis
+    :return:
+    """
+
+    curves = []  # curves patches
+    new_vertices = dict()  # coordinates of vertices given by intersections
+
+    # draw middle arc
+    curves += _plot_arc(k, circles)
+
+    # draw non-smooth vertices
+    # curves += _plot_vertex_endpoints(k, circles)
+    #
+    # # draw smooth 3-valent vertices
+    # curves += _plot_vertex_endpoints_degree_3_smooth(k, circles, new_vertices)
+    #
+    # curves += _plot_crossings_endpoints(k, circles, new_vertices)
+
+    curves += _plot_all_endpoints(k, circles, new_vertices)
+
+    # plot
+
+    # filter arcs and segments
+    arc_patches = [patches.Arc((arc.center.real, arc.center.imag), 2 * arc.radius, 2 * arc.radius,
+                       theta1=math.degrees(arc.theta1), theta2=math.degrees(arc.theta2))
+                   for arc, color in curves if isinstance(arc, CircularArc)]
+
+    arc_colors = [color for arc, color in curves if isinstance(arc, CircularArc)]
+
+    segments = [((seg.A.real, seg.A.imag), (seg.B.real, seg.B.imag)) for seg, color in curves if isinstance(seg, Segment)]
+    segment_colors = [color for seg, color in curves if isinstance(seg, Segment)]
+
+    arrows = [pol for pol, color in curves if isinstance(pol, Arrow)]
+    arrow_colors = [color for seg, color in curves if isinstance(seg, Arrow)]  # TODO: use zip
+
+    ax.add_collection(PatchCollection(arc_patches,
+                                      facecolor='none',
+                                      lw=DEFAULT_LINE_WIDTH,
+                                      edgecolor=arc_colors,
+                                      ))
+
+
+    ax.add_collection(LineCollection(segments,
+                                      facecolor='none',
+                                      lw=DEFAULT_LINE_WIDTH,
+                                      edgecolor=segment_colors,
+                                      ))
+
+    # Create a PolyCollection with the triangles
+    # print(arrows)
+    # for a in arrows:
+    #     print("  ",a)
+    #     print("    ", a.points())
+    # print([a.points() for a in arrows])
+
+    ax.add_collection(
+        PolyCollection(
+        [arrow.triangle() for arrow in arrows],
+        facecolors=arrow_colors, edgecolors="none"
+    )
+    )
+
+    # poly_collection = PolyCollection([a.points() for a in arrows], facecolors=arrow_colors, edgecolors='none')
+    #ax.add_collection(poly_collection)
+    #ax.add_collection(PatchCollection([patches.Polygon([a.x(), a.y()]) for a in arrows]))
+
+    return new_vertices
+
+
+
+    # TODO: support for other vertex types
+
+    # for arc in k.arcs.keys():
+    #     z0 = circles[arc[0].node][0]
+    #     z1 = circles[arc][0]
+    #     z2 = circles[arc[1].node][0]
+    #     path = bezier(z0, z1, z2)
+    #     ax.add_patch(patches.PathPatch(path,
+    #                                    facecolor='none',
+    #                                    lw=DEFAULT_LINE_WIDTH,
+    #                                    edgecolor=DEFAULT_LINE_COLOR,
+    #                                     alpha=0.1))
+
+def draw(k, draw_circles=True, with_labels=False, with_title=False):
+    """Draw the planar diagram k using Matplotlib.
+    :param k: A planar diagram
+    :param draw_circles: draw the circle that define the positions of node, arcs, and areas/faces
+    :param with_labels: set True to draw node labels
+    :param with_title: set True to draw diagram title
+    :return:
+    """
     #print()
     #print("Drawing graph", g)
 
-    default_node_color = "black"
-    default_arc_color = "steelblue"
-    default_circle_alpha = 0.15
-    default_circle_color = "cadetblue"
+    if bridges(k) or loops(k):
+        print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
 
-    circles = circlepack_layout(g)
+    # compute the layout
+    circles = circlepack_layout(k)
 
-    # plot
-    fig, ax = plt.subplots()
-    ax.set_aspect('equal')
+    # compute image size
+    margin = 0.5  # max(radius for coord, radius in circles.values()) * 0.25
+    x_min = min(circle.center.real - circle.radius for circle in circles.values()) - margin
+    x_max = max(circle.center.real + circle.radius for circle in circles.values()) + margin
+    y_min = min(circle.center.imag - circle.radius for circle in circles.values()) - margin
+    y_max = max(circle.center.imag + circle.radius for circle in circles.values()) + margin
+
+    # Create a figure and axis
+    fig, ax = plt.subplots(figsize=((x_max - x_min), (y_max - y_min)))
     ax.axis('off')
 
-    arcs = g.arcs.keys()
-    #print("Arcs are", arcs)
-
-    # plot circles
     if draw_circles:
-        for center, radius in circles.values():
-            circle_patch = plt.Circle((center.real, center.imag), radius,
-                                      alpha=default_circle_alpha,
-                                      facecolor=default_circle_color,
-                                      ls="none")
-            ax.add_patch(circle_patch)
+        _plot_circles(circles, ax)
 
-    # plot arcs
-    for arc in arcs:
-        z0 = circles[arc[0].node][0]
-        z1 = circles[arc][0]
-        z2 = circles[arc[1].node][0]
-        path = bezier(z0, z1, z2)
-        ax.add_patch(patches.PathPatch(path,
-                                       facecolor='none',
-                                       lw=line_width,
-                                       edgecolor=default_arc_color))
+    new_vertices = _plot_arcs(k, circles, ax)
+    circles.update(new_vertices)
 
-    # plot nodes
-    for node in g.nodes:
-        center, radius = circles[node]
-        circle_patch = plt.Circle((center.real, center.imag), node_size / 2,
-                                  color=g.nodes[node].attr.get("color", default_node_color))
-        ax.add_patch(circle_patch)
+    _plot_vertices(k, circles, with_labels=with_labels, ax=ax)
 
-    if len(str(g.name)) > 0:
-        ax.set_title(str(g.name))
+    if with_title:
+        title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
+        ax.set_title(str(title))
 
-    plt.autoscale()
+    # Set axis limits for better visualization
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+
+    # Set aspect ratio to be equal
+    ax.set_aspect('equal', adjustable='box')
+    plt.savefig("test.png", bbox_inches='tight')
     #plt.show()
-    #plt.savefig("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/figs/x.png")
-
-    return None
 
 
-def export_pdf(graphs, filename, author=None):
-    # TODO: detect if one or more grpahs
-    # TODO: autodetect extension
+def export_pdf(k, filename, draw_circles=True, with_labels=False, with_title=False, author=None):
+    """Draw the planar diagram(s) k using Matplotlib and save to pdf.
+    :param k: the planar diagram or a list of planar diagrams
+    :param filename: pdf name
+    :param author: add pdf author information
+    :return:
+    """
+
     pdf = PdfPages(filename)
-    for g in [graphs] if isinstance(graphs, PlanarDiagram) else graphs:
-
-        #print(g)
-        #print(list(kp.regions(g)))
-        draw(g)
-        pdf.savefig()  # saves the current figure into a pdf page
-        #plt.show()
+    warnings = []
+    k = [k] if isinstance(k, PlanarDiagram) else k
+    for pd in (tqdm(k, desc="Exporting to pdf", unit="diagrams") if len(k) >= 5 else k):
+        #print("exporting", k)
+        #print("Exporting", to_pd_notation(pd))
+        if bridges(pd) or loops(pd):
+            warnings.append(f"Skipped drawing {pd}, since drawing loops or bridges in not yet supported.")
+            continue
+        draw(pd,
+             draw_circles=draw_circles,
+             with_labels=with_labels,
+             with_title=with_title)
+        pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
         plt.close()
 
     if author is not None:
@@ -185,57 +512,62 @@ def export_pdf(graphs, filename, author=None):
 
     pdf.close()
 
+    print("\n".join(warnings))
+
 
 
 
 if __name__ == '__main__':
+    """
+    
+    
+    "('OrientedSpatialGraph', {'name': 't0_1(0).0'}, 
+    [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), 
+    ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
 
-    nots =  ["bcdef, afec, abed, ace, adcbf, aeb",]
-    # "bcde, aef, afed, ace, adcfb, bec",
-    # "bcde, aef, afd, ace, adfb, bec",
-    # "bcd, ade, aef, afb, bfc, ced",
-    # "bcd, aec, abefd, acf, bfc, ced",
-    # "bcde, aef, afd, acfe, adfb, bedc",
-    # "bcdef, afc, abfed, ace, adc, acb",
-    # "bcde, aef, afd, acf, afb, bedc",
-    # "bcde, aefc, abfd, acfe, adfb, bedc"]
-    #
-    # graphs = kp.loadtxt_multiple("/Users/bostjan/Dropbox/Code/knotpy/knotpy/drawing/data/polyhedra-?-1.txt",
-    #                              notation="plantri", prepended_node_count=True)
-    #
-    # print("Number of graphs:", len(graphs))
-    #
-    # g1= kp.from_plantri_notation("bcde, aec, abfd, acfg, aghb, chgd, dfhe, egf")
-    # g2= kp.from_plantri_notation("bcde, afgc, abhd, ache, adgf, beg, bfeh, cgd")
-    #
-    # print(g1)
-    # print(g2)
-    #
-    # print()
-    # g1.canonical()
-    # g2.canonical()
-    #
-    # print(str(kp.to_adjacency_list(g1)).replace(" ",""))
-    # print(str(kp.to_adjacency_list(g2)).replace(" ",""))
-    #
+
+
+"""
+
+    import matplotlib.pyplot as plt
+    #s = "('OrientedSpatialGraph', {'name': '+t3_1#-3_1(1).2'}, [('Vertex', 'a', (('IngoingEndpoint', 'c', 2, {}), ('OutgoingEndpoint', 'b', 1, {'color': 1}), ('OutgoingEndpoint', 'd', 0, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'd', 1, {}), ('IngoingEndpoint', 'a', 1, {'color': 1}), ('OutgoingEndpoint', 'g', 0, {})), {}), ('Crossing', 'c', (('IngoingEndpoint', 'f', 3, {}), ('IngoingEndpoint', 'f', 2, {}), ('OutgoingEndpoint', 'a', 0, {}), ('OutgoingEndpoint', 'e', 0, {})), {}), ('Crossing', 'd', (('IngoingEndpoint', 'a', 2, {}), ('OutgoingEndpoint', 'b', 0, {}), ('OutgoingEndpoint', 'g', 3, {}), ('IngoingEndpoint', 'h', 2, {})), {}), ('Crossing', 'e', (('IngoingEndpoint', 'c', 3, {}), ('IngoingEndpoint', 'h', 1, {}), ('OutgoingEndpoint', 'f', 1, {}), ('OutgoingEndpoint', 'f', 0, {})), {}), ('Crossing', 'f', (('IngoingEndpoint', 'e', 3, {}), ('IngoingEndpoint', 'e', 2, {}), ('OutgoingEndpoint', 'c', 1, {}), ('OutgoingEndpoint', 'c', 0, {})), {}), ('Crossing', 'g', (('IngoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'h', 0, {}), ('OutgoingEndpoint', 'h', 3, {}), ('IngoingEndpoint', 'd', 2, {})), {}), ('Crossing', 'h', (('IngoingEndpoint', 'g', 1, {}), ('OutgoingEndpoint', 'e', 1, {}), ('OutgoingEndpoint', 'd', 3, {}), ('IngoingEndpoint', 'g', 2, {})), {})])"
+    #s = "('SpatialGraph', {'name': 't0_1(1)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {}), ('Endpoint', 'b', 2, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {}), ('Endpoint', 'a', 2, {}), ('Endpoint', 'a', 1, {'color': 1})), {})])"
+    s = "('OrientedSpatialGraph', {'name': 't0_1(0).0'}, [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
+    k = from_knotpy_notation(s)
+    # print(k)
+    # k.permute_node("a", {0:1,1:2,2:0})
+    # print(k)
     # exit()
-    #
-    # print("Number of graphs:", len(set(graphs)))
-    #
-    # exit()
-    #
-    # for i, g in enumerate(graphs):
-    #     g.name = f"Graph {i} ({len(g)} nodes)"
-    #     for v in g.nodes:
-    #         if g.degree(v) == 3:
-    #             g.nodes[v]["color"] = "brown"
 
-    graphs = [kp.from_plantri_notation(n.replace(" ",""), ccw=True) for n in nots]
+    draw(k, draw_circles=True, with_labels=True, with_title=True)
 
-    #print(graphs)
-    export_pdf(graphs,
-               "/Users/bostjan/Dropbox/test.pdf")
-    #draw(g, draw_circles=True)
+    plt.show()
 
-    # circle pack
-    pass
+    from knotpy.manipulation.phantom import insert_phantom_bivalent_vertex_on_arc
+    arcs = list(k.arcs)
+    insert_phantom_bivalent_vertex_on_arc(k, arcs[0])
+    print(k)
+    draw(k, draw_circles=True, with_labels=True, with_title=True)
+
+    plt.show()
+    exit()
+    #k = kp.from_pd_notation("X[3,1,0,0],X[2,1,3,2]", create_using=SpatialGraph)
+    #k = kp.from_pd_notation("V[0,2],V[1,0],X[6,2,3,5],V[5,4,6],V[1,4,3]", create_using=SpatialGraph)
+
+    # draw(k, draw_circles=True, with_labels=True, with_title=True)
+    # plt.show()
+    codes = ["V[0,1,2],V[3,4,5],X[6,0,7,8],X[8,9,3,10],X[1,6,10,5],X[9,7,11,12],X[12,11,2,4]"]
+    codes = ["V[0,1,2],V[3,4,1],X[2,4,5,6],X[7,8,9,5],X[8,10,6,9],X[3,0,10,7]"]
+    codes = ["V[0,1,2],V[3,4,5],X[5,2,6,7],X[1,8,9,6],X[10,8,11,12],X[12,11,0,4],X[13,14,7,9],X[14,13,10,3]"]
+    codes = ["V[0,1,2],V[3,4,5],X[6,7,8,9],X[10,11,12,13],X[4,11,2,7],X[13,12,14,15],X[16,0,10,17],X[1,16,18,8],X[5,6,9,18],X[15,14,3,17]"]
+    codes = ["V[0,1,2],V[3,4,5],X[2,6,7,8],X[9,4,10,7],X[5,11,12,1],X[11,9,6,12],X[13,14,3,0],X[8,10,14,13]"]
+    thetas = [kp.from_pd_notation(code, create_using=SpatialGraph) for code in codes]
+    for k in thetas:
+
+        print("Drawing", k)
+        print("verts", k.vertices)
+        print("crossings", k.crossings)
+        draw(k, draw_circles=True, with_labels=True, with_title=True)
+        plt.show()
+
+    #export_pdf(graphs,"slike.pdf", draw_circles=True, with_labels=True, with_title=True)

@@ -35,28 +35,35 @@ class PlanarGraph(PlanarDiagram):
         hashable objects."""
         self.add_nodes_from(nodes_for_adding=vertices_for_adding, create_using=Vertex, **attr)
 
-
     def is_oriented(self):
         return False
 
-    def is_knotted(self):
-        return False
-
-    #@staticmethod
-    def to_unoriented_class(self):
+    @staticmethod
+    def to_unoriented_class():
         return PlanarGraph
 
-    #@staticmethod
-    def to_oriented_class(self):
-        raise NotImplementedError()
-
     @staticmethod
-    def to_knotted_class():
-        return kp.SpatialGraph
+    def to_oriented_class():
+        return OrientedPlanarGraph
 
     @property
     def number_of_vertices(self):
         return len(self._nodes)
+
+
+class OrientedPlanarGraph(PlanarDiagram):
+
+    @staticmethod
+    def is_oriented():
+        return True
+
+    @staticmethod
+    def to_unoriented_class():
+        return PlanarGraph
+
+    @staticmethod
+    def to_oriented_class():
+        raise OrientedPlanarGraph
 
 
 if __name__ == "__main__":

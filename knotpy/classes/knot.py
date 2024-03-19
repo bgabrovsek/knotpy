@@ -2,13 +2,13 @@ from functools import cached_property
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram, _NodeCachedPropertyResetter
-from knotpy.classes.node import Crossing, BivalentVertex
+from knotpy.classes.node import Crossing #, BivalentVertex
 from knotpy.classes.views import FilteredNodeView
 #from knotpy.algorithms.components import link_components_endpoints
 #from knotpy.classes.orientedknot import OrientedKnot
 
 
-__all__ = ['Knot']
+__all__ = ['Knot', "OrientedKnot"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
@@ -37,7 +37,6 @@ class Knot(PlanarDiagram):
         """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
         self.add_node(node_for_adding=crossing_for_adding, create_using=Crossing, degree=4, **attr)
 
-
     def add_crossings_from(self, crossings_for_adding, **attr):
         """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
         hashable objects."""
@@ -59,13 +58,6 @@ class Knot(PlanarDiagram):
         for node in bivalent_nodes_for_adding:
             self.add_bivalent_vertex(node, **attr)
 
-    # graph conversion
-    def to_oriented_knots(self):
-        """Returns a (deepcopy) list of corresponding oriented knots. For an n-component link there are 2^n possible
-        oriented knots."""
-        link_components = link_components_endpoints(self)
-        pass
-
 
 
     @staticmethod
@@ -73,16 +65,12 @@ class Knot(PlanarDiagram):
         return False
 
     @staticmethod
-    def is_knotted():
-        return True
-
-    @staticmethod
     def to_unoriented_class():
-        return kp.Knot
+        return Knot
 
     @staticmethod
     def to_oriented_class():
-        return kp.OrientedKnot
+        return OrientedKnot
 
     @property
     def number_of_crossings(self):
@@ -90,11 +78,13 @@ class Knot(PlanarDiagram):
 
 
 class OrientedKnot(Knot):
-    pass
+    @staticmethod
+    def is_oriented():
+        return True
 
 def _tests():
 
-    from knotpy.algorithms.region_algorithms import regions
+    from knotpy.algorithms.faces import faces
 
     # construct a knot for testing
     k = Knot(name="My knot", color="blue")
@@ -104,7 +94,7 @@ def _tests():
     print(k)
     print(set(k.endpoints))
     print(set(k.arcs))
-    print(list(regions(k)))
+    print(list(faces(k)))
 
 if __name__ == "__main__":
     pass

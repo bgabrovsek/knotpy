@@ -20,10 +20,10 @@ import string
 from collections import defaultdict
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.utils.string_operations import multi_replace, nested_split, abcABC
+from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
 from knotpy.generate.simple import empty_knot
 from knotpy.algorithms.node_algorithms import add_node_to
-from knotpy.classes.node import Vertex, BivalentVertex, Crossing
+from knotpy.classes.node import Vertex, Crossing #BivalentVertex,
 
 
 __all__ = ['from_pd_notation', 'to_pd_notation']
@@ -46,13 +46,13 @@ __author__ = 'Boštjan Gabrovšek'
 _node_abbreviations = {
     "X": Crossing,
     "V": Vertex,
-    "B": BivalentVertex
+    #"B": BivalentVertex
 }
 
 _node_abbreviations_inv = {val: key for key, val in _node_abbreviations.items()}
 
 
-def from_pd_notation(text: str, node_type=str, create_using=None):
+def from_pd_notation(text: str, node_type=str, create_using=None, **attr):
     """Create planar diagram object from string containing the PD code.
     Autodetect PD codes of formats:
     - Mathematica: "V[1,2,3], X[2,3,4,5]", see https://knotinfo.math.indiana.edu/descriptions/pd_notation.html,
@@ -61,6 +61,7 @@ def from_pd_notation(text: str, node_type=str, create_using=None):
     :param text: string containing the PD notation
     :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
     :param create_using:
+    :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
     :return: planar diagram object
     """
 
@@ -73,6 +74,7 @@ def from_pd_notation(text: str, node_type=str, create_using=None):
 
     k = empty_knot(create_using=create_using)
     arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
+
 
     for node, subtext in enumerate(text.split(";")):
         # get node type and arc data
@@ -92,6 +94,8 @@ def from_pd_notation(text: str, node_type=str, create_using=None):
 
     for arc in arc_dict.values():
         k.set_arc(arc)
+
+    k.attr.update(attr)  # update given attribures
 
     #print(k)
 

@@ -15,8 +15,8 @@ are connected through a tiny bond
 
 from abc import ABC, abstractmethod
 
-from knotpy.utils.decorators import total_order_py3
-from knotpy.utils.combinatorics import cmp_dict
+from knotpy.utils.dict_utils import compare_dicts
+from knotpy.utils.decorators import total_ordering_py3
 
 """
 define what a node is and what data it consists of
@@ -26,21 +26,24 @@ __all__ = ['Node']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@gmail.si>'
 
+@total_ordering_py3
+class Node(ABC):
+    """Abstract node class. Holds a list of incident endpoints and node attributes.
+    Nodes can be crossings, vertices, etc."""
 
-@total_order_py3
-class Node(ABC): #Node(ABC, list):
-    """Abstract node class. Nodes can be crossings, vertices,..."""
-
-    attr: dict
-    _inc: list
+    attr: dict  # node's attributes (color, weight, ...)
+    _inc: list  # list of adjacent endpoints
 
     def __init__(self, incoming_node_data=None, degree=None, **attr):
         incoming_node_data = incoming_node_data or []
         degree = degree or 0
+
         if len(incoming_node_data) > degree:
             raise ValueError(f"Cannot create node {incoming_node_data} that is larger than its degree ({degree})")
+
         if len(incoming_node_data) < degree:
             incoming_node_data += [None] * (degree - len(incoming_node_data))
+
         self.attr = dict()
         self.attr.update(attr)
         self._inc = list(incoming_node_data)
@@ -61,41 +64,23 @@ class Node(ABC): #Node(ABC, list):
     def append(self, item):
         self._inc.append(item)
 
-    # def __iadd__(self, other):
-    #     #print("iadd", self,"+",other)
-    #     return self #._adj.__iadd__(other)
-
     def __len__(self):
         return len(self._inc)
-
-
-    # def __eq__(self, other):
-    #     return self.py3_cmp(other) == 0
-    #
-    # def __ne__(self, other):
-    #     return self.py3_cmp(other) != 0
-    #
-    # def __lt__(self, other):
-    #     return self.py3_cmp(other) < 0
-    #
-    # def __le__(self, other):
-    #     return self.py3_cmp(other) <= 0
-    #
-    # def __gt__(self, other):
-    #     return self.py3_cmp(other) > 0
-    #
-    # def __ge__(self, other):
-    #     return self.py3_cmp(other) >= 0
 
     def py3_cmp(self, other, compare_attr=False):
         """Compare node. Replaces obsolete __cmp__ method.
         :param other: Node to compare with
         :param compare_attr: do we compare also the node attributes (name, color, ...)
-        :return: 1 if self > other, -1 if self < other, and 0 otherwise.
+        :return: 1 if self > other,
+                 -1 if self < other,
+                 0 otherwise.
         """
 
+        def _compare(_x, _y):
+            return 1 if (_x > _y) else (-1 if (_x < _y) else 0)
+
         if type(self).__name__ != type(other).__name__:
-            return ((type(self).__name__ > type(other).__name__) << 1) - 1
+            return _compare(type(self).__name__, type(other).__name__)
 
         if len(self) != len(other):
             return ((len(self) < len(other)) << 1) - 1
@@ -105,74 +90,21 @@ class Node(ABC): #Node(ABC, list):
                 return ((a < b) << 1) - 1
 
         if compare_attr:
-            return cmp_dict(self.attr, other.attr)
+            return compare_dicts(self.attr, other.attr)
         return 0
 
     def degree(self):
         return len(self)
-
-    # def naive_permute(self, p):
-    #     """Permute the endpoints of the node. For example, if p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,3,1]),
-    #     endpoints 1, 2, 3 will be placed at positions 2, 3, 1, respectively. I.e. adjacent vert
-    #     Warning: the permutation does not fix adjacent endpoints. For a clean permute, call permute_node from
-    #     node_algorithms.
-    #     :param p: dict, list or tuple.
-    #     :return: None
-    #     TODO: are there problems regarding endpoint attributes?
-    #     """
-    #     if isinstance(p, list) or isinstance(p, tuple):
-    #         p = dict(enumerate(p))
-    #
-    #     inv_p = inverse_dict(p)
-    #
-    #     self._inc = [self._inc[p[i]] for i in p]
-
-
-    # def flip(self, steps):
-    #     """Flips the node from CW to CCW. Use with caution: the code can break the realizability of the knot."""
-    #
-    #     self.reverse()
 
 
     @abstractmethod
     def mirror(self):
         pass
 
-    @staticmethod
-    @abstractmethod
-    def is_crossing(self):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def is_bivalent(self):
-        pass
-
-    @abstractmethod
-    def jump_over(self, position):
-        """Return the adjacent endpoint of (node, position) that is connected (is on the same strand or component) of
-        the endpoint at the input position. For the position i, the jump is at position (i + 2) mod 4.
-        :param position:
-        :return: for a crossing-type node return adjacent position
-        """
-        pass
-
-    # @abstractmethod
-    # def strand_positions(self):
-    #     """Return the list of positions of endpoints that are connected (on the same strand/component),
-    #     e.g. for knots, the endpoints at positions (0, 2) and (1, 3) are on the same strand/component;
-    #     for vertices there are no common strands.
-    #     Strand positions are useful when orienting a diagram, since the arcs on a common strand must be coherently
-    #     oriented.
-    #     :return: a list of tuples, each element representing the integer position of the endpoints on the same strand,
-    #     if the endpoints are independent strands, they are not included in the list
-    #     """
-    #     pass
-
     def __str__(self):
         """Used mostly for debugging. Actual node is usually printed via NodeView."""
         return "({})".format(
-            " ".join((str(e.node) + str(e.position)) if e is not None else "?" for e in self._inc)
+            " ".join(str(ep) if ep is not None else "?" for ep in self._inc)
         )
 
 

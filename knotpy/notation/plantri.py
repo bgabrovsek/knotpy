@@ -8,7 +8,7 @@ See https://users.cecs.anu.edu.au/~bdm/plantri/
 from string import ascii_letters
 from collections import defaultdict
 from knotpy.classes.planargraph import PlanarGraph
-from knotpy.algorithms.arc_algorithms import has_parallel_arcs
+from knotpy.algorithms.structure import parallel_arcs
 
 __all__ = ['from_plantri_notation', 'to_plantri_notation']
 __version__ = '0.1'

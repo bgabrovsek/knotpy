@@ -1,15 +1,24 @@
-class Vertex(list):
-    def __init__(self, data_for_adding):
-        adding = data_for_adding
-        super(Vertex, self).__init__((1,2,3))
-        self.lolz = "vertex"
+class NumberGenerator:
+    def __init__(self, limit):
+        self.limit = limit
+        self.current = 0
 
-    def do(self):
-        self.lolz = "oh  no"
+    def __iter__(self):
+        return self
 
-c = Vertex([1,2,3])
-print(c)
+    def __next__(self):
+        if self.current < self.limit:
+            result = self.current
+            self.current += 1
+            return result
+        else:
+            raise StopIteration
 
-#print(min(range(len(data)), key=lambda i: data[i]))
+# Example usage
+limit = 5
+number_iterator = NumberGenerator(limit)
 
-#print(min(data, key=lambda x: list(zip(*x))))
+for num in number_iterator:
+    print(num)
+
+print(list(NumberGenerator(10)))

@@ -2,10 +2,11 @@
 class EquivalenceRelation(dict):
     """Partitions a set of objects into equivalence classes.
     Each key/item of the dictionary is the object and the values are sets that represent the class"""
-    def __init__(self, items=[]):
+    def __init__(self, items=None):
         """
         :param items: iterable of objects.
         """
+        items = items or []
         super().__init__()
         for item in items:
             super().__setitem__(item, {item})
@@ -25,8 +26,11 @@ class EquivalenceRelation(dict):
             super().__setitem__(item, new_set)
 
     def classes(self):
-        return set(tuple(c) for c in self.values())
-
+        result = []
+        for c in self.values():
+            if c not in result:
+                result.append(c)
+        return result
 
 if __name__ == "__main__":
     # four equivalent classes

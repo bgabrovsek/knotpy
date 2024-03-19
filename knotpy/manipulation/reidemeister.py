@@ -3,7 +3,7 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.node_algorithms import name_for_new_node
 from knotpy.algorithms.components import add_unknot_in_place
-from knotpy.algorithms.region_algorithms import regions
+
 
 __all__ = ['remove_kink']
 __version__ = '0.1'
@@ -85,7 +85,7 @@ def remove_poke(k: PlanarDiagram, region: list) -> None:
     if len(region) != 2:
         raise ValueError(f"Cannot perform an unpoke on a region of length {len(region)}.")
 
-    r = list(regions(k))
+    r = list(faces(k))
 
     # no sanity checks
 

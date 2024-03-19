@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Hashable
 
-from knotpy.utils.decorators import total_order_py3
-from knotpy.utils.combinatorics import cmp_dict
+from knotpy.utils.decorators import total_ordering_py3
+from knotpy.utils.dict_utils import compare_dicts
 
 
 @dataclass(unsafe_hash=True)
-@total_order_py3
+@total_ordering_py3
 class Endpoint:
     node: Hashable
     position: int
@@ -23,11 +23,14 @@ class Endpoint:
         return iter((self.node, self.position))
 
     def __str__(self):
+        s = ""
         if isinstance(self.node, str):
-            return f"{self.node}{self.position}"  # ⇢⇠⤍➤⤞
+            s += f"{self.node}{self.position}"  # ⇢⇠⤍➤⤞
         else:
-            return f"({self.node},{self.position})"
-
+            s += f"({self.node},{self.position})"
+        if "color" in self.attr:
+            s += "=" + str(self.attr["color"])
+        return s
     def py3_cmp(self, other, compare_attributes=False):
 
         if type(self).__name__ != type(other).__name__:
@@ -40,9 +43,24 @@ class Endpoint:
             return ((self.position > other.position) << 1) - 1
 
         if compare_attributes:
-            return cmp_dict(self.attr, other.attr)
+            return compare_dicts(self.attr, other.attr)
 
         return 0
+
+    def __setitem__(self, key, value):
+        self.attr[key] = value
+        #print(key,"to",value)
+
+    def __getitem__(self, key):
+        return self.attr[key]
+
+    def get(self, key, __default=None):
+        return self.attr.get(key, __default)
+
+    def __contains__(self, key):
+        return key in self.attr
+
+
 
     def __repr__(self):
         return str(self)
@@ -51,19 +69,26 @@ class Endpoint:
 class IngoingEndpoint(Endpoint):
 
     def __str__(self):
+        s = ""
         if isinstance(self.node, str):
-            return f"{self.node}{self.position}i"  # ⇢⇠⤍➤⤞
+            s = f"{self.node}{self.position}i"  # ⇢⇠⤍➤⤞
         else:
-            return f"({self.node},{self.position})i"
+            s = f"({self.node},{self.position})i"
 
+        if "color" in self.attr:
+            s += "=" + str(self.attr["color"])
+        return s
 
 class OutgoingEndpoint(Endpoint):
     def __str__(self):
+        s = ""
         if isinstance(self.node, str):
-            return f"{self.node}{self.position}o"  # ⇢⇠⤍➤⤞
+            s = f"{self.node}{self.position}o"  # ⇢⇠⤍➤⤞
         else:
-            return f"({self.node},{self.position})o"
+            s = f"({self.node},{self.position})o"
 
-
+        if "color" in self.attr:
+            s += "=" + str(self.attr["color"])
+        return s
 if __name__ == "__main__":
     pass

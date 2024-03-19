@@ -1,12 +1,11 @@
 from knotpy.classes.knot import Knot
-from knotpy.algorithms.region_algorithms import regions
 from knotpy.algorithms.components import link_components_endpoints, disjoint_components
 
 def sanity_check(k):
 
     _print = True
 
-    reg = list(regions(k))
+    reg = list(faces(k))
     ept = list(k.endpoints)
     arc = list(k.arcs)
     nod = list(k.nodes)

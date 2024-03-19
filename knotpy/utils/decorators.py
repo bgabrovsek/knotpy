@@ -13,7 +13,7 @@ from sympy import symbols, Symbol
 
 #@knottted_structure(Crossing, Node)
 
-def total_order_py3(cls):
+def total_ordering_py3(cls):
     """Create a class with total order from the cmp method py3_cmp()
     :param cls: decorated class
     :return: self
@@ -47,26 +47,26 @@ def total_order_py3(cls):
     return cls
 
 
-def single_variable_invariant(default_variable):
-    """Decorator for a single-variable invariant that converts the second argument of the invariant to a sympy symbol.
-    The invariant is therefore of the form "def invariant_func(obj, variable, ...)". If function (invariant) is called
-    by keyword argument, the keyword argument with key "variable" is assumed. If the "variable" key is not in the kwargs
-    dictionary, the default variable default_variable is added to kwargs."""
-
-    def inner(invariant_func):
-
-        def _to_variable(arg):
-            return arg if isinstance(arg, Symbol) else symbols(arg)
-
-        def wrapper(*args, **kwargs):
-            if len(args) >= 2:
-                args = args[:1] + (_to_variable(args[1]),) + args[2:]
-            else:
-                kwargs["variable"] = _to_variable(kwargs["variable"] if "variable" in kwargs else default_variable)
-            return invariant_func(*args, **kwargs)
-        return wrapper
-
-    return inner
+# def single_variable_invariant(default_variable):
+#     """Decorator for a single-variable invariant that converts the second argument of the invariant to a sympy symbol.
+#     The invariant is therefore of the form "def invariant_func(obj, variable, ...)". If function (invariant) is called
+#     by keyword argument, the keyword argument with key "variable" is assumed. If the "variable" key is not in the kwargs
+#     dictionary, the default variable default_variable is added to kwargs."""
+#
+#     def inner(invariant_func):
+#
+#         def _to_variable(arg):
+#             return arg if isinstance(arg, Symbol) else symbols(arg)
+#
+#         def wrapper(*args, **kwargs):
+#             if len(args) >= 2:
+#                 args = args[:1] + (_to_variable(args[1]),) + args[2:]
+#             else:
+#                 kwargs["variable"] = _to_variable(kwargs["variable"] if "variable" in kwargs else default_variable)
+#             return invariant_func(*args, **kwargs)
+#         return wrapper
+#
+#     return inner
 
 
 def multi_variable_invariant(default_variables):

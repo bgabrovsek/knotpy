@@ -7,7 +7,7 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@gmail.si>'
 
 
 class Terminal(Vertex):
-    """A terminal is a knotoid endpoint."""
+    """A terminal is a special degree 1 vertex of a knotoid endpoint."""
 
     def __init__(self, incoming_terminal_data=None, degree=1, **attr):
         degree = degree or 1
@@ -18,13 +18,13 @@ class Terminal(Vertex):
     def mirror(self):
         pass
 
-    @staticmethod
-    def is_crossing(self):
-        return False
+    # @staticmethod
+    # def is_crossing(self):
+    #     return False
 
-    @staticmethod
-    def is_bivalent(self):
-        return False
+    # @staticmethod
+    # def is_bivalent(self):
+    #     return False
 
     def __str__(self):
         return "T" + super().__str__()
