@@ -1,6 +1,6 @@
 from knotpy.classes.knot import Knot, OrientedKnot
 from knotpy.classes.spatialgraph import SpatialGraph
-from knotpy.classes.orientedspatialgraph import OrientedSpatialGraph
+# from knotpy.classes.orientedspatialgraph import OrientedSpatialGraph
 
 from knotpy.classes.planardiagram import PlanarDiagram
 
