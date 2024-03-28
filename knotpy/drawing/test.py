@@ -17,9 +17,9 @@ def plot_circles(coordinates, radii):
     plt.grid(True)
     plt.show()
 
+if __name__ == '__main__':
+    # Example usage:
+    coordinates = [(1, 1), (3, 2), (-2, -2)]
+    radii = [1, 1.5, 2]
 
-# Example usage:
-coordinates = [(1, 1), (3, 2), (-2, -2)]
-radii = [1, 1.5, 2]
-
-plot_circles(coordinates, radii)
+    plot_circles(coordinates, radii)

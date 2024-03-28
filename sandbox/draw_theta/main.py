@@ -92,31 +92,31 @@ def draw_diagram_from_layout(k, layout, node_size=0.25, line_width=3.5, draw_cir
 
     return None
 
+if __name__ == '__main__':
+    # PD code
+    pd_code = "V[3,18,17],V[9,2,14],X[13,14,17,16],X[16,18,22,20],X[22,23,24,21],X[23,3,2,24],X[20,8,11,13],X[9,11,8,21]"
 
-# PD code
-pd_code = "V[3,18,17],V[9,2,14],X[13,14,17,16],X[16,18,22,20],X[22,23,24,21],X[23,3,2,24],X[20,8,11,13],X[9,11,8,21]"
+    # create knot
+    knot = kp.from_pd_notation(pd_code)
 
-# create knot
-knot = kp.from_pd_notation(pd_code)
+    # a knot is given in EM notation
+    print(knot)
 
-# a knot is given in EM notation
-print(knot)
+    # create layout, that is, a system of circles associated to each vertex/edge/region in form of a dictionary
+    layout = kp.circlepack_layout(knot)
 
-# create layout, that is, a system of circles associated to each vertex/edge/region in form of a dictionary
-layout = kp.circlepack_layout(knot)
-
-for circle in layout:
-    center, radius = layout[circle]
-    print("circle", circle, "center", center, "radius", radius)
+    for circle in layout:
+        center, radius = layout[circle]
+        print("circle", circle, "center", center, "radius", radius)
 
 
-# draw diagram from layout
-draw_diagram_from_layout(knot, layout)
+    # draw diagram from layout
+    draw_diagram_from_layout(knot, layout)
 
-# show diagram
-plt.show()
-# plt.savefig("slika.png")
-plt.close()
+    # show diagram
+    plt.show()
+    # plt.savefig("slika.png")
+    plt.close()
 
 
 
