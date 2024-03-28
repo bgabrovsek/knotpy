@@ -35,15 +35,20 @@ def empty_knot(create_using=None):
 #     return pg
 #
 #
-# def parallel_edge(multiplicity):
-#     """Returns a graph with two vertices and multiplicity edges between the two nodes."""
-#     pg = PlanarGraph()
-#     pg._add_node(0, multiplicity)
-#     pg._add_node(1, multiplicity)
-#     if multiplicity > 0:
-#         for i in range(multiplicity):
-#             pg._set_arc(((0, i), (1, multiplicity - i - 1)))
-#         return pg
+
+def parallel_edge(multiplicity):
+    """Returns a graph with two vertices and multiplicity edges between the two nodes."""
+    # TODO: Implement this
+    
+    # pg = PlanarGraph()
+    # pg._add_node(0, multiplicity)
+    # pg._add_node(1, multiplicity)
+    # if multiplicity > 0:
+    #     for i in range(multiplicity):
+    #         pg._set_arc(((0, i), (1, multiplicity - i - 1)))
+    #     return pg
+    pass
+
 #
 # def house_graph():
 #     """

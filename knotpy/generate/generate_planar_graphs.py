@@ -86,7 +86,7 @@ def generate_planar_graphs(maximal_number_of_nodes,
     :param output_filename:
     :param allow_parallel_arcs:
     :param output_ignore_degree_sequences_filename: if this parameter is provided, all graphs will be saved during the
-     process of generation (not only the ones that have a matching degree sequence)
+    process of generation (not only the ones that have a matching degree sequence)
     :param start_with_planar_graphs: the algorithm will start generating graphs using this list of planar.
     This can be used to continue computations from one step where all graphs up to some degree have already
     been generated.
