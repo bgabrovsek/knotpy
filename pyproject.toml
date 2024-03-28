@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knotpy"
+version = "0.0.1"
+dependencies = [
+    "sympy>=1.12",
+    "matplotlib>=3.8.3",
+    "tqdm>=2.2.3",
+]
+
+[project.optional-dependencies]
+documentation = [
+    "sphinx>=7.2.6",
+    "pydata-sphinx-theme>=0.14.2",
+]
+test = [
+    "pytest>=8.1.1",
+]
+dev = [
+    "sphinx>=7.2.6",
+    "pydata-sphinx-theme>=0.14.2",
+    "pytest>=8.1.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["knotpy*"]
+
+[[project.authors]]
+name = 'Boštjan Gabrovšek'
+email = 'bostjan.gabrovsek@fs.uni-lj.si'
