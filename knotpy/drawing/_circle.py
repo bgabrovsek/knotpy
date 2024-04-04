@@ -27,42 +27,42 @@ def plot_arc(center, radius, theta1, theta2, color='blue'):
     plt.gca().add_patch(circular_arc)
 
 
+if __name__ == '__main__':
+    fig, ax = plt.subplots()
+    ax.set_xlim([-6, 6])
+    ax.set_ylim([-6, 6])
+    ax.set_aspect('equal', adjustable='box')
 
-fig, ax = plt.subplots()
-ax.set_xlim([-6, 6])
-ax.set_ylim([-6, 6])
-ax.set_aspect('equal', adjustable='box')
+    import cmath
 
-import cmath
+    z = 1 + 0.5j
+    r = 3.2
 
-z = 1 + 0.5j
-r = 3.2
+    v = -1+1j
+    i0 = z + r * v / abs(v)
+    v = +3-1.5j
+    i1 = z + r * v / abs(v)
 
-v = -1+1j
-i0 = z + r * v / abs(v)
-v = +3-1.5j
-i1 = z + r * v / abs(v)
-
-p = 0.5 * (i0 + i1)  # midpoint of i0 and i1
-
-
+    p = 0.5 * (i0 + i1)  # midpoint of i0 and i1
 
 
-p_ = _inverse_point_through_circle(z, r, p)
-out_r = abs(p_ - i0)
 
-alpha_1 = cmath.phase(i0-p_)
-alpha_2 = cmath.phase(i1-p_)
 
-print(alpha_1, alpha_2
-      )
+    p_ = _inverse_point_through_circle(z, r, p)
+    out_r = abs(p_ - i0)
 
-circle(z, r)
-pt(i0)
-pt(i1)
-pt(p)
-pt(p_, color="green")
-plot_arc(p_, out_r, alpha_1, alpha_2)
-#circle(p_, out_r)
+    alpha_1 = cmath.phase(i0-p_)
+    alpha_2 = cmath.phase(i1-p_)
 
-plt.show()
+    print(alpha_1, alpha_2
+        )
+
+    circle(z, r)
+    pt(i0)
+    pt(i1)
+    pt(p)
+    pt(p_, color="green")
+    plot_arc(p_, out_r, alpha_1, alpha_2)
+    #circle(p_, out_r)
+
+    plt.show()
