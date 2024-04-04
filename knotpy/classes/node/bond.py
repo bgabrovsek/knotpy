@@ -27,7 +27,7 @@ class Bond(Node):
     #     return False
 
     def __str__(self):
-        return "N" + super().__str__()
+        return "B" + super().__str__()
 
 
 # class OrientedBond(Bond):

@@ -28,7 +28,12 @@ def theta_to_bonded_knot(rk: SpatialGraph, only_simple=True) -> list:
     result = []
     for i in range(3):
         new_k = deepcopy(k)
-        for ep in edges(new_k)[i]:
+        edge = list(edges(new_k)[i])
+        if edge[0].node == edge[-1].node:  # skip bonded knots if the bond forms a loop, since it is not bonded then
+            continue
+        #print(k.name, edge)
+        #if len(edge) ==
+        for ep in edge:
             ep["color"] = 1
         new_k.name = new_k.name + f"({i})"
         result.append(new_k)

@@ -5,9 +5,9 @@ import math
 import cmath
 
 
-__all__ = ["Circle", "CircularArc", "Line", "Segment",
+__all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox",
            "antipode", "perpendicular_line", "perpendicular_arc", "bisect", "tangent_line", "middle", "bisector",
-           "is_angle_between", "perpendicular_arc_through_point"]
+           "is_angle_between", "perpendicular_arc_through_point", "circle_through_points"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -289,7 +289,7 @@ def is_angle_between(theta1: float, theta2: float, theta3: float) -> bool:
 
 #### GEOMETRIC OPERATIONS
 def perpendicular_line(l: Line, p: complex):
-    """Return a line that is perpendicular to the other line."""
+    """Return a line that is perpendicular to the other line. and goes through point p"""
     return Line(p, p + 1j * (l.B - l.A))
 
 
@@ -381,6 +381,7 @@ def perpendicular_arc(circle, circle1, circle2, order=None):
     if len(point1) == 0 or len(point2) == 0:
         raise ValueError("No intersection point computing perpendicular arc")
     if len(point1) == 2 or len(point2) == 2:
+        raise ValueError("two intersection points of tangent circles")
         print("Warning: two intersection points of tangent circles")
     point1 = point1[0]
     point2 = point2[0]
@@ -462,8 +463,90 @@ def middle(g):
     raise TypeError("Can only bisect an arc or a segment.")
 
 
+def circle_through_points(A, B, C):
+    """Return a circle through points A, B, and C."""
+    ab = Segment(A, B)
+    bc = Segment(B, C)
+    b_ab = bisector(ab)
+    b_bc = bisector(bc)
+    center = b_ab * b_bc
+    if center is None:
+        return None
+    radius = (abs(center - A) + abs(center - B) + abs(center - C))/3
+    return Circle(center, radius)
 
 
+class BoundingBox:
+
+    def __init__(self, g=None):
+
+        #print("bb")
+
+        if g is None:
+            self.bottom_left = 0  # bottom left
+            self.top_right = 0  # top right
+        elif isinstance(g, CircularArc):
+            angles = [0, math.pi / 2, math.pi, math.pi * 3 / 2]
+            points = list()  # extreme points
+            points.append(g(g.theta1))
+            points.append(g(g.theta2))
+            for beta in angles:
+                if is_angle_between(g.theta1, beta, g.theta2):
+                    points.append(g(beta))
+
+            self.bottom_left = min(p.real for p in points) + 1J * min(p.imag for p in points)
+            self.top_right = max(p.real for p in points) + 1J * max(p.imag for p in points)
+        elif isinstance(g, Circle):
+            self.bottom_left = g.center - g.radius - 1J * g.radius
+            self.top_right = g.center + g.radius + 1J * g.radius
+        elif isinstance(g, Segment):
+            self.bottom_left = min(g.A.real, g.B.real) + 1J * min(g.A.imag, g.B.imag)
+            self.top_right = max(g.A.real, g.B.real) + 1J * max(g.A.imag, g.B.imag)
+        elif isinstance(g, Line):
+            # todo: except if parallel to real or imaginary axis
+            self.bottom_left = 0
+            self.top_right = 0  # should be inf
+        else:
+            print("ERROR")
+            raise ValueError()
+        #print(self)
+
+    def make_square(self):
+        size_x = self.top_right.real - self.bottom_left.real
+        size_y = self.top_right.imag - self.bottom_left.imag
+        size = max(size_x, size_y)
+        self.bottom_left -= (size - size_x)/2 + 1J * (size - size_y)/2
+        self.top_right += (size - size_x)/2 + 1J * (size - size_y)/2
+
+        """
+        bl = -3 + 1
+        tr = 4 + 11
+        sizex = 7
+        sizey = 10
+        size= 10
+        bl -= (10-7)/2 
+        
+        """
+
+    def add_padding(self, units=None, fraction=None):
+        if units is None and fraction is None:
+            raise ValueError("no padding")
+        if units is not None:
+            self.bottom_left -= units + 1J * units
+            self.top_right += units + 1J * units
+        if fraction is not None:
+            padding = (self.top_right - self.bottom_left) * fraction
+            self.bottom_left -= padding
+            self.top_right += padding
+
+
+    def __repr__(self):
+        return f"Bounding box from bottom left: {self.bottom_left} to top right{self.top_right}))"
+    def __ior__(self, other):
+        """join two bounding boxes"""
+        self.bottom_left = min(self.bottom_left.real, other.bottom_left.real) + 1J * min(self.bottom_left.imag, other.bottom_left.imag)
+        self.top_right = max(self.top_right.real, other.top_right.real) + 1J * max(self.top_right.imag, other.top_right.imag)
+        return self
 
 if __name__ == '__main__':
 

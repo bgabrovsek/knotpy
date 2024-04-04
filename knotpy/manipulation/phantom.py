@@ -3,7 +3,7 @@
 - phantom arcs that are used for plotting algorithm to work
 """
 
-__all__ = ["insert_phantom_bivalent_vertex_on_arc", "is_node_phantom"]
+__all__ = ["insert_phantom_node", "is_node_phantom", "insert_phantom_nodes_on_internal_arcs"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
@@ -24,7 +24,7 @@ def is_node_phantom(k: PlanarDiagram, node):
     return "_phantom" in k.nodes[node].attr and k.nodes[node].attr["_phantom"]
 
 
-def insert_phantom_bivalent_vertex_on_arc(k: PlanarDiagram, arc, node_name=None):
+def insert_phantom_node(k: PlanarDiagram, arc, node_name=None):
     """Put a "phantom" bivalent vertex on the arc."""
     if node_name is None:
         node_name = "_phantom_" + _random_string(8)  # random node name, e.g. "_phantom_jWSu
@@ -34,8 +34,10 @@ def insert_phantom_bivalent_vertex_on_arc(k: PlanarDiagram, arc, node_name=None)
     k.set_endpoint(endpoint_for_setting=ep1, adjacent_endpoint=(node_name, 0), create_using=ep2, _phantom=True)
     k.set_endpoint(endpoint_for_setting=(node_name, 1), adjacent_endpoint=ep2, create_using=ep2, **ep2.attr)
     k.set_endpoint(endpoint_for_setting=ep2, adjacent_endpoint=(node_name, 1), create_using=ep1, _phantom=True)
+    return node_name
 
-def insert_phantom_bivalent_vertices_on_internal_arcs(k: PlanarDiagram, nodes, exclude_arcs=None):
+
+def insert_phantom_nodes_on_internal_arcs(k: PlanarDiagram, nodes, exclude_arcs=None):
     """ insert phantom bivalent vertices on edges that connect two nodes from the nodes set. Except the excluded arcs.
     :param k:
     :param nodes:
@@ -51,7 +53,8 @@ def insert_phantom_bivalent_vertices_on_internal_arcs(k: PlanarDiagram, nodes, e
 
     phantom_nodes = []  # keep track of phantom nodes
     for arc in arcs:
-        ep1, ep2 = arcs
+        ep1, ep2 = arc
         if ep1.node in nodes and ep2.node in nodes:
-            phantom_nodes += insert_phantom_bivalent_vertex_on_arc(k, arc)
+            phantom_nodes.append(insert_phantom_node(k, arc))
+
     return phantom_nodes

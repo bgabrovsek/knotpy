@@ -19,17 +19,17 @@ from knotpy.drawing.layout import circlepack_layout, bezier
 from knotpy.algorithms.structure import loops, bridges
 from knotpy.utils.geometry import Circle, CircularArc, Line, Segment
 from knotpy.utils.geometry import (perpendicular_arc, is_angle_between, antipode, tangent_line, middle, bisector, bisect, split,
-                                   perpendicular_arc_through_point)
+                                   perpendicular_arc_through_point, BoundingBox)
 
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
-from knotpy.classes.node import Vertex, Crossing
+from knotpy.classes.node import Vertex, Crossing, Bond
 from knotpy.manipulation.phantom import is_node_phantom
 
 
-__all__ = ['draw', 'export_pdf', "circlepack_layout"]
+__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -41,6 +41,8 @@ DEFAULT_NODE_SIZE = 0.2
 DEFAULT_NODE_COLOR = "black"
 PHANTOM_NODE_COLOR = "gray"
 PHANTOM_NODE_ALPHA = 0.5
+
+BONDED_NODE_COLOR = "black"
 # arcs
 DEFAULT_LINE_WIDTH = 3.5
 DEFAULT_LINE_COLOR = "steelblue"
@@ -55,6 +57,8 @@ DEFAULT_CIRCLE_COLOR = "cadetblue"
 # edge colors
 EDGE_COLORS = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray',
                'tab:olive', 'tab:cyan']
+
+DEFAULT_BOND_COLOR = "black"
 
 # arrows
 ARROW_LENGTH = 0.25
@@ -99,30 +103,48 @@ def _plot_vertices(k, circles, with_labels, ax):
     :return:
     """
 
-    for node in k.vertices:
+    vertices = k.vertices if hasattr(k, "vertices") else []
+
+
+    for node in vertices:
         circle = circles[node]
         xy = (circle.center.real, circle.center.imag) if isinstance(circle, Circle) else (circle.real, circle.imag)
-        if with_labels and not is_node_phantom(k, node):
-            circle_patch_out = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3 + DEFAULT_LINE_WIDTH / 100 * 1.5,
-                                          color=k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR), zorder=2)
-            circle_patch_in = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3,
-                                         color="white", zorder=3)
-            ax.add_patch(circle_patch_out)
-            ax.add_patch(circle_patch_in)
-            ax.text(*xy,
-                    s=str(node),
-                    ha="center",
-                    va="center",
-                    fontsize=DEFAULT_FONT_SIZE,
-                    color=DEFAULT_TEXT_COLOR,
-                    zorder=4)
 
-        else:
-            color = k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR)
-            if is_node_phantom(k, node):
-                color = PHANTOM_NODE_COLOR
-            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=color, zorder=3)
+        if is_node_phantom(k, node):
+            # PHANTOM NODE
+            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=PHANTOM_NODE_COLOR, zorder=3)
             ax.add_patch(circle_patch)
+        else:
+            # NORMAL NODE
+            if with_labels:
+                circle_patch_out = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3 + DEFAULT_LINE_WIDTH / 100 * 1.5,
+                                              color=k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR), zorder=2)
+                circle_patch_in = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3,
+                                             color="white", zorder=3)
+                ax.add_patch(circle_patch_out)
+                ax.add_patch(circle_patch_in)
+                ax.text(*xy,
+                        s=str(node),
+                        ha="center",
+                        va="center",
+                        fontsize=DEFAULT_FONT_SIZE,
+                        color=DEFAULT_TEXT_COLOR,
+                        zorder=4)
+            else:
+                color = k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR)
+                circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=color, zorder=3)
+                ax.add_patch(circle_patch)
+
+    # BOND NODES
+    for key in circles:
+        if "__BOND__" in key:
+            # BONDED NODE
+
+            value = circles[key]
+            xy = (value.real, value.imag)
+            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2 * 0.67, color=BONDED_NODE_COLOR, zorder=3)
+            ax.add_patch(circle_patch)
+
 
 
 def _plot_circles(circles, ax):
@@ -334,7 +356,10 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
             # get circular arcs
             over_arc = perpendicular_arc(circles[v], circles[arcs[1]], circles[arcs[3]], over_order := [])
             under_arc = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[2]], under_order := [])
-            point = (over_arc * under_arc)[0]
+            #print("OO", over_arc, under_arc)
+            point = (over_arc * under_arc)
+            if not isinstance(point, complex):
+                point = point[0]
 
             over_arc1, over_arc3 = split(over_arc, point)
             under_arc0, under_arc2 = split(under_arc, point)
@@ -343,14 +368,34 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
             result_curves += _plot_endpoint(k, circles, over_arc3, endpoints[3] if over_order[1] == 2 else endpoints[1], gap=False, arrow=False)
             result_curves += _plot_endpoint(k, circles, under_arc0, endpoints[0] if under_order[0] == 1 else endpoints[2], gap=True, arrow=True)
             result_curves += _plot_endpoint(k, circles, under_arc2, endpoints[2] if under_order[0] == 1 else endpoints[0], gap=True, arrow=True)
+
+        elif isinstance(node, Bond):
+            arc01 = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[1]], order01 := [])
+            arc23 = perpendicular_arc(circles[v], circles[arcs[2]], circles[arcs[3]], order23 := [])
+            arc0, arc1 = bisect(arc01)
+            arc2, arc3 = bisect(arc23)
+            result_curves += _plot_endpoint(k, circles, arc0, endpoints[0] if order01[0] == 1 else endpoints[1], gap=False, arrow=False)
+            result_curves += _plot_endpoint(k, circles, arc1, endpoints[1] if order01[1] == 2 else endpoints[0], gap=False, arrow=False)
+            result_curves += _plot_endpoint(k, circles, arc2, endpoints[2] if order23[0] == 1 else endpoints[3], gap=False, arrow=False)
+            result_curves += _plot_endpoint(k, circles, arc3, endpoints[3] if order23[1] == 2 else endpoints[2], gap=False, arrow=False)
+            result_curves.append((Segment(middle(arc01), middle(arc23)), DEFAULT_BOND_COLOR))
+            new_vertices["__BOND__0" + str(len(new_vertices))] = middle(arc01)
+            new_vertices["__BOND__2" + str(len(new_vertices))] = middle(arc23)
+
+            #result_curves.append((Circle(middle(arc01), DEFAULT_BOND_NODE_RADIUS), DEFAULT_BOND_COLOR))
+            #result_curves.append((Circle(middle(arc23), DEFAULT_BOND_NODE_RADIUS), DEFAULT_BOND_COLOR))
+
+            # draw the bond itself
+
     return result_curves
 
 
-def _plot_arcs(k, circles, ax):
+def _plot_arcs(k, circles, ax, bounding_box=None):
     """ Plot diagram arcs obtained by the circle-packing theorem. An arc is a path from a node to a node.
     :param k: planar graph
     :param circles: dictionary containing vertices (or arcs or areas) as keys and (position, radius) as values
     :param ax: pyplot axis
+    :param bounding_box: BoundingBox object
     :return:
     """
 
@@ -359,14 +404,6 @@ def _plot_arcs(k, circles, ax):
 
     # draw middle arc
     curves += _plot_arc(k, circles)
-
-    # draw non-smooth vertices
-    # curves += _plot_vertex_endpoints(k, circles)
-    #
-    # # draw smooth 3-valent vertices
-    # curves += _plot_vertex_endpoints_degree_3_smooth(k, circles, new_vertices)
-    #
-    # curves += _plot_crossings_endpoints(k, circles, new_vertices)
 
     curves += _plot_all_endpoints(k, circles, new_vertices)
 
@@ -385,12 +422,19 @@ def _plot_arcs(k, circles, ax):
     arrows = [pol for pol, color in curves if isinstance(pol, Arrow)]
     arrow_colors = [color for seg, color in curves if isinstance(seg, Arrow)]  # TODO: use zip
 
+    # circles/points
+    arc_patches = [patches.Arc((arc.center.real, arc.center.imag), 2 * arc.radius, 2 * arc.radius,
+                       theta1=math.degrees(arc.theta1), theta2=math.degrees(arc.theta2))
+                   for arc, color in curves if isinstance(arc, CircularArc)]
+
+    arc_colors = [color for arc, color in curves if isinstance(arc, CircularArc)]
+
+
     ax.add_collection(PatchCollection(arc_patches,
                                       facecolor='none',
                                       lw=DEFAULT_LINE_WIDTH,
                                       edgecolor=arc_colors,
                                       ))
-
 
     ax.add_collection(LineCollection(segments,
                                       facecolor='none',
@@ -412,26 +456,89 @@ def _plot_arcs(k, circles, ax):
     )
     )
 
-    # poly_collection = PolyCollection([a.points() for a in arrows], facecolors=arrow_colors, edgecolors='none')
-    #ax.add_collection(poly_collection)
-    #ax.add_collection(PatchCollection([patches.Polygon([a.x(), a.y()]) for a in arrows]))
-
+    # compute the bounding box
+    if bounding_box is not None:
+        for g, color in curves:
+            if isinstance(g, CircularArc) or isinstance(g, Segment):
+                bounding_box |= BoundingBox(g)
     return new_vertices
 
 
 
-    # TODO: support for other vertex types
+def draw_from_layout(k,
+                     layout,
+                     draw_circles=True,
+                     with_labels=False,
+                     with_title=False,
+                     ax=None):
+    """
+    :param k:
+    :param layout:
+    :param draw_circles:
+    :param with_labels:
+    :param with_title:
+    :param ax:
+    :return:
+    """
 
-    # for arc in k.arcs.keys():
-    #     z0 = circles[arc[0].node][0]
-    #     z1 = circles[arc][0]
-    #     z2 = circles[arc[1].node][0]
-    #     path = bezier(z0, z1, z2)
-    #     ax.add_patch(patches.PathPatch(path,
-    #                                    facecolor='none',
-    #                                    lw=DEFAULT_LINE_WIDTH,
-    #                                    edgecolor=DEFAULT_LINE_COLOR,
-    #                                     alpha=0.1))
+    use_bounding_box = False
+    margin = 0.5  # max(radius for coord, radius in circles.values()) * 0.25
+    bb = BoundingBox() if use_bounding_box else None
+
+    if ax is None:
+        ax = plt.gca()
+
+    # compute image size
+    x_min = min(circle.center.real - circle.radius for circle in layout.values()) - margin
+    x_max = max(circle.center.real + circle.radius for circle in layout.values()) + margin
+    y_min = min(circle.center.imag - circle.radius for circle in layout.values()) - margin
+    y_max = max(circle.center.imag + circle.radius for circle in layout.values()) + margin
+
+    # if plt.get_fignums():
+    #     plt.close()
+
+    # Create a figure and axis
+    #fig, ax = plt.subplots(figsize=((x_max - x_min), (y_max - y_min)))
+    ax.axis('off')
+
+    if draw_circles:
+        _plot_circles(layout, ax)
+
+    new_vertices = _plot_arcs(k, layout, ax, bounding_box=bb)
+
+
+    layout.update(new_vertices)
+
+    _plot_vertices(k, layout, with_labels=with_labels, ax=ax)
+
+    if with_title:
+        title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
+        ax.set_title(str(title))
+
+
+    # Set axis limits for better visualization
+    if use_bounding_box:
+        bb.add_padding(fraction=0.1)
+        bb.make_square()
+        ax.set_xlim(bb.bottom_left.real, bb.top_right.real)
+        ax.set_ylim(bb.bottom_left.imag, bb.top_right.imag)
+    else:
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(y_min, y_max)
+
+    # Set aspect ratio to be equal
+    ax.set_aspect('equal', adjustable='box')
+
+    # if save_to_file is not None:
+    #     #DPI = fig.get_dpi()
+    #     #fig.set_size_inches(512.0 / float(DPI), 512.0 / float(DPI))
+    #
+    #     plt.savefig(save_to_file, bbox_inches='tight')
+    # else:
+    #     plt.show()
+
+    # plt.close(fig)
+
 
 def draw(k, draw_circles=True, with_labels=False, with_title=False):
     """Draw the planar diagram k using Matplotlib.
@@ -450,38 +557,7 @@ def draw(k, draw_circles=True, with_labels=False, with_title=False):
     # compute the layout
     circles = circlepack_layout(k)
 
-    # compute image size
-    margin = 0.5  # max(radius for coord, radius in circles.values()) * 0.25
-    x_min = min(circle.center.real - circle.radius for circle in circles.values()) - margin
-    x_max = max(circle.center.real + circle.radius for circle in circles.values()) + margin
-    y_min = min(circle.center.imag - circle.radius for circle in circles.values()) - margin
-    y_max = max(circle.center.imag + circle.radius for circle in circles.values()) + margin
-
-    # Create a figure and axis
-    fig, ax = plt.subplots(figsize=((x_max - x_min), (y_max - y_min)))
-    ax.axis('off')
-
-    if draw_circles:
-        _plot_circles(circles, ax)
-
-    new_vertices = _plot_arcs(k, circles, ax)
-    circles.update(new_vertices)
-
-    _plot_vertices(k, circles, with_labels=with_labels, ax=ax)
-
-    if with_title:
-        title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
-        ax.set_title(str(title))
-
-    # Set axis limits for better visualization
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-
-    # Set aspect ratio to be equal
-    ax.set_aspect('equal', adjustable='box')
-    plt.savefig("test.png", bbox_inches='tight')
-    #plt.show()
-
+    draw_from_layout(k, circles, draw_circles, with_labels, with_title)
 
 def export_pdf(k, filename, draw_circles=True, with_labels=False, with_title=False, author=None):
     """Draw the planar diagram(s) k using Matplotlib and save to pdf.
@@ -491,11 +567,13 @@ def export_pdf(k, filename, draw_circles=True, with_labels=False, with_title=Fal
     :return:
     """
 
+    #print(k)
+
     pdf = PdfPages(filename)
     warnings = []
     k = [k] if isinstance(k, PlanarDiagram) else k
     for pd in (tqdm(k, desc="Exporting to pdf", unit="diagrams") if len(k) >= 5 else k):
-        #print("exporting", k)
+        #print("exporting", pd)
         #print("Exporting", to_pd_notation(pd))
         if bridges(pd) or loops(pd):
             warnings.append(f"Skipped drawing {pd}, since drawing loops or bridges in not yet supported.")
@@ -504,6 +582,7 @@ def export_pdf(k, filename, draw_circles=True, with_labels=False, with_title=Fal
              draw_circles=draw_circles,
              with_labels=with_labels,
              with_title=with_title)
+        #plt.show()
         pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
         plt.close()
 
@@ -543,9 +622,9 @@ if __name__ == '__main__':
 
     plt.show()
 
-    from knotpy.manipulation.phantom import insert_phantom_bivalent_vertex_on_arc
+    from knotpy.manipulation.phantom import insert_phantom_node
     arcs = list(k.arcs)
-    insert_phantom_bivalent_vertex_on_arc(k, arcs[0])
+    insert_phantom_node(k, arcs[0])
     print(k)
     draw(k, draw_circles=True, with_labels=True, with_title=True)
 

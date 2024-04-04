@@ -2,12 +2,13 @@
 
 """
 
-__all__ = ["edges", "number_of_edges", "parallel_arcs","bridges","loops", "kinks"]
+__all__ = ["edges", "number_of_edges", "parallel_arcs","bridges","loops", "kinks", "cut_edges", "cut_vertices"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
 import random
 import string
+from collections import Counter
 
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint
@@ -63,6 +64,7 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
     - edges(k) returns all edges of the spatial graph
     - edges(k, color=1) returns all edges that have color 1
     """
+    # TODO: is this now a view?
     list_of_edges = []
     unused_endpoints = set(k.endpoints)
 
@@ -133,6 +135,25 @@ def bridges(k):
     """
     return set(arc for r in k.faces for arc in k.arcs if arc.issubset(r))
 
+def cut_edges(k):
+    return bridges(k)
+
+
+def articulation_nodes(k):
+    """Return a list of articulation nodes or cut vertices. A vertex is a cut-vertex if its removal disconnects the
+    graph."""
+
+    nodes = set()
+    for f in k.faces:
+        # keep nodes that repeat twice or more in a face
+        counts = Counter(ep.node for ep in f)
+        nodes |= {node for node, count in counts.items() if count >= 2}
+
+    return nodes
+
+
+def cut_vertices(k):
+    return articulation_nodes(k)
 
 def loops(k):
     """Return a set of loops of k. A loop is an arc that connects the node to itself, but the node is not a crossing.
@@ -167,6 +188,8 @@ def kink_region_iterator(k, of_node=None):
         for ep in k.nodes[node]:
             if ep == k.nodes[ep.node][(ep.position + 3) & 3]:  # is the endpoint and the ccw endpoint the same?
                 yield [ep]
+
+
 
 
 

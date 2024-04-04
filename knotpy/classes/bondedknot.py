@@ -3,10 +3,10 @@ from functools import cached_property
 import knotpy as kp
 from knotpy.classes.knot import Knot
 from knotpy.classes.planardiagram import PlanarDiagram, _NodeCachedPropertyResetter
-from knotpy.classes.node import Crossing, Bond #, BivalentVertex
+from knotpy.classes.node import Crossing, Bond
 from knotpy.classes.views import FilteredNodeView
 
-__all__ = ['Knot']
+__all__ = ['BondedKnot']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
