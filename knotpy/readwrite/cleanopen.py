@@ -17,13 +17,14 @@
 # _dispatch_dict = defaultdict(lambda: open, **fopeners)  # type: ignore
 #
 #
-# def prepend_to_extension(path, decoration=None):
-#     name, ext = splitext(path)
-#     if decoration is not None:
-#         path = name + "-" + str(decoration) + ext
-#     return path
-#
-#
+def prepend_to_extension(path, decoration=None):
+    # TODO: Implement this
+    # name, ext = splitext(path)
+    # if decoration is not None:
+    #     path = name + "-" + str(decoration) + ext
+    # return path
+    pass
+
 # def clean_open_file(path, mode="r"):
 #     """Ensure clean opening of files."""
 #     f = open(path, mode)
