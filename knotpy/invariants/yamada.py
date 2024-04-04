@@ -26,12 +26,6 @@ https://en.wikipedia.org/wiki/Mathematical_operators_and_symbols_in_Unicode
 import sympy
 from sympy import Symbol, Expr, symbols, expand
 
-_A = symbols("A")
-_sigma = (_A + 1 + _A**(-1))
-
-print(_sigma)
-
-
 #@single_variable_invariant('A')
 def yamada(g, variable='A') -> Expr:
     A = variable if isinstance(variable, Symbol) else symbols(variable)
