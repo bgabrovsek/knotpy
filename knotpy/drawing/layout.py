@@ -16,6 +16,7 @@ from knotpy.utils.geometry import Circle
 from knotpy.algorithms.components import number_of_link_components
 from knotpy.algorithms.structure import bridges, loops, kinks
 from knotpy.algorithms.components import number_of_disjoint_components
+from knotpy.notation.native import to_knotpy_notation
 
 #__all__ = ['draw', 'export_pdf', "circlepack_layout"]
 __version__ = '0.1'
@@ -137,6 +138,11 @@ def circlepack_layout(k):
     internal_circles |= {frozenset({ep0, ep1}): [ep_to_reg_dict[ep1], ep0.node, ep_to_reg_dict[ep0], ep1.node] for ep0, ep1 in arcs}
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
+
+    # print()
+    # print(k)
+    # print(to_knotpy_notation(k))
+    # print(internal_circles, external_circles)
 
     circles = CirclePack(internal=internal_circles, external=external_circles)
     return {key: Circle(*value) for key, value in circles.items()}  # return Circle objects

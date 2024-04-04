@@ -28,7 +28,7 @@ from typing import Tuple, Any, List, Generator
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes import SpatialGraph, Knot, OrientedKnot
+from knotpy.classes import SpatialGraph, Knot, OrientedKnot, BondedKnot
 from knotpy.notation.pd import from_pd_notation
 from knotpy.classes import Vertex, Crossing
 
