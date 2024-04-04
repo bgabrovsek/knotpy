@@ -139,10 +139,5 @@ def circlepack_layout(k):
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
-    # print()
-    # print(k)
-    # print(to_knotpy_notation(k))
-    # print(internal_circles, external_circles)
-
     circles = CirclePack(internal=internal_circles, external=external_circles)
     return {key: Circle(*value) for key, value in circles.items()}  # return Circle objects

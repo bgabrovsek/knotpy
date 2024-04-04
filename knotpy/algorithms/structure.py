@@ -191,8 +191,6 @@ def kink_region_iterator(k, of_node=None):
 
 
 
-
-
 if __name__ == '__main__':
    # k = from_pd_notation("V[0,1,2],V[3,4,1],X[2,4,5,6],X[7,8,9,5],X[8,10,6,9],X[3,0,10,7]", create_using=SpatialGraph)
     pass

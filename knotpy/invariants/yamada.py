@@ -39,5 +39,8 @@ def yamada(g, variable='A') -> Expr:
     print(sympy.expand(_sigma / A))
     return 0
 
-
-print(yamada(2))
+if __name__ == '__main__':
+    _A = symbols("A")
+    _sigma = (_A + 1 + _A**(-1))
+    print(_sigma)
+    print(yamada(2))
