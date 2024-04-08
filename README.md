@@ -4,6 +4,7 @@ KnotPy is a Python package designed for creating, manipulating, visualizing and 
 
 - **Website (including documentation):** https://bgabrovsek.github.io/knotpy/
 - **Author:** Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>
+- **Publisher:** self-publishing by Boštjan Gabrovšek
 
 ## Install
 
@@ -21,8 +22,10 @@ For more information, please see [INSTALL.md](INSTALL.md).
 
 Released under the 3-Clause BSD license (see `LICENSE.txt`)
 
-   Copyright (C) 2023-2024 KnotPy Developer
+   Copyright (C) 2024 KnotPy Developer
    Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>
+
+
 
 ### Project Funding
 
