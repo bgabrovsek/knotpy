@@ -1,7 +1,0 @@
-# 6 graphs
-7 bcde,afc,abf,afge,adg,bgdc,dfe
-7 bcde,afc,abfd,acge,adg,bgc,dfe
-7 bcde,aedf,afg,agbe,adb,bgc,cfd
-7 bcde,afg,agd,acge,adf,beg,bfdc
-7 bcde,afg,agd,ace,adgf,beg,bfec
-7 bcd,aef,afg,age,bdgf,begc,cfed
