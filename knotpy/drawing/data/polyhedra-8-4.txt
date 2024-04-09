@@ -1,4 +1,0 @@
-# 3 graphs
-8 bcd,aef,agd,ach,bhf,beg,cfh,dge
-8 bcd,aef,agd,acg,bhf,beh,chd,egf
-8 bcd,aef,afg,age,bdh,bhc,chd,egf
