@@ -1,2 +1,0 @@
-# 1 graph
-4 bcd,adc,abd,acb
