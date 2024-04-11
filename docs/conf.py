@@ -33,6 +33,7 @@ html_theme = 'pydata_sphinx_theme'
 html_theme_options = {
     'navigation_with_keys': False,
     'show_prev_next': False,
+    "secondary_sidebar_items": ["page-toc"],
     "icon_links": [
         {
             "name": "GitHub",
@@ -42,12 +43,19 @@ html_theme_options = {
     ],
 }
 
-# TODO: Add logo and favicon
-# html_logo = "_static/logo.svg"
+# Don't show sidebar on the index, installation and tutorial pages.
+html_sidebars = {
+    "**": ["sidebar-nav-bs"],
+    "index": [],
+    "install": [],
+    "tutorial": [],
+}
+
+html_logo = "_static/logo.png"
 # html_favicon = "_static/logo.ico"
 
 html_copy_source = False
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # TODO: Configure latex output

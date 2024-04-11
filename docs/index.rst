@@ -1,11 +1,30 @@
-API Reference
-=============
+KnotPy
+======
 
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
+KnotPy is a Python package designed for creating, manipulating,
+visualizing and studying knots, links, virtual links, knotoids, planar
+graphs and spatial graphs.
+
+-  **Website (including documentation):** https://bgabrovsek.github.io/knotpy/
+-  **Author:** Boštjan Gabrovšek bostjan.gabrovsek@fs.uni-lj.si
+-  **Publisher:** self-published by Boštjan Gabrovšek
+
+License
+-------
+
+.. include:: ../LICENCE.txt
+
+Project Funding
+---------------
+
+This project is funded by the Slovenian Research and Innovatiom Agency
+grant J1-4031.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :hidden:
 
+   install
+   tutorial
    reference/index
-   gallery/index
+   examples/index
