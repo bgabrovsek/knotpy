@@ -171,3 +171,9 @@ docs/reference/generated
 /sandbox/
 
 .DS_Store
+
+# PyCharm project file
+.idea
+
+# VS Code settings
+.vscode
