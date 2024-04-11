@@ -18,6 +18,7 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx_gallery.gen_gallery',
 ]
 
 templates_path = ['_templates']
@@ -49,6 +50,13 @@ html_sidebars = {
     "index": [],
     "install": [],
     "tutorial": [],
+}
+
+sphinx_gallery_conf = {
+    'examples_dirs': '../examples',
+    'gallery_dirs': 'auto_examples',
+    'image_scrapers': ('matplotlib',),
+    'matplotlib_animations': True,
 }
 
 html_logo = "_static/logo.png"
