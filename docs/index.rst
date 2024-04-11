@@ -27,4 +27,4 @@ grant J1-4031.
    install
    tutorial
    reference/index
-   examples/index
+   auto_examples/index

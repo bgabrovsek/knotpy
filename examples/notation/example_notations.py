@@ -1,4 +1,10 @@
-"""Test various knot/graph notations."""
+"""
+=============
+Parsing knots
+=============
+
+Test various knot/graph notations.
+"""
 
 import knotpy as kp
 from knotpy.generate.example import example_spatial_graph
