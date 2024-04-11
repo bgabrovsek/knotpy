@@ -1,4 +1,4 @@
-{{ fullname | escape | underline}}
+{{ name | escape | underline }}
 
 .. automodule:: {{ fullname }}
 
@@ -8,6 +8,7 @@
 
    .. autosummary::
       :toctree:
+      :template: custom-base-template.rst
    {% for item in attributes %}
       {{ item }}
    {%- endfor %}
@@ -20,6 +21,7 @@
 
    .. autosummary::
       :toctree:
+      :template: custom-base-template.rst
    {% for item in functions %}
       {{ item }}
    {%- endfor %}
@@ -32,6 +34,7 @@
 
    .. autosummary::
       :toctree:
+      :template: custom-class-template.rst
    {% for item in classes %}
       {{ item }}
    {%- endfor %}
@@ -44,6 +47,7 @@
 
    .. autosummary::
       :toctree:
+      :template: custom-base-template.rst
    {% for item in exceptions %}
       {{ item }}
    {%- endfor %}
