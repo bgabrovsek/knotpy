@@ -1,5 +1,7 @@
 sphinx>=7.2.6
 pydata-sphinx-theme>=0.14.2
+sphinx-gallery>=0.15.0
+pillow>=10.2.0
 sympy==1.12
 pytest==8.1.1
 matplotlib==3.8.3
