@@ -33,6 +33,13 @@ html_theme = 'pydata_sphinx_theme'
 html_theme_options = {
     'navigation_with_keys': False,
     'show_prev_next': False,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/bgabrovsek/knotpy",
+            "icon": "fab fa-github",
+        },
+    ],
 }
 
 # TODO: Add logo and favicon
