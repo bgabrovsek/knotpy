@@ -1,6 +1,5 @@
 """Base Node class for a node and its child classes (Crossing, Vertex, Terminal,...).
 Node types:
-
 Node: abstract node class
 Vertex: contains a list of n incident endpoints
 Crossing: contains a list of 4 incident endpoints, 0-th and 2-nd endpoints are arcs, 1-st and 3-rd are over arcs
@@ -8,8 +7,6 @@ Bivalent vertex: contains a list of 2 incident endpoints
 Terminal: contains a list of 1 incident endpoint
 Bond: contains a list of 4 incident endpoints, endpoints 0 and 1 (resp. 2 and 3) are on the same strand, the two strands
 are connected through a tiny bond
-
-
 """
 
 
@@ -74,9 +71,7 @@ class Node(ABC):
         """Compare node. Replaces obsolete __cmp__ method.
         :param other: Node to compare with
         :param compare_attr: do we compare also the node attributes (name, color, ...)
-        :return: 1 if self > other,
-                 -1 if self < other,
-                 0 otherwise.
+        :return: 1 if self > other, -1 if self < other,0 otherwise.
         """
 
         def _compare(_x, _y):
@@ -114,31 +109,3 @@ class Node(ABC):
 
 
 
-
-
-
-#
-#
-# class OrientedCrossing(Node):
-#
-#     def __init__(self, incoming_node_data=None, degree=None):
-#         if len(incoming_node_data) > degree:
-#             raise ValueError(f"Cannot create node {incoming_node_data} that is larger than its degree ({degree})")
-#         super().__init__(incoming_node_data)
-#
-#     def mirror(self):
-#         return True
-#
-#     @staticmethod
-#     def is_crossing(self):
-#         return True
-#
-#     @staticmethod
-#     def is_bivalent_vertex(self):
-#         return False
-#
-#
-#     def __str__(self):
-#         return "O" + super().__str__()  # TODO: incorporate plus/minus
-#
-#

@@ -52,10 +52,9 @@ def _node_knot_notation(k: PlanarDiagram, node):
 def to_knotpy_notation(k):
     """Returns KnotPy notation of planar diagram (native python structures list, tuples, dicts,... encoding the whole
     diagram)
-    Example:
-        "SpatialGraph {'name':'x1','color':'red'}
-        Vertex a [('b',0,{'color':'Orange'})] {}
-        Vertex b [('a',0,{'color':'Orange'})] {}"
+    Example:"SpatialGraph {'name':'x1','color':'red'}
+    Vertex a [('b',0,{'color':'Orange'})] {}
+    Vertex b [('a',0,{'color':'Orange'})] {}"
     """
 
     knot_type = type(k).__name__
