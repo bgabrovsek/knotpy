@@ -2,7 +2,7 @@ from functools import cached_property
 
 from knotpy.classes.planardiagram import PlanarDiagram, _NodeCachedPropertyResetter
 from knotpy.classes.knot import Knot
-from knotpy.classes.node import Crossing, Terminal #BivalentVertex,
+from knotpy.classes.node import Crossing, Terminal
 from knotpy.classes.views import FilteredNodeView
 
 __all__ = ['Knotoid']
@@ -14,7 +14,6 @@ class Knotoid(Knot):
 
     # init the descriptor instance, parameter keys are node types, values are cached propery names
     _nodes: dict = _NodeCachedPropertyResetter(Crossing="crossings",
-                                               BivalentVertex="bivalent_vertices",
                                                Terminal="terminals")
 
     def __init__(self, **attr):

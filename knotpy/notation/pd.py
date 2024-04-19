@@ -23,7 +23,7 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
 from knotpy.generate.simple import empty_knot
 from knotpy.algorithms.node_operations import add_node_to
-from knotpy.classes.node import Vertex, Crossing #BivalentVertex,
+from knotpy.classes.node import Vertex, Crossing
 
 
 __all__ = ['from_pd_notation', 'to_pd_notation']

@@ -3,7 +3,7 @@ from functools import cached_property
 from knotpy.classes.planardiagram import _NodeCachedPropertyResetter
 from knotpy.classes.planargraph import PlanarGraph, OrientedPlanarGraph
 from knotpy.classes.knot import Knot, OrientedKnot
-from knotpy.classes.node import Crossing, Vertex #BivalentVertex,
+from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.views import FilteredNodeView
 
 __all__ = ['SpatialGraph', "OrientedSpatialGraph"]
@@ -15,8 +15,7 @@ class SpatialGraph(PlanarGraph, Knot):
 
     # init the descriptor instance, parameter keys are node types, values are cached property names
     _nodes: dict = _NodeCachedPropertyResetter(Vertex="vertices",
-                                               Crossings="crossings",
-                                               BivalentVertex="bivalent_vertices")
+                                               Crossings="crossings")
 
     @cached_property
     def vertices(self):

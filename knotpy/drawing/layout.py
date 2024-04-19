@@ -13,9 +13,9 @@ import knotpy.drawing
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.drawing.circlepack import CirclePack
 from knotpy.utils.geometry import Circle
-from knotpy.algorithms.components import number_of_link_components
+from knotpy.algorithms.components_link import number_of_link_components
 from knotpy.algorithms.structure import bridges, loops, kinks
-from knotpy.algorithms.components import number_of_disjoint_components
+from knotpy.algorithms.components_disjoint import number_of_disjoint_components
 from knotpy.notation.native import to_knotpy_notation
 
 #__all__ = ['draw', 'export_pdf', "circlepack_layout"]

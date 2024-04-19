@@ -2,7 +2,7 @@ from functools import cached_property
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram, _NodeCachedPropertyResetter
-from knotpy.classes.node import Crossing #, BivalentVertex
+from knotpy.classes.node import Crossing
 from knotpy.classes.views import FilteredNodeView
 #from knotpy.algorithms.components import link_components_endpoints
 #from knotpy.classes.orientedknot import OrientedKnot
@@ -16,8 +16,7 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 class Knot(PlanarDiagram):
 
     # init the descriptor instance, parameter keys are node types, values are cached property names
-    _nodes: dict = _NodeCachedPropertyResetter(Crossing="crossings",
-                                               BivalentVertex="bivalent_vertices")
+    _nodes: dict = _NodeCachedPropertyResetter(Crossing="crossings")
 
     def __init__(self, **attr):
         self._nodes = dict()
@@ -28,10 +27,10 @@ class Knot(PlanarDiagram):
         """Node object holding the adjacencies of each node."""
         return FilteredNodeView(self._nodes, node_type=Crossing)
 
-    @cached_property
-    def bivalent_vertices(self):
-        """Node object holding the adjacencies of each node."""
-        return FilteredNodeView(self._nodes, node_type=BivalentVertex)
+    # @cached_property
+    # def bivalent_vertices(self):
+    #     """Node object holding the adjacencies of each node."""
+    #     return FilteredNodeView(self._nodes, node_type=BivalentVertex)
 
     def add_crossing(self, crossing_for_adding, **attr):
         """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
@@ -42,21 +41,21 @@ class Knot(PlanarDiagram):
         hashable objects."""
         self.add_nodes_from(nodes_for_adding=crossings_for_adding, create_using=Crossing, **attr)
 
-    def add_bivalent_vertex(self, bivalent_vertex_for_adding, **attr):
-        """Add or update a bivalent node  and update the node attributes. A node can be any hashable object."""
+    # def add_bivalent_vertex(self, bivalent_vertex_for_adding, **attr):
+    #     """Add or update a bivalent node  and update the node attributes. A node can be any hashable object."""
+    #
+    #     node = bivalent_vertex_for_adding
+    #     if node is None:
+    #         raise ValueError("None cannot be a bivalent node")
+    #     if node not in self._nodes:  # TODO: check if bivalent node is a crossing
+    #         self._nodes[node] = BivalentVertex()
+    #     self._nodes[node].attr.update(attr)
 
-        node = bivalent_vertex_for_adding
-        if node is None:
-            raise ValueError("None cannot be a bivalent node")
-        if node not in self._nodes:  # TODO: check if bivalent node is a crossing
-            self._nodes[node] = BivalentVertex()
-        self._nodes[node].attr.update(attr)
-
-    def add_bivalent_vertices(self, bivalent_nodes_for_adding, **attr):
-        """Add or update a bunch (iterable) of bivalent nodes and update the node attributes. Nodes can be any
-        hashable objects."""
-        for node in bivalent_nodes_for_adding:
-            self.add_bivalent_vertex(node, **attr)
+    # def add_bivalent_vertices(self, bivalent_nodes_for_adding, **attr):
+    #     """Add or update a bunch (iterable) of bivalent nodes and update the node attributes. Nodes can be any
+    #     hashable objects."""
+    #     for node in bivalent_nodes_for_adding:
+    #         self.add_bivalent_vertex(node, **attr)
 
 
 
