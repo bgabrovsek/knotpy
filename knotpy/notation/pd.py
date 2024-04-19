@@ -22,7 +22,7 @@ from collections import defaultdict
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
 from knotpy.generate.simple import empty_knot
-from knotpy.algorithms.node_algorithms import add_node_to
+from knotpy.algorithms.node_operations import add_node_to
 from knotpy.classes.node import Vertex, Crossing #BivalentVertex,
 
 
@@ -64,6 +64,9 @@ def from_pd_notation(text: str, node_type=str, create_using=None, **attr):
     :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
     :return: planar diagram object
     """
+
+    if create_using is not None and type(create_using) is not type:
+        raise TypeError("Creating PD diagram with create_using instance not yet supported.")
 
     text = text.strip()
     text = multi_replace(text, ")]", {"] ": "]", ", ": ","}, ";,", ("],", "];"))

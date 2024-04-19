@@ -62,10 +62,10 @@ class NodeView(Mapping, Set):
         return key in self._nodes
 
     # Call methods
-    def __call__(self, degree):
-        """ Can  call k.nodes(degree=3) and it will return a list of nodes of degree degree.
-        TODO: return a view or iterator"""
-        return [node for node in self._nodes if len(self._nodes[node]) == degree]
+    # def __call__(self, degree):
+    #     """ Can  call k.nodes(degree=3) and it will return a list of nodes of degree degree.
+    #     TODO: return a view or iterator"""
+    #     return [node for node in self._nodes if len(self._nodes[node]) == degree]
 
     @classmethod
     def _from_iterable(cls, it):

@@ -4,6 +4,10 @@ from knotpy.classes.tangle import Tangle
 
 
 def vertical_tangle(create_using=None):
+
+    if create_using is not None and type(create_using) is not type:
+        raise TypeError("Creating tangle with create_using instance not yet supported.")
+
     t = Tangle(name="\u221E")
     t.add_terminals_from(["NE", "SE", "NW", "SW"])
     t.set_arc([("NE", 0), ("SE", 0)])

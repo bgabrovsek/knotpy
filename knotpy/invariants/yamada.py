@@ -28,6 +28,8 @@ from sympy import Symbol, Expr, symbols, expand
 
 #@single_variable_invariant('A')
 def yamada(g, variable='A') -> Expr:
+    stack = deque()  # stack of tuples (poly, graph)
+
     A = variable if isinstance(variable, Symbol) else symbols(variable)
 
     print(sympy.expand(_sigma / A))
