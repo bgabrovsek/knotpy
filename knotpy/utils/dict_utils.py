@@ -71,8 +71,3 @@ class identitydict(defaultdict):
     def __missing__(self, key):
         return key
 
-"""
-print(f"Minimal cyclic rotation of {(test_list := [4,3,0,1])} is {minimal_cyclic_rotation(test_list)}.")
-print (f"Union of sets {(test_sets := [{1, 2}, {0, 1}, {5}])} is {union(*test_sets)}.")
-print(f"Inverse multi-dictionary of {(test_dict := {0:3, 1:4, 2:3})} is {inverse_multi_dict(test_dict)}.")
-"""
