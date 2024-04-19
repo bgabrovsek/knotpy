@@ -12,9 +12,7 @@ def compare_dicts(dict1: dict, dict2: dict, except_keys=None):
     :param dict1: first dictionary to be compared
     :param dict2: second dictionary to be compared
     :param except_keys: a set of keys to exclude from comparison
-    :return: 1 if dict1 > dict2,
-             -1 if dict1 < dict2,
-             0 if dict1 == dict2.
+    :return: 1 if dict1 > dict2, -1 if dict1 < dict2, 0 if dict1 == dict2.
     """
     except_keys = except_keys or set()
     keys1 = sorted(set(dict1) - set(except_keys))
