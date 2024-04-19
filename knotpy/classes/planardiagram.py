@@ -8,6 +8,7 @@ from knotpy.utils.dict_utils import identitydict
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.node import Node
 from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView
+#from knotpy.generate.convert import planar_diagram_from_data
 
 import warnings
 
@@ -63,11 +64,12 @@ class PlanarDiagram(ABC):
         :param attr: graph attributes (name, framing, ...)
         """
 
-        if incoming_diagram_data is not None:
-            raise NotImplementedError()
+        if incoming_diagram_data is None:
+            self._nodes = dict()
+            self.attr = dict()  # store graph attributes (without a View)
+        else:
+            planar_diagram_from_data(incoming_data=incoming_diagram_data, create_using=self)
 
-        self._nodes = dict()
-        self.attr = dict()  # store graph attributes (without a View)
         self.attr.update(attr)
 
     def clear(self):
@@ -81,15 +83,20 @@ class PlanarDiagram(ABC):
         :param copy_using: the planar diagram type of the new diagram
         :return: shallow copy
         """
-        copy_using = copy_using or type(self)  # TODO: type or instance
-        k = copy_using()  # new instance
 
-        k.attr.update(self.attr)   # update knot attributes
-        k.add_nodes_from(self._nodes)
-        for node in self._nodes:
-            for position, ep in enumerate(self._nodes[node]):
-                k.set_endpoint((node, position), ep)
-        return k
+        copy_using = copy_using or type(self)
+
+        return planar_diagram_from_data(incoming_data=self, create_using=copy_using)
+
+        # copy_using = copy_using or type(self)  # TODO: type or instance
+        # k = copy_using()  # new instance
+        #
+        # k.attr.update(self.attr)   # update knot attributes
+        # k.add_nodes_from(self._nodes)
+        # for node in self._nodes:
+        #     for position, ep in enumerate(self._nodes[node]):
+        #         k.set_endpoint((node, position), ep)
+        # return k
 
     # def __deepcopy__(self, memo):
     #     """Return a deep copy of self."""
@@ -176,6 +183,10 @@ class PlanarDiagram(ABC):
         :param attr:
         :return: None
         """
+
+        if create_using is not None and not isinstance(create_using, type):
+            raise TypeError(f"Creating node with create_using instance {create_using} not yet supported.")
+
         node = node_for_adding
 
         if node is None:
@@ -306,10 +317,13 @@ class PlanarDiagram(ABC):
         :param create_using: if the type is not Endpoint (or IngoingEndpoint or OutgoingEndpoint), the class should be
             given, be default Endpoint is assumed if endpoint_for_setting is given as a tuple. If an Endpoint instance is
             given instead of a class, the instance type is used with attributes copied.
-        :param attr: additional attributes of the endpoint are added
+        :param attr: additional attributes of the (adjacent) endpoint
         :return: None
         """
         #print(create_using)
+
+        if create_using is not None and not isinstance(create_using, type):
+            raise TypeError("Creating endpoint with create_using instance not yet supported.")
 
         create_using_type = create_using if isinstance(create_using, type) else type(create_using)
 
@@ -360,7 +374,7 @@ class PlanarDiagram(ABC):
         #print(self._nodes[node])
 
 
-    def twin(self, endpoint):
+    def twin(self, endpoint) -> Endpoint:
         """Return the opposite endpoint (twin) of an endpoint. Both endpoints form an arc.
         
         :param endpoint: Endpoint instance or pair (node, position)
@@ -509,10 +523,50 @@ class PlanarDiagram(ABC):
             ]
         )
 
-def _tests():
 
 
-    pass
+def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
+    """ Generate a planar diagram, from (incoming) data.
+    :param incoming_data: notation or other PlanarDiagram instance
+    :param create_using: type or instance
+    :return: planar diagram with data
+    """
+
+    # initiate the diagram with create_using
+    if isinstance(create_using, type):
+        k = create_using()
+    elif isinstance(create_using, PlanarDiagram):
+        k = create_using
+    else:
+        raise TypeError("create_using is not a valid KnotPy planar diagram type or instance")
+
+    k.clear()
+
+    if isinstance(incoming_data, PlanarDiagram):
+        # copy data from incoming_data instance
+
+        k.attr.update(incoming_data.attr)
+
+        # copy nodes
+        for node in incoming_data.nodes:
+            node_instance = incoming_data.nodes[node]
+            k.add_node(node_for_adding=node, create_using=type(node_instance),
+                       degree=len(node_instance), **node_instance.attr)
+
+        # copy endpoints
+        for ep in incoming_data.endpoints:
+            adj_ep = incoming_data.twin(ep)
+            k.set_endpoint(endpoint_for_setting=ep, adjacent_endpoint=(adj_ep.node, adj_ep.position),
+                           create_using=type(adj_ep), **adj_ep.attr)
+
+    elif incoming_data is None:
+        # create empty diagram
+        pass
+
+    else:
+        raise NotImplementedError("constructing planar diagrams from non-planar diagrams not implemented")
+
+    return k
 
 if __name__ == "__main__":
-    _tests()
+    pass

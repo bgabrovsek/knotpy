@@ -61,6 +61,9 @@ class Node(ABC):
         self._inc[position] = endpoint
         return self
 
+    def __delitem__(self, position):
+        del self._inc[position]
+
     def append(self, item):
         self._inc.append(item)
 

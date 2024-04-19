@@ -12,7 +12,7 @@
 
 __all__ = ['disjoint_components_nodes', 'number_of_disjoint_components', 'disjoint_components',
            'is_connected_sum', 'is_connected_sum_third_order', 'add_unknot_in_place',
-           'number_of_link_components']
+           'number_of_link_components', "link_components_endpoints"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -22,7 +22,7 @@ from copy import deepcopy
 from itertools import combinations, permutations
 
 import knotpy as kp
-from knotpy.algorithms.node_algorithms import name_for_new_node
+from knotpy.algorithms.node_operations import name_for_new_node
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
@@ -133,6 +133,10 @@ def disjoint_sum(*knots, return_relabel_dicts=False, create_using=None):
     :param return_relabel_dicts:
     :return: disjoint sum ⊔k
     """
+
+    if create_using is not None and type(create_using) is not type:
+        raise TypeError("Creating disjoint sum with create_using instance not yet supported.")
+
     if len(knots) <= 1:
         raise ValueError("Cannot create disjoint sum of one or less knots.")
 

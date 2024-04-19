@@ -1,7 +1,7 @@
 from copy import deepcopy
 from queue import Queue
 
-from knotpy.algorithms.node_algorithms import degree_sequence
+from knotpy.algorithms.node_operations import degree_sequence
 from knotpy.classes.planardiagram import PlanarDiagram
 
 __all__ = ['canonical']

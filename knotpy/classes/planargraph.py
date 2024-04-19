@@ -66,6 +66,7 @@ class OrientedPlanarGraph(PlanarDiagram):
         raise OrientedPlanarGraph
 
 
+
 if __name__ == "__main__":
     pass
     #_tests()
