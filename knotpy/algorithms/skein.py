@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from knotpy.algorithms.components import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot_in_place
 from knotpy.algorithms.structure import kinks
 
 

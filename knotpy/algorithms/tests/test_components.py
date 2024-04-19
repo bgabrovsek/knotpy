@@ -3,14 +3,11 @@ import pytest
 
 import knotpy as kp
 
-class TestComponents:
+def test_link_components():
 
-    def setup_method(self):
-        pass
+    k = kp.from_knotpy_notation("('SpatialGraph', {'name': 't0_1(0)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {'color': 1}), ('Endpoint', 'a', 1, {'attr': {}})), {}), ('Vertex', 'c', (('Endpoint', 'd', 0, {}),), {}), ('Vertex', 'd', (('Endpoint', 'c', 0, {}),), {})])")
 
-    def test_knot(self):
-        trefoil = kp.from_pd_notation("[[1,5,2,4],[3,1,4,6],[5,3,6,2]]", "knotinfo")
-        assert len(list(kp.faces(trefoil))) == 5
+    assert kp.number_of_link_components(k) == 2
 
 
 

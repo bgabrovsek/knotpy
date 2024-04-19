@@ -1,5 +1,6 @@
 from knotpy.classes.knot import Knot
-from knotpy.algorithms.components import link_components_endpoints, disjoint_components
+from knotpy.algorithms.components_disjoint import  disjoint_components
+import knotpy as kp
 
 def sanity_check(k):
 
@@ -9,7 +10,7 @@ def sanity_check(k):
     ept = list(k.endpoints)
     arc = list(k.arcs)
     nod = list(k.nodes)
-    lin = link_components_endpoints(k)
+    lin = kp.algorithms.components_link.link_components_endpoints(k)
     #dis = disjoint_components(k)
 
     if _print:

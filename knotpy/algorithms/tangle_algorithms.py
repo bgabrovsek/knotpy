@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import product
 #from knotpy.convert import to_knotted
 from knotpy.algorithms.node_operations import name_for_next_node_generator
-from knotpy.algorithms.components import disjoint_sum, add_unknot_in_place
+from knotpy.algorithms.components_disjoint import disjoint_sum, add_unknot_in_place
 from knotpy.classes.spatialgraph import SpatialGraph
 
 __all__ = ['insert_tangle', 'insert_tangles_from']
