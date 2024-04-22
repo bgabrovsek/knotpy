@@ -1,6 +1,6 @@
 /docs/logo/
 /tests/
-/sandbox/
+#/sandbox/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -168,7 +168,7 @@ cython_debug/
 # Sphinx generated documentation
 docs/_build/
 docs/reference/generated
-/sandbox/
+#/sandbox/
 
 .DS_Store
 
