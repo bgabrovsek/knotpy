@@ -210,8 +210,8 @@ def loadtxt_iterator(path, notation="em", ccw=True, comment="#", separator=",", 
     return# graphs if len(graphs) != 1 else graphs[0]
 
 def _test_text_write():
-    from knotpy.classes.spatialgraph import SpatialGraph
-    k = SpatialGraph(name="x1", color="red")
+    from knotpy.classes.planardiagram import PlanarDiagram
+    k = PlanarDiagram(name="x1", color="red")
     k.add_crossings_from("ab", color="blue")
     k.add_vertices_from("uv")
     k.set_arc([("a",0),("b",0)], color="Orange")

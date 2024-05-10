@@ -3,8 +3,8 @@ __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 def example_spatial_graph():
-    from knotpy.classes.spatialgraph import SpatialGraph
-    k = SpatialGraph(name="x1", color="red")
+    from knotpy.classes.planardiagram import PlanarDiagram
+    k = PlanarDiagram(name="x1", color="red")
     k.add_crossings_from("ab", color="blue")
     k.add_vertices_from("uv")
     k.set_arc([("a", 0), ("b", 0)], color="Orange")
@@ -16,8 +16,8 @@ def example_spatial_graph():
 
 
 def trefoil_knot():
-    from knotpy.classes.knot import Knot
-    k = Knot(name="Trefoil")
+    from knotpy.classes.planardiagram import PlanarDiagram
+    k = PlanarDiagram(name="Trefoil")
     k.add_crossings_from("abc")
     k.set_arc([("a", 0), ("c", 3)])
     k.set_arc([("a", 1), ("c", 2)])
@@ -29,8 +29,8 @@ def trefoil_knot():
 
 
 def trefoil_theta():
-    from knotpy.classes.spatialgraph import SpatialGraph
-    k = SpatialGraph(name="Theta trefoil")
+    from knotpy.classes.planardiagram import PlanarDiagram
+    k = PlanarDiagram(name="Theta trefoil")
     k.add_crossings_from("abc")
     k.add_vertices_from("de")
     k.set_arc([("a", 0), ("c", 3)])
@@ -46,8 +46,8 @@ def trefoil_theta():
 
 
 def handcuff_theta():
-    from knotpy.classes.spatialgraph import SpatialGraph
-    k = SpatialGraph(name="Theta trefoil")
+    from knotpy.classes.planardiagram import PlanarDiagram
+    k = PlanarDiagram(name="Theta trefoil")
     k.add_crossings_from("abc")
     k.add_vertices_from("de")
     k.set_arc([("a", 0), ("b", 3)])

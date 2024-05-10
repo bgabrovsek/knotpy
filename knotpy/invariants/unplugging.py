@@ -7,10 +7,10 @@ from collections import deque
 from random import choice
 from itertools import combinations
 
-from knotpy.classes.spatialgraph import SpatialGraph
+from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.node_operations import unplug
 
-def unplugging(k: SpatialGraph):
+def unplugging(k: PlanarDiagram):
     """Computes the "unplugging" invariant T.
     See Kauffman, L. H. (1989). Invariants of graphs in three-space. Transactions of the American Mathematical Society,
     311(2), 697-710.

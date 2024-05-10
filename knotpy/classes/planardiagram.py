@@ -1,20 +1,21 @@
-from functools import cached_property, total_ordering
-from abc import ABC, abstractmethod
-from copy import deepcopy
+from functools import cached_property
 from itertools import chain
 
-#from knotpy.utils.decorators import total_order_py3
+
 from knotpy.utils.dict_utils import identitydict
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-from knotpy.classes.node import Node
-from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView
-#from knotpy.generate.convert import planar_diagram_from_data
+from knotpy.classes.node import Node, Crossing, Vertex, Bond, VirtualCrossing, Terminal
+from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView, FilteredNodeView
+
+from knotpy.classes._abstractdiagram import (_NodeDiagram, _CrossingDiagram, _VertexDiagram,
+                                             _TerminalDiagram, _BondDiagram, _VirtualCrossingDiagram)
 
 import warnings
 
-__all__ = ['PlanarDiagram', '_NodeCachedPropertyResetter']
+__all__ = ['PlanarDiagram', '_NodeCachedPropertyResetter', 'OrientedPlanarDiagram']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
+
 
 class _NodeCachedPropertyResetter:
     """For info on Data Descriptors see: https://docs.python.org/3/howto/descriptor.html"""
@@ -22,10 +23,16 @@ class _NodeCachedPropertyResetter:
     def __init__(self, **_node_type_property_names):
         self._node_type_property_names = _node_type_property_names
 
+    def add_property_name(self, **_node_type_property_names):
+        self._node_type_property_names.update(_node_type_property_names)
+
+
     def __set__(self, obj, value):
         """The instance variable "node" has been changed, reset all cached properties. The class view instances "nodes",
         "endpoints", and "arcs" are common for all planar diagrams, additional class view instances are stored in
         _node_type_property_names."""
+
+        #print(self._node_type_property_names)
         od = obj.__dict__
         od["_nodes"] = value
         if "nodes" in od:
@@ -42,7 +49,7 @@ class _NodeCachedPropertyResetter:
 
 
 #@total_order_py3
-class PlanarDiagram(ABC):
+class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDiagram, _VirtualCrossingDiagram):
     """The PlanarDiagram class provides the basic abstract class for all planar objects (planar graph, knots, knotted
     graphs, ...).  It is intended to be used only as the parent class for Knot, PlanarGraph, etc.
         
@@ -56,13 +63,22 @@ class PlanarDiagram(ABC):
     - regions are the faces of the planar graph and are represented as a sequence of endpoints.
     """
 
-    _nodes: dict = _NodeCachedPropertyResetter()
+    # cache special node types
+    _nodes: dict = _NodeCachedPropertyResetter(
+        Vertex="vertices",
+        Crossing="crossings",
+        Terminal="terminals",
+        VirtualCrossing="virtual_crossings",
+        Bond="bonds"
+    )
 
     def __init__(self,  incoming_diagram_data=None, **attr):
         """Initialize a planar diagram.
         :param incoming_diagram_data: not implemented
         :param attr: graph attributes (name, framing, ...)
         """
+
+        super(_CrossingDiagram, self).__init__()
 
         if incoming_diagram_data is None:
             self._nodes = dict()
@@ -88,23 +104,27 @@ class PlanarDiagram(ABC):
 
         return planar_diagram_from_data(incoming_data=self, create_using=copy_using)
 
-        # copy_using = copy_using or type(self)  # TODO: type or instance
-        # k = copy_using()  # new instance
-        #
-        # k.attr.update(self.attr)   # update knot attributes
-        # k.add_nodes_from(self._nodes)
-        # for node in self._nodes:
-        #     for position, ep in enumerate(self._nodes[node]):
-        #         k.set_endpoint((node, position), ep)
-        # return k
+    # node-type views
+    @cached_property
+    def nodes(self):
+        """Node object holding the adjacencies of each node."""
+        return NodeView(self._nodes)
 
-    # def __deepcopy__(self, memo):
-    #     """Return a deep copy of self."""
-    #     # TODO: read memo documentation
-    #     new_k = type(self)()
-    #     new_k.attr = deepcopy(self.attr, memo)
-    #     new_k._nodes = deepcopy(self._nodes)
-    #     return new_k
+
+    @cached_property
+    def endpoints(self):
+        """Node object holding the adjacencies of each node."""
+        return EndpointView(self._nodes)
+
+    @cached_property
+    def arcs(self):
+        """Node object holding the adjacencies of each node."""
+        return ArcView(self._nodes)
+
+    @cached_property
+    def faces(self):
+        """Node object holding the adjacencies of each node."""
+        return FaceView(self._nodes)
 
     def __len__(self):
         """Return the number of nodes in the knot."""
@@ -148,28 +168,12 @@ class PlanarDiagram(ABC):
             return cmp_dict(self.attr, other.attr)
         return 0
 
-    @cached_property
-    def nodes(self):
-        """Node object holding the adjacencies of each node."""
-        return NodeView(self._nodes)
 
-    @cached_property
-    def endpoints(self):
-        """Node object holding the adjacencies of each node."""
-        return EndpointView(self._nodes)
 
-    @cached_property
-    def arcs(self):
-        """Node object holding the adjacencies of each node."""
-        return ArcView(self._nodes)
-
-    @cached_property
-    def faces(self):
-        """Node object holding the adjacencies of each node."""
-        return FaceView(self._nodes)
 
     def __getitem__(self, item):
         """ TODO: get item by description"""
+
         raise NotImplementedError()
 
     # node operations
@@ -220,6 +224,25 @@ class PlanarDiagram(ABC):
             for node in nodes_for_adding:
                 self.add_node(node_for_adding=node, create_using=create_using, degree=None, **attr)
 
+    # def add_crossing(self, crossing_for_adding, **attr):
+    #     """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
+    #     self.add_node(node_for_adding=crossing_for_adding, create_using=Crossing, degree=4, **attr)
+
+    def add_crossings_from(self, crossings_for_adding, **attr):
+        """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
+        hashable objects."""
+        self.add_nodes_from(nodes_for_adding=crossings_for_adding, create_using=Crossing, **attr)
+
+    def add_vertex(self, vertex_for_adding, degree=None, **attr):
+        """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
+        self.add_node(node_for_adding=vertex_for_adding, create_using=Vertex, degree=4, **attr)
+
+    def add_crossings_from(self, crossings_for_adding, **attr):
+        """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
+        hashable objects."""
+        self.add_nodes_from(nodes_for_adding=crossings_for_adding, create_using=Crossing, **attr)
+
+
     def permute_node(self, node, permutation):
         """Permute the endpoints of the node of knot k. For example, if p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,2,1]),
         and if node has endpoints [a, b, c, d] (ccw) then the new endpoints will be [a, d, b, c].
@@ -244,30 +267,6 @@ class PlanarDiagram(ABC):
             )
             print(ep,adj_ep)
             self._nodes[ep.node][permutation[ep.position]] = adj_ep
-
-    def rotate_node_ccw(self, node, ccw_shift=1):
-        """Permute the positions of endpoints of the node and take care of adjacent nodes. For example, if we rotate a
-        4-valent node by 90 degrees, the positions change from (0, 1, 2, 3) to (3, 0, 1, 2), so the permutation
-        should be {0: 3, 1: 0, 2: 1, 3: 2}.
-        
-        :param node: the node of which endpoints we permute
-        :param ccw_shift: a dict or list object
-        :return:
-        """
-
-
-        raise NotImplementedError()
-        # node_obj = self._nodes[node]
-        #
-        # # take care of adjacent vertices
-        # for pos, (adj_node, adj_pos) in enumerate(an):
-        #     self._adj[adj_node][adj_pos] = (node, p.get(pos, pos))
-        #
-        # # permute the node
-        # self._adj[node] = [an[p.get(i, i)] for i in range(len(an))]
-        #
-        # # take care of endpoint attributes
-        # self._endpoint_attr.update({(node, p[pos]): self._endpoint_attr[(node, pos)] for pos in p})
 
     def rename_nodes(self, mapping_dict):
         # TODO: should this be an outside method?
@@ -393,26 +392,6 @@ class PlanarDiagram(ABC):
         # the endpoint instance is the twin of the twin
         return self.twin(self.twin(endpoint_pair))
 
-    def jump_over_node(self, endpoint):
-        """
-
-        :param endpoint: Endpoint instance or pair (node, position)
-        :return: endpoint or None
-        """
-        node, position = endpoint
-        jump_position = self._nodes[node].jump_over(position)
-        if jump_position is None:
-            return None
-        return self.get_endpoint_from_pair((node, jump_position))
-
-
-    def get_endpoint(self, node, position):  # TODO: should this be private?
-        """Return the endpoint Endpoint(node, position)"""
-        warnings.warn("This function is deprecated and will be removed in the future.", DeprecationWarning)
-        print("This function is deprecated and will be removed in the future.")
-        adj_endpoint = self._nodes[node][position]
-        return self[adj_endpoint]  # return the adjacent endpoint of the adjacent endpoint
-
     def remove_endpoint(self, endpoint_for_removal):
         _debug = False
 
@@ -441,7 +420,7 @@ class PlanarDiagram(ABC):
 
     # arc operations
 
-    def set_arc(self, arc_for_setting , **attr):
+    def set_arc(self, arc_for_setting, **attr):
         """Set the arc (v_endpoint, u_endpoint), which equals setting the two endpoints adj(u_endpoint) = v_endpoint
         and vice-versa."""
         v_endpoint, u_endpoint = arc_for_setting
@@ -464,19 +443,8 @@ class PlanarDiagram(ABC):
         self.remove_endpoints_from(chain(*arcs_for_removing))
 
     @staticmethod
-    @abstractmethod
     def is_oriented():
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def to_unoriented_class():
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def to_oriented_class():
-        pass
+        False
 
     @property
     def name(self):
@@ -486,6 +454,26 @@ class PlanarDiagram(ABC):
     @property
     def number_of_nodes(self):
         return len(self._nodes)
+
+    @property
+    def number_of_crossings(self):
+        return len(self.crossings)
+
+    @property
+    def number_of_vertices(self):
+        return len(self.vertices)
+
+    @property
+    def number_of_virtual_crossings(self):
+        return len(self.virtual_crossings)
+
+    @property
+    def number_of_bonds(self):
+        return len(self.bonds)
+
+    @property
+    def number_of_terminals(self):
+        return len(self.terminals)
 
     @property
     def number_of_endpoints(self):
@@ -512,6 +500,9 @@ class PlanarDiagram(ABC):
 
     def __str__(self):
         # TODO: get node name from descriptor
+
+        attrib_str = ", ".join([f"{key}={value}" for key, value in self.attr.items() if key != "name" and key != "framing"])
+
         return "".join(
             [
                 f"{self.__class__.__name__} ",
@@ -519,9 +510,19 @@ class PlanarDiagram(ABC):
                 f"with {self.number_of_nodes} nodes, ",
                 f"{self.number_of_arcs} arcs, ",
                 f"and adjacencies {self.nodes}" if self.nodes else f"and no adjacencies",
-                f" with framing {self.framing}"
+                f" with framing {self.framing}",
+                f" ({attrib_str})" if attrib_str else ""
             ]
         )
+
+
+class OrientedPlanarDiagram(PlanarDiagram):
+
+    @staticmethod
+    def is_oriented():
+        return True
+
+
 
 
 
@@ -556,8 +557,15 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
         # copy endpoints
         for ep in incoming_data.endpoints:
             adj_ep = incoming_data.twin(ep)
+
+            adj_ep_type = type(adj_ep)
+
+            # create unoriented endpoint if diagram is unoriented
+            if type(k) is PlanarDiagram and adj_ep_type is not Endpoint:
+                adj_ep_type = Endpoint
+
             k.set_endpoint(endpoint_for_setting=ep, adjacent_endpoint=(adj_ep.node, adj_ep.position),
-                           create_using=type(adj_ep), **adj_ep.attr)
+                           create_using=adj_ep_type, **adj_ep.attr)
 
     elif incoming_data is None:
         # create empty diagram
@@ -569,4 +577,10 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     return k
 
 if __name__ == "__main__":
+
+    d = PlanarDiagram()
+    d.add_node("a", create_using=Vertex)
+    d.add_crossing("olala")
+    d._nodes = dict()
+    print(d)
     pass

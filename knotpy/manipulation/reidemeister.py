@@ -162,9 +162,9 @@ def reidemeister_3(k, region):
 
 if __name__ == "__main__":
 
-    from knotpy.classes.knot import Knot
+    from knotpy.classes.planardiagram import PlanarDiagram
 
-    k = Knot()
+    k = PlanarDiagram()
     k.add_crossings_from("ABC")
     k.set_arcs_from([(("A", 3), ("B", 1)),
                      (("A", 2), ("C", 0)),
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     print(k)
 
     exit()
-    k = Knot()
+    k = PlanarDiagram()
     k.add_crossings_from("ABCDEFGHI")
     k.set_arcs_from([(("A",0), ("B",2)),
                     (("A",1), ("C",1)),

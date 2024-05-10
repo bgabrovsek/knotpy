@@ -61,8 +61,7 @@ def link_components_endpoints(k: PlanarDiagram):
 
 
 def link_components(k: PlanarDiagram) -> set:
-    """
-
+    """Return
     :param k:
     :return:
     """

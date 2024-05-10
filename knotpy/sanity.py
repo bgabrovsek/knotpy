@@ -1,4 +1,4 @@
-from knotpy.classes.knot import Knot
+
 from knotpy.algorithms.components_disjoint import  disjoint_components
 import knotpy as kp
 

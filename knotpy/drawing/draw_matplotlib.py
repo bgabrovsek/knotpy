@@ -14,7 +14,7 @@ import cmath
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes.spatialgraph import SpatialGraph
+
 from knotpy.drawing.layout import circlepack_layout, bezier
 from knotpy.algorithms.structure import loops, bridges
 from knotpy.utils.geometry import Circle, CircularArc, Line, Segment

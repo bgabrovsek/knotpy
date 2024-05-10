@@ -11,7 +11,7 @@ from pathlib import Path
 
 import knotpy as kp
 from knotpy.utils import iterable_depth, combinations_with_limited_repetitions
-from knotpy.generate.simple import parallel_edge
+
 from knotpy.notation.em import to_em_notation
 from knotpy.readwrite.cleanopen import prepend_to_extension
 

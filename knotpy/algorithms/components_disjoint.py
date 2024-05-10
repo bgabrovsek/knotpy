@@ -1,7 +1,7 @@
 """Disjoint components are the diagram components that do not share a common node (crossing, vertex, ...).
 """
 
-__all__ = ['disjoint_components_nodes', 'number_of_disjoint_components', 'disjoint_components',
+__all__ = ['number_of_disjoint_components', 'disjoint_components',
            'add_unknot_in_place',
            ]
 __version__ = '0.1'
@@ -14,51 +14,65 @@ from itertools import combinations, permutations
 import knotpy as kp
 from knotpy.algorithms.node_operations import name_for_new_node
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
 
 
 def add_unknot_in_place(k: PlanarDiagram, number_of_unknots=1):
-    """Add unknot to k (in place). If the planar diagram instance does not contain vertices (e.g. knots), adds the
-    "unknots" attribute.
+    """Add unknot to k (in place). An unknot is a vertex with one edge (loop).
     :param k: input planar diagram
     :param number_of_unknots: number of unknots (default is 1)
     :return: k with a disjoint unknot
     """
     for _ in range(number_of_unknots):
-        if hasattr(k, 'vertices'):
-            node = name_for_new_node(k)
-            k.add_vertex(node)
-            k.set_arc(((node, 0), (node, 1)))
-        else:
-            # if structure has no vertices, increase the number of unknots in the attribute
-            k.attr["unknots"] = k.attr.get("unknots", 0) + 1
+        node = name_for_new_node(k)
+        k.add_vertex(node)
+        k.set_arc(((node, 0), (node, 1)))
 
 
+def _disjoint_components_nodes(k: PlanarDiagram) -> list:
+    """ Return a list of sets of nodes that belong to the same disjoint components.
+    :param k: (disjoint) planar diagram
+    :return: list of sets of nodes
+    """
+    er = EquivalenceRelation(k.nodes)
+    for ep0, ep1 in k.arcs:
+        er[ep0.node] = ep1.node
+    return er.classes()
 
 
 def number_of_disjoint_components(k):
-    return len(disjoint_components_nodes(k))
+    return len(_disjoint_components_nodes(k))
 
 
-def disjoint_components(K):
-    raise NotImplementedError()
-    # components = []
-    # for component_nodes in sorted(K._connected_components_nodes(), reverse=True):
-    #     g = K.__class__()
-    #     g.attr = deepcopy(K.attr)
-    #     g._adj = {node: deepcopy(K._adj[node]) for node in component_nodes}
-    #     g._node_attr = {node: deepcopy(K._node_attr[node]) for node in component_nodes}
-    #     g._endpoint_attr = {deepcopy(ep): deepcopy(K._endpoint_attr[ep])
-    #                         for ep in K._endpoint_attr if ep[0] in component_nodes}
+def disjoint_components(k: PlanarDiagram) -> list:
+    """If k is a disjoint sum, return a list  of disjoint components.
+    :param k:
+    :return:
+    """
+    components = []
+
+    # add components
+    for component_nodes in sorted(_disjoint_components_nodes(k), reverse=True):
+        g = k.copy()
+        g.name = f"{g.name} ({len(components)})"
+        g.remove_nodes_from(set(g.nodes) - component_nodes, remove_incident_endpoints=False)  # incident ep will be removed automatically
+        components.append(g)
+
+    # # add unknot components
+    # for g in range(k.attr.get("unknots", 0)):
+    #     h = type(k)()  # trivial planar diagram
+    #     g.name = f"{g.name} ({len(components)})"
     #     components.append(g)
-    #
-    # for g in components[1:]:
-    #     g.framing = 0
-    # return components
+
+    components[0].framing = k.framing  # this should hold automatically
+    for g in components[1:]:
+        g.framing = 0
+
+    return components
 
 
-def disjoint_sum(*knots, return_relabel_dicts=False, create_using=None):
+def disjoint_sum(*knots, return_relabel_dicts=False):
     """Return the disjoint sum, k[0] ⊔ k[1] ⊔ ... The nodes are relabelled to be "a", "b",... or in case of many
     nodes, 0, 1,...
     :param create_using: structure type of disjoint sum
@@ -67,8 +81,12 @@ def disjoint_sum(*knots, return_relabel_dicts=False, create_using=None):
     :return: disjoint sum ⊔k
     """
 
-    if create_using is not None and type(create_using) is not type:
-        raise TypeError("Creating disjoint sum with create_using instance not yet supported.")
+    if all(isinstance(k, PlanarDiagram) for k in knots):
+        create_using = PlanarDiagram
+    elif all(isinstance(k, OrientedPlanarDiagram) for k in knots):
+        create_using = OrientedPlanarDiagram
+    else:
+        raise TypeError("Cannot create disjoint sum using oriented and non-oriented diagrams.")
 
     if len(knots) <= 1:
         raise ValueError("Cannot create disjoint sum of one or less knots.")
@@ -112,11 +130,7 @@ def disjoint_sum(*knots, return_relabel_dicts=False, create_using=None):
     return (new_knot, relabel_dicts) if return_relabel_dicts else new_knot
 
 
-def disjoint_components_nodes(k):
-    er = EquivalenceRelation(k.nodes)
-    for ep0, ep1 in k.arcs:
-        er[ep0.node] = ep1.node
-    return er.classes()
+
 
 
 

@@ -88,12 +88,13 @@ class FilteredNodeView(NodeView):
     __slots__ = ("_nodes", "_filter")
 
     def __init__(self, nodes, node_type):
+        print("init node view", node_type)
         super().__init__(nodes)
         self._filter = lambda _: isinstance(self._nodes[_], node_type)
 
     # Mapping methods
     def __len__(self):
-        return len([filter(self._filter, self._nodes)])  # slow
+        return len(list(filter(self._filter, self._nodes)))  # slow
 
     def __iter__(self):
         return iter(filter(self._filter, self._nodes))
@@ -214,14 +215,11 @@ class ArcView(NodeView):
         if isinstance(key, slice):
             raise ValueError(f"{type(self).__name__} does not support slicing.")
 
-        if isinstance(key, Endpoint):
-            return frozenset((self._nodes[key.node][key.position], key))
-
         if isinstance(key, Node):
+            # return arcs connected to node
             raise NotImplementedError()
 
         if key in self._nodes:
-
             return [
                 frozenset((self._nodes[ep.node][ep.position], ep))
                 for ep in self._nodes[key]

@@ -1,4 +1,5 @@
 from knotpy.classes.node.node import Node
+from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 
 __all__ = ['Crossing']
 __version__ = '0.1'
@@ -23,6 +24,12 @@ class Crossing(Node):
     def mirror(self):
         raise NotImplementedError()
         pass
+
+    def sign(self):
+        if any(type(ep) is Endpoint for ep in self._inc):
+            raise TypeError("cannot determine the sign of an unoriented crossing.")
+        # out/out, in/in = -1, out/in, in/out = 1
+        return -1 if type(self._inc[0]) is type(self._inc[1]) else 1
 
     def __str__(self):
         return "X" + super().__str__()

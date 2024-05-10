@@ -111,9 +111,9 @@ def smoothing_type_B(k, crossing_for_smoothing):
 
 
 if __name__ == "__main__":
-    from knotpy.classes.knot import Knot
 
-    k = Knot()
+    from knotpy.classes import PlanarDiagram
+    k = PlanarDiagram()
     k.add_crossing("a")
     k.set_arcs_from([[("a", 0), ("a", 1)], [("a", 2), ("a", 3)]])
 

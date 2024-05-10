@@ -1,6 +1,6 @@
 from string import ascii_letters
 
-from knotpy.classes.tangle import Tangle
+from knotpy.classes.planardiagram import PlanarDiagram
 
 
 def vertical_tangle(create_using=None):
@@ -8,23 +8,23 @@ def vertical_tangle(create_using=None):
     if create_using is not None and type(create_using) is not type:
         raise TypeError("Creating tangle with create_using instance not yet supported.")
 
-    t = Tangle(name="\u221E")
-    t.add_terminals_from(["NE", "SE", "NW", "SW"])
+    t = PlanarDiagram(name="\u221E")
+    t.add_nodes_from(["NE", "SE", "NW", "SW"])
     t.set_arc([("NE", 0), ("SE", 0)])
     t.set_arc([("SW", 0), ("NW", 0)])
     return t
 
 
 def horizontal_tangle(create_using=None):
-    t = Tangle(name="0")
-    t.add_terminals_from(["NE", "SE", "NW", "SW"])
+    t = PlanarDiagram(name="0")
+    t.add_nodes_from(["NE", "SE", "NW", "SW"])
     t.set_arc([("NE", 0), ("NW", 0)])
     t.set_arc([("SW", 0), ("SE", 0)])
     return t
 
 
 def integer_tangle(n: int, create_using=None):
-    t = Tangle(name=str(n))
+    t = PlanarDiagram(name=str(n))
     if n == 0:
         return vertical_tangle(create_using=create_using)
 

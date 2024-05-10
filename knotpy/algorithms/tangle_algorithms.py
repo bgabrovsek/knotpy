@@ -3,7 +3,7 @@ from itertools import product
 #from knotpy.convert import to_knotted
 from knotpy.algorithms.node_operations import name_for_next_node_generator
 from knotpy.algorithms.components_disjoint import disjoint_sum, add_unknot_in_place
-from knotpy.classes.spatialgraph import SpatialGraph
+from knotpy.classes.planardiagram import PlanarDiagram
 
 __all__ = ['insert_tangle', 'insert_tangles_from']
 __version__ = '0.1'
