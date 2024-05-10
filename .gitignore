@@ -168,7 +168,7 @@ cython_debug/
 # Sphinx generated documentation
 docs/_build/
 docs/reference/generated
-/sandbox/
+#/sandbox/
 
 .DS_Store
 
