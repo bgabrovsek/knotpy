@@ -10,7 +10,7 @@ import random
 import string
 from collections import Counter
 
-from knotpy.classes.node import Crossing
+from knotpy.classes.node import Crossing, VirtualCrossing, Terminal, Bond
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node.vertex import Vertex
@@ -41,6 +41,9 @@ def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
         else:
             break
 
+        if ep is endpoint:
+            break
+
         # if isinstance(k.nodes[twin_ep.node], Crossing):
         #     ep = twin_ep[0], (twin_ep[1] + 2) % 4  # same node, opposite crossing
         # else:
@@ -68,7 +71,10 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
     list_of_edges = []
     unused_endpoints = set(k.endpoints)
 
-    terminals = [node for node in k.nodes if not isinstance(k.nodes[node], Crossing)]
+    terminals = [node for node in k.nodes
+                 if isinstance(k.nodes[node], Vertex)
+                 or isinstance(k.nodes[node], Terminal)
+                 or isinstance(k.nodes[node], Bond)]
 
     def _endpoints_have_attribute(eps, attr):
         # TODO: make pythonic
@@ -166,14 +172,20 @@ def loops(k):
                and all(not isinstance(k.nodes[ep.node], Crossing) for ep in arc))
 
 
-def kinks(k):
+def kinks(k, of_node=None):
     """Return a set of loops of k. A loop is an arc that connects the node to itself at a crossing. See also kinks().
     :param k: the planar diagram
+    :param of_node:
     :return: set of bridges represented by an arc
     """
-    return set(arc for arc in k.arcs if
-               len({ep.node for ep in arc}) == 1
-               and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
+    if of_node is None:
+        return set(arc for arc in k.arcs if
+                   len({ep.node for ep in arc}) == 1
+                   and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
+    else:
+        return set(arc for arc in k.arcs[of_node] if
+                   len({ep.node for ep in arc}) == 1
+                   and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
 
 
 def kink_region_iterator(k, of_node=None):

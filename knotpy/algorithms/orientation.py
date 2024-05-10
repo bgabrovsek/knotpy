@@ -1,7 +1,7 @@
 """Algorithms with orientation."""
 import itertools as it
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 import knotpy.algorithms.components_disjoint as components
 import knotpy.algorithms.structure as structure
@@ -11,7 +11,7 @@ def _orient_with_edges(k: PlanarDiagram, edges: list):
     """Orient the diagram so that edges are positively ordered, i.e. the orientations follows the endpoints
     edge[0], edge[1], ..."""
 
-    new_k = k.to_oriented_class()(**k.attr)
+    new_k = OrientedPlanarDiagram(**k.attr)
     for node in k.nodes:
         new_k.add_node(node_for_adding=node,
                        create_using=type(k.nodes[node]),
@@ -36,13 +36,16 @@ def _orient_with_edges(k: PlanarDiagram, edges: list):
 def all_orientations(k: PlanarDiagram) -> list:
     edges = list(structure.edges(k))
     orient = list(it.product((True, False), repeat=len(edges)))  # not needed to be a list
-    print(orient)
+    #print(orient)
     return [
         _orient_with_edges(k=k, edges=edge_orientations)
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(edges, o)] for o in orient)
     ]
 
 
+def unorient(k:OrientedPlanarDiagram) -> PlanarDiagram:
+    o = k.copy(copy_using=PlanarDiagram)
+    return o
 
 if __name__ == "__main__":
 
@@ -50,9 +53,15 @@ if __name__ == "__main__":
     k = trefoil_knot()
     print(k)
 
-    k_oriented = oriented(k)
-    print(k_oriented)
+    ok = all_orientations(k)
+    for o in ok:
+        print("   ", o)
+        uo = unorient(o)
+        print("   ", u)
 
-    print()
-    for m in all_orientations(k):
-        print(m)
+    # k_oriented = oriented(k)
+    # print(k_oriented)
+    #
+    # print()
+    # for m in all_orientations(k):
+    #     print(m)

@@ -21,7 +21,6 @@ from collections import defaultdict
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
-from knotpy.generate.simple import empty_knot
 from knotpy.algorithms.node_operations import add_node_to
 from knotpy.classes.node import Vertex, Crossing
 
@@ -52,7 +51,7 @@ _node_abbreviations = {
 _node_abbreviations_inv = {val: key for key, val in _node_abbreviations.items()}
 
 
-def from_pd_notation(text: str, node_type=str, create_using=None, **attr):
+def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
     """Create planar diagram object from string containing the PD code.
     Autodetect PD codes of formats:
     - Mathematica: "V[1,2,3], X[2,3,4,5]", see https://knotinfo.math.indiana.edu/descriptions/pd_notation.html,
@@ -60,22 +59,26 @@ def from_pd_notation(text: str, node_type=str, create_using=None, **attr):
 
     :param text: string containing the PD notation
     :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
-    :param create_using:
+    :param oriented:
     :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
     :return: planar diagram object
     """
 
-    if create_using is not None and type(create_using) is not type:
-        raise TypeError("Creating PD diagram with create_using instance not yet supported.")
+    # if create_using is not None and not isinstance(create_using, type):
+    #     raise TypeError("Creating PD diagram with create_using instance not yet supported.")
+
+    if oriented:
+        raise NotImplementedError()  # TODO: implement oriented diagram
+
 
     text = text.strip()
-    text = multi_replace(text, ")]", {"] ": "]", ", ": ","}, ";,", ("],", "];"))
+    text = multi_replace(text, ")]","([", {"] ": "]", ", ": ","}, ";,", ("],", "];"))
 
     # extract nested list (KnotInfo)
     if text[:2] in ("[[", "[(", "([", "((") and text[-2:] in ("]]", "])", ")]", "))"):
         text = text[1:-1]
 
-    k = empty_knot(create_using=create_using)
+    k = PlanarDiagram()
     arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
 
 
@@ -134,22 +137,27 @@ def to_pd_notation(k: PlanarDiagram) -> str:
         )
 
 def _test():
-    from knotpy.classes.knot import Knot
-    from knotpy.classes.spatialgraph import SpatialGraph
+
+
+
     pd_code_mathematica = "X[1, 9, 2, 8], X[3, 10, 4, 11], X[5, 3, 6, 2],X[7, 1, 8, 12], X[9, 4, 10, 5], X[11,7,12,6]"
     pd_code_knotinfo = "[[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]]"
     pd_code_topoly = "V[12,14,5],V[14,13,2],X[11,10,13,12],X[7,11,5,6],X[10,7,6,2]"
 
-    k1 = from_pd_notation(pd_code_mathematica, node_type=str, create_using=Knot)
+    k1 = from_pd_notation(pd_code_mathematica, node_type=str)
     print(k1)
-    k2 = from_pd_notation(pd_code_knotinfo, node_type=str, create_using=Knot)
+    k2 = from_pd_notation(pd_code_knotinfo, node_type=str)
     print(k2)
-    k3 = from_pd_notation(pd_code_topoly, node_type=str, create_using=SpatialGraph)
+    k3 = from_pd_notation(pd_code_topoly, node_type=str)
     print(k3)
 
     print(to_pd_notation(k1))
     print(to_pd_notation(k2))
     print(to_pd_notation(k3))
+
+    pd = "V[0,1],X[0,3,2,4],X[3,1,4,2]"
+    k = from_pd_notation(pd)
+    print(k)
 
 if __name__ == "__main__":
     _test()

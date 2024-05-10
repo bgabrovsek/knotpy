@@ -1,5 +1,6 @@
 from .structure import *
 from .canonical import *
+from .classification import *
 from .components_disjoint import *
 from .components_link import *
 from .connected_sum import *

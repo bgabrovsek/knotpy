@@ -3,43 +3,18 @@
 #__all__ = [""]
 
 
-from knotpy.classes.knot import Knot
-from knotpy.classes.planardiagram import PlanarDiagram
 
-__all__ = ['empty_knot']
+
+__all__ = ['parallel_edge']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-def empty_knot(create_using=None):
-    """Return the empty graph/knot with zero nodes and zero arcs.
-    :param create_using: planar diagram instance, Constructor or None.
-    :return: empty graph
-    """
-
-    if create_using is None:
-        g = Knot()
-    elif isinstance(create_using, type):
-        g = create_using()
-    elif isinstance(create_using, PlanarDiagram):
-        g = type(create_using)()
-    else:
-        raise TypeError("create_using is not a valid KnotPy type or instance")
-    return g
-#
-#
-# def trivial_theta_curve():
-#     pg = PlanarGraph()
-#     pg._add_node(0, (0, 2, 1))
-#     pg._add_node(1, (0, 1, 2))
-#     return pg
-#
-#
 
 def parallel_edge(multiplicity):
     """Returns a graph with two vertices and multiplicity edges between the two nodes."""
     # TODO: Implement this
-    
+    raise NotImplementedError()
     # pg = PlanarGraph()
     # pg._add_node(0, multiplicity)
     # pg._add_node(1, multiplicity)

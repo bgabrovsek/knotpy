@@ -25,8 +25,8 @@ import string
 import re
 
 import knotpy as kp
-from knotpy.classes.planargraph import PlanarGraph
-from knotpy.generate.simple import empty_knot
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+
 from knotpy.classes.node import Crossing, Vertex
 
 
@@ -40,17 +40,20 @@ def to_em_notation(g) -> dict:
     return {node: [adj_ep for adj_ep in g.adj[node]] for node in g.nodes}
 
 
-def from_em_notation(data, create_using=None):
+def from_em_notation(data, oriented=False):
     """
     :param data: dictionary of lists of tuples or a string that evaluates to this
-    :param create_using: Graph Instance, Constructor or None
+    :param oriented:
     :return: PlanarGraph object
     """
+
+    if oriented:
+        raise NotImplementedError()  # TODO: implement oriented diagram
 
     if isinstance(data, str):
         pd = eval(data)
 
-    g = PlanarGraph()
+    g = PlanarDiagram()
     for node in data:
         g.add_node(node, len(data[node]))
         for pos, adj_endpoint in enumerate(data[node]):
@@ -80,11 +83,22 @@ def to_condensed_em_notation(g, separator=",") -> str:
     )
 
 
-def from_condensed_em_notation(data: str, separator=",", create_using=None):
+def from_condensed_em_notation(data: str, separator=",", oriented=False):
+    """
+
+    :param data:
+    :param separator:
+    :param oriented:
+    :return:
+    """
     """Convert a condensed EM string to a planar diagram."""
 
+    if oriented:
+        raise NotImplementedError()  # TODO: implement oriented diagram
+
+
     data = (" " if separator == " " else "").join(data.split())  # clean up string
-    g = empty_knot(create_using=create_using)
+    g = PlanarDiagram()
     data = data.split(separator)
     for s, node in zip(data, string.ascii_letters[:len(data)]):
         adj_nodes = re.findall(r"[a-zA-Z]", s)

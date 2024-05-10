@@ -8,10 +8,9 @@ from knotpy.classes.node import Vertex, Crossing
 from knotpy.classes import PlanarDiagram
 # from knotpy.generate.simple import house_graph
 
-__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node"]
+__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node", "remove_bivalent_vertices"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
-
 
 
 def add_node_to(k, node_for_adding, node_type, degree=None):
@@ -147,6 +146,40 @@ def unplug(k: PlanarDiagram, node, unplug_endpoint_positions):
         k.add_node(node_for_adding=new_node, create_using=Vertex, degree=1)
         replug_endpoint(k, source_endpoint=(node, position), destination_endpoint=(new_node, 0))
 
+
+def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
+    """Remove bivalent vertices from knotted graph k
+    :param k:
+    :param match_attributes: if True, removes bivalent vertices only if all four adjacent/incident endpoints match,
+    if False, it removes the bivalent vertices regardless
+    :return: None
+    """
+    if not hasattr(k, "vertices"):
+        raise TypeError(f"cannot remove bivalent vertices from an instance of type {type(k)}")
+
+    bivalent_vertices = {node for node in k.vertices if len(k.nodes[node]) == 2}
+
+    while bivalent_vertices:
+        node = bivalent_vertices.pop()
+        # get the incident endpoints b0 and b1 and the incident endpoints a0 and a1 (ai is the twin of bi for i=0,1)
+        b0 = k.get_endpoint_from_pair((node, 0))
+        a0 = k.twin(b0)
+        b1 = k.get_endpoint_from_pair((node, 1))
+        a1 = k.twin(b1)
+
+        if match_attributes and (b0.attr == a0.attr == b1.attr == a1.attr):
+            continue  # skip removing vertex
+
+        if b0.node == a0.node or b1.node == a1.node:
+            continue  # cannot remove loops
+
+        if k.is_oriented() and (type(a0) is type(a1)):
+            continue  # skip incoherently ordered endpoints
+
+        k.nodes[a0.node][a0.position] = a1
+        k.nodes[a1.node][a1.position] = a0
+        k.remove_node(node_for_removing=node, remove_incident_endpoints=False)
+
+
 if __name__ == "__main__":
-    g = house_graph()
     print(degree_sequence(g))

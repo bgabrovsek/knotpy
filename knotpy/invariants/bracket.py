@@ -15,46 +15,46 @@ from sympy import Expr, expand, Integer, symbols, Symbol
 from collections import deque
 
 from knotpy.algorithms.skein import smoothing_type_A, smoothing_type_B
-from knotpy.algorithms.faces import choose_kink
-from knotpy.manipulation.reidemeister import remove_kink
-from knotpy.manipulation.simplification import simplify
+from knotpy.invariants.writhe import writhe
+from knotpy.algorithms.orientation import unorient
 
-_A = symbols("A")
-_kauffman_term = (-_A ** 2 - _A ** (-2))
-_framing_term = - _A ** 3
+def bracket_polynomial(k, variable="A", normalize=True) -> Expr:
+    """
 
-#@single_variable_invariant('A')
-def bracket_polynomial(k, variable="A") -> Expr:
+    :param k:
+    :param variable:
+    :param normalize:
+    :return:
+    """
 
-    if k.is_oriented():
-        raise NotImplemented("Oriented case not yet implemented")  # TODO: convert to unoriented version
+    # if k.is_oriented():
+    #     raise NotImplemented("the bracket polynomial is defined for unoriented knots")  # TODO: convert to unoriented version
 
     A = variable if isinstance(variable, Symbol) else symbols(variable)
 
-    poly = Integer(0)
-    stack = deque()
-    stack.append((Integer(1), k))
+    _kauffman_term = (-A ** 2 - A ** (-2))
+    _framing_term = - A ** 3
 
-    #print("ok")
+    polynomial = Integer(0)
+    stack = deque()
+    stack.append((Integer(1), k if not k.is_oriented() else unorient(k)))
 
     while stack:
-        #print("pop")
-        poly, k = stack.pop()
+        polynomial, k = stack.pop()
 
-        if reduce:
-            simplify(k, in_place=True)
-
-        #print("k", k)
         if k.crossings:
             crossing = next(iter(k.crossings))
             kA = smoothing_type_A(k, crossing)
             kB = smoothing_type_B(k, crossing)
-            #print(kA)
-            #print(kB)
-            stack.append((poly * A, kA))
-            stack.append((poly / A, kB))
+            stack.append((polynomial * A, kA))
+            stack.append((polynomial * (A**-1), kB))
 
         else:
-            polynomial += poly * (kauff_term ** (k.number_of_nodes - 1)) * (framing_term ** k.framing)
+            polynomial += polynomial * (_kauffman_term ** (k.number_of_nodes - 1)) * (_framing_term ** k.framing)
+
+    if normalize:
+        polynomial *= _framing_term ** writhe(k)  # the normalized bracket is (-A^-3)^w(L) * <L>
+
 
     return expand(polynomial)
+
