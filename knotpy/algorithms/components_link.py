@@ -65,7 +65,7 @@ def link_components(k: PlanarDiagram) -> set:
     :param k:
     :return:
     """
-    pass
+    raise NotImplementedError()
 
 
 

@@ -2,7 +2,8 @@
 
 """
 
-__all__ = ["edges", "number_of_edges", "parallel_arcs","bridges","loops", "kinks", "cut_edges", "cut_vertices"]
+__all__ = ["edges", "number_of_edges", "parallel_arcs","bridges","loops", "kinks", "cut_edges", "cut_vertices",
+           "is_knot", "is_planar_graph"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
@@ -171,21 +172,45 @@ def loops(k):
                len({ep.node for ep in arc}) == 1
                and all(not isinstance(k.nodes[ep.node], Crossing) for ep in arc))
 
+def is_kink(k: PlanarDiagram, endpoint: Endpoint):
+    """
+    :param k:
+    :param endpoint:
+    :return:
+    """
+    if not isinstance(k.nodes[endpoint.node], Crossing):
+        return False
+    #print("is kink", k, endpoint)
+    return k.nodes[endpoint.node][(endpoint.position - 1) % 4] == endpoint
 
-def kinks(k, of_node=None):
-    """Return a set of loops of k. A loop is an arc that connects the node to itself at a crossing. See also kinks().
+
+def kinks(k, of_crossing=None):
+    """Return a set of loops of k. A loop is defined at a crossing, such that as the endpoint (that defines the length 1
+    face of the kink) in which, if we travel in ccw direction, we hit the same node.
+    #an arc that connects the node to itself at a crossing. See also kinks().
     :param k: the planar diagram
-    :param of_node:
+    :param of_crossing:
     :return: set of bridges represented by an arc
     """
-    if of_node is None:
-        return set(arc for arc in k.arcs if
-                   len({ep.node for ep in arc}) == 1
-                   and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
-    else:
-        return set(arc for arc in k.arcs[of_node] if
-                   len({ep.node for ep in arc}) == 1
-                   and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
+    #TODO we do not need to loop though all endpoints, just those of crossings
+    return set(ep for ep in (k.endpoints if of_crossing is None else k.nodes[of_crossing]) if is_kink(k, ep))
+
+
+    #if of_crossing is None:
+    #    return
+    #else
+    # if of_crossing is None:
+    #     return set(ep for ep in k.endpoints
+    #                if isinstance(k.nodes[ep.node][ep.pos], Crossing) and k.nodes[ep.node][(ep.position - 1) % 4].node == ep.node)
+    #     # return set(arc for arc in k.arcs if
+    #     #            len({ep.node for ep in arc}) == 1
+    #     #            and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
+    # else:
+    #     #print(set(ep for ep in k.nodes[of_crossing]))
+    #     return set(ep for ep in k.nodes[of_crossing] if ep.node == of_crossing == k.nodes[ep.node][(ep.position - 1) % 4].node)
+    #     # return set(arc for arc in k.arcs[of_crossing] if
+    #     #            len({ep.node for ep in arc}) == 1
+    #     #            and all(isinstance(k.nodes[ep.node], Crossing) for ep in arc))
 
 
 def kink_region_iterator(k, of_node=None):
@@ -200,6 +225,22 @@ def kink_region_iterator(k, of_node=None):
         for ep in k.nodes[node]:
             if ep == k.nodes[ep.node][(ep.position + 3) & 3]:  # is the endpoint and the ccw endpoint the same?
                 yield [ep]
+
+def is_planar_graph(k):
+    """Are are nodes vertices?
+    :param k:
+    :return:
+    """
+    return all(type(k.nodes[node]) is Vertex for node in k.nodes)
+
+
+
+def is_knot(k):
+    """Are all nodes crossings?
+    :param k:
+    :return:
+    """
+    return all(type(k.nodes[node]) is Crossing for node in k.nodes)
 
 
 

@@ -1,43 +1,38 @@
-
+from collections import Counter
 from knotpy.algorithms.components_disjoint import  disjoint_components
-import knotpy as kp
+#import knotpy as kp
 
 def sanity_check(k):
 
-    _print = True
+    _print = False
 
-    reg = list(faces(k))
+    fac = list(k.faces)
     ept = list(k.endpoints)
     arc = list(k.arcs)
     nod = list(k.nodes)
-    lin = kp.algorithms.components_link.link_components_endpoints(k)
-    #dis = disjoint_components(k)
 
-    if _print:
-        print("Sanity check")
-        print(k)
-        print("  regions", reg)
-        print("  endpoints", ept)
-        print("  arcs", arc)
-        print("  nodes", nod)
-        print("  link components", lin)
-        print("  disjoint components", lin)
+    for n in nod:
+        for i in range(len(k.nodes[n])):
+            if k.nodes[n][i] is None:
+                raise ValueError(f"None endpoint found in node {n} at position {i}.")
 
     if len(ept) != len(set(ept)):
-        return False
+        repeated_elements = [element for element, count in Counter(ept).items() if count > 1]
 
-    if len(ept) == len(set.union(*[set(r) for r in reg])):
-        return False
+        raise ValueError(f"Endpoints {repeated_elements} repeat")
 
-    if len(ept) == len(set.union(*[set(l) for l in lin])):
-        return False
+    # if len(ept) == len(set.union(*[set(r) for r in fac])):
+    #     raise ValueError("Not all endpoints are on faces")
 
-    if len(ept) == len(arc)*2:
-        return False
+    if len(ept) != len(arc)*2:
+        raise ValueError(f"There are more endpoints than twice the arcs. \nKnot: {k} \n endpoints: {ept}\n arcs {arc}."
+                         f"\n num. endpoints {len(ept)}, num. arcs: {len(arc)}")
 
-    if len(ept) == sum(len(l) for l in lin):
-        return False
+    if set(ep.node for ep in ept) != set(nod):
+        raise ValueError("Not all nodes have endpoints")
 
-    #assert len(nod) == sum(len(c) for c in dis)
-    # Euler characteristic
-    #assert len(nod) - len(arc) + len(reg) == 2 * len(dis)
+    for ep in ept:
+        twin = k.twin(ep)
+        twin_twin = k.twin(twin)
+        if twin_twin != ep:
+            raise ValueError("Twin of twin is not the original endpoint")

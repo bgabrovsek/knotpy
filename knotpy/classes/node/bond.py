@@ -15,8 +15,8 @@ class Bond(Node):
 
         super().__init__(incoming_node_data, degree=degree, **attr)
 
-    def mirror(self):
-        pass
+    # def mirror(self):
+    #     pass
 
     # @staticmethod
     # def is_crossing(self):

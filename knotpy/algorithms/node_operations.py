@@ -8,7 +8,7 @@ from knotpy.classes.node import Vertex, Crossing
 from knotpy.classes import PlanarDiagram
 # from knotpy.generate.simple import house_graph
 
-__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node", "remove_bivalent_vertices"]
+__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node", "remove_bivalent_vertices", "mirror"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -68,17 +68,45 @@ def name_for_next_node_generator(k, count=None, default="a"):
             new_node = _next_letter[new_node] if _is_letter_but_not_Z[new_node] else 0
 
 
-def permute_node(k, node, p):
-    """Permute the endpoints of the node of knot k. For example, if p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,2,1]),
+def permute_node(k, node, permutation):
+    """Permute the endpoints of the node of knot k. For example, if p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,3,1]),
     and if node has endpoints [a, b, c, d] (ccw) then the new endpoints will be [a, d, b, c].
     :param k: knot diagram
     :param node: node of which we permute its endpoints
-    :param p: permutation given as a dict or list/tuple
+    :param permutation: permutation given as a dict or list/tuple
     :return: None
     TODO: are there problems regarding endpoint attributes?
     TODO: check if it works for loops (probably does not)
     """
 
+    DEBUG = False
+    if DEBUG: print(f"Permuting node {node} with {permutation} of", k)
+
+    adj_endpoints = [adj_ep for adj_ep in k.nodes[node]]  # save old endpoints, maybe enough just list(...)
+    if DEBUG: print(f"Adjacent endpoints", adj_endpoints)
+    node_endpoint_inst = [k.twin(adj_ep) for adj_ep in adj_endpoints]
+    if DEBUG: print(f"Self endpoints", node_endpoint_inst)
+    for pos, adj_ep in enumerate(adj_endpoints):
+        if adj_ep.node != node:  # no loop
+            # set adjacent
+            k.set_endpoint(endpoint_for_setting=(node, permutation[pos]),
+                           adjacent_endpoint=(adj_ep.node, adj_ep.position),
+                           create_using=type(adj_ep),
+                           **adj_ep.attr)
+            # set self
+            k.set_endpoint(endpoint_for_setting=adj_ep,
+                           adjacent_endpoint=(node, permutation[pos]),
+                           create_using=type(node_endpoint_inst[pos]),
+                           **node_endpoint_inst[pos].attr)
+        else:
+            # set adjacent
+            k.set_endpoint(endpoint_for_setting=(node, permutation[pos]),
+                           adjacent_endpoint=(adj_ep.node, permutation[adj_ep.position]),
+                           create_using=type(adj_ep),
+                           **adj_ep.attr)
+
+
+    return
 
     # convert list/tuple permutation to dict
     if isinstance(p, list) or isinstance(p, tuple):
@@ -91,14 +119,17 @@ def permute_node(k, node, p):
         #print("old_node_data[pos]", old_node_data[pos], type(old_node_data[pos]))
         # set endpoint from adjacent crossing
         #print(type(ep))
+        if DEBUG: print("setting", ep, "to", (node, p[pos]))
         k.set_endpoint(
             endpoint_for_setting=ep,
             adjacent_endpoint=(node, p[pos]),
-            create_using=old_node_data[pos],  # copies the type and "old" attributes
+            create_using=type(old_node_data[pos]),  # copies the type and "old" attributes
             )
         # set endpoint from crossing
+        if DEBUG: print("Setting", node,p[pos], "to", ep)
         k.nodes[node][p[pos]] = ep
 
+    if DEBUG: print("result", k)
 
 def replug_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
     """Unplugs the endpoint endpoint_source and plugs it into endpoint_destination. Takes care of removing the source
@@ -181,5 +212,28 @@ def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
         k.remove_node(node_for_removing=node, remove_incident_endpoints=False)
 
 
+def mirror(k: PlanarDiagram, crossings=None):
+    """Mirror a planar diagram in-place. If no crosssings are given, mirror the whole diagram
+    :param k:
+    :param crossings:
+    :return:
+    """
+
+    #print(crossings)
+    if crossings is None:
+        crossings = set(k.crossings)
+
+    #print(crossings)
+
+
+    if k.is_oriented():
+        raise NotImplementedError("Mirroring not implemented on oriented knots")
+    else:
+        for c in crossings:
+            permute_node(k, c, (1, 2, 3, 0))
+
+    # a → X(d0 b1 c1 c0), b → X(e0 a1 c3 c2), c → X(a3 a2 b3 b2), d → V(a0), e → V(b0) with framing 0
+
+
 if __name__ == "__main__":
-    print(degree_sequence(g))
+    pass

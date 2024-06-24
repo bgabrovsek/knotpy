@@ -34,6 +34,11 @@ def _orient_with_edges(k: PlanarDiagram, edges: list):
 
 
 def all_orientations(k: PlanarDiagram) -> list:
+    """
+
+    :param k:
+    :return:
+    """
     edges = list(structure.edges(k))
     orient = list(it.product((True, False), repeat=len(edges)))  # not needed to be a list
     #print(orient)
@@ -42,8 +47,12 @@ def all_orientations(k: PlanarDiagram) -> list:
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(edges, o)] for o in orient)
     ]
 
+def oriented(k: PlanarDiagram):
+    edges = structure.edges(k)
+    return _orient_with_edges(k=k, edges=edges)
 
-def unorient(k:OrientedPlanarDiagram) -> PlanarDiagram:
+
+def unoriented(k:OrientedPlanarDiagram) -> PlanarDiagram:
     o = k.copy(copy_using=PlanarDiagram)
     return o
 
@@ -56,7 +65,7 @@ if __name__ == "__main__":
     ok = all_orientations(k)
     for o in ok:
         print("   ", o)
-        uo = unorient(o)
+        uo = unoriented(o)
         print("   ", u)
 
     # k_oriented = oriented(k)

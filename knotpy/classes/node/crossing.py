@@ -21,9 +21,9 @@ class Crossing(Node):
             raise ValueError("Cannot create a crossing with degree not equal to four.")
         super().__init__(incoming_node_data, degree=degree, **attr)
 
-    def mirror(self):
-        raise NotImplementedError()
-        pass
+    # def mirror(self):
+    #     raise NotImplementedError()
+    #     pass
 
     def sign(self):
         if any(type(ep) is Endpoint for ep in self._inc):

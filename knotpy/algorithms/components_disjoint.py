@@ -2,7 +2,7 @@
 """
 
 __all__ = ['number_of_disjoint_components', 'disjoint_components',
-           'add_unknot_in_place',
+           'add_unknot_in_place', "number_of_unknots", "remove_unknots"
            ]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -26,7 +26,7 @@ def add_unknot_in_place(k: PlanarDiagram, number_of_unknots=1):
     """
     for _ in range(number_of_unknots):
         node = name_for_new_node(k)
-        k.add_vertex(node)
+        k.add_vertex(node, degree=2)
         k.set_arc(((node, 0), (node, 1)))
 
 
@@ -38,7 +38,7 @@ def _disjoint_components_nodes(k: PlanarDiagram) -> list:
     er = EquivalenceRelation(k.nodes)
     for ep0, ep1 in k.arcs:
         er[ep0.node] = ep1.node
-    return er.classes()
+    return list(er.classes())
 
 
 def number_of_disjoint_components(k):
@@ -129,13 +129,34 @@ def disjoint_sum(*knots, return_relabel_dicts=False):
 
     return (new_knot, relabel_dicts) if return_relabel_dicts else new_knot
 
+def _is_vertex_an_unknot(k: PlanarDiagram, vertex):
+    return len(k.nodes[vertex]) == 2 and k.nodes[vertex][0].node == k.nodes[vertex][1].node == vertex
+
+def number_of_unknots(k: PlanarDiagram):
+    """Return the number of unknots (degree 1 vertices which have an edge connected to itself)
+    :param k:
+    :return:
+    """
+    return sum(1 for v in k.vertices if _is_vertex_an_unknot(k, v))
 
 
+def remove_unknots(k: PlanarDiagram, max_unknots=None):
+    """Remove all unknots in
+    :param k:
+    :param max_unknots:
+    :return: number of unknots removed
+    """
+    vertices_to_remove = []
+    for v in k.vertices:
+        #print(v, _is_vertex_an_unknot(k, v), len(k.nodes[v]), k.nodes[v][0].node, "==", v)
+        if max_unknots is not None and len(vertices_to_remove) >= max_unknots:
+            break
+        if _is_vertex_an_unknot(k, v):
+            vertices_to_remove.append(v)
 
-
-
-
-
+    for v in vertices_to_remove:
+        k.remove_node(v, remove_incident_endpoints=True)
+    return len(vertices_to_remove)
 
 
 

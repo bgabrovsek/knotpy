@@ -3,6 +3,14 @@ from pathlib import Path
 import knotpy as kp
 
 
+k = kp.from_pd_notation("[[1;5;2;4];[3;1;4;6];[5;3;6;2]]")
+print(k)
+if k.crossings:
+    for c in k.crossings:
+        print(c)
+exit()
+
+
 data_folder = Path("data")
 txt_input_file = data_folder / 'bonded.txt'
 

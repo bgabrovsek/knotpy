@@ -54,7 +54,7 @@ def _nodes_to_graphs(graphs, maximal_degree=None):
                                          connect_at_endpoints=endpoints)
                 if _debug: print("  After adding node (EM)", to_em_notation(new_g))
                 if _debug: print("  After adding node (ADJ)", new_g._inc)
-                new_g = kp.canonical(new_g)
+                new_g = kp.canonical_unoriented(new_g)
                 if _debug: print("  Canonical", new_g)
                 new_graphs.add(new_g)
 

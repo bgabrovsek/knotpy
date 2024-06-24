@@ -57,6 +57,8 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
     - Mathematica: "V[1,2,3], X[2,3,4,5]", see https://knotinfo.math.indiana.edu/descriptions/pd_notation.html,
     - Knotinfo: "[[1,5,2,4],[3,1,4,6],[5,3,6,2]]", see http://katlas.org/wiki/Planar_Diagrams.
 
+    ['XABC', 'YBAD', 'CDEF', 'EGHI', 'FJKG', 'IHKJ', 'X', 'Y']
+
     :param text: string containing the PD notation
     :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
     :param oriented:
@@ -139,7 +141,6 @@ def to_pd_notation(k: PlanarDiagram) -> str:
 def _test():
 
 
-
     pd_code_mathematica = "X[1, 9, 2, 8], X[3, 10, 4, 11], X[5, 3, 6, 2],X[7, 1, 8, 12], X[9, 4, 10, 5], X[11,7,12,6]"
     pd_code_knotinfo = "[[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]]"
     pd_code_topoly = "V[12,14,5],V[14,13,2],X[11,10,13,12],X[7,11,5,6],X[10,7,6,2]"
@@ -160,4 +161,8 @@ def _test():
     print(k)
 
 if __name__ == "__main__":
-    _test()
+
+    s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+    k = from_pd_notation(s)
+    print(k)
+    #_test()

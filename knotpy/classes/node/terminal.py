@@ -15,8 +15,8 @@ class Terminal(Vertex):
             raise ValueError("Degree of a terminal must be 1")
         super().__init__(incoming_terminal_data, degree, **attr)
 
-    def mirror(self):
-        pass
+    # def mirror(self):
+    #     pass
 
     # @staticmethod
     # def is_crossing(self):

@@ -13,7 +13,7 @@ are connected through a tiny bond
 from abc import ABC, abstractmethod
 
 from knotpy.utils.dict_utils import compare_dicts
-from knotpy.utils.decorators import total_ordering_py3
+from knotpy.utils.decorators import total_ordering_from_compare
 
 """
 define what a node is and what data it consists of
@@ -23,7 +23,7 @@ __all__ = ['Node']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@gmail.si>'
 
-@total_ordering_py3
+@total_ordering_from_compare
 class Node(ABC):
     """Abstract node class. Holds a list of incident endpoints and node attributes.
     Nodes can be crossings, vertices, etc."""
@@ -67,37 +67,37 @@ class Node(ABC):
     def __len__(self):
         return len(self._inc)
 
-    def py3_cmp(self, other, compare_attr=False):
+    def compare(self, other, compare_attributes=False):
         """Compare node. Replaces obsolete __cmp__ method.
         :param other: Node to compare with
-        :param compare_attr: do we compare also the node attributes (name, color, ...)
-        :return: 1 if self > other, -1 if self < other,0 otherwise.
+        :param compare_attributes: attributes to compare, if False we do not compare attributes, if True, we compare all attributes
+        :return: 1 if self > other, -1 if self < other, or 0 if self == other.
         """
 
-        def _compare(_x, _y):
-            return 1 if (_x > _y) else (-1 if (_x < _y) else 0)
-
+        # compare node type
         if type(self).__name__ != type(other).__name__:
-            return _compare(type(self).__name__, type(other).__name__)
+            return (type(self).__name__ > type(other).__name__) * 2 - 1
 
         if len(self) != len(other):
-            return ((len(self) < len(other)) << 1) - 1
+            return (len(self) > len(other)) * 2 - 1
 
-        for a, b in zip(self, other):
-            if a != b:
-                return ((a < b) << 1) - 1
+        for ep, ep_other in zip(self, other):
+            if cmp := ep.compare(ep_other, compare_attributes):
+                return cmp
 
-        if compare_attr:
-            return compare_dicts(self.attr, other.attr)
+        if compare_attributes:
+            return compare_dicts(self.attr, other.attr,
+                                 compare_attributes if compare_attributes in (set, list, tuple) else None)
+
         return 0
 
     def degree(self):
         return len(self)
 
 
-    @abstractmethod
-    def mirror(self):
-        pass
+    # @abstractmethod
+    # def mirror(self):
+    #     pass
 
     def __str__(self):
         """Used mostly for debugging. Actual node is usually printed via NodeView."""

@@ -75,7 +75,7 @@ def from_plantri_notation(data: str, separator=",", ccw=True, node_type=str):
     data = data.split(separator)
     nodes = ascii_letters[:len(data)]
 
-    g = PlanarGraph()
+    g = PlanarDiagram() #PlanarGraph()
     g.add_vertices_from(nodes, degrees=[len(word) for word in data])
 
 

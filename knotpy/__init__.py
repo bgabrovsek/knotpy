@@ -32,5 +32,9 @@ from knotpy.drawing import *
 from knotpy import sanity
 from .sanity import *
 
+from knotpy import reidemeister
+from .reidemeister import *
+
+
 # from knotpy import builder
 # from knotpy.builder import *

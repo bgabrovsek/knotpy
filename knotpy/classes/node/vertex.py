@@ -9,8 +9,8 @@ class Vertex(Node):
     """A graph 0-dimensional vertex is a point with arcs emitting from it.
     """
 
-    def mirror(self):
-        pass
+    # def mirror(self):
+    #     pass
 
     # @staticmethod
     # def is_crossing(self):
