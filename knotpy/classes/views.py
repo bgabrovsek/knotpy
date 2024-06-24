@@ -88,9 +88,10 @@ class FilteredNodeView(NodeView):
     __slots__ = ("_nodes", "_filter")
 
     def __init__(self, nodes, node_type):
-        print("init node view", node_type)
+        #print("init node view", node_type)
         super().__init__(nodes)
         self._filter = lambda _: isinstance(self._nodes[_], node_type)
+        #print("filter", self._filter)
 
     # Mapping methods
     def __len__(self):
@@ -200,9 +201,10 @@ class ArcView(NodeView):
     def __next__(self):
         while True:
             endpoint = next(self._iter_endpoints)  # can raise StopIteration
-            adjacent_endpoint = self._nodes[endpoint.node][endpoint.position]
-            self._visited_endpoints.add(adjacent_endpoint)
             if endpoint not in self._visited_endpoints:
+                adjacent_endpoint = self._nodes[endpoint.node][endpoint.position]
+                self._visited_endpoints.add(adjacent_endpoint)
+                #if endpoint not in self._visited_endpoints:
                 return frozenset((adjacent_endpoint, endpoint))
 
     def __getitem__(self, key):

@@ -20,7 +20,7 @@ for name in ["poly"]:#, "sum", "third"]:
                 graphs += kp.loadtxt_multiple(data_dir / (name + f"-{n}-{b}.txt"), notation="plantri", prepended_node_count=False)
 
 
-            canon = {kp.canonical(g) for g in graphs}
+            canon = {kp.canonical_unoriented(g) for g in graphs}
             print("  count =", len(graphs), "=", len(canon))
 
 

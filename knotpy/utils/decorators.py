@@ -13,29 +13,29 @@ from sympy import symbols, Symbol
 
 #@knottted_structure(Crossing, Node)
 
-def total_ordering_py3(cls):
+def total_ordering_from_compare(cls):
     """Create a class with total order from the cmp method py3_cmp()
     :param cls: decorated class
     :return: self
     """
 
     def __eq__(self, other):
-        return self.py3_cmp(other) == 0
+        return self.compare(other) == 0
 
     def __ne__(self, other):
-        return self.py3_cmp(other) != 0
+        return self.compare(other) != 0
 
     def __lt__(self, other):
-        return self.py3_cmp(other) < 0
+        return self.compare(other) < 0
 
     def __le__(self, other):
-        return self.py3_cmp(other) <= 0
+        return self.compare(other) <= 0
 
     def __gt__(self, other):
-        return self.py3_cmp(other) > 0
+        return self.compare(other) > 0
 
     def __ge__(self, other):
-        return self.py3_cmp(other) >= 0
+        return self.compare(other) >= 0
 
     setattr(cls, '__eq__', __eq__)
     setattr(cls, '__ne__', __ne__)

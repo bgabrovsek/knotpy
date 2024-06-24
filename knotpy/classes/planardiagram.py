@@ -1,8 +1,8 @@
 from functools import cached_property
 from itertools import chain
 
-
-from knotpy.utils.dict_utils import identitydict
+from knotpy.utils.dict_utils import compare_dicts
+from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.node import Node, Crossing, Vertex, Bond, VirtualCrossing, Terminal
 from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView, FilteredNodeView
@@ -48,7 +48,7 @@ class _NodeCachedPropertyResetter:
                 del od[self._node_type_property_names[node_type]]
 
 
-#@total_order_py3
+@total_ordering_from_compare
 class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDiagram, _VirtualCrossingDiagram):
     """The PlanarDiagram class provides the basic abstract class for all planar objects (planar graph, knots, knotted
     graphs, ...).  It is intended to be used only as the parent class for Knot, PlanarGraph, etc.
@@ -102,6 +102,8 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
         copy_using = copy_using or type(self)
 
+        # print(".... COPY")
+        #
         return planar_diagram_from_data(incoming_data=self, create_using=copy_using)
 
     # node-type views
@@ -130,45 +132,38 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         """Return the number of nodes in the knot."""
         return len(self._nodes)
 
-    def py3_cmp(self, other, compare_attr=False):
-        """Compare diagrams. Replaces obsolete __cmp__ method.
-
-        :param other:
-        :param compare_attr: do we compare also the node attributes (name, color, ...)
-        :return: 1 if self > other, -1 if self < other, and 0 otherwise.
+    def compare(self, other, compare_attributes=True):
+        """Compare the diagram with other.
+        :param other: planar diagram
+        :param compare_attributes: if False, ignore all attributes when comparing, if True, compare all attributes
+        (except diagram name), if list, set, or tuple, compare only those attributes.
+        :return: 1 if self > other, -1 if self < other, and 0 if self = other.
         """
 
-        if type(self).__name__ != type(other).__name__:
-            return ((type(self).__name__ > type(other).__name__) << 1) - 1
+        # compare type
+        if type(self) is not type(other):
+            return TypeError(f"Cannot compare {type(self)} with {type(other)}.")
 
+        # compare nodes
         if self.number_of_nodes != other.number_of_nodes:
-            return self.number_of_nodes > other.number_of_nodes
+            return (self.number_of_nodes > other.number_of_nodes) * 2 - 1
 
-        for this_node, that_node in zip(self._nodes, other._nodes):
-            if cmp := this_node.py3_cmp(that_node, compare_attr=compare_attr):
+        if set(self._nodes) != set(other._nodes):
+            return (sorted(self._nodes) > sorted(other._nodes)) * 2 - 1
+
+        for this_node, that_node in zip(self._nodes.values(), other._nodes.values()):
+            if cmp := this_node.compare(that_node, compare_attributes=compare_attributes):
                 return cmp
 
         if self.framing != other.framing:
-            return self.framing > other.framing
+            return (self.framing > other.framing) * 2 - 1
 
-        if compare_attr:
-            raise NotImplementedError()
+        if compare_attributes is True:
+            return compare_dicts(self.attr, other.attr, exclude_keys=["name", "framing"])
+        elif type(compare_attributes) in (list, set, tuple):
+            return compare_dicts(self.attr, other.attr, exclude_keys=["name", "framing"], include_only_keys=compare_attributes)
 
-        if type(self).__name__ != type(other).__name__:
-            return ((type(self).__name__ > type(other).__name__) << 1) - 1
-
-        if len(self) != len(other):
-            return ((len(self) < len(other)) << 1) - 1
-
-        for a, b in zip(self, other):
-            if a != b:
-                return ((a < b) << 1) - 1
-
-        if compare_attr:
-            return cmp_dict(self.attr, other.attr)
         return 0
-
-
 
 
     def __getitem__(self, item):
@@ -235,7 +230,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
     def add_vertex(self, vertex_for_adding, degree=None, **attr):
         """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
-        self.add_node(node_for_adding=vertex_for_adding, create_using=Vertex, degree=4, **attr)
+        self.add_node(node_for_adding=vertex_for_adding, create_using=Vertex, degree=degree, **attr)
 
     def add_crossings_from(self, crossings_for_adding, **attr):
         """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
@@ -320,6 +315,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         :return: None
         """
         #print(create_using)
+
 
         if create_using is not None and not isinstance(create_using, type):
             raise TypeError("Creating endpoint with create_using instance not yet supported.")
@@ -442,9 +438,26 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
     def remove_arcs_from(self, arcs_for_removing):
         self.remove_endpoints_from(chain(*arcs_for_removing))
 
+    def __hash__(self):
+        """Unsafe hashing"""
+
+        def _endpoints_to_tuple(node):
+            return tuple((type(ep), ep.node, ep.position, ep.attr["color"]) if "color" in ep.attr else (ep.node, ep.position)
+                    for ep in self._nodes[node])
+
+        self_attr = (self.framing, )
+        self_nodes = tuple(
+            (node, type(self._nodes[node]), _endpoints_to_tuple(node), self._nodes[node].attr["color"])
+            if "color" in self._nodes[node].attr else
+            (node, type(self._nodes[node]), _endpoints_to_tuple(node))
+            for node in self._nodes
+        )
+        return hash(self_attr + self_nodes)
+
     @staticmethod
     def is_oriented():
         False
+
 
     @property
     def name(self):
@@ -524,8 +537,6 @@ class OrientedPlanarDiagram(PlanarDiagram):
 
 
 
-
-
 def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     """ Generate a planar diagram, from (incoming) data.
     :param incoming_data: notation or other PlanarDiagram instance
@@ -557,7 +568,6 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
         # copy endpoints
         for ep in incoming_data.endpoints:
             adj_ep = incoming_data.twin(ep)
-
             adj_ep_type = type(adj_ep)
 
             # create unoriented endpoint if diagram is unoriented

@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Hashable
 
-from knotpy.utils.decorators import total_ordering_py3
+from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.utils.dict_utils import compare_dicts
 
 
 @dataclass(unsafe_hash=True)
-@total_ordering_py3
+@total_ordering_from_compare
 class Endpoint:
     node: Hashable
     position: int
@@ -31,19 +31,29 @@ class Endpoint:
         if "color" in self.attr:
             s += "=" + str(self.attr["color"])
         return s
-    def py3_cmp(self, other, compare_attributes=False):
+    def compare(self, other, compare_attributes=False):
 
-        if type(self).__name__ != type(other).__name__:
-            return ((type(self).__name__ > type(other).__name__) << 1) - 1
+        # compare types
+        if type(self) is Endpoint and (type(other) is IngoingEndpoint or type(other) is OutgoingEndpoint):
+            raise TypeError("Cannot compare unoriented endpoints with oriented endpoints")
+
+        if type(other) is Endpoint and (type(self) is IngoingEndpoint or type(self) is OutgoingEndpoint):
+            raise TypeError("Cannot compare oriented endpoints with unoriented endpoints")
+
+        if type(self) is IngoingEndpoint and type(self) is OutgoingEndpoint:
+            return 1
+
+        if type(self) is OutgoingEndpoint and type(self) is IngoingEndpoint:
+            return -1
 
         if self.node != other.node:
-            return ((self.node > other.node) << 1) - 1
+            return ((self.node > other.node) * 2) - 1
 
         if self.position != other.position:
-            return ((self.position > other.position) << 1) - 1
+            return ((self.position > other.position) * 2) - 1
 
         if compare_attributes:
-            return compare_dicts(self.attr, other.attr)
+            return compare_dicts(self.attr, other.attr, compare_attributes if compare_attributes in (set, list, tuple) else None)
 
         return 0
 

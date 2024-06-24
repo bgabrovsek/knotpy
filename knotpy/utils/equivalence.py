@@ -1,14 +1,18 @@
+__all__ = ["EquivalenceRelation"]
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 
 class EquivalenceRelation(dict):
     """Partitions a set of objects into equivalence classes.
     Each key/item of the dictionary is the object and the values are sets that represent the class"""
-    def __init__(self, items=None):
+    def __init__(self, iterable=None):
         """
-        :param items: iterable of objects.
+        :param iterable: iterable of objects.
         """
-        items = items or []
+        iterable = iterable or []
         super().__init__()
-        for item in items:
+        for item in iterable:
             super().__setitem__(item, {item})
 
     def __iadd__(self, item):
@@ -25,24 +29,45 @@ class EquivalenceRelation(dict):
         for item in new_set:
             super().__setitem__(item, new_set)
 
+    def representatives(self):
+        for cls in self.classes():
+            yield min(cls)
+
     def classes(self):
-        result = []
+        already_yielded = []
         for c in self.values():
-            if c not in result:
-                result.append(c)
-        return result
+            if c not in already_yielded:
+                yield c
+                already_yielded.append(c)
+
+    def number_of_classes(self):
+        return sum(1 for c in self.classes())
 
 if __name__ == "__main__":
     # four equivalent classes
     e = EquivalenceRelation([0,1,2])
     e += 3
     e += 4
-    print(e.classes())
 
+    e[0] = 0
     e[0] = 3  # join classes 0 and 3
-    print(e.classes())
+    e[3] = 3
+    e[5] = 5
     e[3] = 4  # join classes 4 and 3
-    print(e.classes())
     e[1] = 2
-    print(e.classes())
+    print(list(e.classes()))
+    print(list(e.representatives()))
 
+"""
+
+[{0}, {1}, {2}, {3}, {4}]
+[{0, 3}, {1}, {2}, {4}]
+[{0, 3, 4}, {1}, {2}]
+[{0, 3, 4}, {1, 2}]
+
+[{0}, {1}, {2}, {3}, {4}]
+[{0, 3}, {1}, {2}, {4}, {5}]
+[{0, 3, 4}, {1}, {2}, {5}]
+[{0, 3, 4}, {1, 2}, {5}]
+
+"""

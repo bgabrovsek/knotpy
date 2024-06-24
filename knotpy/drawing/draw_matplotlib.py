@@ -26,7 +26,7 @@ from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
 from knotpy.classes.node import Vertex, Crossing, Bond
-from knotpy.manipulation.phantom import is_node_phantom
+from knotpy.reidemeister.phantom import is_node_phantom
 
 
 __all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout"]
@@ -622,7 +622,7 @@ if __name__ == '__main__':
 
     plt.show()
 
-    from knotpy.manipulation.phantom import insert_phantom_node
+    from knotpy.reidemeister.phantom import insert_phantom_node
     arcs = list(k.arcs)
     insert_phantom_node(k, arcs[0])
     print(k)
