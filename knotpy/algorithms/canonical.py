@@ -52,6 +52,8 @@ def _canonical_unoriented(k: PlanarDiagram, use_letters_for_nodes=True):
 
     _debug = False
 
+    #print(" canonical", k)
+
     # node names
     letters = (string.ascii_lowercase + string.ascii_uppercase) if use_letters_for_nodes else list(range(len(k)))
 
@@ -119,8 +121,12 @@ def _canonical_unoriented(k: PlanarDiagram, use_letters_for_nodes=True):
 
         # if g.number_of_arcs == 5: print("> ")
 
+        #print("   candidate:", new_graph)
+
         if minimal_graph is None or new_graph < minimal_graph:
             minimal_graph = new_graph
+            #print("   minimal  :", new_graph)
+
     #
     # if in_place:
     #     # copy all data from minimal_graph
@@ -141,7 +147,7 @@ def _canonically_permute_nodes(k : PlanarDiagram):
     if k.is_oriented():
         raise NotImplementedError()
     else:
-        for node in sorted(k.nodes):  # probably sorted not needed
+        for node in sorted(k.nodes):  # probably sorted not needed, on second though, probably is needed
 
             # if len(k.nodes[node]) <= 1:  # no need to permute leafs
             #     continue

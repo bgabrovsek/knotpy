@@ -14,7 +14,7 @@ _notation_aliases = {
         "emc": ["emc", "ewingmillettcondensed", "condensedewingmillett", "cem", "condensedem", "emcondensed"],
         "pd": ["pd", "planardiagram", "planar"],
         "plantri": ["plantri", "planarcode", "pl"],
-        "knotpy": ["native", ],
+        "knotpy": ["knotpy", "native", ],
     }
 
 _reversed_notation_aliases = {val: key for key in _notation_aliases for val in _notation_aliases[key]}

@@ -24,6 +24,7 @@ from knotpy.algorithms.components_disjoint import number_of_unknots, remove_unkn
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplification import simplify_diagram_crossing_reducing
+from knotpy.invariants.cache import Cache
 
 def _forced_writhe(k: PlanarDiagram) -> int:
     """
@@ -38,7 +39,12 @@ def _forced_writhe(k: PlanarDiagram) -> int:
         except ValueError:
             return min(writhe(ok) for ok in all_orientations(k))
 
-def kauffman_bracket_skein_module(k :PlanarDiagram, variable="A", normalize=True, use_cache=True):
+
+_KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
+
+
+
+def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True, use_cache=True):
     """
 
     :param k:
@@ -68,22 +74,8 @@ def kauffman_bracket_skein_module(k :PlanarDiagram, variable="A", normalize=True
     while stack:
         coeff, k = stack.pop()
 
-        #print("->", k)
         simplify_diagram_crossing_reducing(k, inplace=True)
-        #print("==", k)
-        #
-        # if use_cache and len(k) <= CACHE_NODES:
-        #     k = canonical(k)
-        #     if k in precomputed:
-        #         for m in precomputed:
-        #             print("    ", m)
-        #         expression += precomputed[k]
-        #     else:
-        #         invariant_value = kauffman_bracket_skein_module(k, variable, normalize=False, use_cache=False)
-        #         invariant_value = module.from_tuples(invariant_value)
-        #         precomputed[k] = invariant_value
-        #         expression += invariant_value
-        #     continue
+
 
         if k.crossings:
             crossing = next(iter(k.crossings))
@@ -92,23 +84,16 @@ def kauffman_bracket_skein_module(k :PlanarDiagram, variable="A", normalize=True
             stack.append((coeff * A, kA))
             stack.append((coeff * (A**-1), kB))
         else:
-            #print("u",k)
             number_of_unknots = remove_unknots(k)
-            #print("r", k)
             k_canonical = canonical(k)
             framing = k_canonical.framing
             k_canonical.framing = 0
 
             expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- A ** 3) ** framing), k_canonical)
-            #expression.append((coeff * (_kauffman_term ** number_of_unknots) * ((- A ** 3) ** k.framing), k_canonical))
 
     if normalize:
         wr = _forced_writhe(original_knot)
-        #print("writhe", wr)
-        expression *= (- A ** (3)) ** (wr + original_knot.framing)
-        #expression = [(expand(koeff * _kauffman_term ** wr), g) for koeff, g in expression]  # the normalized bracket is (-A^-3)^w(L) * <L>
-    #else:
-    #    expression = [(expand(koeff), g) for koeff, g in expression]
+        expression *= (- A ** 3) ** (wr + original_knot.framing)
 
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
