@@ -7,7 +7,7 @@ It is characterized by the following three rules:
 See Louis H. Kauffman, State models and the Jones polynomial. Topology 26 (1987), no. 3, 395--407.
 """
 
-__all__ = ['bracket_polynomial']
+__all__ = ['jones_polynomial']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
