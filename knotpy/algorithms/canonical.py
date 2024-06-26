@@ -57,6 +57,9 @@ def _canonical_unoriented(k: PlanarDiagram, use_letters_for_nodes=True):
     # node names
     letters = (string.ascii_lowercase + string.ascii_uppercase) if use_letters_for_nodes else list(range(len(k)))
 
+    if len(k) == 0:  # empty knot
+        return k.copy()
+
     minimal_degree = min(degree_sequence(k))
     nodes_with_minimal_degree = [node for node in k.nodes if k.degree(node) == minimal_degree]
     # TODO: optimize by viewing also 2nd degree (number of neighbour's neighbours)

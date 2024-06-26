@@ -25,6 +25,7 @@ from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplification import simplify_diagram_crossing_reducing
 from knotpy.invariants.cache import Cache
+from knotpy.algorithms.classification import is_empty_diagram
 
 def _forced_writhe(k: PlanarDiagram) -> int:
     """
@@ -44,7 +45,7 @@ _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
 
 
-def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True, use_cache=True):
+def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True):
     """
 
     :param k:
@@ -98,46 +99,90 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
 
-
-def bracket_polynomial(k, variable="A", normalize=True) -> Expr:
+def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
     """
-    :param k:
-    :param variable:
-    :param normalize:
-    :return:
-    """
-    if not is_knot(k):
-        raise ValueError("The bracket polynomial can onlt be computed for knots and links.")
-        #return kauffman_bracket_skein_module(k, variable, normalize)
 
+       :param k:
+       :param variable:
+       :param normalize:
+       :return:
+
+       # TODO: take care of vertices connected by two arcs,
+       TODO: take care that we unframe once we add the framing to the polynomial
+       TODO: canonical
+       TODO: expression as defaultdicT?
+       """
     if k.is_oriented():
-        raise NotImplementedError("The bracket polynomial is not implemented for oriented knots")
+        raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
     original_knot = k
     A = variable if isinstance(variable, Symbol) else symbols(variable)
     _kauffman_term = (-A ** 2 - A ** (-2))
-    polynomial = Integer(0)
+    polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
 
-    stack.append((Integer(1), k if not k.is_oriented() else unoriented(k)))
+    stack.append((Integer(1), k.copy() if not k.is_oriented() else unoriented(k)))
 
     while stack:
         coeff, k = stack.pop()
 
+        simplify_diagram_crossing_reducing(k, inplace=True)
+
         if k.crossings:
             crossing = next(iter(k.crossings))
-            kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A") # smoothing_type_A(k, crossing)
-            kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B") # smoothing_type_A(k, crossing)
+            kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A")  # smoothing_type_A(k, crossing)
+            kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")  # smoothing_type_A(k, crossing)
             stack.append((coeff * A, kA))
-            stack.append((coeff * (A**-1), kB))
+            stack.append((coeff * (A ** -1), kB))
         else:
-            #polynomial += coeff * (_kauffman_term ** (k.number_of_nodes - 1)) * ((- A ** 3) ** k.framing
-            if k.number_of_nodes != k.number_of_unknots:
-                raise ValueError("After skein resolution, number of nodes does not equal number of unknots")
-            polynomial += coeff * (_kauffman_term ** (k.number_of_unknots - 1)) * ((- A ** 3) ** k.framing)
+            number_of_unknots = remove_unknots(k)
+            k_canonical = canonical(k)
+            framing = k_canonical.framing
+            k_canonical.framing = 0
+
+            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- A ** 3) ** framing)
 
     if normalize:
-        polynomial *= (- A ** 3) ** _forced_writhe(original_knot)  # the normalized bracket is (-A^-3)^w(L) * <L>
+        wr = _forced_writhe(original_knot)
+        polynomial *= (- A ** 3) ** (wr + original_knot.framing)
 
     return expand(polynomial)
 
+
+if __name__ == '__main__':
+    from knotpy.notation.pd import from_pd_notation
+
+    import sympy
+
+    a = from_pd_notation("X[1,5,2,4],X[3,1,4,6],X[5,3,6,2]")  # trefoil
+    b = from_pd_notation("X[5,2,4,1],X[1,4,6,3],X[3,6,2,5]")  # mirror trefoil
+    k = from_pd_notation("X[1,5,2,4],X[3,9,4,8],X[5,1,6,10],X[7,3,8,2],X[9,7,10,6]]")  # 5_2 knot
+
+    print(a, a.is_oriented())
+    print(b)
+    print(k)
+
+    bracket_a = bracket_polynomial(a)
+    bracket_b = bracket_polynomial(b)
+    bracket_k = bracket_polynomial(k)
+
+    print(bracket_a)
+    print(bracket_b)
+    print(bracket_k)
+
+    A = sympy.symbols("A")
+    mirror_b = bracket_b.subs(A,A**(-1))
+
+    print("Mirror:", mirror_b)
+
+    if mirror_b == bracket_a:
+        print("Knots are mirrors of each other")
+
+
+"""A**14 + A**6 - A**2
+-1/A**2 + A**(-6) + A**(-14)"""
+
+"""
+A**14 + A**6 - A**2
+-1/A**2 + A**(-6) + A**(-14)
+"""
