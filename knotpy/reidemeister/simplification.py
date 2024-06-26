@@ -20,7 +20,7 @@ from knotpy.notation.pd import to_pd_notation
 # from knotpy.reidemeister.find_reidemeister_moves import (find_reidemeister_1_kinks, find_reidemeister_1_unkinks,
 #                                                          find_reidemeister_2_pokes, find_reidemeister_2_unpokes,
 #                                                          find_reidemeister_3_triangles)
-from knotpy.algorithms.canonical import canonical as canonical_form
+from knotpy.algorithms.canonical import canonical
 
 
 def simplify_diagram_crossing_reducing(k: PlanarDiagram, inplace=False):
@@ -77,17 +77,17 @@ def make_reidemeister_move(k: PlanarDiagram, location: ReidemeisterLocation, inp
         raise ValueError(f"Unknown Reidemesiter locatio {location}")
 
 
-def batch_make_reidemeister_moves(k: PlanarDiagram, iterable_of_moves, canonical=False):
-    """
+def batch_make_reidemeister_moves(k: PlanarDiagram, iterable_of_moves, put_in_canonical_form=False):
+    """Make a bunch of reidemeister moves
 
     :param k:
     :param iterable_of_moves:
     :return:
     """
-    if canonical:
-        knots = [canonical_form(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
+    if put_in_canonical_form:
+        knots = [canonical(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
     else:
-        knots = [canonical_form(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
+        knots = [canonical(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
 
     return knots
 
@@ -138,12 +138,12 @@ def _simplify_auto(k, depth):
 
     if DEBUG: print("Auto simplifying with depth", depth)
 
-    kc = canonical_form(k.copy())
+    kc = canonical(k.copy())
     level_diagrams = {0: {kc}}
     all_diagrams = {kc}
 
 
-    for level in range(1, depth+1):
+    for level in range(1, depth+1):  # recursion level
         if DEBUG: print(level)
         level_diagrams[level] = set()
         for k in level_diagrams[level-1]:
@@ -165,7 +165,7 @@ def _simplify_auto(k, depth):
                         find_reidemeister_2_pokes(k)
                     ))
                 if DEBUG:print(" *Level", level, r_moves)
-                new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, canonical=True))
+                new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, put_in_canonical_form=True))
                 if DEBUG: print("       ", len(new_diagrams), "new diagrams")
 
             new_diagrams -= all_diagrams  # interested onlyin new diagrams
@@ -173,46 +173,53 @@ def _simplify_auto(k, depth):
             all_diagrams.update(new_diagrams)
             level_diagrams[level].update(new_diagrams)
 
-    return canonical_form(min(all_diagrams))
+    return canonical(min(all_diagrams))
 
 
 def _simplify_non_increasing(k, depth):
+    """Simplify the knot by using only non-crossing increasing Reidemeister moves
+    :param k: planar diagram
+    :param depth: depth of recursion
+    :return: minimal knot after Reidemeister moves
+    """
     DEBUG = False
 
     if DEBUG: print("Auto simplifying with depth", depth)
 
-    kc = canonical_form(k.copy())
-    level_diagrams = {0: {kc}}
-    all_diagrams = {kc}
+    # put the canonical form at (recursion) level 0
+    kc = canonical(k)
+    level_diagrams = {0: {kc}}  # dictionary {recursion level: {new diagrams}}
+    all_diagrams = {kc}  # store all diagrams (at all levels)
 
-    print("Simplifying", kc)
+    #print("Simplifying", kc)
 
-    for level in range(1, depth+1):
+    for level in range(1, depth+1):  # recursion level
+
         if DEBUG: print(level)
+
         level_diagrams[level] = set()
-        for k in level_diagrams[level-1]:
+
+        for k in level_diagrams[level-1]:  # process all knots at a level lower
+
+            # all possible Reidemeister moves
             r_moves = list(chain(
                     find_reidemeister_1_remove_kinks(k),
                     find_reidemeister_2_unpokes(k),
                     find_reidemeister_3_triangles(k)
                 ))
-            if DEBUG: print("  Level", level, r_moves)
-            new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, canonical=True))
-            if DEBUG: print("       ", len(new_diagrams), "new diagrams")
-            new_diagrams -= all_diagrams  # interested onlyin new diagrams
-            if DEBUG: print("       ", len(new_diagrams), "new new diagrams")
 
-            print("NEW", *new_diagrams)
-            if len(new_diagrams) >= 1:
-                kk = list(new_diagrams)[0]
-                kkk = canonical_form(kk)
-                print("NEW", kkk)
+
+            new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, put_in_canonical_form=True))
+
+            if DEBUG: print("       ", len(new_diagrams), f"diagrams at level {level}")
+            new_diagrams -= all_diagrams  # remove all diagrams that already appeared at lower recursion levels
+            if DEBUG: print("       ", len(new_diagrams), f"new diagrams  at level {level} ")
 
             all_diagrams.update(new_diagrams)
             level_diagrams[level].update(new_diagrams)
 
+    return min(all_diagrams)
 
-    return canonical_form(min(all_diagrams))
 
 def simplify(k, depth, method="auto"):
     """Simplify by performing sequences of Reidemesiter moves. if method is
@@ -226,16 +233,19 @@ def simplify(k, depth, method="auto"):
     :return:
     """
 
+    put_in_canonical_form = True
+
 
     method = method.lower()
-    if method not in ["auto", "nonincreasing", "non-increasing"]:
-        raise NotImplementedError(f"Simplification method {method} not yet implemented")
 
     if method == "auto":
         return _simplify_auto(k, depth)
 
-    if method == "nonincreasing" or method == "non-increasing":
+    elif method == "nonincreasing" or method == "non-increasing":
         return _simplify_non_increasing(k, depth)
+
+    else:
+        raise NotImplementedError(f"Simplification method {method} not yet implemented")
 
 
 

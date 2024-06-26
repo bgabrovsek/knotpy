@@ -6,55 +6,47 @@ import sympy
 
 import knotpy as kp
 
-POLY_FOLDER = Path("polynomials")
+POLY_FOLDER = Path("polynomials-10")
 
 
-print("X[0,1,2,3],X[4,5,6,7],X[1,8,9,2],X[10,11,12,4],X[13,6,5,14],X[15,9,8,11],X[15,10,16,0],X[16,13,14,12],V[3],V[7]")
-print("X[0,1,2,3],X[4,5,6,7],X[1,8,9,2],X[10,11,4,12],X[12,6,5,13],X[14,10,13,15],X[16,9,8,15],X[16,11,14,0],V[3],V[7]")
-
-
-k1 = kp.from_pd_notation("X[0,1,2,3],X[4,5,6,7],X[1,8,9,2],X[10,11,12,4],X[13,6,5,14],X[15,9,8,11],X[15,10,16,0],X[16,13,14,12],V[3],V[7]")
-k2 = kp.from_pd_notation("X[0,1,2,3],X[4,5,6,7],X[1,8,9,2],X[10,11,4,12],X[12,6,5,13],X[14,10,13,15],X[16,9,8,15],X[16,11,14,0],V[3],V[7]")
-print(k1)
-print(k2)
-
-
-
-
-c1 = kp.canonical(k1)
-c2 = kp.canonical(k2)
-
-print(k1 < k2, k2 < k1)
-
-
-print(c1)
-print(c2)
-
-print("---")
-kp.simplify(c2, 1, "non-increasing",)
-
-exit()
 def str2poly(s):
-    d = ["/d", "*x", "+p", "-m", " s", "(o", ")z"]
-    for x, y in d:
+    """Convert a file name string into a polynomial."""
+    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
         s = s.replace(y, x)
     return sympy.sympify(s)
 
-for filename in os.listdir(POLY_FOLDER):
-    if not filename.endswith(".gz"): continue
+print("Start")
 
-    #if not filename.startswith("7_"): continue
-    #print(filename)
+for filename in os.listdir(POLY_FOLDER):  # load all knots with same polynomial
+    if not filename.endswith(".gz"):
+        continue
+
+
     polynomial = str2poly(filename[:-3][filename.find("_")+1:])
 
     knots = kp.load_collection(POLY_FOLDER / filename)
-    print("Polynomial", polynomial, f"({len(knots)} knots)")
 
-    er = kp.EquivalenceRelation(knots)
+    #print("Polynomial", polynomial, f"({len(knots)} knots)")
 
-    print("Classes:", er.number_of_classes(), end=" ", flush=True)
+    if len(knots) <= 1:
+        continue
 
-    for depth in [2]:#[2, 5, 8, 11, 17]:
+    if len(knots) != 2:
+        continue
+
+
+
+    er = kp.EquivalenceRelation([kp.canonical(k) for k in knots])
+
+    print("Number of classes:", er.number_of_classes(), end=" -> ")
+
+    print("Knots sharing the polynomial:")
+    for k in er:
+        print("     ", k)
+
+
+
+    for depth in [1]:#[2, 5, 8, 11, 17]:
 
         new_dict = dict()
 
@@ -62,19 +54,21 @@ for filename in os.listdir(POLY_FOLDER):
             #print(k)
             k_simplified = kp.simplify(k, depth=depth, method="nonincreasing")
             k_simplified = kp.canonical(k_simplified)
-            #print("simpl", k_simplified)
+            print("simpl", k_simplified)
             new_dict[k_simplified] = k
 
-        for a, b in new_dict.items():
-            er[a] = b
+        # for a, b in new_dict.items():
+        #     print()
+        #     print("a", a)
+        #     print("b", b)
+        #     er[a] = b
 
-        noc = er.number_of_classes()
-        print(noc, end=" ", flush=True)
-    print()
+        print(er.number_of_classes())
+
+    exit()
+    #print()
 
 
-
-    break
 
 
 exit()

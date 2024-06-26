@@ -32,7 +32,7 @@ def number_of_link_components(k: PlanarDiagram):
     :param k: input planar diagram
     :return: number of link components
     """
-    return len(link_components_endpoints(k))
+    return len(list(link_components_endpoints(k)))
 
 
 def link_components_endpoints(k: PlanarDiagram):

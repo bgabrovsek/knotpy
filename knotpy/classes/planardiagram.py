@@ -148,12 +148,22 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         if self.number_of_nodes != other.number_of_nodes:
             return (self.number_of_nodes > other.number_of_nodes) * 2 - 1
 
-        if set(self._nodes) != set(other._nodes):
-            return (sorted(self._nodes) > sorted(other._nodes)) * 2 - 1
+        self_nodes_sorted = sorted(self._nodes)
+        other_nodes_sorted = sorted(other._nodes)
 
-        for this_node, that_node in zip(self._nodes.values(), other._nodes.values()):
-            if cmp := this_node.compare(that_node, compare_attributes=compare_attributes):
+        if self_nodes_sorted != other_nodes_sorted:
+            return (self_nodes_sorted > other_nodes_sorted) * 2 - 1
+
+        # if set(self._nodes) != set(other._nodes):
+        #     return (sorted(self._nodes) > sorted(other._nodes)) * 2 - 1
+
+        for node in self_nodes_sorted:
+            if cmp := self._nodes[node].compare(other._nodes[node], compare_attributes=compare_attributes):
                 return cmp
+
+        # for this_node, that_node in zip(self._nodes.values(), other._nodes.values()):
+        #     if cmp := this_node.compare(that_node, compare_attributes=compare_attributes):
+        #        return cmp
 
         if self.framing != other.framing:
             return (self.framing > other.framing) * 2 - 1
