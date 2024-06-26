@@ -12,3 +12,7 @@ from knotpy.classes.node import Crossing
 
 def is_knot(k: PlanarDiagram) -> bool:
     return all(type(node) is Crossing for node in k.nodes)
+
+
+def is_empty_diagram(k: PlanarDiagram) -> bool:
+    return len(k) == 0
