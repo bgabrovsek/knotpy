@@ -137,7 +137,7 @@ def _plot_vertices(k, circles, with_labels, ax):
 
     # BOND NODES
     for key in circles:
-        if "__BOND__" in key:
+        if isinstance(key, str) and "__BOND__" in key:
             # BONDED NODE
 
             value = circles[key]
@@ -540,7 +540,7 @@ def draw_from_layout(k,
     # plt.close(fig)
 
 
-def draw(k, draw_circles=True, with_labels=False, with_title=False):
+def draw(k, draw_circles=False, with_labels=False, with_title=False):
     """Draw the planar diagram k using Matplotlib.
     :param k: A planar diagram
     :param draw_circles: draw the circle that define the positions of node, arcs, and areas/faces
@@ -559,14 +559,14 @@ def draw(k, draw_circles=True, with_labels=False, with_title=False):
 
     draw_from_layout(k, circles, draw_circles, with_labels, with_title)
 
-def export_pdf(k, filename, draw_circles=True, with_labels=False, with_title=False, author=None):
+def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=False, author=None):
     """Draw the planar diagram(s) k using Matplotlib and save to pdf.
     :param k: the planar diagram or a list of planar diagrams
     :param filename: pdf name
     :param author: add pdf author information
     :return:
     """
-
+    plt.close()
     #print(k)
 
     pdf = PdfPages(filename)
