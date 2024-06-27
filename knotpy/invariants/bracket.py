@@ -150,13 +150,32 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
 
 
 if __name__ == '__main__':
-    from knotpy.notation.pd import from_pd_notation
-
+    import knotpy as kp
+    import matplotlib.pyplot as plt
     import sympy
 
-    a = from_pd_notation("X[1,5,2,4],X[3,1,4,6],X[5,3,6,2]")  # trefoil
-    b = from_pd_notation("X[5,2,4,1],X[1,4,6,3],X[3,6,2,5]")  # mirror trefoil
-    k = from_pd_notation("X[1,5,2,4],X[3,9,4,8],X[5,1,6,10],X[7,3,8,2],X[9,7,10,6]]")  # 5_2 knot
+    plt.close()
+
+    a = kp.from_pd_notation("X[1,5,2,4],X[3,1,4,6],X[5,3,6,2]")  # trefoil
+    b = kp.from_pd_notation("X[5,2,4,1],X[1,4,6,3],X[3,6,2,5]")  # mirror trefoil
+    k = kp.from_pd_notation("X[1,5,2,4],X[3,9,4,8],X[5,1,6,10],X[7,3,8,2],X[9,7,10,6]]")  # 5_2 knot
+
+    # draw a knot
+    kp.draw(k)
+    plt.show()
+
+    # save a knot
+    kp.draw(k)
+    plt.savefig("knot.png")
+
+    # draw many knots to pdf
+    knot_list = [a, b, k]
+
+    a.name = "Right Trefoil"
+    b.name = "Left Trefoil"
+    k.name = "5_2"
+    kp.export_pdf(knot_list, "knots.pdf", with_title=True)
+
 
     print(a, a.is_oriented())
     print(b)
