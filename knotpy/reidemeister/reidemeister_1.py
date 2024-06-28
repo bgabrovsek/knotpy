@@ -107,7 +107,7 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, location: ReidemeisterLocationR
                        create_using=type(ep_a), **ep_a.attr)
         k.remove_node(node, remove_incident_endpoints=False)
 
-    k.framing = k.framing + (1 if position % 2 else -1)
+    k.framing = k.framing + (-1 if position % 2 else 1)  # if we remove positive kink, the framing decreases by 1
 
     if _CHECK_SANITY:
         try:
@@ -164,7 +164,7 @@ def reidemeister_1_add_kink(k: PlanarDiagram, location: ReidemeisterLocationAddK
     else:
         raise ValueError(f"Unsupported crossing sign {location.sign}.")
 
-    k.framing -= location.sign
+    k.framing += location.sign  # if we add a positive kink, the framing increases by 1
 
 
     if DEBUG:
