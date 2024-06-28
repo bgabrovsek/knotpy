@@ -93,7 +93,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         self._nodes = dict()
         self.attr = dict()
 
-    def copy(self, copy_using=None):
+    def copy(self, copy_using=None, **attr):
         """
         Return shallow copy of the diagram.
         :param copy_using: the planar diagram type of the new diagram
@@ -102,9 +102,10 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
         copy_using = copy_using or type(self)
 
-        # print(".... COPY")
-        #
-        return planar_diagram_from_data(incoming_data=self, create_using=copy_using)
+        the_copy = planar_diagram_from_data(incoming_data=self, create_using=copy_using)
+        the_copy.attr.update(attr)
+        #print(attr,the_copy.attr)
+        return the_copy
 
     # node-type views
     @cached_property

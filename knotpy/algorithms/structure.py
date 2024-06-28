@@ -145,6 +145,9 @@ def bridges(k):
 def cut_edges(k):
     return bridges(k)
 
+def arc_subdivision(k, arc):
+    edge0, edge1 = arc
+
 
 def articulation_nodes(k):
     """Return a list of articulation nodes or cut vertices. A vertex is a cut-vertex if its removal disconnects the

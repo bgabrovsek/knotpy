@@ -29,6 +29,7 @@ from knotpy.algorithms.classification import is_empty_diagram
 
 def _forced_writhe(k: PlanarDiagram) -> int:
     """
+    TODO: optimize for knots, etc.
     :param k:
     :return:
     """
@@ -100,28 +101,27 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
 
 
 def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
-    """
+    """Return the (Kauffman) Bracket polynomial defined via the skein relations <L_X> = A <L_0> + 1/A <L_inf>,
+    <L ⊔ U> = (-A^2 - A^-2) <L> and <unknot> = 1.
+       :param k: Planar diagram
+       :param variable: variable used for the polynomial
+       :param normalize: should we normalize it by multiplying by the factor (-A^3)^wr(k), where wr is the writhe of the
+       diagram d
+       :return: (Laurent) polynomial in variable
 
-       :param k:
-       :param variable:
-       :param normalize:
-       :return:
-
-       # TODO: take care of vertices connected by two arcs,
+       TODO: take care of vertices connected by two arcs,
        TODO: take care that we unframe once we add the framing to the polynomial
        TODO: canonical
-       TODO: expression as defaultdicT?
        """
+    original_knot = k
     if k.is_oriented():
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
-    original_knot = k
     A = variable if isinstance(variable, Symbol) else symbols(variable)
     _kauffman_term = (-A ** 2 - A ** (-2))
     polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
-
-    stack.append((Integer(1), k.copy() if not k.is_oriented() else unoriented(k)))
+    stack.append((Integer(1), k.copy(framing=0) if not k.is_oriented() else unoriented(k)))
 
     while stack:
         coeff, k = stack.pop()
@@ -136,15 +136,13 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
             stack.append((coeff * (A ** -1), kB))
         else:
             number_of_unknots = remove_unknots(k)
-            k_canonical = canonical(k)
-            framing = k_canonical.framing
-            k_canonical.framing = 0
+            if not is_empty_diagram(k):
+                raise ValueError("Obtained non-empty diagram when removing crossings from knot.")
 
-            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- A ** 3) ** framing)
+            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- A ** 3) ** (-k.framing))
 
     if normalize:
-        wr = _forced_writhe(original_knot)
-        polynomial *= (- A ** 3) ** (wr + original_knot.framing)
+        polynomial *= (- A ** 3) ** (-_forced_writhe(original_knot) - original_knot.framing)
 
     return expand(polynomial)
 
@@ -154,11 +152,26 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import sympy
 
-    plt.close()
-
     a = kp.from_pd_notation("X[1,5,2,4],X[3,1,4,6],X[5,3,6,2]")  # trefoil
     b = kp.from_pd_notation("X[5,2,4,1],X[1,4,6,3],X[3,6,2,5]")  # mirror trefoil
     k = kp.from_pd_notation("X[1,5,2,4],X[3,9,4,8],X[5,1,6,10],X[7,3,8,2],X[9,7,10,6]]")  # 5_2 knot
+
+
+    m = kp.from_pd_notation("X[4, 5, 6, 3], X[4, 3, 7, 8], X[6, 5, 8, 7]")
+    print(m)
+    print(kp.bracket_polynomial(m))
+
+    m = kp.from_pd_notation("X[4, 5, 6, 3], X[3, 7, 8, 4], X[6, 5, 8, 7]")
+    print(m)
+    print(kp.bracket_polynomial(m))
+
+
+    m = kp.from_pd_notation("X[3, 4, 5, 6], X[7, 8, 9, 3], X[4, 9, 8, 10], X[5, 10, 7, 6]")
+    print(m)
+    print(kp.bracket_polynomial(m))
+
+
+    exit()
 
     # draw a knot
     kp.draw(k)
