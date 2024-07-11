@@ -10,7 +10,7 @@ from collections import defaultdict
 import knotpy as kp
 
 DATA_FOLDER = Path("data")
-POLY_FOLDER = Path("polynomials-10")
+POLY_FOLDER = Path("polys")
 #POLY_FOLDER = Path("polynomials-10")
 #filename_knots = {6: "knots_pdcodes-2-6.gz", 7: "knots_pdcodes-7.gz", 8: "knots_pdcodes-8.gz", 9: "knots_pdcodes-9.gz", 10: "knots_pdcodes-10.gz"}
 #path_kauffman = DATA_FOLDER / "kbsm.csv"
@@ -31,13 +31,11 @@ def str2poly(s):
 
 # load knotoids
 print("Loaing...", end="")
-knotoids = kp.load_collection(DATA_FOLDER / "knotoids_native_codes-6.gz")
-print(end="6 ")
-knotoids += kp.load_collection(DATA_FOLDER / "knotoids_native_codes-7.gz")
-print(end="7 ")
-knotoids += kp.load_collection(DATA_FOLDER / "knotoids_native_codes-8.gz")
-print(end="8 ")
-# knotoids += kp.load_collection(DATA_FOLDER / "knotoids_native_codes-9.gz")
+knotoids = []
+for i in range(5):
+    knotoids += kp.load_collection(DATA_FOLDER / f"knotoids_native_codes-{i}.gz")
+
+print(f"loaded {len(knotoids)} knots.")
 # print(end="9 ")
 # knotoids += kp.load_collection(DATA_FOLDER / "knotoids_native_codes-10.gz")
 # print(end="10 ")
@@ -64,6 +62,13 @@ for k in tqdm(knotoids):
     kbsm_dict[poly].add(k)  # add the knotoid to the polynomial group
 
 print("There are", len(kbsm_dict), "polynomials with", sum(len(v) for v in kbsm_dict.values()), "knots")
+
+poly_group_sizes = defaultdict(int)
+for p in kbsm_dict:
+    poly_group_sizes[len(kbsm_dict[p])] += 1
+
+for length in sorted(poly_group_sizes):
+    print("Group size:", length, "count:", poly_group_sizes[length])
 
 # save
 for poly in kbsm_dict:

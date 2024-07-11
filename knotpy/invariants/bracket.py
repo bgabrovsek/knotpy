@@ -93,9 +93,14 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
 
             expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- A ** 3) ** framing), k_canonical)
 
+
     if normalize:
+        #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
         wr = _forced_writhe(original_knot)
-        expression *= (- A ** 3) ** (wr + original_knot.framing)
+        #print("    wr", wr)
+        expression *= (- A ** (-3)) ** (wr + original_knot.framing)
+        #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
+        #print()
 
     return [(expand(r), s) for r, s in expression.to_tuple()]
 

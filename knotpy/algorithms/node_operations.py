@@ -212,12 +212,15 @@ def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
         k.remove_node(node_for_removing=node, remove_incident_endpoints=False)
 
 
-def mirror(k: PlanarDiagram, crossings=None):
+def mirror(k: PlanarDiagram, crossings=None, inplace=False):
     """Mirror a planar diagram in-place. If no crosssings are given, mirror the whole diagram
     :param k:
     :param crossings:
     :return:
     """
+
+    if not inplace:
+        k = k.copy()
 
     #print(crossings)
     if crossings is None:
@@ -232,6 +235,7 @@ def mirror(k: PlanarDiagram, crossings=None):
         for c in crossings:
             permute_node(k, c, (1, 2, 3, 0))
 
+    return k
     # a → X(d0 b1 c1 c0), b → X(e0 a1 c3 c2), c → X(a3 a2 b3 b2), d → V(a0), e → V(b0) with framing 0
 
 

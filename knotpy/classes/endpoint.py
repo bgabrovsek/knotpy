@@ -5,7 +5,7 @@ from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.utils.dict_utils import compare_dicts
 
 
-@dataclass(unsafe_hash=True)
+#@dataclass(unsafe_hash=True)
 @total_ordering_from_compare
 class Endpoint:
     node: Hashable
@@ -31,6 +31,10 @@ class Endpoint:
         if "color" in self.attr:
             s += "=" + str(self.attr["color"])
         return s
+
+    def __hash__(self):
+        return hash((type(self), self.attr.get("color", None), self.node, self.position))
+
     def compare(self, other, compare_attributes=False):
 
         # compare types
@@ -70,7 +74,9 @@ class Endpoint:
     def __contains__(self, key):
         return key in self.attr
 
-
+    @staticmethod
+    def reverse_type():
+        return Endpoint
 
     def __repr__(self):
         return str(self)
@@ -89,6 +95,11 @@ class IngoingEndpoint(Endpoint):
             s += "=" + str(self.attr["color"])
         return s
 
+    @staticmethod
+    def reverse_type():
+        return OutgoingEndpoint
+
+
 class OutgoingEndpoint(Endpoint):
     def __str__(self):
         s = ""
@@ -100,5 +111,10 @@ class OutgoingEndpoint(Endpoint):
         if "color" in self.attr:
             s += "=" + str(self.attr["color"])
         return s
+
+    @staticmethod
+    def reverse_type():
+        return IngoingEndpoint
+
 if __name__ == "__main__":
     pass

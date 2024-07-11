@@ -145,9 +145,15 @@ class Segment(Line):
     def length(self):
         return abs(self.B - self.A)  # |B-A|
 
-    def __call__(self, t):
-        """The point on the line A + t * directional vector."""
-        return self.A + t * (self.B - self.A) if 0 <= t <= 1 else None
+    def __call__(self, t1, t2=None):
+        """The point on the line A + t * directional vector. if both t1 and t2 are given, return the segment from t1 to t2."""
+        if t2 is None:
+            return self.A + t1 * (self.B - self.A) if 0 <= t1 <= 1 else None
+        else:
+            if 0 <= t1 <= 1 and 0 <= t2 <= 1:
+                return Segment(self(t1), self(t2))
+            else:
+                return None
 
     def __str__(self):
         return f"Segment through points {self.A:.5f} and {self.B:.5f}"

@@ -67,6 +67,11 @@ class Node(ABC):
     def __len__(self):
         return len(self._inc)
 
+    def __hash__(self):
+        # print("node hash", (type(self), self.attr.get("color", None), *self._inc), "----",
+        #       hash((type(self), self.attr.get("color", None), *self._inc)))
+        return hash((type(self), self.attr.get("color", None), *self._inc))
+
     def compare(self, other, compare_attributes=False):
         """Compare node. Replaces obsolete __cmp__ method.
         :param other: Node to compare with

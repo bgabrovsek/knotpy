@@ -20,8 +20,8 @@ def _random_string(N):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
 
 
-def is_node_phantom(k: PlanarDiagram, node):
-    return "_phantom" in k.nodes[node].attr and k.nodes[node].attr["_phantom"]
+# def is_node_phantom(k: PlanarDiagram, node):
+#     return "_phantom" in k.nodes[node].attr and k.nodes[node].attr["_phantom"]
 
 
 def insert_phantom_node(k: PlanarDiagram, arc, node_name=None):

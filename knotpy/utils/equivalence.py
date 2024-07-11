@@ -23,8 +23,24 @@ class EquivalenceRelation(dict):
 
     def __setitem__(self, item1, item2):
         """Join classes of item1 and item2."""
+
         self.__iadd__(item1)
+        if item1 == item2:
+            return
         self.__iadd__(item2)
+
+
+        # print("item1", item1)
+        # print("item2", item2)
+        # if not (item1 in self) or not (item2 in self):
+        #     print([hash(kkk) == hash(item1) for kkk in self])
+        #     print([kkk == item2 for kkk in self])
+        #     print([hash(kkk) == hash(item1) for kkk in self])
+        #     print([kkk == item2 for kkk in self])
+        #     pass
+        # print("self1", self[item1])
+        # print("self2", self[item2])
+
         new_set = self[item1] | self[item2]
         for item in new_set:
             super().__setitem__(item, new_set)
@@ -56,7 +72,10 @@ if __name__ == "__main__":
     e[3] = 4  # join classes 4 and 3
     e[1] = 2
     print(list(e.classes()))
+    print(list(min(c) for c in e.classes()))
     print(list(e.representatives()))
+    print(list(e))
+
 
 """
 
