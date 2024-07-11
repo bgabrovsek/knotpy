@@ -268,10 +268,10 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
             self.set_endpoint(
                 endpoint_for_setting=adj_ep,
                 adjacent_endpoint=(ep.node, permutation[ep.position]),
-                create_using=ep,
+                create_using=type(ep),
                 **ep.attr
             )
-            print(ep,adj_ep)
+            #print(ep,adj_ep)
             self._nodes[ep.node][permutation[ep.position]] = adj_ep
 
     def rename_nodes(self, mapping_dict):
@@ -325,8 +325,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         :param attr: additional attributes of the (adjacent) endpoint
         :return: None
         """
-        #print(create_using)
-
 
         if create_using is not None and not isinstance(create_using, type):
             raise TypeError("Creating endpoint with create_using instance not yet supported.")
@@ -340,9 +338,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
             raise ValueError(f"Cannot add oriented endpoint {create_using} to an unoriented diagram")
 
         node, node_pos = endpoint_for_setting
-
-        # TODO: avoid else
-        # adjacent endpoint
 
         if isinstance(adjacent_endpoint, Endpoint):
             #create_using = create_using or type(adjacent_endpoint)  # todo: why adjacent? should it be default Endpoint?
@@ -359,25 +354,35 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
             create_using = create_using or Endpoint
             adjacent_endpoint = create_using(*adjacent_endpoint, **attr)
 
-        #print("a", self._nodes[node])
-
         # insert missing positions missing in the node
         for i in range(node_pos + 1 - len(self._nodes[node])):
             self._nodes[node].append(Node)
 
-        #self._nodes[node] += [None] * (node_pos + 1 - len(self._nodes[node]))
-        #print("b", self._nodes[node])
-
-
-
-        #int(self._nodes)
-
-        #print("set endpoint", "node", node, "pos", node_pos, "adj", adjacent_endpoint)
-        #print("node", node,self._nodes[node])
         self._nodes[node][node_pos] = adjacent_endpoint
 
+    # def insert_endpoint(self, endpoint_for_setting, adjacent_endpoint, create_using=Endpoint, **attr):
+    #     """
+    #
+    #     :param endpoint_for_setting:
+    #     :param adjacent_endpoint:
+    #     :param create_using:
+    #     :param attr:
+    #     :return:
+    #     """
+    #
+    #     ep = endpoint_for_setting
+    #     if isinstance(ep, Endpoint):
+    #         new_ep = type(ep)(ep.node, self.degree(ep.node))
+    #         node, old_pos, new_pos = ep.node, ep.position, new_ep.position
+    #     else:
+    #         new_ep = (ep[0], self.degree(ep[0]))
+    #         node, old_pos, new_pos = ep[0], ep[1], new_ep[1]
+    #
+    #     self.set_endpoint(ep, adjacent_endpoint, create_using=create_using, **attr)
+    #     perm = {i: (i if i < old_pos else i + 1) for i in range(self.degree(node) - 1)}
+    #     perm[self.degree(node) - 1] = old_pos
+    #     self.permute_node(node, perm)
 
-        #print(self._nodes[node])
 
 
     def twin(self, endpoint) -> Endpoint:
@@ -451,19 +456,36 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
     def __hash__(self):
         """Unsafe hashing"""
+        # TODO: sort by hash if keys are not comparable
+        # print("hash",
+        #       (
+        #           self.framing,
+        #           tuple(hash(self._nodes[node]) for node in sorted(self._nodes))  # nodes need to be sorted
+        #       )
+        #
+        #       )
 
-        def _endpoints_to_tuple(node):
-            return tuple((type(ep), ep.node, ep.position, ep.attr["color"]) if "color" in ep.attr else (ep.node, ep.position)
-                    for ep in self._nodes[node])
-
-        self_attr = (self.framing, )
-        self_nodes = tuple(
-            (node, type(self._nodes[node]), _endpoints_to_tuple(node), self._nodes[node].attr["color"])
-            if "color" in self._nodes[node].attr else
-            (node, type(self._nodes[node]), _endpoints_to_tuple(node))
-            for node in self._nodes
+        return hash(
+            (
+                self.framing,
+                tuple(hash(self._nodes[node]) for node in sorted(self._nodes))  # nodes need to be sorted
+            )
         )
-        return hash(self_attr + self_nodes)
+
+        #
+        # def _endpoints_to_tuple(node):
+        #     return tuple((type(ep), ep.node, ep.position, ep.attr["color"]) if "color" in ep.attr else (ep.node, ep.position)
+        #             for ep in self._nodes[node])
+        #
+        # self_attr = (self.framing, )
+        # self_nodes = tuple(
+        #     (node, type(self._nodes[node]), _endpoints_to_tuple(node), self._nodes[node].attr["color"])
+        #     if "color" in self._nodes[node].attr else
+        #     (node, type(self._nodes[node]), _endpoints_to_tuple(node))
+        #     for node in self._nodes
+        # )
+        # print("__hash__", self_attr + self_nodes)
+        # return hash(self_attr + self_nodes)
 
     @staticmethod
     def is_oriented():

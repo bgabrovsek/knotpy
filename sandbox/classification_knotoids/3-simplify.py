@@ -3,11 +3,12 @@ from tqdm import tqdm
 from time import time
 import os
 import sympy
+import matplotlib.pyplot as plt
 
 import knotpy as kp
 
-POLY_FOLDER = Path("polynomials-10")
-
+POLY_FOLDER = Path("polys")
+FILTER_POLY_FOLDER = Path("filt-1")
 
 def str2poly(s):
     """Convert a file name string into a polynomial."""
@@ -15,61 +16,173 @@ def str2poly(s):
         s = s.replace(y, x)
     return sympy.sympify(s)
 
-print("Start")
+def poly2str(poly):
+    """Convert polynomial into a filename-type string"""
+    s = str(poly)
+    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
+        s = s.replace(x, y)
+    return s
 
+# print("Start")
+#
+# a = kp.from_pd_notation("X[0,1,2,3],X[4,5,6,7],X[1,0,4,8],X[2,8,7,6],V[3],V[5]")
+# aa = kp.from_pd_notation("X[5,1,6,0],X[1,5,2,4],X[6,4,7,3],X[2,8,3,7],V[0],V[8]")
+# b = kp.from_pd_notation("V[0],X[3,1,4,0],X[1,5,2,4],X[5,3,6,2],V[6]")
+#
+# print(a)
+# print(aa)
+# print(b)
+#
+#
+# print(hash(a))
+# print(hash(aa))
+# print(hash(b))
+# exit()
+#
+# pa, ga = kp.kauffman_bracket_skein_module(a)[0]
+# paa, gaa = kp.kauffman_bracket_skein_module(aa)[0]
+# pb, gb = kp.kauffman_bracket_skein_module(b)[0]
+#
+# print(pa, ga)
+# print(paa, gaa)
+# print(pb, gb)
+#
+# print()
+# print()
+# exit()
+
+count_knotoids = 0
+count_filtered_knotoids = 0
+
+outer_counter = 0
 for filename in os.listdir(POLY_FOLDER):  # load all knots with same polynomial
+
     if not filename.endswith(".gz"):
         continue
 
+    outer_counter += 1
 
+    # load the knotoids with same polynomial
     polynomial = str2poly(filename[:-3][filename.find("_")+1:])
-
     knots = kp.load_collection(POLY_FOLDER / filename)
 
-    #print("Polynomial", polynomial, f"({len(knots)} knots)")
 
-    if len(knots) <= 1:
-        continue
-
-    if len(knots) != 2:
-        continue
-
-
-
+    # put them into an equivalence relation
     er = kp.EquivalenceRelation([kp.canonical(k) for k in knots])
+    original_number_of_classes = er.number_of_classes()
+    count_knotoids += len(er)
+    print()
+    print("Poly:", polynomial)
+    print("   Classes:", er.number_of_classes(), f"({len(knots)})","crossings from", min(len(k) for k in er), "to", max(len(k) for k in er))
 
-    print("Number of classes:", er.number_of_classes(), end=" -> ")
+    # for i, k in enumerate(er):
+    #     print(f"*{i}", k)
+    #     print(kp.to_pd_notation(k))
+    #     print(kp.kauffman_bracket_skein_module(k))
+    #     print(polynomial)
+    # found = False
+    # for i, k in enumerate(er):
+    #     r3 = list(kp.find_reidemeister_3_triangles(k))
+    #
+    #     if len(r3) > 0:
+    #
+    #         print(r3[0])
+    #         k_ = kp.reidemeister_3(k, r3[0], inplace=False)
+    #         kp.algorithms.canonical_unoriented_details_temp(k_)
+    #         k_ = kp.canonical(k_)
+    #         print(f"-({i})", k_)
+    #         print(kp.kauffman_bracket_skein_module(k_))
+    #         found = True
+    #
+    # print()
+    # continue
 
-    print("Knots sharing the polynomial:")
-    for k in er:
-        print("     ", k)
+
+
+    counter = 0
+    for counter, k in enumerate(er):
+
+        k.name = f"Diagram {outer_counter}.{counter}"
+        #print("  ", kp.canonical(k))
 
 
 
-    for depth in [1]:#[2, 5, 8, 11, 17]:
 
-        new_dict = dict()
+    for depth in [2, 5, 8, 11, 14]:
 
-        for k in er:
-            #print(k)
+        if er.number_of_classes() == 1:
+            continue
+
+        for k in list(er):
             k_simplified = kp.simplify(k, depth=depth, method="nonincreasing")
             k_simplified = kp.canonical(k_simplified)
-            print("simpl", k_simplified)
-            new_dict[k_simplified] = k
+            #print("  *", k)
+            # print("->", k_simplified)
+            k_simplified.framing = 0
 
-        # for a, b in new_dict.items():
-        #     print()
-        #     print("a", a)
-        #     print("b", b)
-        #     er[a] = b
+            er[k] = k_simplified
 
-        print(er.number_of_classes())
 
-    exit()
+
+        #print("depth", depth, "number of classes", er.number_of_classes())
+    #
+
+    for depth in [1, 2, 5, 8]:
+
+        if er.number_of_classes() == 1:
+            continue
+
+        for k in list(er):
+            k_simplified = kp.simplify(k, depth=depth)
+            k_simplified = kp.canonical(k_simplified)
+            # print("  *", k)
+            # print("->", k_simplified)
+            k_simplified.framing = 0
+
+            #print("****", k,"->", k_simplified)
+            er[k] = k_simplified
+    # print("..........."*3)
+    # from itertools import combinations
+    # repr = list(er.representatives())
+    # for a, b in combinations(repr, 2):
+    #     print(a==b, "   ", "\n",a, "\n",b)
+    #     print(hash(a))
+    #     print(hash(b))
+    #     exit()
+
+
+    count_filtered_knotoids += er.number_of_classes()
+
+    print("Simplified:", er.number_of_classes(),"crossings from", min(len(k) for k in er.representatives()), "to",
+          max(len(k) for k in er.representatives()))
+
+    for k in er.representatives():
+        print("  *", k)
+
+        try:
+            plt.close()
+            kp.draw(k, with_title=True)
+            plt.savefig("figures/" + k.name + ".png")
+            plt.close()
+        except:
+            pass
+
+    filename = poly2str(polynomial) + ".gz"  # convert the polynomial to a filename type string (no characters "*", "/", ...)
+    filename = FILTER_POLY_FOLDER / filename
+    kp.save_collection(filename, list(er.representatives()))
+
+print("Simplified from ", count_knotoids,"to", count_filtered_knotoids)
+    #exit()
     #print()
 
 
+"""
 
+      PlanarDiagram with 8 nodes, 13 arcs, and adjacencies a → V(b3), b → X(c0 d0 d3 a0), c → X(b0 e0 e3 f0), d → X(b1 g0 g3 b2), e → X(c1 h0 h3 c2), f → V(c3), g → X(d1 h2 h1 d2), h → X(e1 g2 g1 e2) with framing 0
+      X[0,1,2,3],X[0,4,5,6],X[1,7,8,2],X[4,9,10,5],X[7,11,12,8],X[9,12,11,10],V[3],V[6]
+      PlanarDiagram with 8 nodes, 13 arcs, and adjacencies a → V(b0), b → X(a0 c0 c3 d3), c → X(b1 e0 e3 b2), d → X(f0 g0 g3 b3), e → X(c1 h0 h3 c2), f → V(d0), g → X(d1 h2 h1 d2), h → X(e1 g2 g1 e2) with framing 0
+      X[0,1,2,3],X[4,5,6,3],X[1,7,8,2],X[5,9,10,6],X[7,11,12,8],X[11,10,9,12],V[0],V[4]
+      """
 
 exit()
 #

@@ -50,7 +50,7 @@ knotoids_pd = list()  # PD codes of knotoids
 knotoids_kp = list()  # KnotPy codes of knotoids
 count_all_knotoids = 0  # count theoretical number of knotoids
 
-for n in range(0, 11):  # number of crossings
+for n in range(0, 10):  # number of crossings
 
     #print(f"Mirroring crossings of knots with {n} crossings ({len(graphs[n])})")
 
@@ -78,7 +78,7 @@ for n in range(0, 11):  # number of crossings
     print(f"{len(graphs[n])} graphs converted to {count_all_knotoids} knots with {len(knotoids_pd)} good ones.")
 
     # save the knotoids (group knotoids with 6 or fewer crossings into one file)
-    if n >= 6:
+    if True: #n >= 6:
 
         kp.save_collection(_fai(str(path_knotoids_pd), n), iterable=knotoids_pd, notation="pd")
         print(f"{len(knotoids_pd)} knots saved to files {_fai(str(path_knotoids_pd), n)}", end=" and ")

@@ -3,7 +3,8 @@
 """
 
 __all__ = ["edges", "number_of_edges", "parallel_arcs","bridges","loops", "kinks", "cut_edges", "cut_vertices",
-           "is_knot", "is_planar_graph"]
+           "is_knot", "is_planar_graph",
+           "subdivide_endpoint", "subdivide_arc", "insert_arc"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
@@ -12,9 +13,10 @@ import string
 from collections import Counter
 
 from knotpy.classes.node import Crossing, VirtualCrossing, Terminal, Bond
-from knotpy.classes.endpoint import Endpoint, IngoingEndpoint
+from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node.vertex import Vertex
+from knotpy.algorithms.node_operations import name_for_new_node
 
 
 def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
@@ -145,9 +147,91 @@ def bridges(k):
 def cut_edges(k):
     return bridges(k)
 
-def arc_subdivision(k, arc):
-    edge0, edge1 = arc
+def subdivide_endpoint(k:PlanarDiagram, endpoint, **attr):
+    """
 
+    :param k:
+    :param endpoint:
+    :return: name of new node created
+    """
+    return subdivide_arc(k, [endpoint, k.twin(endpoint)], **attr)
+
+
+def subdivide_arc(k:PlanarDiagram, arc, **attr):
+    """
+
+    :param k:
+    :param arc:
+    :return: name of new node created
+    """
+    endpoint_a, endpoint_b = arc
+
+
+    if not isinstance(endpoint_a, Endpoint):
+        endpoint_a = k.get_endpoint_from_pair(endpoint_a)
+    if not isinstance(endpoint_b, Endpoint):
+        endpoint_b = k.get_endpoint_from_pair(endpoint_b)
+
+    new_node = name_for_new_node(k)
+    k.add_node(node_for_adding=new_node, create_using=Vertex, degree=2, **attr)
+    k.set_endpoint(endpoint_for_setting=(new_node, 0),
+                   adjacent_endpoint=(endpoint_a.node, endpoint_a.position),
+                   create_using=type(endpoint_a),
+                   **endpoint_a.attr)
+    k.set_endpoint(endpoint_for_setting=(endpoint_a.node, endpoint_a.position),
+                   adjacent_endpoint=(new_node, 0),
+                   create_using=type(endpoint_a).reverse_type())
+
+    k.set_endpoint(endpoint_for_setting=(new_node, 1),
+                   adjacent_endpoint=(endpoint_b.node, endpoint_b.position),
+                   create_using=type(endpoint_b),
+                   **endpoint_b.attr)
+    k.set_endpoint(endpoint_for_setting=(endpoint_b.node, endpoint_b.position),
+                   adjacent_endpoint=(new_node, 1),
+                   create_using=type(endpoint_b).reverse_type())
+
+    return new_node
+
+
+
+
+def insert_arc(k: PlanarDiagram, node_a, position_a, node_b, position_b, **attr):
+    """Insert an arc between node a and node b at positions position_a and position b, respectively.
+    If the diagram is oriented, the arc goes from a to b.
+    :param k:
+    :param node_a:
+    :param position_a:
+    :param node_b:
+    :param position_b:
+    :param attr:
+    :return:
+    """
+    is_oriented = k.is_oriented()
+
+    if node_a == node_b:
+        raise NotImplementedError()
+
+    k.set_endpoint(
+        endpoint_for_setting=(node_a, k.degree(node_a)),
+        adjacent_endpoint=(node_b, k.degree(node_b)),
+        create_using=IngoingEndpoint if is_oriented else Endpoint,
+        **attr
+    )
+
+    k.set_endpoint(
+        endpoint_for_setting=(node_b, k.degree(node_b)),
+        adjacent_endpoint=(node_a, k.degree(node_a)-1),
+        create_using=OutgoingEndpoint if is_oriented else Endpoint,
+        **attr
+    )
+
+    perm = {i: (i if i < position_a else i + 1) for i in range(k.degree(node_a) - 1)}
+    perm[k.degree(node_a) - 1] = position_a
+    k.permute_node(node_a, perm)
+
+    perm = {i: (i if i < position_b else i + 1) for i in range(k.degree(node_b) - 1)}
+    perm[k.degree(node_b) - 1] = position_b
+    k.permute_node(node_b, perm)
 
 def articulation_nodes(k):
     """Return a list of articulation nodes or cut vertices. A vertex is a cut-vertex if its removal disconnects the

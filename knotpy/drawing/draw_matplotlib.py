@@ -26,10 +26,9 @@ from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
 from knotpy.classes.node import Vertex, Crossing, Bond
-from knotpy.reidemeister.phantom import is_node_phantom
+from knotpy.algorithms.structure import insert_arc, bridges
 
-
-__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout"]
+__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "add_support_arcs"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -37,16 +36,16 @@ __author__ = 'Boštjan Gabrovšek'
 
 # default plotting properties
 # node
-DEFAULT_NODE_SIZE = 0.2
+DEFAULT_NODE_SIZE = 0.1
 DEFAULT_NODE_COLOR = "black"
 PHANTOM_NODE_COLOR = "gray"
 PHANTOM_NODE_ALPHA = 0.5
 
 BONDED_NODE_COLOR = "black"
 # arcs
-DEFAULT_LINE_WIDTH = 3.5
+DEFAULT_LINE_WIDTH = 1.5
 DEFAULT_LINE_COLOR = "steelblue"
-DEFAULT_BRAKE_WIDTH = 0.15  # arc break marking the under-passing
+DEFAULT_BRAKE_WIDTH = 0.3  # arc break marking the under-passing
 # text
 DEFAULT_TEXT_COLOR = "black"
 DEFAULT_FONT_SIZE = 16
@@ -94,6 +93,65 @@ def average_color(color1, color2):
     return (rgb1[0] + rgb2[0])/2, (rgb1[1] + rgb2[1])/2, (rgb1[2] + rgb2[2])/2
 
 
+
+def add_support_arcs(k: kp.PlanarDiagram):
+    """ Ads support arcs so there are no bridges in the diagram. For every bridge, add two parallel arcs. In the case
+    the bridge is a leaf, add two adjacent arcs to the leaf.
+
+    :param k:
+    :return:
+    """
+
+    k = k.copy()
+    is_oriented = k.is_oriented()
+
+    for bridge in bridges(k):
+        # the bridge from node a to node b
+        #print("  ", bridge)
+        endpoint_a, endpoint_b = bridge
+        node_a, pos_a = endpoint_a
+        node_b, pos_b = endpoint_b
+        deg_a = k.degree(node_a)
+        deg_b = k.degree(node_b)
+        if deg_a == 2 or deg_b == 2:
+            raise NotImplementedError("Support arcs for degree-2 vertices not supported")
+
+        if deg_a == 1 and deg_b == 1:
+            raise NotImplementedError("Support arcs for two degree-1 vertices not supported")
+
+        # Looking from node a, one parallel arc if considered "right" and the other one "left.
+
+        if k.degree(node_a) == 1:
+            # we have a leaf/knotoid terminal at node a, do not create a parallel arc to the bridge, but two adjacent arcs
+            node_a_right = node_a_left = node_a
+            pos_a_right, pos_a_left = 1, 2
+        else:
+            # add two parallel endpoints (right and left)
+            node_a_right = kp.subdivide_endpoint(k, (node_a, (pos_a + 1) % 4), __support__=True)
+            node_a_left = kp.subdivide_endpoint(k, (node_a, (pos_a - 1) % 4), __support__=True)
+            pos_a_right = 1 if k.nodes[node_a_right][0].node == node_a else 2
+            pos_a_left = 2 if k.nodes[node_a_right][0].node == node_a else 1
+
+        if k.degree(node_b) == 1:
+            # we have a leaf/knotoid terminal at node a
+            node_b_right = node_b_left = node_b
+            pos_b_right, pos_b_left = 2, 1
+        else:
+            node_b_right = kp.subdivide_endpoint(k, (node_b, (pos_b - 1) % 4), __support__=True)
+            node_b_left = kp.subdivide_endpoint(k, (node_b, (pos_b + 1) % 4), __support__=True)
+            pos_b_right = 2 if k.nodes[node_b_right][0].node == node_b else 1
+            pos_b_left = 1 if k.nodes[node_b_right][0].node == node_b else 2
+
+        if k.degree(node_a) == 1:
+            # if pos_a_right <  pos_a_left, first insert the smaller one, otherwise indices will not make sense
+            insert_arc(k, node_a_right, pos_a_right, node_b_right, pos_b_right, __support__=True)
+            insert_arc(k, node_a_left, pos_a_left, node_b_left, pos_b_left, __support__=True)
+        else:
+            insert_arc(k, node_a_left, pos_a_left, node_b_left, pos_b_left, __support__=True)
+            insert_arc(k, node_a_right, pos_a_right, node_b_right, pos_b_right, __support__=True)
+
+    return k
+
 def _plot_vertices(k, circles, with_labels, ax):
     """Plot vertices as points or circles with label
     :param k: planar graph
@@ -110,30 +168,32 @@ def _plot_vertices(k, circles, with_labels, ax):
         circle = circles[node]
         xy = (circle.center.real, circle.center.imag) if isinstance(circle, Circle) else (circle.real, circle.imag)
 
-        if is_node_phantom(k, node):
-            # PHANTOM NODE
-            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=PHANTOM_NODE_COLOR, zorder=3)
-            ax.add_patch(circle_patch)
+        if not _visible(k.nodes[node]):
+            continue
+
+        # if is_node_phantom(k, node):
+        #     # PHANTOM NODE
+        #     circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=PHANTOM_NODE_COLOR, zorder=3)
+        #     ax.add_patch(circle_patch)
+        # NORMAL NODE
+        if with_labels:
+            circle_patch_out = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3 + DEFAULT_LINE_WIDTH / 100 * 1.5,
+                                          color=k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR), zorder=2)
+            circle_patch_in = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3,
+                                         color="white", zorder=3)
+            ax.add_patch(circle_patch_out)
+            ax.add_patch(circle_patch_in)
+            ax.text(*xy,
+                    s=str(node),
+                    ha="center",
+                    va="center",
+                    fontsize=DEFAULT_FONT_SIZE,
+                    color=DEFAULT_TEXT_COLOR,
+                    zorder=4)
         else:
-            # NORMAL NODE
-            if with_labels:
-                circle_patch_out = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3 + DEFAULT_LINE_WIDTH / 100 * 1.5,
-                                              color=k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR), zorder=2)
-                circle_patch_in = plt.Circle(xy, DEFAULT_FONT_SIZE_PIXELS * 1.3,
-                                             color="white", zorder=3)
-                ax.add_patch(circle_patch_out)
-                ax.add_patch(circle_patch_in)
-                ax.text(*xy,
-                        s=str(node),
-                        ha="center",
-                        va="center",
-                        fontsize=DEFAULT_FONT_SIZE,
-                        color=DEFAULT_TEXT_COLOR,
-                        zorder=4)
-            else:
-                color = k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR)
-                circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=color, zorder=3)
-                ax.add_patch(circle_patch)
+            color = k.nodes[node].attr.get("color", DEFAULT_NODE_COLOR)
+            circle_patch = plt.Circle(xy, DEFAULT_NODE_SIZE / 2, color=color, zorder=3)
+            ax.add_patch(circle_patch)
 
     # BOND NODES
     for key in circles:
@@ -163,7 +223,7 @@ def _plot_circles(circles, ax):
         ax.add_patch(circle_patch)
 
 
-def _plot_arc(k, circles):
+def _plot_middle_arc(k, circles):
     """The middle "arc" part that is a path through the arc circle and starts and ends on the intersection of the arc
     circle and the adjacent tangent node circles.
     :param k:
@@ -173,6 +233,11 @@ def _plot_arc(k, circles):
     result_curves = []
     for arc in k.arcs.keys():
         ep0, ep1 = arc
+
+        # do not draw if invisible
+        if not _visible(ep0) or not _visible(ep1):
+            continue
+
         # compute the arc that is perpendicular to the arc circle
         g_arc = perpendicular_arc(circles[arc], circles[ep0.node], circles[ep1.node])
         color1 = k.nodes[ep0].get("color", DEFAULT_LINE_COLOR)
@@ -206,6 +271,18 @@ def _indices_by_value_count(lst):
     return sorted(counter.values(), key=lambda t: len(t))
 
 
+def _visible(__obj):
+    """Should object (node, endpoint, ...) be shown in diagram?
+    :param __obj:
+    :return:
+    """
+    if not hasattr(__obj, "attr"):
+        return True
+    if "__support__" in __obj.attr and __obj.attr["__support__"]:
+        return False
+    return True
+
+
 def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False, arrow=False):
     """ Plot the node endpoint presented by the arc. Also plot arrows, gaps, etc.
     :param k: planar diagram
@@ -214,6 +291,10 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
     :param ep: endpoint to draw
     :return:
     """
+
+    #print(ep, ep.attr)
+    if not _visible(ep):
+        return []
     return_curves = []
     color = to_color(ep.get("color", DEFAULT_LINE_COLOR))
 
@@ -240,6 +321,7 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
                         return_curves.append((a, color))
 
         else:
+
             gap_angle = DEFAULT_BRAKE_WIDTH / arc.radius  # circular arc length is s = theta * radius
             arrow_angle = ARROW_LENGTH / arc.radius  # circular arc length is s = theta * radius
             if arc.length() > DEFAULT_BRAKE_WIDTH:
@@ -257,7 +339,15 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
                         return_curves.append((a, color))
 
     elif isinstance(seg := arc, Segment):
-        return_curves.append((seg, color))
+        if not gap:
+            return_curves.append((seg, color))
+        else:
+            gap_t = DEFAULT_BRAKE_WIDTH / seg.length()
+            if node_pt == 0:
+                return_curves.append((seg(gap_t, 1), color))
+            else:
+                return_curves.append((seg(0, 1-gap_t), color))
+
         if arrow and isinstance(ep, IngoingEndpoint):
             arrow_t = ARROW_WIDTH / seg.length()
             if node_pt == 0:
@@ -281,7 +371,8 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
         node = k.nodes[v]
         arcs = k.arcs[v]
         endpoints = k.endpoints[v]
-        colors = [to_color(k.nodes[ep].get("color", DEFAULT_LINE_COLOR)) for ep in endpoints]
+        colors = [to_color(k.nodes[ep].get("color", DEFAULT_LINE_COLOR)) if _visible(ep) else None for ep in endpoints]
+        #visibles = [ep for ep in endpoints if _visible(ep)]
         # is the vertex smooth?
         if isinstance(node, Vertex) and len(colors) == 3 and len(set(colors)) == 2:
             """If geometry allows, create a 3-valent vertex, such that:
@@ -310,12 +401,14 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
             diff_arc = perpendicular_arc_through_point(circles[v], boundary_b_point, mid_arc_point)
 
             # draw the single endpoint that is of different color
+
             result_curves += _plot_endpoint(k, circles, diff_arc, ep_b, gap=False, arrow=True)
             # print(k)
             # print(circles)
             # print(diff_arc)
             # print(ep_b)
             # print()
+
 
             same_arc1, same_arc2 = bisect(same_arc)
             result_curves += _plot_endpoint(k, circles, same_arc1, ep_a1 if order[0] == 1 else ep_a2, gap=False, arrow=True)
@@ -341,11 +434,15 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
             of the rest od the endpoints. TODO: make the average boundary point as the node position and and arcs"""
             for arc in k.arcs[v]:  # loop through incident arcs
                 ep0, ep1 = arc
+
+                # if not _visible(ep0):
+                #     continue
+
                 color = to_color(k.nodes[ep0].get("color", DEFAULT_LINE_COLOR))  # assume 1st endpoint is at vertex
                 int_point = circles[arc] * circles[v]  # intersection point
                 int_point = int_point[0]
 
-                result_curves.append((Segment(int_point, circles[v].center), color))
+                result_curves.append((Segment(int_point, circles[v].center), color if _visible(ep0) else "red"))
 
 
         elif isinstance(node, Crossing):
@@ -366,6 +463,7 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
 
             result_curves += _plot_endpoint(k, circles, over_arc1, endpoints[1] if over_order[0] == 1 else endpoints[3], gap=False, arrow=False)
             result_curves += _plot_endpoint(k, circles, over_arc3, endpoints[3] if over_order[1] == 2 else endpoints[1], gap=False, arrow=False)
+
             result_curves += _plot_endpoint(k, circles, under_arc0, endpoints[0] if under_order[0] == 1 else endpoints[2], gap=True, arrow=True)
             result_curves += _plot_endpoint(k, circles, under_arc2, endpoints[2] if under_order[0] == 1 else endpoints[0], gap=True, arrow=True)
 
@@ -403,7 +501,7 @@ def _plot_arcs(k, circles, ax, bounding_box=None):
     new_vertices = dict()  # coordinates of vertices given by intersections
 
     # draw middle arc
-    curves += _plot_arc(k, circles)
+    curves += _plot_middle_arc(k, circles)
 
     curves += _plot_all_endpoints(k, circles, new_vertices)
 
@@ -550,6 +648,9 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
     """
     #print()
     #print("Drawing graph", g)
+
+    if bridges(k):
+        k = add_support_arcs(k)
 
     if bridges(k) or loops(k):
         print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
