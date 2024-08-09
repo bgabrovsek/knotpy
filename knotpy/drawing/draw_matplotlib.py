@@ -28,7 +28,7 @@ from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 from knotpy.classes.node import Vertex, Crossing, Bond
 from knotpy.algorithms.structure import insert_arc, bridges
 
-__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "add_support_arcs"]
+__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "add_support_arcs", "plt", "export_png"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -105,6 +105,7 @@ def add_support_arcs(k: kp.PlanarDiagram):
     k = k.copy()
     is_oriented = k.is_oriented()
 
+    #print(k)
     for bridge in bridges(k):
         # the bridge from node a to node b
         #print("  ", bridge)
@@ -117,7 +118,13 @@ def add_support_arcs(k: kp.PlanarDiagram):
             raise NotImplementedError("Support arcs for degree-2 vertices not supported")
 
         if deg_a == 1 and deg_b == 1:
-            raise NotImplementedError("Support arcs for two degree-1 vertices not supported")
+            # just a line
+            k.set_endpoint((node_a, 1), (node_b,2),  __support__=True)
+            k.set_endpoint((node_a, 2), (node_b,1),  __support__=True)
+            k.set_endpoint((node_b, 1), (node_a,2),  __support__=True)
+            k.set_endpoint((node_b, 2), (node_a,1),  __support__=True)
+            return k
+            #raise NotImplementedError("Support arcs for two degree-1 vertices not supported")
 
         # Looking from node a, one parallel arc if considered "right" and the other one "left.
 
@@ -637,7 +644,6 @@ def draw_from_layout(k,
 
     # plt.close(fig)
 
-
 def draw(k, draw_circles=False, with_labels=False, with_title=False):
     """Draw the planar diagram k using Matplotlib.
     :param k: A planar diagram
@@ -648,23 +654,35 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
     """
     #print()
     #print("Drawing graph", g)
-
+    #print(3)
     if bridges(k):
+        # print("*", k)
+        # print("_", to_pd_notation(k))
         k = add_support_arcs(k)
-
+    #print(4)
     if bridges(k) or loops(k):
         print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
 
     # compute the layout
     circles = circlepack_layout(k)
-
+    #print(5)
     draw_from_layout(k, circles, draw_circles, with_labels, with_title)
 
-def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=False, author=None):
+def export_png(k, filename, draw_circles=False, with_labels=False, with_title=False):
+    try:
+        plt.close()
+    except:
+        pass
+
+    draw(k, draw_circles=draw_circles, with_labels=with_labels, with_title=with_title)
+    plt.savefig(filename)
+
+def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=False, author=None, show_progress=True):
     """Draw the planar diagram(s) k using Matplotlib and save to pdf.
     :param k: the planar diagram or a list of planar diagrams
     :param filename: pdf name
     :param author: add pdf author information
+    :param show_progress:
     :return:
     """
     plt.close()
@@ -673,26 +691,37 @@ def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=Fa
     pdf = PdfPages(filename)
     warnings = []
     k = [k] if isinstance(k, PlanarDiagram) else k
-    for pd in (tqdm(k, desc="Exporting to pdf", unit="diagrams") if len(k) >= 5 else k):
+    for pd in (tqdm(k, desc="Exporting to pdf", unit="diagrams", disable=not show_progress) if len(k) >= 5 else k):
+
         #print("exporting", pd)
         #print("Exporting", to_pd_notation(pd))
-        if bridges(pd) or loops(pd):
+        #if bridges(pd) or loops(pd):
+        if loops(pd):
             warnings.append(f"Skipped drawing {pd}, since drawing loops or bridges in not yet supported.")
             continue
+        # print(pd)
+        # print(to_pd_notation(pd))
+
+
+
         draw(pd,
              draw_circles=draw_circles,
              with_labels=with_labels,
              with_title=with_title)
+
+
+
         #plt.show()
         pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
         plt.close()
+
 
     if author is not None:
         pdf.infodict()["Author"] = author
 
     pdf.close()
-
-    print("\n".join(warnings))
+    if warnings:
+        print("\n".join(warnings))
 
 
 

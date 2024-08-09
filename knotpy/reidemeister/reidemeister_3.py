@@ -4,7 +4,7 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.node import Crossing
 
@@ -14,12 +14,13 @@ _CHECK_SANITY = True
 class ReidemeisterLocationThree(ReidemeisterLocation):
     def __init__(self, face):
         self.face = face
+        self.color = None  # if color is given, then the arcs involved in the moves will be colored
 
     def __str__(self):
         return "R3 " + str(self.face)
 
 
-def find_reidemeister_3_triangles(k):
+def find_reidemeister_3_triangle(k):
     """An iterator (generator) over non-alternating triangular regions that enable us to perform an (Reidemeister III
     move). See also regions().
     :param k: planar diagram object
@@ -41,9 +42,9 @@ def choose_reidemeister_3_triangle(k, random=False):
     :return: ... or None
     """
     if random:
-        return choice(tuple(find_reidemeister_3_triangles(k)))
+        return choice(tuple(find_reidemeister_3_triangle(k)))
     else:
-        return next(find_reidemeister_3_triangles(k), None)  # select 1st item
+        return next(find_reidemeister_3_triangle(k), None)  # select 1st item
 
 
 def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):

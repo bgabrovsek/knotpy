@@ -13,8 +13,12 @@ with open("pd.txt", 'r') as file:
 
 knots = [kp.from_pd_notation(line.strip().split(" - ")[3]) for line in lines][:20]
 
-print("Plotting diagrams")
-for index, k in enumerate(tqdm(knots)):
-    plt.close()
-    kp.draw(k)
-    plt.savefig(plot_folder / f"{index:04}.png")
+for k in knots:
+    name = kp.name(k)
+    print(name)
+
+# print("Plotting diagrams")
+# for index, k in enumerate(tqdm(knots)):
+#     plt.close()
+#     kp.draw(k)
+#     plt.savefig(plot_folder / f"{index:04}.png")

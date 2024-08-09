@@ -1,58 +1,28 @@
 from itertools import chain
-from collections import Counter
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
+#from knotpy.reidemeister import batch_make_reidemeister_moves
 from knotpy.reidemeister.reidemeister_1 import (ReidemeisterLocationAddKink, ReidemeisterLocationRemoveKink,
-                                                find_reidemeister_1_add_kinks, find_reidemeister_1_remove_kinks,
+                                                find_reidemeister_1_add_kink, find_reidemeister_1_remove_kink,
                                                 reidemeister_1_remove_kink, reidemeister_1_add_kink,
                                                 choose_reidemeister_1_remove_kink, choose_reidemeister_1_add_kink)
 from knotpy.reidemeister.reidemeister_2 import (ReidemeisterLocationPoke, ReidemeisterLocationUnpoke,
-                                                find_reidemeister_2_unpokes, find_reidemeister_2_pokes,
+                                                find_reidemeister_2_unpoke, find_reidemeister_2_poke,
                                                 reidemeister_2_unpoke, reidemeister_2_poke, choose_reidemeister_2_unpoke,
                                                 choose_reidemeister_2_poke)
-from knotpy.reidemeister.reidemeister_3 import (ReidemeisterLocationThree, find_reidemeister_3_triangles, reidemeister_3,
+from knotpy.reidemeister.reidemeister_3 import (ReidemeisterLocationThree, find_reidemeister_3_triangle, reidemeister_3,
                                                 choose_reidemeister_3_triangle)
-from knotpy.notation.pd import to_pd_notation
 
-#from knotpy.reidemeister.reidemeister import reidemeister_1_remove_kink, reidemeister_2_unpoke, reidemeister_2_poke, reidemeister_1_add_kink, reidemeister_3
-# from knotpy.reidemeister.find_reidemeister_moves import choose_reidemeister_1_unkink, choose_reidemeister_2_unpoke
-# from knotpy.reidemeister.find_reidemeister_moves import (find_reidemeister_1_kinks, find_reidemeister_1_unkinks,
-#                                                          find_reidemeister_2_pokes, find_reidemeister_2_unpokes,
-#                                                          find_reidemeister_3_triangles)
+from knotpy.reidemeister.detour_move import find_detour_moves
+from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
+
+from knotpy.utils.set_utils import MultiLevelSet
 from knotpy.algorithms.canonical import canonical
 
 
-def simplify_diagram_crossing_reducing(k: PlanarDiagram, inplace=False):
-    """ Use crossings reducing moves (R1 unkink and R2 unpoke) to simplify a diagram.
-    :param k:
-    :param inplace:
-    :return:
-    """
-
-    changes_were_made = True
-
-    if inplace:
-        k = k.copy()
-
-    while changes_were_made:
-
-        changes_were_made = False
-
-        while location := choose_reidemeister_1_remove_kink(k, random=False):
-            reidemeister_1_remove_kink(k, location, inplace=True)
-            changes_were_made = True
-
-        while location := choose_reidemeister_2_unpoke(k, random=False):
-            #print("eps", k, eps)
-            reidemeister_2_unpoke(k, location, inplace=True)
-            changes_were_made = True
-
-    return k
-
-
 def make_reidemeister_move(k: PlanarDiagram, location: ReidemeisterLocation, inplace=False):
-    """
+    """Makes a Reidemeister move according to the type of location.
+    TODO: move this to reidemeister
     :param k:
     :param location:
     :param inplace:
@@ -74,66 +44,138 @@ def make_reidemeister_move(k: PlanarDiagram, location: ReidemeisterLocation, inp
         return reidemeister_3(k=k, location=location, inplace=inplace)
 
     else:
-        raise ValueError(f"Unknown Reidemesiter locatio {location}")
+        raise ValueError(f"Unknown Reidemesiter location {location}")
 
 
-def batch_make_reidemeister_moves(k: PlanarDiagram, iterable_of_moves, put_in_canonical_form=False):
-    """Make a bunch of reidemeister moves
-
+def unframe(k, inplace=False):
+    """Remove framing of the planar diagram.
     :param k:
-    :param iterable_of_moves:
+    :param inplace:
     :return:
     """
-    if put_in_canonical_form:
-        knots = [canonical(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
+    if inplace:
+        if isinstance(k, PlanarDiagram):
+            k.framing = 0
+            return k
+        if isinstance(k, set):
+            raise ValueError("Cannot perform in-place framing on a set")
+        if isinstance(k, list):
+            for m in k:
+                m.framing = 0
+            return k
+        NotImplementedError("In-place framing on a generator not implemented")
     else:
-        knots = [canonical(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
+        if isinstance(k, PlanarDiagram):
+            return k.copy(framing=0)
+        if isinstance(k, set):
+            return {m.copy(framing=0) for m in k}
+        if isinstance(k, list):
+            return [m.copy(framing=0) for m in k]
+        return (m.copy(framing=0) for m in k)
+
+
+def batch_make_reidemeister_moves(k: PlanarDiagram, iterable_of_moves, put_in_canonical_form=False, framed=True):
+    """Make a bunch of reidemeister moves
+    :param k:
+    :param iterable_of_moves:
+    :param put_in_canonical_form:
+    :param framed:
+    :return:
+    """
+
+    if put_in_canonical_form:
+        if framed:
+            knots = [canonical(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
+        else:
+            knots = [unframe(canonical(make_reidemeister_move(k, location, inplace=False))) for location in iterable_of_moves]
+    else:
+        if framed:
+            knots = [make_reidemeister_move(k, location, inplace=False) for location in iterable_of_moves]
+        else:
+            knots = [unframe(make_reidemeister_move(k, location, inplace=False)) for location in iterable_of_moves]
 
     return knots
 
-# def _all_reidemeister_moves(k, move):
-#     """
-#     :param k:
-#     :param move:
-#     :return:
-#     """
-#     move = move.lower()
-#
-#     result = set()
-#
-#     if move == "kink":
-#         # add kink
-#         for ep, sign in find_reidemeister_1_kinks(k):
-#             k_ = reidemeister_1_add_kink(k, ep, sign)
-#             result.add(canonical(k_))
-#     elif move == "unkink":
-#         # unkink
-#         for ep in find_reidemeister_1_unkinks(k):
-#             k_ = reidemeister_1_remove_kink(k, ep)
-#             result.add(canonical(k_))
-#     elif move == "poke":
-#         # poke
-#         for ep_a, ep_b in find_reidemeister_2_pokes(k):
-#             k_ = reidemeister_2_poke(k, ep_a, ep_b)
-#             result.add(canonical(k_))
-#     elif move == "unpoke":
-#         # unpoke
-#         for face in find_reidemeister_2_unpokes(k):
-#             k_ = reidemeister_2_unpoke(k, face)
-#             result.add(canonical(k_))
-#     elif move == "triangle":
-#         # triangle move
-#         #print("All triangle moves")
-#         for face in find_reidemeister_3_triangles(k):
-#             k_ = reidemeister_3(k, face)
-#             #print("--")
-#             result.add(canonical(k_))
-#     else:
-#         raise ValueError(f"Move {move} not known.")
-#
-#     return result
 
-def _simplify_auto(k, depth):
+def simplify_diagram_crossing_reducing(k: PlanarDiagram, inplace=False, framed=True):
+    """ Use crossings reducing moves (R1 unkink and R2 unpoke) to simplify a diagram.
+    :param k:
+    :param inplace:
+    :param framed:
+    :return:
+    """
+
+    if not inplace:
+        k = k.copy()
+
+    changes_were_made = True
+
+    while changes_were_made:
+        changes_were_made = False
+        while location := choose_reidemeister_1_remove_kink(k, random=False):
+            reidemeister_1_remove_kink(k, location, inplace=True)
+            changes_were_made = True
+        while location := choose_reidemeister_2_unpoke(k, random=False):
+            reidemeister_2_unpoke(k, location, inplace=True)
+            changes_were_made = True
+
+    if not framed:
+        print("fffff")
+        k.framing = 0
+
+    return k
+
+def _reidemeister_3_space(k: PlanarDiagram):
+    """Continuously perform R3 moves, until there are no unique diagrams left.
+    :param k:
+    :return: list of diagrams with R3 moves
+    """
+    mls = MultiLevelSet(canonical(k))
+    while mls[-1]:
+        level = len(mls)
+        for k in mls[level-1]:
+            mls.add_to_level(level, list(batch_make_reidemeister_moves(k, find_reidemeister_3_triangle(k), put_in_canonical_form=True)))
+    return set(mls)
+
+
+def _simplify_smart(k, depth, framed=True):
+
+    if not framed:
+        k.framing = 0
+
+    def _r3_space_simp(m):
+        r3_space = _reidemeister_3_space(m)
+        r3_space_simpl = {canonical(simplify_diagram_crossing_reducing(m_, inplace=False)) for m_ in r3_space}
+        if not framed:
+            r3_space_simpl = unframe(r3_space_simpl)
+        return r3_space | r3_space_simpl
+
+    # put k and all its R3 moves into a multiset at level 0
+    mls = MultiLevelSet(_r3_space_simp(simplify_diagram_crossing_reducing(k)))
+
+    for level in range(1, 2 * depth + 1):
+        #print("level 1", k)
+        # make Reidemeister increasing moves on levels 1, 3, 5, ...
+        # make R3 moves and decreasing moves on levels 2, 4, 6, ...
+
+        if level % 2:  # make R3 moves every other time
+
+            for k in mls[level - 1]:
+                mls.add_to_level(level, batch_make_reidemeister_moves(k, find_detour_moves(k), put_in_canonical_form=True, framed=framed))
+
+        else:
+            for k in mls[level-1]:
+                mls.add_to_level(level, _r3_space_simp(k))
+
+            if not mls[level]:  # if there is nothing new, then break
+                break
+
+    return min(mls)
+
+
+
+
+def _simplify_auto_obsolete(k, depth):
     DEBUG = False
 
     if DEBUG: print("Auto simplifying with depth", depth)
@@ -149,20 +191,20 @@ def _simplify_auto(k, depth):
         for k in level_diagrams[level-1]:
             if level % 3 != 0:
                 r_moves = list(chain(
-                        find_reidemeister_1_remove_kinks(k),
-                        find_reidemeister_2_unpokes(k),
-                        find_reidemeister_3_triangles(k)
+                        find_reidemeister_1_remove_kink(k),
+                        find_reidemeister_2_unpoke(k),
+                        find_reidemeister_3_triangle(k)
                     ))
                 if DEBUG: print("  Level", level, r_moves)
                 new_diagrams = set(batch_make_reidemeister_moves(k, r_moves))
                 if DEBUG: print("       ", len(new_diagrams), "new diagrams")
             else:
                 r_moves = list(chain(
-                        find_reidemeister_1_remove_kinks(k),
-                        find_reidemeister_2_unpokes(k),
-                        find_reidemeister_3_triangles(k),
-                        find_reidemeister_1_add_kinks(k),
-                        find_reidemeister_2_pokes(k)
+                        find_reidemeister_1_remove_kink(k),
+                        find_reidemeister_2_unpoke(k),
+                        find_reidemeister_3_triangle(k),
+                        find_reidemeister_1_add_kink(k),
+                        find_reidemeister_2_poke(k)
                     ))
                 if DEBUG:print(" *Level", level, r_moves)
                 new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, put_in_canonical_form=True))
@@ -176,52 +218,84 @@ def _simplify_auto(k, depth):
     return canonical(min(all_diagrams))
 
 
-def _simplify_non_increasing(k, depth):
-    """Simplify the knot by using only non-crossing increasing Reidemeister moves
-    :param k: planar diagram
-    :param depth: depth of recursion
-    :return: minimal knot after Reidemeister moves
+
+
+def simplify_non_increasing(k, framed=True):
     """
-    DEBUG = False
 
-    if DEBUG: print("Auto simplifying with depth", depth)
+    :param k:
+    :param framed:
+    :return:
+    """
 
-    # put the canonical form at (recursion) level 0
-    kc = canonical(k)
-    level_diagrams = {0: {kc}}  # dictionary {recursion level: {new diagrams}}
-    all_diagrams = {kc}  # store all diagrams (at all levels)
+    if not framed:
+        k.framing = 0
 
-    #print("Simplifying", kc)
+    def _r3_space_simp(m):
+        r3_space = _reidemeister_3_space(m)
+        r3_space_simpl = {canonical(simplify_diagram_crossing_reducing(m_, inplace=False)) for m_ in r3_space}
+        if not framed:
+            r3_space_simpl = unframe(r3_space_simpl)
+        return r3_space | r3_space_simpl
 
-    for level in range(1, depth+1):  # recursion level
+    # put k and all its R3 moves into a multiset at level 0
+    mls = MultiLevelSet(_r3_space_simp(simplify_diagram_crossing_reducing(k)))
 
-        if DEBUG: print(level)
+    while mls[-1]:
+        level = len(mls)
+        for k in mls[-1]:
+            mls.add_to_level(level, _r3_space_simp(k))
 
-        level_diagrams[level] = set()
-
-        for k in level_diagrams[level-1]:  # process all knots at a level lower
-
-            # all possible Reidemeister moves
-            r_moves = list(chain(
-                    find_reidemeister_1_remove_kinks(k),
-                    find_reidemeister_2_unpokes(k),
-                    find_reidemeister_3_triangles(k)
-                ))
-
-
-            new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, put_in_canonical_form=True))
-
-            if DEBUG: print("       ", len(new_diagrams), f"diagrams at level {level}")
-            new_diagrams -= all_diagrams  # remove all diagrams that already appeared at lower recursion levels
-            if DEBUG: print("       ", len(new_diagrams), f"new diagrams  at level {level} ")
-
-            all_diagrams.update(new_diagrams)
-            level_diagrams[level].update(new_diagrams)
-
-    return min(all_diagrams)
+    return min(mls)
 
 
-def simplify(k, depth, method="auto"):
+#
+# def _simplify_non_increasing_OLD(k, depth, framed=True):
+#     """Simplify the knot by using only non-crossing increasing Reidemeister moves
+#     :param k: planar diagram
+#     :param depth: depth of recursion
+#     :return: minimal knot after Reidemeister moves
+#     """
+#     DEBUG = False
+#
+#     if DEBUG: print("Auto simplifying with depth", depth)
+#
+#     # put the canonical form at (recursion) level 0
+#     kc = canonical(k)
+#     level_diagrams = {0: {kc}}  # dictionary {recursion level: {new diagrams}}
+#     all_diagrams = {kc}  # store all diagrams (at all levels)
+#
+#     #print("Simplifying", kc)
+#
+#     for level in range(1, depth+1):  # recursion level
+#
+#         if DEBUG: print(level)
+#
+#         level_diagrams[level] = set()
+#
+#         for k in level_diagrams[level-1]:  # process all knots at a level lower
+#
+#             # all possible Reidemeister moves
+#             r_moves = list(chain(
+#                     find_reidemeister_1_remove_kinks(k),
+#                     find_reidemeister_2_unpokes(k),
+#                     find_reidemeister_3_triangles(k)
+#                 ))
+#
+#
+#             new_diagrams = set(batch_make_reidemeister_moves(k, r_moves, put_in_canonical_form=True))
+#
+#             if DEBUG: print("       ", len(new_diagrams), f"diagrams at level {level}")
+#             new_diagrams -= all_diagrams  # remove all diagrams that already appeared at lower recursion levels
+#             if DEBUG: print("       ", len(new_diagrams), f"new diagrams  at level {level} ")
+#
+#             all_diagrams.update(new_diagrams)
+#             level_diagrams[level].update(new_diagrams)
+#
+#     return min(all_diagrams)
+
+
+def simplify(k, depth=1, method="auto", framed=True):
     """Simplify by performing sequences of Reidemesiter moves. if method is
     "all": all Reidemeisiter moves are performed,
     "auto": crossing-increasing Reidemesiter moves are prerformed only each 3rd time
@@ -235,77 +309,21 @@ def simplify(k, depth, method="auto"):
 
     put_in_canonical_form = True
 
+    method = method.strip().lower()
 
-    method = method.lower()
+    if method == "smart":
+        return _simplify_smart(k, depth, framed=framed)
 
     if method == "auto":
-        return _simplify_auto(k, depth)
+        return _simplify_auto_obsolete(k, depth)
 
     elif method == "nonincreasing" or method == "non-increasing":
-        return _simplify_non_increasing(k, depth)
+        return simplify_non_increasing(k, framed=framed)
+
+    elif method == "reducing" or method == "decreaesing":
+        return simplify_diagram_crossing_reducing(k, framed=framed)
 
     else:
         raise NotImplementedError(f"Simplification method {method} not yet implemented")
 
 
-
-    # print(Counter([len(d) for d in all_diagrams]))
-    # mindeg = min(len(d) for d in all_diagrams)
-    #
-    # mink = [d for d in all_diagrams if len(d) == mindeg][0]
-    # print(mink < k, mink)
-
-
-
-
-
-
-    #
-    #
-    # changes_made = True
-    #
-    # while changes_made:
-    #
-    #     changes_made = False
-    #
-    #     while kink := choose_kink(k):
-    #
-    #         if _debug:
-    #             kc = deepcopy(k)
-    #             poly_1 = __bracket_polynomial(kc)
-    #         remove_kink(k, kink)
-    #
-    #         if _debug:
-    #             poly_2 = __bracket_polynomial(k)
-    #             if poly_1 != poly_2:
-    #                 print("Wrong unkink:")
-    #                 print("before removal", kc)
-    #                 print(" after removal", k)
-    #                 print("poly before removal", poly_1)
-    #                 print(" poly after removal", poly_2)
-    #
-    #         changes_made = True
-    #     while poke := choose_poke(k):
-    #
-    #         if _debug:
-    #             kc = deepcopy(k)
-    #             poly_1 = __bracket_polynomial(kc)
-    #
-    #
-    #         reidemeister_2_unpoke(k, poke)
-    #
-    #         if _debug:
-    #             poly_2 = __bracket_polynomial(k)
-    #             if poly_1 != poly_2:
-    #                 print("Wrong unkink:")
-    #                 print("mod", k)
-    #                 print("ori", kc)
-    #                 print("poke", poke)
-    #                 print("p1",poly_1)
-    #                 print("p2",poly_2)
-    #
-    #         changes_made = True
-    #
-    # return k
-    #
-    #

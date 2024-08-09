@@ -8,7 +8,7 @@ from knotpy.classes.node import Vertex, Crossing
 from knotpy.classes import PlanarDiagram
 # from knotpy.generate.simple import house_graph
 
-__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node", "remove_bivalent_vertices", "mirror"]
+__all__ = ['degree_sequence', 'name_for_new_node', "add_node_to", "permute_node", "remove_bivalent_vertices", "mirror", "flip"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -193,9 +193,9 @@ def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
     while bivalent_vertices:
         node = bivalent_vertices.pop()
         # get the incident endpoints b0 and b1 and the incident endpoints a0 and a1 (ai is the twin of bi for i=0,1)
-        b0 = k.get_endpoint_from_pair((node, 0))
+        b0 = k.endpoint_from_pair((node, 0))
         a0 = k.twin(b0)
-        b1 = k.get_endpoint_from_pair((node, 1))
+        b1 = k.endpoint_from_pair((node, 1))
         a1 = k.twin(b1)
 
         if match_attributes and (b0.attr == a0.attr == b1.attr == a1.attr):
@@ -212,6 +212,19 @@ def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
         k.remove_node(node_for_removing=node, remove_incident_endpoints=False)
 
 
+def flip(k:PlanarDiagram, inplace=False):
+    """Flip the diagram by 180 degrees
+        :param k:
+        :param crossings:
+        :return:
+        """
+    if not inplace:
+        k = k.copy()
+
+    for c in list(k.crossings):
+        permute_node(k, c, {0:3,1:2,2:1,3:0})
+    return k
+
 def mirror(k: PlanarDiagram, crossings=None, inplace=False):
     """Mirror a planar diagram in-place. If no crosssings are given, mirror the whole diagram
     :param k:
@@ -225,8 +238,6 @@ def mirror(k: PlanarDiagram, crossings=None, inplace=False):
     #print(crossings)
     if crossings is None:
         crossings = set(k.crossings)
-
-    #print(crossings)
 
 
     if k.is_oriented():

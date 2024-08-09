@@ -11,12 +11,14 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 import random
 import string
 from collections import Counter
+from itertools import chain
 
 from knotpy.classes.node import Crossing, VirtualCrossing, Terminal, Bond
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node.vertex import Vertex
 from knotpy.algorithms.node_operations import name_for_new_node
+
 
 
 def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
@@ -30,8 +32,8 @@ def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
     if not isinstance(endpoint, Endpoint):
         raise TypeError(f"Endpoint {endpoint} should be of type Endpoint")
 
-    if isinstance(endpoint, IngoingEndpoint):
-        raise NotImplementedError("Path from ingoing endpoint not yet implemented")  # TODO: in this case, we should first jump over crossing
+    # if isinstance(endpoint, IngoingEndpoint):
+    #     raise NotImplementedError("Path from ingoing endpoint not yet implemented")  # TODO: in this case, we should first jump over crossing
 
     path = []
     ep = endpoint
@@ -40,7 +42,7 @@ def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
         path.append(ep)
         path.append(twin_ep := k.twin(ep))  # jump to twin
         if isinstance(k.nodes[twin_ep.node], Crossing):
-            ep = k.get_endpoint_from_pair((twin_ep.node, (twin_ep.position + 2) % 4))
+            ep = k.endpoint_from_pair((twin_ep.node, (twin_ep.position + 2) % 4))
         else:
             break
 
@@ -74,6 +76,7 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
     list_of_edges = []
     unused_endpoints = set(k.endpoints)
 
+    # start edges with terminals
     terminals = [node for node in k.nodes
                  if isinstance(k.nodes[node], Vertex)
                  or isinstance(k.nodes[node], Terminal)
@@ -91,25 +94,28 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
                             return False
         return True
 
-    # first follow strands from the terminals
-    for node in terminals:
-        for ep in k.nodes[node]:
-            #print(ep, type(ep))
-            if ep in unused_endpoints and not isinstance(ep, IngoingEndpoint):  # skip ingoing to follow orientation
-                strand = path_from_endpoint(k, k.twin(ep))
-                strand_set = set(strand)
-                if not strand_set.issubset(unused_endpoints):  # sanity check
-                    raise ValueError(f"Endpoints {strand} should be unused")
-                unused_endpoints -= strand_set  # remove them from unused
+    priority = {OutgoingEndpoint: 0, IngoingEndpoint: 1, Endpoint: 2}
+    start_endpoint_candidates = sorted([ep for node in terminals for ep in k.nodes[node]], key=lambda x: priority[type(x)])
 
-                if _endpoints_have_attribute(strand, endpoint_attributes):
-                    list_of_edges.append(strand)
+    # first follow strands from the terminals
+    for ep in start_endpoint_candidates:
+        #print(ep, type(ep))
+        if ep in unused_endpoints:  # skip ingoing to follow orientation
+            strand = path_from_endpoint(k, k.twin(ep))
+            strand_set = set(strand)
+            if not strand_set.issubset(unused_endpoints):  # sanity check
+                raise ValueError(f"Endpoints {strand} should be unused")
+            unused_endpoints -= strand_set  # remove them from unused
+
+            if _endpoints_have_attribute(strand, endpoint_attributes):
+                list_of_edges.append(strand)
 
     #print(list_of_edges)
 
     # if there are still endpoints available, they come from closed components
+
     while unused_endpoints:
-        strand = path_from_endpoint(k, next(iter(unused_endpoints)))
+        strand = path_from_endpoint(k, next(iter(unused_endpoints)))  # TODO: start from outgoing endpoint
         strand_set = set(strand)
         if not strand_set.issubset(unused_endpoints):  # sanity check
             raise ValueError(f"Endpoints {strand} should be unused")
@@ -168,9 +174,9 @@ def subdivide_arc(k:PlanarDiagram, arc, **attr):
 
 
     if not isinstance(endpoint_a, Endpoint):
-        endpoint_a = k.get_endpoint_from_pair(endpoint_a)
+        endpoint_a = k.endpoint_from_pair(endpoint_a)
     if not isinstance(endpoint_b, Endpoint):
-        endpoint_b = k.get_endpoint_from_pair(endpoint_b)
+        endpoint_b = k.endpoint_from_pair(endpoint_b)
 
     new_node = name_for_new_node(k)
     k.add_node(node_for_adding=new_node, create_using=Vertex, degree=2, **attr)

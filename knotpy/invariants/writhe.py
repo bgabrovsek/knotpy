@@ -1,4 +1,4 @@
-__all__ = ['writhe']
+__all__ = ['writhe', "forced_writhe"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
@@ -22,3 +22,17 @@ def writhe(k: PlanarDiagram) -> int:
 
     return sum(k.nodes[node].sign() for node in k.crossings)
 
+
+def forced_writhe(k: PlanarDiagram) -> int:
+    """
+    TODO: optimize for knots, etc.
+    :param k:
+    :return:
+    """
+    if k.is_oriented():
+        return writhe(k)
+    else:
+        try:
+            return writhe(k)
+        except ValueError:
+            return min(writhe(ok) for ok in all_orientations(k))

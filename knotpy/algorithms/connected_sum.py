@@ -15,7 +15,7 @@ from knotpy.algorithms.node_operations import name_for_new_node
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
-
+import knotpy
 
 def is_connected_sum(g: PlanarDiagram) -> bool:
     """Return True if g is a connected sum diagram and False otherwise."""
@@ -54,9 +54,12 @@ def cut_sets(k: PlanarDiagram, order: int, max_cut_sets=None) -> list:
             continue
         if len(classes) >= 3:
             warnings.warn(f"The cut-set {cut_set} contains three components.")
+            print("ERROR", k)
+            print("ERROR", knotpy.notation.to_pd_notation(k))
+            print("ERROR", classes)
 
         if len(classes) >= 2:  # normal "cut-set"
-            if all(node_er[arc[0].node] != node_er[arc[1].node] for arc in cut_set):  # do we need to check this?
+            if all(node_er[arc0.node] != node_er[arc1.node] for arc0, arc1 in cut_set):  # do we need to check this?
                 all_cut_sets.append(cut_set)
                 if max_cut_sets is not None and len(all_cut_sets) >= max_cut_sets:
                     break

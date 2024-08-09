@@ -4,7 +4,7 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.node_operations import name_for_new_node
@@ -15,6 +15,7 @@ _CHECK_SANITY = True
 class ReidemeisterLocationRemoveKink(ReidemeisterLocation):
     def __init__(self, endpoint):
         self.endpoint = endpoint
+        self.color = None  # if color is given, then the arcs involved in the moves will be colored
 
     def __str__(self):
         return "Remove kink " + str(self.endpoint)
@@ -24,12 +25,13 @@ class ReidemeisterLocationAddKink(ReidemeisterLocation):
     def __init__(self, endpoint, sign):
         self.endpoint = endpoint
         self.sign = sign
+        self.color = None  # if color is given, then the arcs involved in the moves will be colored
 
     def __str__(self):
         return "Add kink " + str(self.endpoint) + {1: "+", -1: "-"}[self.sign]
 
 
-def find_reidemeister_1_remove_kinks(k: PlanarDiagram):
+def find_reidemeister_1_remove_kink(k: PlanarDiagram):
     """An "unkink" position is en endpoint defining the 1-face of the diagram
     :param k:
     :return: set of endpoints
@@ -38,7 +40,7 @@ def find_reidemeister_1_remove_kinks(k: PlanarDiagram):
         yield ReidemeisterLocationRemoveKink(ep)
 
 
-def find_reidemeister_1_add_kinks(k: PlanarDiagram):
+def find_reidemeister_1_add_kink(k: PlanarDiagram):
     """Get positions of possible kinks. Such a position is defined as a pair (endpoint, sign), where sign is 1 or -1.
     :param k:
     :return: generator over elements of the form (endpoint, sign)
@@ -54,9 +56,9 @@ def choose_reidemeister_1_add_kink(k: PlanarDiagram, random=False):
     :return: ... or None
     """
     if random:
-        return choice(tuple(find_reidemeister_1_add_kinks(k)))
+        return choice(tuple(find_reidemeister_1_add_kink(k)))
     else:
-        return next(find_reidemeister_1_add_kinks(k), None)
+        return next(find_reidemeister_1_add_kink(k), None)
 
 
 def choose_reidemeister_1_remove_kink(k: PlanarDiagram, random=False):
@@ -66,9 +68,9 @@ def choose_reidemeister_1_remove_kink(k: PlanarDiagram, random=False):
     :return: ... or None
     """
     if random:
-        return choice(tuple(find_reidemeister_1_remove_kinks(k)))
+        return choice(tuple(find_reidemeister_1_remove_kink(k)))
     else:
-        return next(find_reidemeister_1_remove_kinks(k), None)
+        return next(find_reidemeister_1_remove_kink(k), None)
 
 
 def reidemeister_1_remove_kink(k: PlanarDiagram, location: ReidemeisterLocationRemoveKink, inplace=False):
@@ -94,7 +96,7 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, location: ReidemeisterLocationR
     # double kink?
     if k.nodes[node][(position + 1) % 4].node == k.nodes[node][(position + 2) % 4].node == node:
         k.remove_node(node, remove_incident_endpoints=False)
-        add_unknot_in_place(k)  # TODO: copy endpoint attributes to new unknot, let it be oriented of oriented
+        add_unknot(k)  # TODO: copy endpoint attributes to new unknot, let it be oriented of oriented
     # single kink?
     else:
         # we attach the endpoints at positions (endpoint.position + 1) and (endpoint.position + 2)
@@ -165,6 +167,13 @@ def reidemeister_1_add_kink(k: PlanarDiagram, location: ReidemeisterLocationAddK
         raise ValueError(f"Unsupported crossing sign {location.sign}.")
 
     k.framing += location.sign  # if we add a positive kink, the framing increases by 1
+
+    # color newly created poke
+    if location.color is not None:
+        for face in k.faces:
+            if len(face) == 1 and face[0].node == node:
+                face[0].attr["color"] = location.color
+                k.twin(face[0]).attr["color"] = location.color
 
 
     if DEBUG:
