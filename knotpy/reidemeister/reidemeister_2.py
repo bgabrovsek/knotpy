@@ -4,7 +4,7 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
@@ -21,6 +21,8 @@ class ReidemeisterLocationUnpoke(ReidemeisterLocation):
         else:
             self.endpoint_over, self.endpoint_under = face
 
+        self.color = None  # if color is given, then the arcs involved in the moves will be colored
+
     def __str__(self):
         return "Unpoke " + str(self.endpoint_under) + str(self.endpoint_over)
 
@@ -29,11 +31,13 @@ class ReidemeisterLocationPoke(ReidemeisterLocation):
     def __init__(self, endpoint_under, endpoint_over):
         self.endpoint_under = endpoint_under
         self.endpoint_over = endpoint_over
+        self.color = None  # if color is given, then the arcs involved in the moves will be colored
+
     def __str__(self):
         return "Poke " + str(self.endpoint_under) + str(self.endpoint_over)
 
 
-def find_reidemeister_2_unpokes(k: PlanarDiagram):
+def find_reidemeister_2_unpoke(k: PlanarDiagram):
     """An iterator (generator) over bigon areas/regions that enable us to unpoke (Reidemeister II move). (to reduce the
     number of crossings by 2)
     The areas contain the two endpoints that define it.
@@ -48,7 +52,7 @@ def find_reidemeister_2_unpokes(k: PlanarDiagram):
             yield ReidemeisterLocationUnpoke(face)
 
 
-def find_reidemeister_2_pokes(k: PlanarDiagram):
+def find_reidemeister_2_poke(k: PlanarDiagram):
     """A reidemeister poke position is the pair (over endpoint, under endpoint), where both endpoints lie in the same face.
     :param k:
     :return: generator over pairs of endpoints
@@ -67,9 +71,9 @@ def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
     :return: ... or None
     """
     if random:
-        return choice(tuple(find_reidemeister_2_unpokes(k)))
+        return choice(tuple(find_reidemeister_2_unpoke(k)))
     else:
-        return next(find_reidemeister_2_unpokes(k), None)
+        return next(find_reidemeister_2_unpoke(k), None)
 
 
 
@@ -80,9 +84,9 @@ def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
     :return: ... or None
     """
     if random:
-        return choice(tuple(find_reidemeister_2_pokes(k)))
+        return choice(tuple(find_reidemeister_2_poke(k)))
     else:
-        return next(find_reidemeister_2_pokes(k), None)  # select 1st item
+        return next(find_reidemeister_2_poke(k), None)  # select 1st item
 
 
 def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke, inplace=False):
@@ -111,10 +115,10 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
         ep_a, ep_b = k.twin(twin_a), k.twin(twin_b)
 
     # a "jump" is the endpoint on the other side of the crossing (on the same edge/strand)
-    jump_a = k.get_endpoint_from_pair((ep_a.node, (ep_a.position + 2) % 4))
-    jump_b = k.get_endpoint_from_pair((ep_b.node, (ep_b.position + 2) % 4))
-    jump_twin_a = k.get_endpoint_from_pair((twin_a.node, (twin_a.position + 2) % 4))
-    jump_twin_b = k.get_endpoint_from_pair((twin_b.node, (twin_b.position + 2) % 4))
+    jump_a = k.endpoint_from_pair((ep_a.node, (ep_a.position + 2) % 4))
+    jump_b = k.endpoint_from_pair((ep_b.node, (ep_b.position + 2) % 4))
+    jump_twin_a = k.endpoint_from_pair((twin_a.node, (twin_a.position + 2) % 4))
+    jump_twin_b = k.endpoint_from_pair((twin_b.node, (twin_b.position + 2) % 4))
 
     twin_jump_a = k.twin(jump_a)  # twin jump a
     twin_jump_b = k.twin(jump_b)  # twin jump b
@@ -134,7 +138,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
         k.set_endpoint(endpoint_for_setting=b, adjacent_endpoint=(a.node, a.position), create_using=type(a), **a.attr)
 
     if twin_jump_twin_a is jump_b and twin_jump_twin_b is jump_a:  # double kink?
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     elif twin_jump_twin_a is jump_b:  # single kink at ep_a
         _set_arc(twin_jump_a, twin_jump_twin_b)
@@ -143,7 +147,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
         _set_arc(twin_jump_b, twin_jump_twin_a)
 
     elif twin_jump_a is jump_twin_a and twin_jump_b is jump_twin_b:  # two unknots overlapping
-        add_unknot_in_place(k, number_of_unknots=2)
+        add_unknot(k, number_of_unknots=2)
 
     elif jump_a is twin_jump_b:  # "x"-type connected
         _set_arc(twin_jump_twin_a, twin_jump_twin_b)
@@ -153,11 +157,11 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
 
     elif twin_jump_a is jump_twin_a:  # one unknot overlapping on strand a
         _set_arc(twin_jump_twin_b, twin_jump_b)
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     elif twin_jump_b is jump_twin_b:  # one unknot overlapping on strand b
         _set_arc(twin_jump_twin_a, twin_jump_a)
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     else:  # "normal" R2 move, all four external endpoints are distinct
         _set_arc(twin_jump_twin_a, twin_jump_a)
@@ -260,7 +264,14 @@ def reidemeister_2_poke(k: PlanarDiagram, location: ReidemeisterLocationPoke, in
         k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(node_f, 3), create_using=rev_u)
         k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(node_e, 0), create_using=rev_o)
 
-
+    # color newly created poke
+    if location.color is not None:
+        for face in k.faces:
+            if len(face) == 2 and {face[0].node, face[1].node} == {node_e, node_f}:
+                face[0].attr["color"] = location.color
+                face[1].attr["color"] = location.color
+                k.twin(face[0]).attr["color"] = location.color
+                k.twin(face[1]).attr["color"] = location.color
     if _CHECK_SANITY:
         try:
             sanity_check(k)

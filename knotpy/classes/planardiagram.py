@@ -326,33 +326,26 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         :return: None
         """
 
-        if create_using is not None and not isinstance(create_using, type):
+        # if create_using is default Endpoint and adjacent endpoint is Oriented Endpoint, convert create using to oriented type
+        if (type(adjacent_endpoint) is OutgoingEndpoint or type(adjacent_endpoint) is IngoingEndpoint) and create_using is Endpoint:
+            create_using = type(adjacent_endpoint)
+
+        if not isinstance(create_using, type):
             raise TypeError("Creating endpoint with create_using instance not yet supported.")
 
-        create_using_type = create_using if isinstance(create_using, type) else type(create_using)
-
-        if self.is_oriented() and (create_using_type is not IngoingEndpoint and create_using_type is not OutgoingEndpoint):
-            raise ValueError("Cannot add unoriented endpoint to an oriented diagram")
-
-        if not self.is_oriented() and create_using_type is not Endpoint:
-            raise ValueError(f"Cannot add oriented endpoint {create_using} to an unoriented diagram")
+        if self.is_oriented() ^ create_using.is_oriented():
+            raise ValueError("Cannot add unoriented endpoint to an oriented diagram and vice versa")
 
         node, node_pos = endpoint_for_setting
 
+        # we would like a tuple
+        if isinstance(endpoint_for_setting, Endpoint):
+            endpoint_for_setting = list(endpoint_for_setting)
         if isinstance(adjacent_endpoint, Endpoint):
-            #create_using = create_using or type(adjacent_endpoint)  # todo: why adjacent? should it be default Endpoint?
-            if not isinstance(create_using, type):
-                create_using = type(create_using)  # todo: make nicer
-            adjacent_endpoint = create_using(*adjacent_endpoint, **adjacent_endpoint.attr)
-            adjacent_endpoint.attr.update(attr)
-        elif isinstance(create_using, Endpoint):
-            # if create_using is an instance, create new instance from its class and copy the attributes and override
-            # the new attributes
-            adjacent_endpoint = type(create_using)(*adjacent_endpoint, **(create_using.attr | attr))
+            attr = adjacent_endpoint.attr | attr  # join attributes
+            adjacent_endpoint = list(adjacent_endpoint)
 
-        else:
-            create_using = create_using or Endpoint
-            adjacent_endpoint = create_using(*adjacent_endpoint, **attr)
+        adjacent_endpoint = create_using(*adjacent_endpoint, **attr)
 
         # insert missing positions missing in the node
         for i in range(node_pos + 1 - len(self._nodes[node])):
@@ -394,7 +387,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         node, position = endpoint
         return self._nodes[node][position]
 
-    def get_endpoint_from_pair(self, endpoint_pair):
+    def endpoint_from_pair(self, endpoint_pair):
         """Returns the Endpoint instance of the pair (node, position).
         
         :param endpoint_pair: a pair (node, position)
@@ -489,7 +482,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
     @staticmethod
     def is_oriented():
-        False
+        return False
 
 
     @property

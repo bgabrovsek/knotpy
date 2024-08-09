@@ -4,89 +4,94 @@ Remove knotoids that allow an unpoke R2 move.
 Remove knotoids with more than 1 component (linkoids)
 Put knotoids into canonical form and save them into gzipped files.
 """
-
+import multiprocessing
 from pathlib import Path
 from itertools import combinations, chain
 from tqdm import tqdm
 
+import sys
+sys.path.append('/home/bostjan/remote_code/knotpy')
+
 import knotpy as kp
 
+
 DATA_FOLDER = Path("data")
-path_graphs = DATA_FOLDER / "graphs_pdcodes.txt"
-path_knotoids_pd = DATA_FOLDER / "knotoids_pd_codes.gz"
-path_knotoids_kp = DATA_FOLDER / "knotoids_native_codes.gz"
+input_graphs = DATA_FOLDER / "graphs_pdcodes.txt"  # get PD codes of planar graphs
+output_knotoids = DATA_FOLDER / "knotoids_pd_codes.txt"  # save PD codes of knotoids
+
+MAX_NUMBER_OF_CROSSINGS = 8
 
 def powerset(iterable):
-    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    """Return the powerset of an iterable, e.g., for [1,2,3], obtain () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
+
 def all_crossing_sign_combinations(k):
+    """For a given knotoid, generate all knotoids with all possible signs for crossings, +++, ++-, ...
+    :param k:
+    :return:
+    """
     list_of_knots = []
     for crossings in powerset(k.crossings):
         new_k = k.copy()
-        kp.mirror(new_k, crossings=crossings)
+        kp.mirror(new_k, crossings=crossings, inplace=True)
         list_of_knots.append(new_k)
     return list_of_knots
 
-def _fai(filename: str, n:int):
-    """ File Append Integer: convert example.txt to example-n.txt"""
-    return filename[:filename.rfind(".")] + f"-{n}" + filename[filename.rfind("."):]
-
-graphs = {n: list() for n in range(11)}  # graphs with n crossings and 2 terminals
-
-# load all graphs from pd codes
-with open(path_graphs) as file:
-    for line in file:
-        g = kp.from_pd_notation(line.rstrip())
-        graphs[g.number_of_nodes - 2].append(g)
 
 
-# print number of graphs for a given number of crossings
-print("Number of graphs:", {n: len(graphs[n]) for n in graphs})
 
-# convert graphs to knotoids by changing all possible crossing signs
-knotoids_pd = list()  # PD codes of knotoids
-knotoids_kp = list()  # KnotPy codes of knotoids
-count_all_knotoids = 0  # count theoretical number of knotoids
+if __name__ == "__main__":
 
-for n in range(0, 10):  # number of crossings
+    comment = f"All knotoids up to {MAX_NUMBER_OF_CROSSINGS} crossings // 7.8.2024"
 
-    #print(f"Mirroring crossings of knots with {n} crossings ({len(graphs[n])})")
+    # load all graphs from pd codes
+    with open(input_graphs) as file:
+        graphs = [kp.from_pd_notation(line.rstrip()) for line in file]
 
-    print()
-    for g in tqdm(graphs[n], desc=f"{n} crossings"):
+    print(f"Loaded {len(graphs)} graphs from {min(len(g) for g in graphs)-2} to {max(len(g) for g in graphs)-2} crossings")
+
+    count_all_knotoids = 0  # count theoretical number of knotoids
+    count_output_knotoids = 0  # count theoretical number of knotoids
+    knotoids_pd = []
+
+    # create new collection
+    kp.save_collection(output_knotoids, [], notation="cpd", comment=comment)
+
+    all_graphs = len(graphs)
+    canonical_graphs = set()
+    number_of_potential_graphs = 0
+    for g in tqdm(graphs, desc="canonical"):
+        no_crossings = len(g) - 2  # nuber of crossings
+
+        # ignore if we have too many crossings
+        if no_crossings > MAX_NUMBER_OF_CROSSINGS:
+            continue
+
+        g = kp.canonical(g)
+        number_of_potential_graphs += 1
+        canonical_graphs.add(g)
+
+    print(f"Using {len(canonical_graphs)} out of {number_of_potential_graphs} ({len(graphs)}) graphs.")
+
+    for g in tqdm(canonical_graphs, desc="graphs"):
+
+
+
+        count_all_knotoids += no_crossings ** 2
 
         # ignore if we have a linkoid
         if kp.number_of_link_components(g) > 1:
-            count_all_knotoids += n ** 2  # add to theoretical counter
             continue
 
         new_knotoids = all_crossing_sign_combinations(g)  # all candidates single crossing "mutations"
-        count_all_knotoids += len(new_knotoids)
+        new_knotoids = [k for k in new_knotoids if kp.choose_reidemeister_2_unpoke(k) is None] # keep if no unpoke
+        new_knotoids = {kp.canonical(k) for k in new_knotoids}  # keep only knots with no R2 unpoke move
 
-        # keep only knots with no R2 unpoke move
-        new_knotoids = [k for k in new_knotoids if kp.choose_reidemeister_2_unpoke(k) is None]
+        kp.append_to_collection(output_knotoids, new_knotoids, notation="cpd")
 
-        # put the knots into canonical form
-        new_knotoids = [kp.canonical(k) for k in new_knotoids]
+        count_output_knotoids += len(new_knotoids)
 
-        # store only the codes to save memory (codes take up less memory than the actual instance)
-        knotoids_kp.extend([kp.to_knotpy_notation(k) for k in new_knotoids])  # convert to pd so save memory
-        knotoids_pd.extend([kp.to_pd_notation(k) for k in new_knotoids])  # convert to pd so save memory
 
-    print(f"{len(graphs[n])} graphs converted to {count_all_knotoids} knots with {len(knotoids_pd)} good ones.")
-
-    # save the knotoids (group knotoids with 6 or fewer crossings into one file)
-    if True: #n >= 6:
-
-        kp.save_collection(_fai(str(path_knotoids_pd), n), iterable=knotoids_pd, notation="pd")
-        print(f"{len(knotoids_pd)} knots saved to files {_fai(str(path_knotoids_pd), n)}", end=" and ")
-
-        kp.save_collection(_fai(str(path_knotoids_kp), n), iterable=knotoids_kp, notation="knotpy")
-        print(f"{_fai(str(path_knotoids_kp), n)}.")
-
-        # clear tables, since they are now saved
-        knotoids_pd = []
-        knotoids_kp = []
-        count_all_knotoids = 0
+    print(f"Written {count_output_knotoids} out of {count_all_knotoids} knotoids.")

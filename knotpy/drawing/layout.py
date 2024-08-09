@@ -17,6 +17,8 @@ from knotpy.algorithms.components_link import number_of_link_components
 from knotpy.algorithms.structure import bridges, loops, kinks
 from knotpy.algorithms.components_disjoint import number_of_disjoint_components
 from knotpy.notation.native import to_knotpy_notation
+from knotpy.algorithms.structure import insert_arc
+
 
 #__all__ = ['draw', 'export_pdf', "circlepack_layout"]
 __version__ = '0.1'
@@ -73,16 +75,20 @@ def _repr(d):
     return ""
 
 
-def preprocess_diagram(k):
-    """ Replaces bridges with triple arcs.
-    Adds two additional arcs to a kink or loop."""
 
-    pass
+
+# def preprocess_diagram(k):
+#     """ Replaces bridges with triple arcs.
+#     Adds two additional arcs to a kink or loop."""
+#     k_ = add_support_arcs(k)
+#
+#     return k_
 
 def circlepack_layout(k):
     """Return a layout for knot k. A layout is a dictionary where keys are nodes/edges/areas and values are circles
     TODO: add support for: bridges, kink/loops, disjoint diagrams
     """
+
 
     if len([kinks(k)]):
         ValueError(f"Cannot plot diagram {k}, since it contains a kink.")
@@ -94,6 +100,8 @@ def circlepack_layout(k):
         ValueError(f"Cannot plot diagram {k}, since it contains disjoint components.")
 
 
+    # if bridges(k) or loops(k):
+    #     print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
 
 
 
@@ -140,4 +148,5 @@ def circlepack_layout(k):
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
     circles = CirclePack(internal=internal_circles, external=external_circles)
-    return {key: Circle(*value) for key, value in circles.items()}  # return Circle objects
+    # we need to conjugate, for knotoids the diagram is in CW order
+    return {key: Circle(value[0].conjugate(), value[1]) for key, value in circles.items()}  # return Circle objects

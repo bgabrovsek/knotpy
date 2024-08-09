@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import product
 #from knotpy.convert import to_knotted
 from knotpy.algorithms.node_operations import name_for_next_node_generator
-from knotpy.algorithms.components_disjoint import disjoint_sum, add_unknot_in_place
+from knotpy.algorithms.components_disjoint import disjoint_sum, add_unknot
 from knotpy.classes.planardiagram import PlanarDiagram
 
 __all__ = ['insert_tangle', 'insert_tangles_from']
@@ -98,7 +98,7 @@ def insert_tangles_from(k, tangles_dict: dict, create_using=None):
             new_arc = (new_knot.nodes[new_node][position], new_knot.nodes[new_tangle_node][0])
 
             if new_knot.nodes[new_arc[0]] == new_arc[1] and new_knot.nodes[new_arc[1]] == new_arc[0]:  # self-loop?
-                add_unknot_in_place(new_knot)
+                add_unknot(new_knot)
             else:
                 new_knot.set_arc(new_arc)
 

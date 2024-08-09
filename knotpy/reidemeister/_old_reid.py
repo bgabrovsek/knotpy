@@ -2,7 +2,7 @@ from itertools import chain
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.node_operations import name_for_new_node
-from knotpy.algorithms.components_disjoint import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.sanity import sanity_check
 
 __all__ = ["reidemeister_1_remove_kink",
@@ -111,10 +111,10 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face: list, inplace=False) -> None:
         ep_a, ep_b = k.twin(twin_a), k.twin(twin_b)
 
     # a "jump" is the endpoint on the other side of the crossing (on the same edge/strand)
-    jump_a = k.get_endpoint_from_pair((ep_a.node, (ep_a.position + 2) % 4))
-    jump_b = k.get_endpoint_from_pair((ep_b.node, (ep_b.position + 2) % 4))
-    jump_twin_a = k.get_endpoint_from_pair((twin_a.node, (twin_a.position + 2) % 4))
-    jump_twin_b = k.get_endpoint_from_pair((twin_b.node, (twin_b.position + 2) % 4))
+    jump_a = k.endpoint_from_pair((ep_a.node, (ep_a.position + 2) % 4))
+    jump_b = k.endpoint_from_pair((ep_b.node, (ep_b.position + 2) % 4))
+    jump_twin_a = k.endpoint_from_pair((twin_a.node, (twin_a.position + 2) % 4))
+    jump_twin_b = k.endpoint_from_pair((twin_b.node, (twin_b.position + 2) % 4))
 
     twin_jump_a = k.twin(jump_a)  # twin jump a
     twin_jump_b = k.twin(jump_b)  # twin jump b
@@ -134,7 +134,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face: list, inplace=False) -> None:
         k.set_endpoint(endpoint_for_setting=b, adjacent_endpoint=(a.node, a.position), create_using=type(a), **a.attr)
 
     if twin_jump_twin_a is jump_b and twin_jump_twin_b is jump_a:  # double kink?
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     elif twin_jump_twin_a is jump_b:  # single kink at ep_a
         _set_arc(twin_jump_a, twin_jump_twin_b)
@@ -143,7 +143,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face: list, inplace=False) -> None:
         _set_arc(twin_jump_b, twin_jump_twin_a)
 
     elif twin_jump_a is jump_twin_a and twin_jump_b is jump_twin_b:  # two unknots overlapping
-        add_unknot_in_place(k, number_of_unknots=2)
+        add_unknot(k, number_of_unknots=2)
 
     elif jump_a is twin_jump_b:  # "x"-type connected
         _set_arc(twin_jump_twin_a, twin_jump_twin_b)
@@ -153,11 +153,11 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face: list, inplace=False) -> None:
 
     elif twin_jump_a is jump_twin_a:  # one unknot overlapping on strand a
         _set_arc(twin_jump_twin_b, twin_jump_b)
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     elif twin_jump_b is jump_twin_b:  # one unknot overlapping on strand b
         _set_arc(twin_jump_twin_a, twin_jump_a)
-        add_unknot_in_place(k)
+        add_unknot(k)
 
     else:  # "normal" R2 move, all four external endpoints are distinct
         _set_arc(twin_jump_twin_a, twin_jump_a)

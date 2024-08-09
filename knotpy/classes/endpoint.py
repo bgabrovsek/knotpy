@@ -66,7 +66,7 @@ class Endpoint:
         #print(key,"to",value)
 
     def __getitem__(self, key):
-        return self.attr[key]
+        return self.attr.get(key, None)
 
     def get(self, key, __default=None):
         return self.attr.get(key, __default)
@@ -77,6 +77,10 @@ class Endpoint:
     @staticmethod
     def reverse_type():
         return Endpoint
+
+    @staticmethod
+    def is_oriented():
+        return False
 
     def __repr__(self):
         return str(self)
@@ -99,6 +103,11 @@ class IngoingEndpoint(Endpoint):
     def reverse_type():
         return OutgoingEndpoint
 
+    @staticmethod
+    def is_oriented():
+        return True
+
+
 
 class OutgoingEndpoint(Endpoint):
     def __str__(self):
@@ -115,6 +124,11 @@ class OutgoingEndpoint(Endpoint):
     @staticmethod
     def reverse_type():
         return IngoingEndpoint
+
+    @staticmethod
+    def is_oriented():
+        return True
+
 
 if __name__ == "__main__":
     pass

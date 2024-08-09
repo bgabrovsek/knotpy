@@ -7,75 +7,71 @@ import sympy
 from tqdm import tqdm
 from time import time
 from collections import defaultdict
+
+import sys
+sys.path.append('/home/bostjan/remote_code/knotpy')
+
 import knotpy as kp
+#from classification import loop_diagrams_file, print_invariant_dict_stats, line_count, ClassificationFile
 
 DATA_FOLDER = Path("data")
-POLY_FOLDER = Path("polys")
-#POLY_FOLDER = Path("polynomials-10")
-#filename_knots = {6: "knots_pdcodes-2-6.gz", 7: "knots_pdcodes-7.gz", 8: "knots_pdcodes-8.gz", 9: "knots_pdcodes-9.gz", 10: "knots_pdcodes-10.gz"}
-#path_kauffman = DATA_FOLDER / "kbsm.csv"
+input_knotoids = DATA_FOLDER / "knotoids_pd_codes.txt"  # save PD codes of knotoids
+output = DATA_FOLDER / "knotoids-filter-0.txt"  # save PD codes of knotoids
 
 
-def poly2str(poly):
-    """Convert polynomial into a filename-type string"""
-    s = str(poly)
-    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
-        s = s.replace(x, y)
-    return s
-
-def str2poly(s):
-    """Convert a filename--type string into a polynomial"""
-    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
-        s = s.replace(y, x)
-    return sympy.sympify(s)
-
-# load knotoids
-print("Loaing...", end="")
-knotoids = []
-for i in range(5):
-    knotoids += kp.load_collection(DATA_FOLDER / f"knotoids_native_codes-{i}.gz")
-
-print(f"loaded {len(knotoids)} knots.")
-# print(end="9 ")
-# knotoids += kp.load_collection(DATA_FOLDER / "knotoids_native_codes-10.gz")
-# print(end="10 ")
-
-# they should already be in canonical form
-# print("Checking canonical from")
-# for k in tqdm(knotoids[::10]):
-#     if k != kp.canonical(k):
-#         raise ValueError("Knotoids not in canonical form")  # just a check: at step 1 we saved them into canonical form
+def is_mirror(poly):
+    # return True if poly is the smaller of the two mirror polynomials
+    def zlp(poly):
+        # zip laurent poly
+        return tuple(zip(*[(e, c) for c, e in kp.laurent_polynomial_to_tuples(poly, "A")]))
+    return zlp(poly) < zlp(kp.reciprocal(poly, "A"))
 
 
-print(f"There are {len(set(knotoids))} unique diagrams out of {len(knotoids)} loaded diagrams.")
+def print_invariant_dict_stats(data):
+    from collections import defaultdict
+    print("There are", len(data), "polynomials with", sum(len(val) for val in data.values()), "diagrams - ", end="")
+    poly_group_sizes = defaultdict(int)
+    for p in data:
+        poly_group_sizes[len(data[p])] += 1
+    print("Group sizes (count):", ", ".join(f"{l}({poly_group_sizes[l]})" for l in sorted(poly_group_sizes)))
 
-print("Computing KBSMs...")
 
-kbsm_dict = defaultdict(set)  # store kbsm's (Kauffman bracket polynomials)
-for k in tqdm(knotoids):
 
-    kbsm_expr = kp.kauffman_bracket_skein_module(k)
-    if len(kbsm_expr) != 1:  # for knotoids there should only be 1 generator of the KBSM (the trivial knotoid)
-        raise ValueError("KBSM wrong generators")
-    poly = kbsm_expr[0][0]  # get the polynomial
+if __name__ == "__main__":
 
-    kbsm_dict[poly].add(k)  # add the knotoid to the polynomial group
+    comment = f"Knotoids up to 6 crossings without mirrors // 7.8.2024"
 
-print("There are", len(kbsm_dict), "polynomials with", sum(len(v) for v in kbsm_dict.values()), "knots")
+    invariant_names = ("Kauffman bracket", "Affine index polynomial", "Arrow polynomial", "Mock Alexander polynomial")
+    invariant_functions = (lambda q: kp.kauffman_bracket_skein_module(q, normalize=True)[0][0],
+                           kp.affine_index_polynomial,
+                           kp.arrow_polynomial,
+                           kp.mock_alexander_polynomial)
 
-poly_group_sizes = defaultdict(int)
-for p in kbsm_dict:
-    poly_group_sizes[len(kbsm_dict[p])] += 1
+    knotoids = defaultdict(set)  # store invariants (Kauffman bracket polynomials)
+    no_ignored = 0
 
-for length in sorted(poly_group_sizes):
-    print("Group size:", length, "count:", poly_group_sizes[length])
+    for k in tqdm(
+            kp.load_collection_iterator(input_knotoids, "cpd"),
+            total=kp.count_lines(input_knotoids) - 1, desc="Computing invariants"
+    ):
+        k_invariants = tuple(f(k) for f in invariant_functions)
 
-# save
-for poly in kbsm_dict:
+        # ignore knotoid if Kauffman says it is a mirror
+        if is_mirror(k_invariants[0]):
+            no_ignored += 1
+            continue
 
-    filename = poly2str(poly) + ".gz"  # convert the polynomial to a filename type string (no characters "*", "/", ...)
-    min_crossing_number = min(len(k) for k in kbsm_dict[poly])  # prepend to the filename the smallest number of crossings
-    filename = str(min_crossing_number) + "_" + filename
-    filename = POLY_FOLDER / filename
+        k = kp.canonical(k)
+        knotoids[k_invariants].add(k)
 
-    kp.save_collection(filename, kbsm_dict[poly])
+    print_invariant_dict_stats(knotoids)
+
+    kp.save_invariant_collection(output, knotoids, invariant_names, "cpd", comment)
+
+    print(f"Ignored {no_ignored} knotoids")
+    #
+    # cf = ClassificationFile(output, comment, invariants=invariant_names, notation_function=kp.to_condensed_pd_notation)
+    # cf.write_dict(knotoids)
+    # print("Wrote", line_count(output), "lines to", output)
+
+exit()

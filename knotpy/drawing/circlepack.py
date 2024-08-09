@@ -53,6 +53,7 @@ def CirclePack(internal, external):
     place(placements, radii, internal, k1)  # recursively place the rest
     place(placements, radii, internal, k2)
 
+    # conjugate the dictionary
     return dict((k, (placements[k], radii[k])) for k in radii)
 
 

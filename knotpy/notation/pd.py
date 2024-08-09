@@ -24,8 +24,7 @@ from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
 from knotpy.algorithms.node_operations import add_node_to
 from knotpy.classes.node import Vertex, Crossing
 
-
-__all__ = ['from_pd_notation', 'to_pd_notation']
+__all__ = ['from_pd_notation', 'to_pd_notation', "to_condensed_pd_notation", "from_condensed_pd_notation"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -110,6 +109,51 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
     return k
 
 
+
+def from_condensed_pd_notation(text: str, node_type=str, oriented=False, **attr):
+    """Create planar diagram object from string containing the condensed PD code. The condensed pd code is, e.g.
+    "abc bcde ..."
+
+    :param text: string containing the PD notation
+    :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
+    :param oriented:
+    :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
+    :return: planar diagram object
+    """
+
+    # if create_using is not None and not isinstance(create_using, type):
+    #     raise TypeError("Creating PD diagram with create_using instance not yet supported.")
+
+    if oriented:
+        raise NotImplementedError()  # TODO: implement oriented diagram
+
+    text = text.strip()
+
+    k = PlanarDiagram()
+    arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
+
+    for node, subtext in enumerate(text.split(" ")):
+        node_arcs = list(subtext)  # list of arcs
+        node_abbr = "X" if len(subtext) == 4 else "V"
+        node_name = abcABC[node] if node_type is str else node  # abc or 123
+
+        k.add_node(node_for_adding=node_name,
+                   create_using=_node_abbreviations[node_abbr],
+                   degree=len(node_arcs))
+
+        for pos, arc in enumerate(node_arcs):
+            arc_dict[arc].append((node_name, pos))
+
+    for arc in arc_dict.values():
+        k.set_arc(arc)
+
+    k.attr.update(attr)  # update given attribures
+
+    #print(k)
+
+    return k
+
+
 def to_pd_notation(k: PlanarDiagram) -> str:
     """
 
@@ -138,6 +182,34 @@ def to_pd_notation(k: PlanarDiagram) -> str:
         for node in k.nodes
         )
 
+
+def to_condensed_pd_notation(k: PlanarDiagram) -> str:
+    """
+    :param k:
+    :return:
+    """
+
+    if len(list(k.arcs)) > 50:
+        raise ValueError("Too much arcs for converting a diagram to condensed PD notation")
+
+    if len(k.vertices) + len(k.crossings) != len(k.nodes):
+        raise ValueError("For condensed PD notation, the diagram should contain only vertices and crossings")
+
+    if any(k.degree(node) == 4 for node in k.vertices):
+        raise ValueError("For condensed PD notation, no vertex should be of degree 4")
+
+    # associate each endpoint to its arc number (starting from 0).
+    endpoint_dict = dict()
+    for arc_number, (ep0, ep1) in enumerate(k.arcs):
+        endpoint_dict[ep0] = abcABC[arc_number]
+        endpoint_dict[ep1] = abcABC[arc_number]
+
+    return " ".join(
+        "".join(str(endpoint_dict[ep]) for ep in k.nodes[node])
+        for node in k.nodes
+        )
+
+
 def _test():
 
 
@@ -165,4 +237,10 @@ if __name__ == "__main__":
     s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
     k = from_pd_notation(s)
     print(k)
+    print(to_pd_notation(k))
+    print()
+    s = to_condensed_pd_notation(k)
+    print(s)
+    print(from_condensed_pd_notation(s))
+
     #_test()

@@ -1,7 +1,7 @@
 import csv
 
 from knotpy.readwrite.read_invariants import read_invariants_from_csv
-from knotpy.invariants.jones import jones_polynomial
+from knotpy.invariants.jones_polynomial import jones_polynomial
 from knotpy.invariants.bracket import bracket_polynomial
 from knotpy.algorithms.orientation import all_orientations, unoriented
 

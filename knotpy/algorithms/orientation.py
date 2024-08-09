@@ -5,7 +5,7 @@ from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 import knotpy.algorithms.components_disjoint as components
 import knotpy.algorithms.structure as structure
-
+from knotpy.algorithms.canonical import canonical
 
 def _orient_with_edges(k: PlanarDiagram, edges: list):
     """Orient the diagram so that edges are positively ordered, i.e. the orientations follows the endpoints
@@ -47,9 +47,17 @@ def all_orientations(k: PlanarDiagram) -> list:
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(edges, o)] for o in orient)
     ]
 
-def oriented(k: PlanarDiagram):
-    edges = structure.edges(k)
-    return _orient_with_edges(k=k, edges=edges)
+def oriented(k: PlanarDiagram, minimal_orientation=False):
+    """Orient the diagram (choose a random orientation). If minimal_orientation is True, then return the minimal diagram
+    out of all possibilities of orientations (this is much slower),
+    :param k:
+    :param minimal_orientation: if True, computes one orientation, otherwise computes the minimal orientation
+    :return:
+    """
+    if minimal_orientation:
+        return min(canonical(o) for o in all_orientations(k))
+    else:
+        return _orient_with_edges(k=k, edges=structure.edges(k))
 
 
 def unoriented(k:OrientedPlanarDiagram) -> PlanarDiagram:

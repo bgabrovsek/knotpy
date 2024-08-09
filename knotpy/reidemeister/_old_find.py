@@ -7,7 +7,7 @@ from knotpy.notation.pd import from_pd_notation
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.node_operations import name_for_new_node
-from knotpy.algorithms.components_disjoint import add_unknot_in_place
+from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.algorithms.structure import kinks
 
 #_all__ = ['find_reidemeister_1_unkinks', "find_reidemeister_1_kinks", "find_reidemeister_3_nonalternating_triangles"]

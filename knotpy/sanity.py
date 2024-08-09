@@ -36,3 +36,5 @@ def sanity_check(k):
         twin_twin = k.twin(twin)
         if twin_twin != ep:
             raise ValueError("Twin of twin is not the original endpoint")
+
+    return True

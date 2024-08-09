@@ -2,7 +2,7 @@
 """
 
 __all__ = ['number_of_disjoint_components', 'disjoint_components',
-           'add_unknot_in_place', "number_of_unknots", "remove_unknots"
+           'add_unknot', "number_of_unknots", "remove_unknots"
            ]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -18,16 +18,21 @@ from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
 
 
-def add_unknot_in_place(k: PlanarDiagram, number_of_unknots=1):
+def add_unknot(k: PlanarDiagram, number_of_unknots=1, in_place=True):
     """Add unknot to k (in place). An unknot is a vertex with one edge (loop).
     :param k: input planar diagram
     :param number_of_unknots: number of unknots (default is 1)
     :return: k with a disjoint unknot
     """
+    if not in_place:
+        k = k.copy()
+    oriented = k.is_oriented()
     for _ in range(number_of_unknots):
         node = name_for_new_node(k)
         k.add_vertex(node, degree=2)
-        k.set_arc(((node, 0), (node, 1)))
+        k.set_endpoint((node, 0), (node, 1), IngoingEndpoint if oriented else Endpoint)
+        k.set_endpoint((node, 1), (node, 0), OutgoingEndpoint if oriented else Endpoint)
+    return k
 
 
 def _disjoint_components_nodes(k: PlanarDiagram) -> list:

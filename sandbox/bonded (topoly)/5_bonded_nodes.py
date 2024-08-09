@@ -47,10 +47,10 @@ def to_bonded_structure(k: PlanarDiagram):
     k.add_node(node_for_adding="bond", create_using=Bond, degree=4)
     #print("bond", bond, ep1, ep2)
     copy_and_move_arc(k, [
-        {k.get_endpoint_from_pair((ep1.node, (ep1.position+1) % 3)): ("bond", 0)},
-        {k.get_endpoint_from_pair((ep1.node, (ep1.position - 1) % 3)): ("bond", 1)},
-        {k.get_endpoint_from_pair((ep2.node, (ep2.position + 1) % 3)): ("bond", 2)},
-        {k.get_endpoint_from_pair((ep2.node, (ep2.position - 1) % 3)): ("bond", 3)},
+        {k.endpoint_from_pair((ep1.node, (ep1.position + 1) % 3)): ("bond", 0)},
+        {k.endpoint_from_pair((ep1.node, (ep1.position - 1) % 3)): ("bond", 1)},
+        {k.endpoint_from_pair((ep2.node, (ep2.position + 1) % 3)): ("bond", 2)},
+        {k.endpoint_from_pair((ep2.node, (ep2.position - 1) % 3)): ("bond", 3)},
     ])
 
     print(k)
