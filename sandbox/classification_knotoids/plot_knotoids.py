@@ -22,21 +22,11 @@ input = DATA_FOLDER / "knotoids-filter-4-no-flips.txt"
 
 unique = []
 non_unique = []
-for j in kp.load_collection_iterator(input):
+
+diagrams = kp.load_collection(input)
+diagrams = [d[0] for d in diagrams]
+for d in diagrams:
+    d.name = kp.to_condensed_pd_notation(d)
 
 
-    if len(j) == 1:
-        unique += j
-    else:
-        non_unique.append(j)
-
-
-#kp.export_pdf(unique, "plot/filter-4/unique.pdf",with_title=True)
-
-
-for i, j in kp.Bar(enumerate(non_unique), total=len(non_unique)):
-    if len(j) <= 1:
-        continue
-    s = "plot/filter-4/" + str(len(j)) + "_" + str(i).zfill(4) + ".pdf"
-    kp.export_pdf(j, s, with_title=True)
-#kp.export_pdf()
+kp.export_pdf([d for d in diagrams], "plot/filt4.pdf", with_title=True)

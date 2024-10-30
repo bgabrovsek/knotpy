@@ -10,7 +10,7 @@ sys.path.append('/home/bostjan/Dropbox/Code/knotpy/')
 import knotpy as kp
 
 input = "data/pds_tangles.txt"
-output = "data/0-tangles-reduced-canonical.csv"
+output = "data/0-tangles-canonical.csv"
 
 num_tangles = kp.count_lines(input) - 1
 
@@ -25,8 +25,8 @@ with open(input, "rt") as f:
         dk = kp.from_pd_notation(line[3], name=f"N({line[0]})")
         nk = kp.from_pd_notation(line[4], name=f"D({line[0]})")
         #print(type(dk), type(nk))
-        dk = kp.simplify_crossing_reducing(dk)
-        nk = kp.simplify_crossing_reducing(nk)
+        #dk = kp.simplify_crossing_reducing(dk)
+        #nk = kp.simplify_crossing_reducing(nk)
         #print(type(dk), type(nk))
         dk = kp.canonical(dk)
         nk = kp.canonical(nk)

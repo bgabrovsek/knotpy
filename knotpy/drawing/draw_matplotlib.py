@@ -708,6 +708,7 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
     #print()
     #print("Drawing graph", g)
     #print(3)
+    error = False
     if bridges(k):
         # print("*", k)
         # print("_", to_pd_notation(k))
@@ -715,12 +716,33 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
     #print(4)
     if bridges(k) or loops(k):
         print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
+        error = True
 
     # compute the layout
-    circles = circlepack_layout(k)
-    circles = canonically_rotate_layout(circles, 0)
+    try:
+        circles = circlepack_layout(k)
+        circles = canonically_rotate_layout(circles, 0)
+    except ZeroDivisionError:
+        print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
+        error = True
+
     #print(5)
-    draw_from_layout(k, circles, draw_circles, with_labels, with_title)
+    if not error:
+        draw_from_layout(k, circles, draw_circles, with_labels, with_title)
+    else:
+        ax = plt.gca()
+        x_values_1 = [0, 1]
+        y_values_1 = [0, 1]
+        x_values_2 = [0, 1]
+        y_values_2 = [1, 0]
+
+        # Plot the "X" shape on the provided axis
+        ax.plot(x_values_1, y_values_1, color="blue", linewidth=2)
+        ax.plot(x_values_2, y_values_2, color="blue", linewidth=2)
+        ax.set_xlim(-0.5, 1.5)
+        ax.set_ylim(-0.5, 1.5)
+        ax.set_aspect('equal')
+        ax.axis("off")
 
 def export_png(k, filename, draw_circles=False, with_labels=False, with_title=False):
     try:

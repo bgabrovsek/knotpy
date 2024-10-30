@@ -133,6 +133,7 @@ def from_condensed_pd_notation(text: str, node_type=str, oriented=False, **attr)
     arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
 
     for node, subtext in enumerate(text.split(" ")):
+
         node_arcs = list(subtext)  # list of arcs
         node_abbr = "X" if len(subtext) == 4 else "V"
         node_name = abcABC[node] if node_type is str else node  # abc or 123
