@@ -29,7 +29,8 @@ def dual_planar_diagram(k: PlanarDiagram) -> PlanarDiagram:
             adjacent_dual_position = ep_face_dict[twin].index(twin)
             dual.set_endpoint(endpoint_for_setting=(face, pos), adjacent_endpoint=(adjacent_dual_node, adjacent_dual_position))
 
-    print(dual)
+    if k.name is not None:
+        dual.name = k.name + "^*"
     return dual
 
 

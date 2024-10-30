@@ -30,7 +30,7 @@ def add_node_to(k, node_for_adding, node_type, degree=None):
 
 
 def degree_sequence(g):
-    return tuple(sorted([len(g.nodes[node]) for node in g.nodes]))
+    return tuple(sorted([len(g.nodes[node]) for node in g.nodes]))  # TODO: use degree
 
 
 # dictionary that stores True for all letters a-zA-Y and False for other hashable objects
@@ -77,15 +77,12 @@ def permute_node(k, node, permutation):
     :return: None
     TODO: are there problems regarding endpoint attributes?
     TODO: check if it works for loops (probably does not)
+    TODO: make this faster, since it a frequently called operation in canonical() and consumes a lot of tottime and cumtime
     """
 
-    DEBUG = False
-    if DEBUG: print(f"Permuting node {node} with {permutation} of", k)
-
     adj_endpoints = [adj_ep for adj_ep in k.nodes[node]]  # save old endpoints, maybe enough just list(...)
-    if DEBUG: print(f"Adjacent endpoints", adj_endpoints)
+    #print(k, "node", node, "perm", permutation)
     node_endpoint_inst = [k.twin(adj_ep) for adj_ep in adj_endpoints]
-    if DEBUG: print(f"Self endpoints", node_endpoint_inst)
     for pos, adj_ep in enumerate(adj_endpoints):
         if adj_ep.node != node:  # no loop
             # set adjacent

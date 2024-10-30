@@ -58,11 +58,9 @@ def compare_dicts(dict1: dict, dict2: dict, exclude_keys=None, include_only_keys
 
     return 0
 
-
-
 def inverse_multi_dict(d):
     """ exchanges keys & vals, but stores keys in a set """
-    invd = dict()  # defaultdict?
+    invd = dict()  # defaultdict is slower (tested)
     for key, value in d.items():
         if value in invd:
             invd[value].add(key)
@@ -102,3 +100,31 @@ class identitydict(defaultdict):
     def __missing__(self, key):
         return key
 
+if __name__ == "__main__":
+
+    from itertools import permutations
+
+    a = "abcdefglmo"
+    b = [0,0,0,1,1,2,2,3,4,5]
+    d = []
+    for q in permutations(b):
+        d.append(dict(zip(a, q)))
+        #print(d)
+
+    from time import time
+
+    t = time()
+    for x in d:
+
+        invd = inverse_multi_dict(x)
+    print(time()-t)
+
+    t = time()
+    for x in d:
+        invd = inverse_multi_dict2(x)
+    print(time()-t)
+
+    exit()
+
+    d = {"a": 1, "b": 3, "c": 1, "d": 2, "e":8, "f":1, "g":8}
+    print(inverse_multi_dict(d))

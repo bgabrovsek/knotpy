@@ -3,7 +3,7 @@ Skein operations:
  - smoothing crossings by A/B smoothening
 """
 
-from knotpy.algorithms.components_disjoint import add_unknot
+from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.algorithms.structure import kinks
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Crossing

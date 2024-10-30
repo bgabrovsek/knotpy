@@ -9,7 +9,7 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot
+from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint

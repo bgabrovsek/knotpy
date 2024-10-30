@@ -1,6 +1,5 @@
 from collections import Counter
-from knotpy.algorithms.components_disjoint import  disjoint_components
-#import knotpy as kp
+
 
 def sanity_check(k):
 

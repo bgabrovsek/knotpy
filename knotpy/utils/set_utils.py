@@ -1,43 +1,47 @@
 from itertools import chain
 
-class MultiLevelSet:
-    """
-    MultiLevelSet is a class that manages multiple levels of sets, ensuring that elements are unique across all levels.
-    """
-    def __init__(self, level_zero_elements=None):
-        self.levels = []
-        if level_zero_elements is not None:
-            self.add_to_level(0, level_zero_elements)
 
-    def add_to_level(self, level, element):
-        while len(self.levels) <= level:  # Ensure there are enough levels
-            self.levels.append(set())
+class LevelSet:
+    def __init__(self, elements=None):
+        self.levels = {}
+        if elements:
+            self.extend(elements, level=0)
 
-        if isinstance(element, set) or isinstance(element, list) or isinstance(element, tuple):
-            for el in element:
-                self.add_to_level(level, el)
-            return
-
-        if not any(element in self.levels[i] for i in reversed(range(level))):
+    def add(self, element, level):
+        """Add an element to a specific level, if it's not already present."""
+        if level not in self.levels:
+            self.levels[level] = set()
+        if element not in self:
             self.levels[level].add(element)
 
+    def extend(self, elements, level):
+        """Add multiple elements to a specific level, if they're not already present."""
+        if level not in self.levels:
+            self.levels[level] = set()
+        for element in elements:
+            if element not in self:
+                self.levels[level].add(element)
+
+    def __contains__(self, element):
+        """Check if an element exists in any level."""
+        return any(element in level for level in self.levels.values())
+
     def __getitem__(self, level):
-        # Ensure there are enough levels
-        while len(self.levels) <= level:
-            self.levels.append(set())
-        return self.levels[level]
-
-    def __setitem__(self, level, element):
-        self.add_to_level(level, element)
-
-    def __len__(self):
-        return len(self.levels)
-
-    def __repr__(self):
-        return '\n'.join(f"Level {i}: {len(level)} element{'s' if len(level)!=1 else ''}" for i, level in enumerate(self.levels))
+        """Get the set of elements at a specific level."""
+        return self.levels.get(level, set())
 
     def __iter__(self):
-        return chain(*self.levels)
+        """Iterate over all elements in the LevelSet, independent of level."""
+        seen = set()
+        for level in self.levels.values():
+            for element in level:
+                if element not in seen:
+                    seen.add(element)
+                    yield element
+
+    def __repr__(self):
+        """String representation of the LevelSet."""
+        return f"LevelSet({self.levels})"
 
 #
 #

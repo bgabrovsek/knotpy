@@ -20,10 +20,10 @@ from knotpy.algorithms.orientation import unoriented
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import all_orientations
 from knotpy.algorithms.structure import is_knot, is_planar_graph
-from knotpy.algorithms.components_disjoint import number_of_unknots, remove_unknots
+from knotpy.algorithms.disjoint_sum import number_of_unknots, remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
-from knotpy.reidemeister.simplification import simplify_diagram_crossing_reducing
+from knotpy.reidemeister.simplification import simplify_crossing_reducing
 from knotpy.invariants.cache import Cache
 from knotpy.algorithms.detect_diagram_type import is_empty_diagram
 
@@ -55,7 +55,12 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
     expression = module()
     stack = deque()
 
-    stack.append((Integer(1), k.copy() if not k.is_oriented() else unoriented(k)))
+    k = unoriented(k) if k.is_oriented() else k.copy()
+    # add framing if unframed
+    if not k.is_framed():
+        k.framing = 0
+
+    stack.append((Integer(1), k))
 
     CACHE_NODES = 7
     precomputed = {}
@@ -64,7 +69,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
         coeff, k = stack.pop()
 
         #print("> ",coeff, k)
-        simplify_diagram_crossing_reducing(k, inplace=True)
+        simplify_crossing_reducing(k, inplace=True)
         #print("s ", coeff, k)
 
         if k.crossings:
@@ -85,17 +90,18 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
 
             expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- A ** 3) ** (-framing)), k_canonical)
 
+    original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
         #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
         wr = forced_writhe(original_knot)
         #print("    wr", wr)
-        expression *= (- A ** (-3)) ** (wr + original_knot.framing)
+        expression *= (- A ** (-3)) ** (wr + original_framing)
         #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
         #print()
     else:
         pass
-        expression *= (- A ** (-3)) ** original_knot.framing
+        expression *= (- A ** (-3)) ** original_framing
 
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
@@ -121,12 +127,17 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
     _kauffman_term = (-A ** 2 - A ** (-2))
     polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
-    stack.append((Integer(1), k.copy(framing=0) if not k.is_oriented() else unoriented(k)))
+    k = unoriented(k) if k.is_oriented() else k.copy()
+    # add framing if unframed
+    if not k.is_framed():
+        k.framing = 0
+
+    stack.append((Integer(1), k))
 
     while stack:
         coeff, k = stack.pop()
 
-        simplify_diagram_crossing_reducing(k, inplace=True)
+        simplify_crossing_reducing(k, inplace=True)
 
         if k.crossings:
             crossing = next(iter(k.crossings))
@@ -141,11 +152,14 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
 
             polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- A ** 3) ** (-k.framing))
 
+
+    original_framing = original_knot.framing if original_knot.is_framed() else 0
+
     if normalize:
         #polynomial *= (- A ** 3) ** (-_forced_writhe(original_knot) - original_knot.framing)
-        polynomial *= (- A ** 3) ** (-_forced_writhe(original_knot))  # ignore framing if normalized
+        polynomial *= (- A ** (-3)) ** (forced_writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
-        polynomial *= (- A ** 3) ** (-original_knot.framing)
+        polynomial *= (- A ** (-3)) ** (original_framing)
 
     return expand(polynomial)
 

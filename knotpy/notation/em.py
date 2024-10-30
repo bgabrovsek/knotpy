@@ -26,7 +26,7 @@ import re
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-
+from knotpy.classes.composite import DisjointSum
 from knotpy.classes.node import Crossing, Vertex
 
 
@@ -66,6 +66,15 @@ def to_condensed_em_notation(g, separator=",") -> str:
     :raises ValueError: if the number of nodes is more than 52.
     :raises TypeError: if the nodes are mixed by type (e.g. int and string).
     """
+    include_name = False
+
+    #print(type(g))
+
+    if isinstance(g, DisjointSum):
+        return "  ⊔  ".join(to_condensed_em_notation(_) for _ in g)
+
+
+    #name_seperator = ":"
 
     if len(g.nodes) > len(string.ascii_letters):
         raise ValueError(
@@ -77,6 +86,8 @@ def to_condensed_em_notation(g, separator=",") -> str:
         raise TypeError(f"Condensed EM notation requires the nodes to be of same type (int, str,...), ") from e
 
     node_dict = dict(zip(nodes, string.ascii_letters[:len(g.nodes)]))
+
+    #name = f"{g.name}{name_seperator}" if g.name else ""
 
     return separator.join(
         ["".join(node_dict[u] + str(u_pos) for u, u_pos in g.nodes[v]) for v in nodes]
@@ -92,10 +103,17 @@ def from_condensed_em_notation(data: str, separator=",", oriented=False):
     :return:
     """
     """Convert a condensed EM string to a planar diagram."""
+    name_seperator = ":"
+    default_vertex_type = Crossing
+
+    if (seperator_index := data.find(":")) >= 0:
+        name = data[:seperator_index]
+        data = data[seperator_index+1:]
+    else:
+        name = None
 
     if oriented:
         raise NotImplementedError()  # TODO: implement oriented diagram
-
 
     data = (" " if separator == " " else "").join(data.split())  # clean up string
     g = PlanarDiagram()
@@ -104,10 +122,17 @@ def from_condensed_em_notation(data: str, separator=",", oriented=False):
         adj_nodes = re.findall(r"[a-zA-Z]", s)
         adj_positions = re.findall(r"\d+", s)
 
-        g.add_node(node_for_adding=node, create_using=Vertex, degree=len(adj_nodes))
+        #print(s, node, adj_nodes, adj_positions)
+        if len(adj_nodes) == 4:
+            g.add_node(node_for_adding=node, create_using=Crossing, degree=len(adj_nodes))
+        else:
+            g.add_node(node_for_adding=node, create_using=Vertex, degree=len(adj_nodes))
 
         for i, (v, v_pos) in enumerate(zip(adj_nodes, adj_positions)):
             g.set_endpoint((node, i), (v, v_pos))
+
+    if name is not None:
+        g.name = name
 
     return g
 

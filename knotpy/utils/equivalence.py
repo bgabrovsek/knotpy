@@ -29,21 +29,13 @@ class EquivalenceRelation(dict):
             return
         self.__iadd__(item2)
 
-
-        # print("item1", item1)
-        # print("item2", item2)
-        # if not (item1 in self) or not (item2 in self):
-        #     print([hash(kkk) == hash(item1) for kkk in self])
-        #     print([kkk == item2 for kkk in self])
-        #     print([hash(kkk) == hash(item1) for kkk in self])
-        #     print([kkk == item2 for kkk in self])
-        #     pass
-        # print("self1", self[item1])
-        # print("self2", self[item2])
-
         new_set = self[item1] | self[item2]
         for item in new_set:
             super().__setitem__(item, new_set)
+
+    def set_bunch(self, item, equivalent_elements):
+        for elt in equivalent_elements:
+            self[item] = elt
 
     def representatives(self):
         for cls in self.classes():

@@ -13,7 +13,7 @@ import knotpy as kp
 from knotpy.utils import iterable_depth, combinations_with_limited_repetitions
 
 from knotpy.notation.em import to_em_notation
-from knotpy.readwrite.cleanopen import prepend_to_extension
+#from knotpy.readwrite.cleanopen import prepend_to_extension
 
 
 

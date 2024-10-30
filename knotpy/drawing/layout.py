@@ -15,7 +15,7 @@ from knotpy.drawing.circlepack import CirclePack
 from knotpy.utils.geometry import Circle
 from knotpy.algorithms.components_link import number_of_link_components
 from knotpy.algorithms.structure import bridges, loops, kinks
-from knotpy.algorithms.components_disjoint import number_of_disjoint_components
+from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
 from knotpy.notation.native import to_knotpy_notation
 from knotpy.algorithms.structure import insert_arc
 
@@ -116,7 +116,21 @@ def circlepack_layout(k):
     regions = list([face for face in k.faces])
     if _debug: print("Regions are", regions)
 
-    external_region = min(regions, key=lambda r: (-len(r), r))  # sort by longest, then by lexicographical order
+    # get external endpoints if they exists
+    external_endpoints = [ep for ep in k.endpoints if "outer" in ep.attr]
+    if external_endpoints:
+        external_regions = [face for face in regions if set(face).issuperset(external_endpoints)]
+        if len(external_regions) == 1:
+            external_region = external_regions[0]
+        else:
+            print("Warning: multiple external regions")
+            external_region = external_regions[0]
+    else:
+        external_region = min(regions, key=lambda r: (-len(r), r))  # sort by longest, then by lexicographical order
+
+    # print("External endpoints", external_endpoints)
+    # print("Faes", list(k.faces))
+
     if _debug: print("External region is", external_region)
 
     regions.remove(external_region)

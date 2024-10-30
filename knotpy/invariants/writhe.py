@@ -3,7 +3,7 @@ __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.components_disjoint import number_of_disjoint_components
+from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
 from knotpy.algorithms.orientation import all_orientations, oriented
 
 def writhe(k: PlanarDiagram) -> int:

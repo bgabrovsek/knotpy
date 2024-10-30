@@ -8,7 +8,7 @@ from knotpy.algorithms.skein import smoothen_crossing
 from knotpy.algorithms.node_operations import name_for_new_node
 from knotpy.classes.node import Crossing, Vertex, Terminal
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.components_disjoint import add_unknot
+from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.invariants.writhe import writhe
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
 from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemeister_1_remove_kink

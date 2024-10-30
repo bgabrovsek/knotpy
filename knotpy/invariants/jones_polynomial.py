@@ -31,7 +31,7 @@ def jones_polynomial(k, variable="t") -> Expr:
 
     A = symbols("A")
     polynomial = bracket_polynomial(k, A, normalize=True)
-    return expand(polynomial.subs(A, t ** Rational(1, 4)))
+    return expand(polynomial.subs(A, t ** Rational(-1, 4)))
 
 
 

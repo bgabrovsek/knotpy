@@ -4,13 +4,13 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot
+from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.node_operations import name_for_new_node
 
 _DEBUG_REID = False
-_CHECK_SANITY = True
+_CHECK_SANITY = False
 
 class ReidemeisterLocationRemoveKink(ReidemeisterLocation):
     def __init__(self, endpoint):
@@ -109,7 +109,8 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, location: ReidemeisterLocationR
                        create_using=type(ep_a), **ep_a.attr)
         k.remove_node(node, remove_incident_endpoints=False)
 
-    k.framing = k.framing + (-1 if position % 2 else 1)  # if we remove positive kink, the framing decreases by 1
+    if k.is_framed():
+        k.framing = k.framing + (-1 if position % 2 else 1)  # if we remove positive kink, the framing decreases by 1
 
     if _CHECK_SANITY:
         try:
@@ -166,7 +167,8 @@ def reidemeister_1_add_kink(k: PlanarDiagram, location: ReidemeisterLocationAddK
     else:
         raise ValueError(f"Unsupported crossing sign {location.sign}.")
 
-    k.framing += location.sign  # if we add a positive kink, the framing increases by 1
+    if k.is_framed():
+        k.framing += location.sign  # if we add a positive kink, the framing increases by 1
 
     # color newly created poke
     if location.color is not None:

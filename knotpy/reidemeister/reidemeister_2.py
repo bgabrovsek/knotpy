@@ -4,14 +4,14 @@ from random import choice
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot
+from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.node_operations import name_for_new_node
 
 _DEBUG_REID = False
-_CHECK_SANITY = True
+_CHECK_SANITY = False
 
 
 class ReidemeisterLocationUnpoke(ReidemeisterLocation):

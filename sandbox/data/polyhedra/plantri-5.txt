@@ -1,2 +1,0 @@
-5 bcde,aedc,abd,acbe,adb
-5 bcd,ade,aed,aceb,bdc
