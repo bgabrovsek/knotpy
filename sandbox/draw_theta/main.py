@@ -106,7 +106,7 @@ if __name__ == '__main__':
     layout = kp.circlepack_layout(knot)
 
     for circle in layout:
-        center, radius = layout[circle]
+        center, radius = layout[circle].center,layout[circle].radius
         print("circle", circle, "center", center, "radius", radius)
 
 

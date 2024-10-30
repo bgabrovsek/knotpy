@@ -1,0 +1,5 @@
+#just a set of knots
+Name;CEM notation
+3_1;b1c0c3b2,c1a0a3c2,a1b0b3a2
+5_1;c1d0d3c2,d1e0e3d2,e1a0a3e2,a1b0b3a2,b1c0c3b2
+4_1;c3d0b3b2,d3c0a3a2,b1d2d1a0,a1c2c1b0

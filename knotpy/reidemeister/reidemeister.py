@@ -12,7 +12,7 @@ from knotpy.reidemeister.reidemeister_2 import (ReidemeisterLocationPoke, Reidem
 from knotpy.reidemeister.reidemeister_3 import (ReidemeisterLocationThree, reidemeister_3,
                                                 choose_reidemeister_3_triangle,
                                                 find_reidemeister_3_triangle)
-from knotpy.reidemeister.simplification import make_reidemeister_move
+
 
 from random import randint, choice
 
@@ -74,4 +74,27 @@ def random_reidemeister_moves(k, moves=None, count=1):
         if location is not None:
             result.append(make_reidemeister_move(knot, location, inplace=False))
     return result
+
+def make_reidemeister_move(k: PlanarDiagram, location: ReidemeisterLocation, inplace=False):
+    """Makes a Reidemeister move according to the type of location.
+    TODO: move this to reidemeister
+    :param k:
+    :param location:
+    :param inplace:
+    :return:
+    """
+    if type(location) is ReidemeisterLocationRemoveKink:
+        return reidemeister_1_remove_kink(k=k, location=location, inplace=inplace)
+    elif type(location) is ReidemeisterLocationAddKink:
+        return reidemeister_1_add_kink(k=k, location=location, inplace=inplace)
+    elif type(location) is ReidemeisterLocationUnpoke:
+        return reidemeister_2_unpoke(k=k, location=location, inplace=inplace)
+    elif type(location) is ReidemeisterLocationPoke:
+        return reidemeister_2_poke(k=k, location=location, inplace=inplace)
+    elif type(location) is ReidemeisterLocationThree:
+        return reidemeister_3(k=k, location=location, inplace=inplace)
+    else:
+        raise ValueError(f"Unknown Reidemesiter location {location}")
+
+
 

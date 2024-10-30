@@ -7,6 +7,8 @@ from matplotlib.collections import PatchCollection, LineCollection, PolyCollecti
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.colors import to_rgb
 from collections import defaultdict
+from sklearn.decomposition import PCA
+from time import time
 
 from tqdm import tqdm
 import math
@@ -22,6 +24,7 @@ from knotpy.utils.geometry import (perpendicular_arc, is_angle_between, antipode
                                    perpendicular_arc_through_point, BoundingBox)
 
 from knotpy.notation.native import from_knotpy_notation
+from knotpy.notation.pd import from_pd_notation
 from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
@@ -43,9 +46,9 @@ PHANTOM_NODE_ALPHA = 0.5
 
 BONDED_NODE_COLOR = "black"
 # arcs
-DEFAULT_LINE_WIDTH = 1.5
+DEFAULT_LINE_WIDTH = 0.5
 DEFAULT_LINE_COLOR = "steelblue"
-DEFAULT_BRAKE_WIDTH = 0.3  # arc break marking the under-passing
+DEFAULT_GAP_WIDTH = 0.08  # arc break marking the under-passing
 # text
 DEFAULT_TEXT_COLOR = "black"
 DEFAULT_FONT_SIZE = 16
@@ -329,9 +332,9 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
 
         else:
 
-            gap_angle = DEFAULT_BRAKE_WIDTH / arc.radius  # circular arc length is s = theta * radius
+            gap_angle = DEFAULT_GAP_WIDTH / arc.radius  # circular arc length is s = theta * radius
             arrow_angle = ARROW_LENGTH / arc.radius  # circular arc length is s = theta * radius
-            if arc.length() > DEFAULT_BRAKE_WIDTH:
+            if arc.length() > DEFAULT_GAP_WIDTH:
                 if node_pt == 0:
                     return_curves.append((CircularArc(arc.center, arc.radius, arc.theta1 + gap_angle, arc.theta2), color))
                     if arrow and isinstance(ep, IngoingEndpoint):
@@ -349,7 +352,7 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
         if not gap:
             return_curves.append((seg, color))
         else:
-            gap_t = DEFAULT_BRAKE_WIDTH / seg.length()
+            gap_t = DEFAULT_GAP_WIDTH / seg.length()
             if node_pt == 0:
                 return_curves.append((seg(gap_t, 1), color))
             else:
@@ -568,6 +571,55 @@ def _plot_arcs(k, circles, ax, bounding_box=None):
                 bounding_box |= BoundingBox(g)
     return new_vertices
 
+def compute_PCA(complex_points: list):
+    """
+    https: // en.wikipedia.org / wiki / Principal_component_analysis
+
+    :param complex_points: list of complex points
+    :return:
+    """
+    # Step 1: Convert complex numbers to 2D vectors (x, y)
+    points_2d = [[z.real, z.imag] for z in complex_points]
+
+    # Step 2: Fit PCA model to the data
+    pca = PCA(n_components=2)
+    pca.fit(points_2d)
+
+    # Step 3: Extract the principal components and explained variance
+    conjugated_principal_components = [complex(c[0], -c[1]) for c in pca.components_]
+    conjugated_principal_components = [c / abs(c) for c in conjugated_principal_components]  # they should already be normalized
+    # the 0th principal component should be the biggest
+
+    conj_print_comp = conjugated_principal_components[0]
+
+    return [c*conj_print_comp for c in complex_points]
+
+
+    #
+
+    #print("Principal Components:")
+    #print(conjugated_principal_components, abs(conjugated_principal_components[0]), abs(conjugated_principal_components[1]))
+    #print("Explained Variance:")
+    #print(explained_variance)
+
+
+def canonically_rotate_layout(layout, PCA_degrees=0):
+    """
+
+    :param layout:
+    :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
+    :return:
+    """
+    centers = [circle.center for circle in layout.values()]
+    radii = [circle.radius for circle in layout.values()]
+
+    mass_center = sum(c * r for c, r in zip(centers, radii)) / sum(radii)
+    centers = [c - mass_center for c in centers]
+    centers = aligned_centers = compute_PCA(centers)
+    # rotate centers
+    rotation = complex(math.cos(math.radians(PCA_degrees)), math.sin(math.radians(PCA_degrees)))
+    centers = [c * rotation for c in centers]
+    return {key: Circle(c, r) for key, c, r in zip(layout, centers, radii)}
 
 
 def draw_from_layout(k,
@@ -583,6 +635,7 @@ def draw_from_layout(k,
     :param with_labels:
     :param with_title:
     :param ax:
+    :angle from the principal component analysis (to canonically rotate the circles)
     :return:
     """
 
@@ -665,6 +718,7 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
 
     # compute the layout
     circles = circlepack_layout(k)
+    circles = canonically_rotate_layout(circles, 0)
     #print(5)
     draw_from_layout(k, circles, draw_circles, with_labels, with_title)
 
@@ -739,18 +793,16 @@ if __name__ == '__main__':
 """
 
     import matplotlib.pyplot as plt
-    #s = "('OrientedSpatialGraph', {'name': '+t3_1#-3_1(1).2'}, [('Vertex', 'a', (('IngoingEndpoint', 'c', 2, {}), ('OutgoingEndpoint', 'b', 1, {'color': 1}), ('OutgoingEndpoint', 'd', 0, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'd', 1, {}), ('IngoingEndpoint', 'a', 1, {'color': 1}), ('OutgoingEndpoint', 'g', 0, {})), {}), ('Crossing', 'c', (('IngoingEndpoint', 'f', 3, {}), ('IngoingEndpoint', 'f', 2, {}), ('OutgoingEndpoint', 'a', 0, {}), ('OutgoingEndpoint', 'e', 0, {})), {}), ('Crossing', 'd', (('IngoingEndpoint', 'a', 2, {}), ('OutgoingEndpoint', 'b', 0, {}), ('OutgoingEndpoint', 'g', 3, {}), ('IngoingEndpoint', 'h', 2, {})), {}), ('Crossing', 'e', (('IngoingEndpoint', 'c', 3, {}), ('IngoingEndpoint', 'h', 1, {}), ('OutgoingEndpoint', 'f', 1, {}), ('OutgoingEndpoint', 'f', 0, {})), {}), ('Crossing', 'f', (('IngoingEndpoint', 'e', 3, {}), ('IngoingEndpoint', 'e', 2, {}), ('OutgoingEndpoint', 'c', 1, {}), ('OutgoingEndpoint', 'c', 0, {})), {}), ('Crossing', 'g', (('IngoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'h', 0, {}), ('OutgoingEndpoint', 'h', 3, {}), ('IngoingEndpoint', 'd', 2, {})), {}), ('Crossing', 'h', (('IngoingEndpoint', 'g', 1, {}), ('OutgoingEndpoint', 'e', 1, {}), ('OutgoingEndpoint', 'd', 3, {}), ('IngoingEndpoint', 'g', 2, {})), {})])"
-    #s = "('SpatialGraph', {'name': 't0_1(1)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {}), ('Endpoint', 'b', 2, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {}), ('Endpoint', 'a', 2, {}), ('Endpoint', 'a', 1, {'color': 1})), {})])"
-    s = "('OrientedSpatialGraph', {'name': 't0_1(0).0'}, [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
-    k = from_knotpy_notation(s)
-    # print(k)
-    # k.permute_node("a", {0:1,1:2,2:0})
-    # print(k)
-    # exit()
-
+    s = "V[0,1,2],V[3,4,5],X[6,0,7,8],X[8,9,3,10],X[1,6,10,5],X[9,7,11,12],X[12,11,2,4]"
+    s = "V[0,1,2],V[3,4,5],X[5,2,6,7],X[1,8,9,6],X[10,8,11,12],X[12,11,0,4],X[13,14,7,9],X[14,13,10,3]"
+    s = "V[0,1,2],V[3,4,5],X[6,7,8,9],X[10,11,12,13],X[4,11,2,7],X[13,12,14,15],X[16,0,10,17],X[1,16,18,8],X[5,6,9,18],X[15,14,3,17]"
+    #s = "V[0,1,2],V[3,4,5],X[2,6,7,8],X[9,4,10,7],X[5,11,12,1],X[11,9,6,12],X[13,14,3,0],X[8,10,14,13]"
+    k = from_pd_notation(s)
+    t= time()
     draw(k, draw_circles=True, with_labels=True, with_title=True)
-
+    print("Time:", time()- t)
     plt.show()
+    exit()
 
     from knotpy.reidemeister.phantom import insert_phantom_node
     arcs = list(k.arcs)
@@ -770,6 +822,9 @@ if __name__ == '__main__':
     codes = ["V[0,1,2],V[3,4,5],X[5,2,6,7],X[1,8,9,6],X[10,8,11,12],X[12,11,0,4],X[13,14,7,9],X[14,13,10,3]"]
     codes = ["V[0,1,2],V[3,4,5],X[6,7,8,9],X[10,11,12,13],X[4,11,2,7],X[13,12,14,15],X[16,0,10,17],X[1,16,18,8],X[5,6,9,18],X[15,14,3,17]"]
     codes = ["V[0,1,2],V[3,4,5],X[2,6,7,8],X[9,4,10,7],X[5,11,12,1],X[11,9,6,12],X[13,14,3,0],X[8,10,14,13]"]
+
+
+
     thetas = [kp.from_pd_notation(code, create_using=SpatialGraph) for code in codes]
     for k in thetas:
 

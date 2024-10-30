@@ -2,18 +2,16 @@ from itertools import product, chain
 from random import choice
 
 from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
-from knotpy.classes import PlanarDiagram
-from knotpy.algorithms.structure import kinks
-from knotpy.algorithms.components_disjoint import add_unknot
 from knotpy.sanity import sanity_check
 from knotpy.classes.node import Crossing
 
-_DEBUG_REID = False
-_CHECK_SANITY = True
+_CHECK_SANITY = False
+
 
 class ReidemeisterLocationThree(ReidemeisterLocation):
+    """ Class that stores a position where a  Reidemeister 3 move can be performed."""
     def __init__(self, face):
-        self.face = face
+        self.face = face  # a face that contains three endpoints
         self.color = None  # if color is given, then the arcs involved in the moves will be colored
 
     def __str__(self):
@@ -21,10 +19,9 @@ class ReidemeisterLocationThree(ReidemeisterLocation):
 
 
 def find_reidemeister_3_triangle(k):
-    """An iterator (generator) over non-alternating triangular regions that enable us to perform an (Reidemeister III
-    move). See also regions().
-    :param k: planar diagram object
-    :return: an iterator (generator) over non-alternating triangles
+    """A generator that yields triangular faces where Reidemeister III moves can be performed.
+    :param k: planar diagram
+    :return: yields a non-alternating triangles
     """
     # TODO: make faster by not iterating over all regions
     for face in k.faces:
@@ -36,10 +33,10 @@ def find_reidemeister_3_triangle(k):
             yield ReidemeisterLocationThree(face)
 
 def choose_reidemeister_3_triangle(k, random=False):
-    """
+    """Returns a (random) face where a Reidemeister 3 move can be performed.
     :param k: planar diagram
-    :param random: if True, the function returns a random ..., otherwise it returns the first ... is finds
-    :return: ... or None
+    :param random: if True, the function returns a random face, otherwise it returns the first face is finds
+    :return: a triangular face
     """
     if random:
         return choice(tuple(find_reidemeister_3_triangle(k)))
@@ -49,17 +46,15 @@ def choose_reidemeister_3_triangle(k, random=False):
 
 def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
     """Perform a Reidemeister III move on a non-alternating triangular region.
-    :param k:
-    :param face:
+    :param k: planar diagram
+    :param location: ReidemeisterLocationThree object
     :param inplace: If True, modify the current instance.
                     If False, return a new instance with the modified value.
     :return:
     """
-
-    DEBUG = _DEBUG_REID or False
+    DEBUG = False
 
     if DEBUG: print("R3", k, location)
-
 
     if k.is_oriented():
         raise ValueError("Oriented not yet supported")
@@ -70,11 +65,9 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
     # if len(region) != 3:
     #     raise ValueError(f"Cannot perform an Reidemeister III move on a region of length {len(region)}.")
 
-    #triangle_nodes = {ep.node for ep in region}
     node_a, pos_a = location.face[0]
     node_b, pos_b = location.face[1]
     node_c, pos_c = location.face[2]
-
     area_nodes = {node_a, node_b, node_c}
 
     # redirect endpoints on arcs inside the area
@@ -97,9 +90,7 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
         (node_c, pos_c): tuple(k.nodes[node_b][(pos_b + 1) % 4]),
         (node_c, (pos_c - 1) % 4): tuple(k.nodes[node_a][(pos_a + 2) % 4]),
     }
-
     #print("new outer", new_outer_endpoints)
-
 
     # "outer" endpoints change if they point to a crossing of the triangle face
     new_outer_endpoints.update(
@@ -107,24 +98,13 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
          for src_ep, dst_ep in new_outer_endpoints.items() if dst_ep[0] in area_nodes}
     )
 
-    #print("new outer", new_outer_endpoints)
-
-
     # redirect endpoints that do not lie on the triangle (are incident to it)
     new_external_endpoints = {
         dst_ep: src_ep for src_ep, dst_ep in new_outer_endpoints.items() if dst_ep[0] not in area_nodes
     }
 
-    #print("new external", new_external_endpoints)
-
-
-    # new_external_endpoints = {
-    #     dest_ep: src_ep if dest_ep[0] not in area_nodes else
-    #     for src_ep, dest_ep in new_outer_endpoints.items() if
-    # }
-
+    # actually make the endpoint changes
     for src_ep, dst_ep in chain(new_inner_endpoints.items(), new_outer_endpoints.items(), new_external_endpoints.items()):
-        #print("setting", src_ep, "->", dst_ep)
         k.set_endpoint(
             endpoint_for_setting=src_ep,
             adjacent_endpoint=dst_ep,
@@ -132,7 +112,9 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
             **k.nodes[dst_ep[0]][dst_ep[1]].attr  # use old type of attributes
         )
 
-    #sprint("After R3", k)
+    # save the nodes where the R3 was made to the planar diagram (optional)
+    # this is needed when performing multiple R3 moves, so we do not repeat (undo) the moves
+    k.attr["_r3"] = area_nodes
 
     if _CHECK_SANITY:
         try:

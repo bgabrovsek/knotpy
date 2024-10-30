@@ -147,32 +147,33 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
         # compare nodes
         if self.number_of_nodes != other.number_of_nodes:
-            return (self.number_of_nodes > other.number_of_nodes) * 2 - 1
+            return 1 if self.number_of_nodes > other.number_of_nodes else -1
 
         self_nodes_sorted = sorted(self._nodes)
         other_nodes_sorted = sorted(other._nodes)
 
         if self_nodes_sorted != other_nodes_sorted:
-            return (self_nodes_sorted > other_nodes_sorted) * 2 - 1
-
-        # if set(self._nodes) != set(other._nodes):
-        #     return (sorted(self._nodes) > sorted(other._nodes)) * 2 - 1
+            return 1 if self_nodes_sorted > other_nodes_sorted else -1
 
         for node in self_nodes_sorted:
             if cmp := self._nodes[node].compare(other._nodes[node], compare_attributes=compare_attributes):
                 return cmp
 
-        # for this_node, that_node in zip(self._nodes.values(), other._nodes.values()):
-        #     if cmp := this_node.compare(that_node, compare_attributes=compare_attributes):
-        #        return cmp
+        if (self.framing is None) ^ (other.framing is None):
+            return 1 if self.framing is None else -1
 
         if self.framing != other.framing:
-            return (self.framing > other.framing) * 2 - 1
+            return 1 if self.framing > other.framing else -1
+
+        # TODO: exclude "_" keys in nodes and endpoints also
+        exclude_keys = ({"name", "framing"} |
+                        {a for a in self.attr if isinstance(a, str) and a[0] == "_"} |
+                        {a for a in other.attr if isinstance(a, str) and a[0] == "_"})
 
         if compare_attributes is True:
-            return compare_dicts(self.attr, other.attr, exclude_keys=["name", "framing"])
+            return compare_dicts(self.attr, other.attr, exclude_keys=exclude_keys)
         elif type(compare_attributes) in (list, set, tuple):
-            return compare_dicts(self.attr, other.attr, exclude_keys=["name", "framing"], include_only_keys=compare_attributes)
+            return compare_dicts(self.attr, other.attr, exclude_keys=exclude_keys, include_only_keys=compare_attributes)
 
         return 0
 
@@ -243,11 +244,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
         self.add_node(node_for_adding=vertex_for_adding, create_using=Vertex, degree=degree, **attr)
 
-    def add_crossings_from(self, crossings_for_adding, **attr):
-        """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
-        hashable objects."""
-        self.add_nodes_from(nodes_for_adding=crossings_for_adding, create_using=Crossing, **attr)
-
 
     def permute_node(self, node, permutation):
         """Permute the endpoints of the node of knot k. For example, if p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,2,1]),
@@ -274,14 +270,14 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
             #print(ep,adj_ep)
             self._nodes[ep.node][permutation[ep.position]] = adj_ep
 
-    def rename_nodes(self, mapping_dict):
-        # TODO: should this be an outside method?
-        mapping_dict = identitydict(mapping_dict)
-        self._nodes = dict()
-        self._nodes.update((mapping_dict[node], value) for node, value in self._nodes.items())
-        for node in self._nodes:
-            for adj_node in self._nodes[node]:
-                print(adj_node)
+    # def rename_nodes(self, mapping_dict):
+    #     # TODO: should this be an outside method?
+    #     mapping_dict = identitydict(mapping_dict)
+    #     self._nodes = dict()
+    #     self._nodes.update((mapping_dict[node], value) for node, value in self._nodes.items())
+    #     for node in self._nodes:
+    #         for adj_node in self._nodes[node]:
+    #             print(adj_node)
 
     def remove_node(self, node_for_removing, remove_incident_endpoints=True):
         """Remove the node.
@@ -305,8 +301,8 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         """Relabels the nodes, can be a partial map"""
         # TODO: is this the same as rename_nodes?
         self._nodes = {
-            mapping.get(node_key, node_key): node_inst
-            for node_key, node_inst in self._nodes.items()
+            mapping.get(node, node): node_inst
+            for node, node_inst in self._nodes.items()
         }
         for ep in self.endpoints:
             ep.node = mapping.get(ep.node, ep.node)
@@ -450,6 +446,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
     def __hash__(self):
         """Unsafe hashing"""
         # TODO: sort by hash if keys are not comparable
+        # TODO: if knot has attibute "framed = False", then hash excludes the framedness
         # print("hash",
         #       (
         #           self.framing,
@@ -464,21 +461,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
                 tuple(hash(self._nodes[node]) for node in sorted(self._nodes))  # nodes need to be sorted
             )
         )
-
-        #
-        # def _endpoints_to_tuple(node):
-        #     return tuple((type(ep), ep.node, ep.position, ep.attr["color"]) if "color" in ep.attr else (ep.node, ep.position)
-        #             for ep in self._nodes[node])
-        #
-        # self_attr = (self.framing, )
-        # self_nodes = tuple(
-        #     (node, type(self._nodes[node]), _endpoints_to_tuple(node), self._nodes[node].attr["color"])
-        #     if "color" in self._nodes[node].attr else
-        #     (node, type(self._nodes[node]), _endpoints_to_tuple(node))
-        #     for node in self._nodes
-        # )
-        # print("__hash__", self_attr + self_nodes)
-        # return hash(self_attr + self_nodes)
 
     @staticmethod
     def is_oriented():
@@ -525,7 +507,10 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
     @property
     def framing(self):
         """Blackboard framing number of planar diagram."""
-        return self.attr.get("framing", 0)
+        return self.attr.get("framing", None)
+
+    def is_framed(self):
+        return self.framing is not None
 
     @name.setter
     def name(self, s):
@@ -549,7 +534,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
                 f"with {self.number_of_nodes} nodes, ",
                 f"{self.number_of_arcs} arcs, ",
                 f"and adjacencies {self.nodes}" if self.nodes else f"and no adjacencies",
-                f" with framing {self.framing}",
+                f" with framing {self.framing}" if self.framing is not None else "",
                 f" ({attrib_str})" if attrib_str else ""
             ]
         )

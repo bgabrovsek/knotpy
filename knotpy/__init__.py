@@ -35,6 +35,9 @@ from .sanity import *
 from knotpy import reidemeister
 from .reidemeister import *
 
+from knotpy import tabulation
+from .tabulation import *
+
 
 # from knotpy import builder
 # from knotpy.builder import *

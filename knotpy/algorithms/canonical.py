@@ -1,13 +1,18 @@
 from copy import deepcopy
 from queue import Queue
+from typing import Union
 import string
-
+import multiprocessing
 from knotpy.algorithms.node_operations import degree_sequence
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes.node import Crossing
+from knotpy.classes.endpoint import Endpoint
+from knotpy.classes.node import Crossing, Vertex
 from knotpy.algorithms.node_operations import permute_node
+from knotpy.algorithms.disjoint_sum import number_of_disjoint_components, to_disjoint_sum
+from knotpy.classes.composite import DisjointSum, ConnectedSum
+from knotpy.utils.dict_utils import inverse_multi_dict
 from knotpy.sanity import sanity_check
-__all__ = ['canonical', "canonical_unoriented_details_temp"]
+__all__ = ['canonical', "canonical_parallel"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -15,241 +20,152 @@ __author__ = 'Boštjan Gabrovšek'
 _CHECK_SANITY = True
 # canonical methods
 
-def canonical(k: PlanarDiagram, use_letters_for_nodes=True):
 
-    if _CHECK_SANITY:
-        k_copy = k.copy()
+_ascii_letters = string.ascii_lowercase + string.ascii_uppercase
 
-    if k.is_oriented():
-        raise NotImplementedError
+
+def canonical(k: Union[PlanarDiagram, DisjointSum, ConnectedSum]):
+
+    if isinstance(k, PlanarDiagram):
+        if k.is_oriented():
+            raise NotImplementedError("Canonical form of oriented diagrams not supported")
+        else:
+            return _canonical_unoriented(k)
+    elif isinstance(k, DisjointSum) or isinstance(k, ConnectedSum):
+        return _canonical_composite(k)
     else:
-
-        canonical_k = _canonical_unoriented(k, use_letters_for_nodes)
-
-        if _CHECK_SANITY:
-            try:
-                sanity_check(canonical_k)
-            except:
-                print("Not sane after canonical.")
-                print("In: ", k_copy)
-                print("Out:", canonical_k)
-                sanity_check(canonical_k)
+        raise TypeError(f"Cannot put a {type(k)} instance into canonical from.")
 
 
-        return _canonical_unoriented(k, use_letters_for_nodes)
+def _node_neighbours_sequence(k:PlanarDiagram, node):
+    """Counts number of new neighbours from node at distance 1, distance 2, ..."""
+    used_nodes = {node}
+    levels = [{node}]
+    while levels[-1]:
+        levels.append({ep.node for prev_node in levels[-1] for ep in k.nodes[prev_node] if ep.node not in used_nodes})
+        used_nodes |= levels[-1]
+    return tuple(len(w) for w in levels[1:-1])  # first is just the node, last is empy
 
-def _canonical_unoriented(k: PlanarDiagram, use_letters_for_nodes=True):
+
+def _minimal_degree_nodes(k:PlanarDiagram):
+    """Return all the nodes that have the minimal degree of the diagram."""
+    minimal_degree = min(k.degree(node) for node in k.nodes)
+    return [node for node in k.nodes if k.degree(node) == minimal_degree]
+
+
+def _min_value_keys(d:dict):
+    """return keys that have minimal values."""
+    min_value = min(d.values())
+    return [key for key in d if d[key] == min_value]
+
+
+def _under_endpoints_of_node(k, node):
+    """Return a tuple of endpoints that are under endpoints in case of crossings and all endpoints in case of vertices"""
+    return [(node, 0), (node, 2)] if isinstance(k.nodes[node], Crossing) else [(node, pos) for pos in range(k.degree(node))]
+
+
+def _ccw_expand_node_names(k:PlanarDiagram, endpoint, node_names):
+    """Starting from the node in the endpoint in the direction of the endpoints, start labelling nodes in ccw direction.
+    Labels with integers.
+    :param: labels: list of (ordered) labels"""
+    node_relabel = dict()  # also holds as a "visited node" set
+    endpoint_queue = Queue()
+    endpoint_queue.put(endpoint)
+
+    while not endpoint_queue.empty():
+        v, pos = endpoint_queue.get()
+
+        if v not in node_relabel:  # new node visited
+            node_relabel[v] = node_names[len(node_relabel)]  # rename the node to next available integer
+            v_deg = k.degree(v)
+            # put all adjacent endpoints in queue in ccw order
+            for relative_pos in range(1, v_deg):
+                endpoint_queue.put((v, (pos + relative_pos) % v_deg))
+
+        # go to the adjacent endpoint and add it to the queue
+        adj_v, adj_pos = k.nodes[v][pos]
+        if adj_v not in node_relabel:
+            endpoint_queue.put((adj_v, adj_pos))
+    return node_relabel
+
+
+def _canonical_unoriented(k: PlanarDiagram):
     """Puts the diagram k in a unique canonical form. The diagram start with an endpoint on of a minimal degree vertex,
     it continues to an adjacent endpoints and distributes the ordering from there on using breadth first search using
     CCW order of visited nodes. At the moment, it is only implemented if the graph is connected.
-    TODO: In case of degree 2 vertices the canonical form might not be unique.
     :param k: the input (knot/graph/...) diagram
     :param use_letters_for_nodes: if True, the diagram's nodes will be a, b, c,... otherwise they will be 0, 1, 2, ...
     :return: None
     """
+    # TODO: In case of degree 2 vertices the canonical form might not be unique.
 
-    # should diagram
-
-    _debug = False
-
-    #print(" canonical", k)
-
-    # node names
-    letters = (string.ascii_lowercase + string.ascii_uppercase) if use_letters_for_nodes else list(range(len(k)))
-
-    if len(k) == 0:  # empty knot
+    if len(k) == 0:
         return k.copy()
 
-    minimal_degree = min(degree_sequence(k))
-    nodes_with_minimal_degree = [node for node in k.nodes if k.degree(node) == minimal_degree]
-    # TODO: optimize by viewing also 2nd degree (number of neighbour's neighbours)
-    # TODO: also take minimal Node type
-    # TODO: multiple disjoint components
+    # node names
+    letters = _ascii_letters if len(k) <= len(_ascii_letters) else list(range(len(k)))
 
-    if _debug: print("minimal degree nodes", nodes_with_minimal_degree)
+    # disjoint sum
+    if number_of_disjoint_components(k) >= 2:
+        ds = to_disjoint_sum(k)
+        # remove _r3 tags from the components that do not have _r3 point
+        for _ in ds:
+            if "_r3" in _.attr:
+                if not _.attr["_r3"].issubset(_.nodes):
+                    del _.attr["_r3"]
 
-    # endpoints of minimal nodes
-    starting_endpoints = list()
-    for node in nodes_with_minimal_degree:
-        if type(k.nodes[node]) is Crossing:
-            starting_endpoints.append((node, 0))
-            starting_endpoints.append((node, 2))
-        else:
-            starting_endpoints.extend([node, pos] for pos in range(minimal_degree))
+        return canonical(ds)
 
-    #starting_endpoints = [ep for node in nodes_with_minimal_degree for ep in k.endpoints[node]]
-    #        [(v, pos) for v in nodes_with_minimal_degree for pos in range(minimal_degree)]
-    if _debug: print("starting endpoints", starting_endpoints)
+    # start expanding enumeration of nodes with nodes that are "minimal"
+    minimal_nodes = _minimal_degree_nodes(k)
+    minimal_nodes = _min_value_keys({node: _node_neighbours_sequence(k, node) for node in minimal_nodes})
 
-    minimal_graph = None
+    # create a list of endpoints of minimal nodes
+    starting_endpoints = [ep for node in minimal_nodes for ep in _under_endpoints_of_node(k, node)]
 
+    minimal_diagram = None
+
+    # start expanding enumeration from endpoints for each "minimal" node (under) endpoint
     for ep_start in starting_endpoints:
-        if _debug: print("starting with", ep_start)
+        node_relabel = _ccw_expand_node_names(k, ep_start, letters)
 
-        node_relabel = dict()  # also holds as a "visited node" set
-        endpoint_queue = Queue()
-        endpoint_queue.put(ep_start)
-
-        while not endpoint_queue.empty():
-            v, pos = ep = endpoint_queue.get()
-            if _debug: print("popping endpoint", ep)
-            if v not in node_relabel:  # new node visited
-                node_relabel[v] = letters[len(node_relabel)]  # rename the node to next available integer
-                v_deg = k.degree(v)
-                # put all adjacent endpoints in queue in ccw order
-                for relative_pos in range(1, v_deg):
-                    endpoint_queue.put((v, (pos + relative_pos) % v_deg))
-
-            # go to the adjacent endpoint and add it to the queue
-            adj_v, adj_pos = k.nodes[v][pos]
-            if adj_v not in node_relabel:
-                endpoint_queue.put((adj_v, adj_pos))
-
-        if _debug: print(node_relabel)
+        #print("node relabel", k, node_relabel)
         if len(node_relabel) != len(k):
             raise ValueError("Cannot put a non-connected graph into canonical form.")
 
-        new_graph = deepcopy(k)
-        if _debug: print("before relabeling", new_graph)
-        new_graph.relabel_nodes(node_relabel)
-        if _debug: print("after relabeling", new_graph)
+        #print("k", k)
+        new_graph = k.copy()  # copy method is faster than built-in deepcopy
+        #print("ng", new_graph)
+        if "_r3" in k.attr:
+            new_graph.attr["_r3"] = {node_relabel[node] for node in k.attr["_r3"]}
+
+        # do the relabelling
+        #new_graph.relabel_nodes(node_relabel)
+        #print("relabel", node_relabel)
+
+        new_graph._nodes = {node_relabel[node]:
+                                Crossing([Endpoint(node_relabel[ep.node], ep.position) for ep in node_inst._inc]) if type(node_inst) is Crossing
+                                else Vertex([Endpoint(node_relabel[node_inst._inc[position].node], node_inst._inc[position].position) for position in range(len(node_inst))], degree=len(node_inst))
+                            for node, node_inst in k._nodes.items()}
+
+        #print("ng", new_graph)
         _canonically_permute_nodes(new_graph)
-        if _debug: print("after permuting", new_graph)
-
-        # if g.number_of_arcs == 5: print("> ", new_graph)
-
-        #### ####
-        #for v in range(k.number_of_nodes):  # new_graph._adj:
-        #    new_graph._canonically_rotate_node(v)
-
-        # if g.number_of_arcs == 5: print("> ")
-
-        #print("   candidate:", new_graph)
-
-        if minimal_graph is None or new_graph < minimal_graph:
-            minimal_graph = new_graph
-            #print("   minimal  :", new_graph)
-
-    #
-    # if in_place:
-    #     # copy all data from minimal_graph
-    #     g._node_attr = minimal_graph._node_attr
-    #     g._endpoint_attr = minimal_graph._endpoint_attr
-    #     g._adj = minimal_graph._adj
-    # else:
-
-    return minimal_graph
 
 
+        if minimal_diagram is None or new_graph < minimal_diagram:
+            minimal_diagram = new_graph
+
+    # TODO: should we add inplace support?
+
+    return minimal_diagram
 
 
-def canonical_unoriented_details_temp(k: PlanarDiagram, use_letters_for_nodes=True):
-    """Puts the diagram k in a unique canonical form. The diagram start with an endpoint on of a minimal degree vertex,
-    it continues to an adjacent endpoints and distributes the ordering from there on using breadth first search using
-    CCW order of visited nodes. At the moment, it is only implemented if the graph is connected.
-    TODO: In case of degree 2 vertices the canonical form might not be unique.
-    :param k: the input (knot/graph/...) diagram
-    :param use_letters_for_nodes: if True, the diagram's nodes will be a, b, c,... otherwise they will be 0, 1, 2, ...
-    :return: None
-    """
-
-    # should diagram
-
-    _debug = False
-
-    #print(" canonical", k)
-
-    # node names
-    letters = (string.ascii_lowercase + string.ascii_uppercase) if use_letters_for_nodes else list(range(len(k)))
-
-    if len(k) == 0:  # empty knot
-        return k.copy()
-
-    minimal_degree = min(degree_sequence(k))
-    nodes_with_minimal_degree = [node for node in k.nodes if k.degree(node) == minimal_degree]
-    # TODO: optimize by viewing also 2nd degree (number of neighbour's neighbours)
-    # TODO: also take minimal Node type
-    # TODO: multiple disjoint components
-
-    if _debug: print("minimal degree nodes", nodes_with_minimal_degree)
-
-    # endpoints of minimal nodes
-    starting_endpoints = list()
-    for node in nodes_with_minimal_degree:
-        if type(k.nodes[node]) is Crossing:
-            starting_endpoints.append((node, 0))
-            starting_endpoints.append((node, 2))
-        else:
-            starting_endpoints.extend([node, pos] for pos in range(minimal_degree))
-
-    #starting_endpoints = [ep for node in nodes_with_minimal_degree for ep in k.endpoints[node]]
-    #        [(v, pos) for v in nodes_with_minimal_degree for pos in range(minimal_degree)]
-    if _debug: print("starting endpoints", starting_endpoints)
-
-    minimal_graph = None
-
-    for ep_start in starting_endpoints:
-        if _debug: print("starting with", ep_start)
-
-        node_relabel = dict()  # also holds as a "visited node" set
-        endpoint_queue = Queue()
-        endpoint_queue.put(ep_start)
-
-        while not endpoint_queue.empty():
-            v, pos = ep = endpoint_queue.get()
-            if _debug: print("popping endpoint", ep)
-            if v not in node_relabel:  # new node visited
-                node_relabel[v] = letters[len(node_relabel)]  # rename the node to next available integer
-                v_deg = k.degree(v)
-                # put all adjacent endpoints in queue in ccw order
-                for relative_pos in range(1, v_deg):
-                    endpoint_queue.put((v, (pos + relative_pos) % v_deg))
-
-            # go to the adjacent endpoint and add it to the queue
-            adj_v, adj_pos = k.nodes[v][pos]
-            if adj_v not in node_relabel:
-                endpoint_queue.put((adj_v, adj_pos))
-
-        if _debug: print(node_relabel)
-        if len(node_relabel) != len(k):
-            raise ValueError("Cannot put a non-connected graph into canonical form.")
-
-        new_graph = deepcopy(k)
-        if _debug: print("before relabeling", new_graph)
-        new_graph.relabel_nodes(node_relabel)
-        if _debug: print("after relabeling", new_graph)
-        _canonically_permute_nodes(new_graph)
-        if _debug: print("after permuting", new_graph)
-
-        # if g.number_of_arcs == 5: print("> ", new_graph)
-
-        #### ####
-        #for v in range(k.number_of_nodes):  # new_graph._adj:
-        #    new_graph._canonically_rotate_node(v)
-
-        # if g.number_of_arcs == 5: print("> ")
-
-        #print("   candidate:", new_graph)
-
-        if minimal_graph is None or new_graph < minimal_graph:
-            print("can *", new_graph)
-            minimal_graph = new_graph
-        else:
-            print("can  ", new_graph)
-            #print("   minimal  :", new_graph)
-
-    #
-    # if in_place:
-    #     # copy all data from minimal_graph
-    #     g._node_attr = minimal_graph._node_attr
-    #     g._endpoint_attr = minimal_graph._endpoint_attr
-    #     g._adj = minimal_graph._adj
-    # else:
-
-    return minimal_graph
+def _canonical_composite(k: Union[DisjointSum, ConnectedSum]):
+    """Return the canonical form of a disjoint sum or connected sum."""
+    return type(k)(*sorted(canonical(_) for _ in k), **k.attr)
 
 
-def _canonically_permute_nodes(k : PlanarDiagram):
+def _canonically_permute_nodes(k: PlanarDiagram):
     """
     Uniquely permutes the nodes in-place (smallest neighbour is first)
     :param k: planar diagram
@@ -260,10 +176,7 @@ def _canonically_permute_nodes(k : PlanarDiagram):
     else:
         for node in sorted(k.nodes):  # probably sorted not needed, on second though, probably is needed
 
-            # if len(k.nodes[node]) <= 1:  # no need to permute leafs
-            #     continue
-
-            degree = len(k.nodes[node])
+            degree = k.degree(node)
             neighbours = [ep.node for ep in k.nodes[node]]
             if isinstance(k.nodes[node], Crossing):
                 index = 0 if neighbours < (neighbours[2:] + neighbours[:2]) else 2
@@ -280,6 +193,10 @@ def _canonically_permute_nodes(k : PlanarDiagram):
         """
 
 
+def canonical_parallel(diagrams):
+    with multiprocessing.Pool() as pool:
+        result = pool.map(canonical, diagrams)
+    return result
 
 if __name__ == "__main__":
     degree = 4

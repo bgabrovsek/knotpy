@@ -1,6 +1,0 @@
-bcd,ade,aef,afb,bfc,ced
-bcd,adec,abef,afb,bfc,ced
-bcd,adef,afed,acb,bcf,bec
-bcd,adef,afe,aeb,bdcf,bec
-bcd,adec,abef,afeb,bdfc,ced
-bcde,aefc,abfd,acfe,adfb,bedc

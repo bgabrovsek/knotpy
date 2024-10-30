@@ -3,7 +3,7 @@ import itertools as it
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-import knotpy.algorithms.components_disjoint as components
+import knotpy.algorithms.disjoint_sum as components
 import knotpy.algorithms.structure as structure
 from knotpy.algorithms.canonical import canonical
 
