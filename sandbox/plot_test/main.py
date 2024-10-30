@@ -2,7 +2,16 @@
 
 import knotpy as kp
 
-# some knots in EM notation
+# some knots in condensed EM notation
+#EM notation: each crossing has half-arcs 0,1,2,3 from it (counterclockwise).
+# "h3c0g3b2" means that:
+# - arc 0 of crossing "a" is connected to arc 3 of crossing "h",
+# - arc 1 of crossing "a" is connected to arc 0 of crossing "c",
+# - arc 2 of crossing "a" is connected to arc 3 of crossing "g"
+# - arc 3 of crossing "a" is connected to arc 2 of crossing "b"
+# see emcode.png for very similar notation
+
+the crossing "a" is connected to the 3rd arc of crossing h, then t
 knot1_cem = [
     "h3c0g3b2,g1h0a3g2,a1h2l1i0,l3i2j1j0,j3j2k1k0,k3k2i1l0,i3b0b3a2,b1l2c1a0,c3f2d1g0,d3d2e1e0,e3e2f1f0,f3c2h1d0",
     "g1g0f3f2,f1f0e3e2,e1h0h3g2,h1i0i3h2,i1c0b3b2,b1b0a3a2,a1a0c3i2,c1d0d3c2,d1e0g3d2",
@@ -19,7 +28,7 @@ knot1_cem = [
     "b1b0c1c0,a1a0d3e0,a3a2e3f0,g3h0h3b2,b3h2i0c2,c3j3k1k0,k3k2l0d0,d1l3e1d2,e2m0j1j0,i3i2n1f1,f3f2g1g0,g2n0m1h1,i1l2n3n2,l1j2m3m2",
     "b3c0c3b0,a3d0e3a0,a1f0g1a2,b1g0f1h0,i1i0j1b2,c1d2g3g2,d1c2f3f2,d3j0k1k0,e1e0k3j2,h1e2i3k2,h3h2j3i2",]
 
-# some knots in PD notation
+# some knots in condensed PD notation
 knot2_pd = ["abcd baef dcgh eijk flmg ihnj kopl mqrn orqp",
             "abcd baef dcgh ijke flmn nopg hqji lkqr omrp",
             "abcd defa bghc eijf gklh ilmn jopk nmqr orqp",
@@ -40,7 +49,7 @@ theta1_pd = ["V[0,1,2],V[3,1,4],X[5,6,7,8],X[2,9,8,10],X[6,11,12,13],X[13,12,4,1
              "V[7,8,20],V[9,20,8],X[12,5,11,10],X[10,14,13,12],X[16,15,18,17],X[19,16,0,13],X[15,19,14,11],X[7,18,5,6],X[6,0,17,9]",
              "V[12,9,27],V[27,9,8],X[25,6,16,26],X[31,35,34,28],X[26,34,35,25],X[28,19,18,31],X[8,17,6,18],X[17,12,19,16]"]
 
-# knotted graphs, with four 3-valent vertices on the outer region in PD notation
+# knotted graphs, with four 3-valent vertices on the outer region in condensed PD notation
 graph1_pd = ["abc cde elm amz bfgd hklg jhfi rpnj istr vuot szuv pokn",
              "agb bvc ade dcu fihg ekjf izmh klzj ontm lspr rpno suvt"]
 
