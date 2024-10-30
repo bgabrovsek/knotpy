@@ -58,9 +58,9 @@ thetas = [kp.from_pd_notation(s) for s in theta1_pd]
 graphs = [kp.from_condensed_pd_notation(s) for s in graph1_pd]
 
 # plot
-kp.export_pdf(knots1, "plot/knots_example_1.pdf")
-kp.export_pdf(knots2, "plot/knots_example_2.pdf")
-kp.export_pdf(thetas, "plot/thetas_example_1.pdf")
+kp.export_pdf(knots1, "plot/knots_example_1.pdf", draw_circles=True)
+kp.export_pdf(knots2, "plot/knots_example_2.pdf", draw_circles=True)
+kp.export_pdf(thetas, "plot/thetas_example_1.pdf", draw_circles=True)
 
 # CONTROLLING THE OUTER REGION
 
@@ -71,4 +71,4 @@ for g in graphs:
             for endpoint in f:
                 endpoint.attr["outer"] = True
 
-kp.export_pdf(graphs, "plot/graph_example_1.pdf")
+kp.export_pdf(graphs, "plot/graph_example_1.pdf", draw_circles=True)
