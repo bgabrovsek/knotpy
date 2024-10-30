@@ -10,8 +10,6 @@ import knotpy as kp
 # - arc 2 of crossing "a" is connected to arc 3 of crossing "g"
 # - arc 3 of crossing "a" is connected to arc 2 of crossing "b"
 # see emcode.png for very similar notation
-
-the crossing "a" is connected to the 3rd arc of crossing h, then t
 knot1_cem = [
     "h3c0g3b2,g1h0a3g2,a1h2l1i0,l3i2j1j0,j3j2k1k0,k3k2i1l0,i3b0b3a2,b1l2c1a0,c3f2d1g0,d3d2e1e0,e3e2f1f0,f3c2h1d0",
     "g1g0f3f2,f1f0e3e2,e1h0h3g2,h1i0i3h2,i1c0b3b2,b1b0a3a2,a1a0c3i2,c1d0d3c2,d1e0g3d2",
