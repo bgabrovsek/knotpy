@@ -104,7 +104,7 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
 
     k.attr.update(attr)  # update given attribures
 
-    #print(k)
+    print(k)
 
     return k
 
@@ -235,8 +235,19 @@ def _test():
 if __name__ == "__main__":
 
     s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+    s = "X[4,2,5,1],X[2,6,3,5],X[6,4,1,3]"
     k = from_pd_notation(s)
     print(k)
+    print('\nARCS')
+    print(k.arcs.keys())
+    print(k.arcs.values())
+    print('\nNODES')
+    print(k.nodes.keys())
+    print(k.nodes.values())
+    print('\nFACES')
+    print(k.faces.keys())
+    print(k.faces.values())
+    print()
     print(to_pd_notation(k))
     print()
     s = to_condensed_pd_notation(k)

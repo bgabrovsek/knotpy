@@ -615,8 +615,11 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
 if __name__ == "__main__":
 
     d = PlanarDiagram()
+    print(d)
     d.add_node("a", create_using=Vertex)
+    print(d)
     d.add_crossing("olala")
+    print(d)
     d._nodes = dict()
     print(d)
     pass

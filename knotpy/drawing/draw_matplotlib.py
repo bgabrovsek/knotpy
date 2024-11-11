@@ -22,6 +22,9 @@ from knotpy.utils.geometry import (perpendicular_arc, is_angle_between, antipode
                                    perpendicular_arc_through_point, BoundingBox)
 
 from knotpy.notation.native import from_knotpy_notation
+# test
+from knotpy.notation.native import from_pd_notation
+
 from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
@@ -741,9 +744,16 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     #s = "('OrientedSpatialGraph', {'name': '+t3_1#-3_1(1).2'}, [('Vertex', 'a', (('IngoingEndpoint', 'c', 2, {}), ('OutgoingEndpoint', 'b', 1, {'color': 1}), ('OutgoingEndpoint', 'd', 0, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'd', 1, {}), ('IngoingEndpoint', 'a', 1, {'color': 1}), ('OutgoingEndpoint', 'g', 0, {})), {}), ('Crossing', 'c', (('IngoingEndpoint', 'f', 3, {}), ('IngoingEndpoint', 'f', 2, {}), ('OutgoingEndpoint', 'a', 0, {}), ('OutgoingEndpoint', 'e', 0, {})), {}), ('Crossing', 'd', (('IngoingEndpoint', 'a', 2, {}), ('OutgoingEndpoint', 'b', 0, {}), ('OutgoingEndpoint', 'g', 3, {}), ('IngoingEndpoint', 'h', 2, {})), {}), ('Crossing', 'e', (('IngoingEndpoint', 'c', 3, {}), ('IngoingEndpoint', 'h', 1, {}), ('OutgoingEndpoint', 'f', 1, {}), ('OutgoingEndpoint', 'f', 0, {})), {}), ('Crossing', 'f', (('IngoingEndpoint', 'e', 3, {}), ('IngoingEndpoint', 'e', 2, {}), ('OutgoingEndpoint', 'c', 1, {}), ('OutgoingEndpoint', 'c', 0, {})), {}), ('Crossing', 'g', (('IngoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'h', 0, {}), ('OutgoingEndpoint', 'h', 3, {}), ('IngoingEndpoint', 'd', 2, {})), {}), ('Crossing', 'h', (('IngoingEndpoint', 'g', 1, {}), ('OutgoingEndpoint', 'e', 1, {}), ('OutgoingEndpoint', 'd', 3, {}), ('IngoingEndpoint', 'g', 2, {})), {})])"
     #s = "('SpatialGraph', {'name': 't0_1(1)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {}), ('Endpoint', 'b', 2, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {}), ('Endpoint', 'a', 2, {}), ('Endpoint', 'a', 1, {'color': 1})), {})])"
-    s = "('OrientedSpatialGraph', {'name': 't0_1(0).0'}, [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
+    #s = "('OrientedSpatialGraph', {'name': 't0_1(0).0'}, [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
+    s = "('PlanarDiagram', {'name': 't0_1(0).0'}, [('Vertex', 'a', (('OutgoingEndpoint', 'b', 0, {'color': 1}), ('OutgoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'a', 0, {'color': 1}), ('IngoingEndpoint', 'a', 2, {}), ('IngoingEndpoint', 'a', 1, {})), {})])"
+    s = "('PlanarDiagram', {'name': 't0_1(1)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {}), ('Endpoint', 'b', 2, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {}), ('Endpoint', 'a', 2, {}), ('Endpoint', 'a', 1, {'color': 1})), {})])"
+    s = "('PlanarDiagram', {'name': '+t3_1#-3_1(1).2'}, [('Vertex', 'a', (('IngoingEndpoint', 'c', 2, {}), ('OutgoingEndpoint', 'b', 1, {'color': 1}), ('OutgoingEndpoint', 'd', 0, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'd', 1, {}), ('IngoingEndpoint', 'a', 1, {'color': 1}), ('OutgoingEndpoint', 'g', 0, {})), {}), ('Crossing', 'c', (('IngoingEndpoint', 'f', 3, {}), ('IngoingEndpoint', 'f', 2, {}), ('OutgoingEndpoint', 'a', 0, {}), ('OutgoingEndpoint', 'e', 0, {})), {}), ('Crossing', 'd', (('IngoingEndpoint', 'a', 2, {}), ('OutgoingEndpoint', 'b', 0, {}), ('OutgoingEndpoint', 'g', 3, {}), ('IngoingEndpoint', 'h', 2, {})), {}), ('Crossing', 'e', (('IngoingEndpoint', 'c', 3, {}), ('IngoingEndpoint', 'h', 1, {}), ('OutgoingEndpoint', 'f', 1, {}), ('OutgoingEndpoint', 'f', 0, {})), {}), ('Crossing', 'f', (('IngoingEndpoint', 'e', 3, {}), ('IngoingEndpoint', 'e', 2, {}), ('OutgoingEndpoint', 'c', 1, {}), ('OutgoingEndpoint', 'c', 0, {})), {}), ('Crossing', 'g', (('IngoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'h', 0, {}), ('OutgoingEndpoint', 'h', 3, {}), ('IngoingEndpoint', 'd', 2, {})), {}), ('Crossing', 'h', (('IngoingEndpoint', 'g', 1, {}), ('OutgoingEndpoint', 'e', 1, {}), ('OutgoingEndpoint', 'd', 3, {}), ('IngoingEndpoint', 'g', 2, {})), {})])"
     k = from_knotpy_notation(s)
-    # print(k)
+
+    ## test
+    #s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+    #k = from_pd_notation(s)
+    print(k)
     # k.permute_node("a", {0:1,1:2,2:0})
     # print(k)
     # exit()
@@ -751,15 +761,15 @@ if __name__ == '__main__':
     draw(k, draw_circles=True, with_labels=True, with_title=True)
 
     plt.show()
-
+    """
     from knotpy.reidemeister.phantom import insert_phantom_node
     arcs = list(k.arcs)
     insert_phantom_node(k, arcs[0])
     print(k)
     draw(k, draw_circles=True, with_labels=True, with_title=True)
-
     plt.show()
     exit()
+    """
     #k = kp.from_pd_notation("X[3,1,0,0],X[2,1,3,2]", create_using=SpatialGraph)
     #k = kp.from_pd_notation("V[0,2],V[1,0],X[6,2,3,5],V[5,4,6],V[1,4,3]", create_using=SpatialGraph)
 
@@ -770,7 +780,8 @@ if __name__ == '__main__':
     codes = ["V[0,1,2],V[3,4,5],X[5,2,6,7],X[1,8,9,6],X[10,8,11,12],X[12,11,0,4],X[13,14,7,9],X[14,13,10,3]"]
     codes = ["V[0,1,2],V[3,4,5],X[6,7,8,9],X[10,11,12,13],X[4,11,2,7],X[13,12,14,15],X[16,0,10,17],X[1,16,18,8],X[5,6,9,18],X[15,14,3,17]"]
     codes = ["V[0,1,2],V[3,4,5],X[2,6,7,8],X[9,4,10,7],X[5,11,12,1],X[11,9,6,12],X[13,14,3,0],X[8,10,14,13]"]
-    thetas = [kp.from_pd_notation(code, create_using=SpatialGraph) for code in codes]
+    #thetas = [kp.from_pd_notation(code, create_using=SpatialGraph) for code in codes]
+    thetas = [kp.from_pd_notation(code, create_using=PlanarDiagram) for code in codes]
     for k in thetas:
 
         print("Drawing", k)

@@ -146,7 +146,57 @@ def circlepack_layout(k):
     internal_circles |= {frozenset({ep0, ep1}): [ep_to_reg_dict[ep1], ep0.node, ep_to_reg_dict[ep0], ep1.node] for ep0, ep1 in arcs}
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
+    
+    import pprint
+    pprint.pprint(internal_circles)
+    print("\n")
+    pprint.pprint(external_circles)
+
 
     circles = CirclePack(internal=internal_circles, external=external_circles)
     # we need to conjugate, for knotoids the diagram is in CW order
-    return {key: Circle(value[0].conjugate(), value[1]) for key, value in circles.items()}  # return Circle objects
+    #print("CirclePack: ", circles)
+    dictionary = {key: Circle(value[0].conjugate(), value[1]) for key, value in circles.items()}
+    #print("dictionary: ", dictionary)
+    return dictionary  # return Circle objects
+
+
+
+if __name__ == "__main__":
+    # test
+    from knotpy.notation.native import from_knotpy_notation, from_pd_notation
+    from knotpy.notation.pd import to_pd_notation, to_condensed_pd_notation, from_condensed_pd_notation
+    from knotpy.drawing.draw_matplotlib import _plot_circles, draw_from_layout
+
+
+    s = "('PlanarDiagram', {'name': '+t3_1#-3_1(1).2'}, [('Vertex', 'a', (('IngoingEndpoint', 'c', 2, {}), ('OutgoingEndpoint', 'b', 1, {'color': 1}), ('OutgoingEndpoint', 'd', 0, {})), {}), ('Vertex', 'b', (('IngoingEndpoint', 'd', 1, {}), ('IngoingEndpoint', 'a', 1, {'color': 1}), ('OutgoingEndpoint', 'g', 0, {})), {}), ('Crossing', 'c', (('IngoingEndpoint', 'f', 3, {}), ('IngoingEndpoint', 'f', 2, {}), ('OutgoingEndpoint', 'a', 0, {}), ('OutgoingEndpoint', 'e', 0, {})), {}), ('Crossing', 'd', (('IngoingEndpoint', 'a', 2, {}), ('OutgoingEndpoint', 'b', 0, {}), ('OutgoingEndpoint', 'g', 3, {}), ('IngoingEndpoint', 'h', 2, {})), {}), ('Crossing', 'e', (('IngoingEndpoint', 'c', 3, {}), ('IngoingEndpoint', 'h', 1, {}), ('OutgoingEndpoint', 'f', 1, {}), ('OutgoingEndpoint', 'f', 0, {})), {}), ('Crossing', 'f', (('IngoingEndpoint', 'e', 3, {}), ('IngoingEndpoint', 'e', 2, {}), ('OutgoingEndpoint', 'c', 1, {}), ('OutgoingEndpoint', 'c', 0, {})), {}), ('Crossing', 'g', (('IngoingEndpoint', 'b', 2, {}), ('OutgoingEndpoint', 'h', 0, {}), ('OutgoingEndpoint', 'h', 3, {}), ('IngoingEndpoint', 'd', 2, {})), {}), ('Crossing', 'h', (('IngoingEndpoint', 'g', 1, {}), ('OutgoingEndpoint', 'e', 1, {}), ('OutgoingEndpoint', 'd', 3, {}), ('IngoingEndpoint', 'g', 2, {})), {})])"
+    k = from_knotpy_notation(s)
+    print(k)
+    s = to_pd_notation(k)
+    print(s)
+    s2 = to_condensed_pd_notation(k)
+    print(s2)
+    #s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+    s = "V[0,1,2],V[3,1,4],X[5,6,0,7],X[2,3,8,9],X[7,10,11,12],X[12,11,6,5],X[4,13,14,8],X[13,10,9,14]"
+    
+    s = "X[4,2,5,1],X[2,6,3,5],X[6,4,1,3]"
+    #s = "X[1,9,2,8],X[3,10,4,11],X[5,3,6,2],X[7,1,8,12],X[9,4,10,5],X[11,7,12,6]"
+
+    print("\n")
+    print(s)
+    k2 = from_pd_notation(s)
+    print(k2)
+    k3 = from_condensed_pd_notation(s2)
+    ret = circlepack_layout(k2)
+
+    print("\n")
+    import pprint
+    #print(ret)
+    pprint.pprint(ret)
+    #ax = plt.gca()
+    #ax.axis('off')
+    #_plot_circles(ret, ax)
+
+    #draw_from_layout(k2, ret, with_labels=True, with_title=True)
+    #plt.show()
+

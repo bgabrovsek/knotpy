@@ -30,7 +30,7 @@ def CirclePack(internal, external):
     for k in internal:
         if k in external:
             raise ValueError("CirclePack: keys are not disjoint")
-        radii[k] = 1
+        radii[k] = 1   # Initial radii for internal circles are set to 1.
 
     # The main iteration for finding the correct set of radii
     lastChange = 2
@@ -87,7 +87,8 @@ def NormalizePacking(packing, k=None, target=1.0):
     else:
         z, r = packing[k]
     s = target / r
-    return dict((kk, (zz * s, rr * s)) for kk, (zz, rr) in packing.iteritems())
+    #return dict((kk, (zz * s, rr * s)) for kk, (zz, rr) in packing.iteritems())
+    return dict((kk, (zz * s, rr * s)) for kk, (zz, rr) in packing.items())     # Correction: AttributeError: 'dict' object has no attribute 'iteritems'
 
 
 def InvertAround(packing, k, smallCircles=None):
@@ -164,26 +165,227 @@ def testgrid(packing, k, z, r, q, g):
                 yield minrad, i, j, center
 
 
-if __name__ == "__main__":
-
-    external= {"a":1,(4,1):1,"c":1}
-    internal={"d":["a",(4,1),"c"]}
-
-    ret = CirclePack(internal=internal, external=external)
-
-    print(ret)
+# ======================================================
+#   Mobius transformations
+# ======================================================
+def plot_packing(packing):
     import matplotlib.pyplot as plt
     figure, axes = plt.subplots()
-    plt_circles = [plt.Circle((z.real, z.imag), r, alpha=0.2) for z, r in ret.values()]
+    plt_circles = [plt.Circle((z.real, z.imag), r, alpha=0.2) for z, r in packing.values()]
+    plt_points = [plt.plot(z.real, z.imag, 'ro') for z, r in packing.values()]
+    #plt_labels = [plt.text(z.real, z.imag, str(k)) for k, (z, r) in packing.items()]
     axes.set_aspect(1)
-    for circ in plt_circles:
+    for i, circ in enumerate(plt_circles):
         axes.add_artist(circ)
+        axes.add_artist(plt_points[i][0])
+        #axes.add_artist(plt_labels[i])
     plt.title('Colored Circle')
     axes.relim()
     axes.autoscale_view()
 
     plt.show()
 
+def plot_layout_packing(packing):
+    import matplotlib.pyplot as plt
+    figure, axes = plt.subplots()
+    #plt_circles = [plt.Circle((z.real, z.imag), r, alpha=0.2) for z, r in packing.values()]
+    #plt_points = [plt.plot(z.real, z.imag, 'ro') for z, r in packing.values()]
+    #plt_labels = [plt.text(z.real, z.imag, str(k)) for k, (z, r) in packing.items()]
+    plt_circles, plt_points, plt_labels = [], [], []
+    for k, circle in packing.items():
+        z = circle.center
+        r = circle.radius
+        plt_circles.append(plt.Circle((z.real, z.imag), r, alpha=0.2))
+        plt_points.append(plt.plot(z.real, z.imag, 'ro'))
+        #plt_labels.append(plt.text(z.real, z.imag, str(k)))
+
+    axes.set_aspect(1)
+    for i, circ in enumerate(plt_circles):
+        axes.add_artist(circ)
+        axes.add_artist(plt_points[i][0])
+        #axes.add_artist(plt_labels[i])
+    plt.title('Colored Circle')
+    axes.relim()
+    axes.autoscale_view()
+
+    plt.show()
+
+
+
+def mobius_transform(z, a, b, c, d):
+    """Apply Möbius transformation to a complex point z."""
+    return (a * z + b) / (c * z + d)
+
+def apply_mobius_to_packing(packing, a, b, c, d):
+    """Apply Möbius transformation to the circle packing."""
+    transformed_packing = {}
+    #for k, (z, r) in packing.items():
+    for k, circle in packing.items():
+        z = circle.center
+        r = circle.radius
+        new_z = mobius_transform(z, a, b, c, d)
+        new_r = abs((a * r) / (c * z + d))  # Scaling the radius under the transformation
+        transformed_packing[k] = (new_z, new_r)
+    return transformed_packing
+
+def normalize_radii(packing, max_ratio=2.0):
+    """Normalize the packing to ensure all circles have radii within a factor of max_ratio."""
+    # Find the smallest radius
+    min_radius = min(r for _, r in packing.values())
+    
+    # Adjust all radii to be within [min_radius, min_radius * max_ratio]
+    normalized_packing = {}
+    #for k, (z, r) in packing.items():
+    for k, circle in packing.items():
+        z, r = circle.center, circle.radius
+        new_r = max(min_radius, min(min_radius * max_ratio, r))
+        normalized_packing[k] = (z, new_r)
+    
+    return normalized_packing
+
+def find_smallest_radius_circle(circle_dict):
+    """Find the key of the circle with the smallest radius in the dictionary."""
+    smallest_key = None
+    smallest_radius = float('inf')  # Start with an infinitely large radius
+    smallest_position = None
+
+    for key, circle in circle_dict.items():
+        if circle.radius < smallest_radius:
+            smallest_radius = circle.radius
+            smallest_position = circle.center
+            smallest_key = key
+
+    
+    return smallest_key, smallest_position, smallest_radius  # Return both the key and the smallest radius for reference
+
+
+
+if __name__ == "__main__":
+
+    """
+    #external= {"a":1,"b":1,"c":1, "e":1, "g":1, "f":1}
+    #internal={"d":["a","b","c", "e", "g","f"],"h":["a","b","c", "e", "g","f"]}
+    # Four internal circles surrounded by three external circles
+    external = {"a": 1, "b": 1, "c": 1}
+    internal = {"d": ["a", "b", "c"], "e": ["a", "b", "c"], "f": ["d", "e", "a"]}
+    # calls error KeyError: 'e'
+
+    # Two levels of internal circles, internal circles surround the previous level of internal circles
+    external = {"a": 1, "b": 1, "c": 1}
+    internal = {
+        "d": ["a", "b", "c"],  # First level
+        "e": ["d", "a", "b"],  # Second level
+        "f": ["d", "e", "c"]   # Second level
+    }
+    # same problem
+
+    # Six external circles surrounding three internal circles
+    external = {"a": 1, "b": 1, "c": 3, "d": 3, "e": 1, "f": 3}
+    internal = {"g": ["a", "b", "c", "d", "e", "f"]}
+    # already tried this and it works
+
+    # Nested internal circles surrounded by several external circles
+    external = {"a": 1, "b": 1, "c": 1, "d": 1, "e": 1}
+    internal = {
+        "f": ["a", "b", "c"],
+        "g": ["b", "c", "d"],
+        "h": ["c", "d", "e"],
+        "i": ["a", "e", "f", "g", "h"]
+    }
+    # KeyError: 'd'
+
+    # Mixed sizes for external circles, with internal circles of varying arrangements
+    external = {"a": 1, "b": 1.5, "c": 0.75, "d": 1.25, "e": 1}
+    internal = {"f": ["a", "b", "c", "d"], "g": ["b", "d", "e"]}
+    # KeyError: 'e'
+
+    # Test case with more external circles and two internal circles
+    external = {"a": 1, "b": 1, "c": 1, "d": 1, "e": 1, "f": 1, "h": 1, "i": 1, "j": 1}
+    internal = {"g": ["a", "b", "c", "d", "e", "f"], "k": ["h", "i", "j", "g"]}
+    # KeyError: 'h'
+    """
+
+    external= {"a":1,(4,1):1,"c":1}
+    internal={"d":["a",(4,1),"c"]}
+
+    external= {"a":1,"b":1,"c":1}
+    internal={"d":["a","b","c"]}
+
+    ret = CirclePack(internal=internal, external=external)
+
+    # Define the Möbius transformation parameters
+    a, b, c, d = 1, 0, 0, 1  # Identity transformation (no change)
+    a, b, c, d = 1, 1, 0, 1  
+    # You can change these to adjust the transformation, e.g., try a = 1, b = 1, c = 0, d = 1
+
+
+    ## Apply the Möbius transformation to the packing
+    #transformed_packing = apply_mobius_to_packing(ret, a, b, c, d)
+    ## Normalize the radii to avoid overlaps and maintain closeness in size
+    #normalized_packing = normalize_radii(transformed_packing, max_ratio=2.0)  # Factor of 2    
+    #norm_ret = normalize_radii(ret, max_ratio=2.0)
+    #norm_ret = NormalizePacking(ret, k='a', target=1.0)
+    ##mob_norm_ret = apply_mobi s_to_packing(norm_ret, a, b, c, d)
+
+    import pprint
+    #print(ret)
+    pprint.pprint(ret)
+
+    import matplotlib.pyplot as plt
+    #plt.ion()
+
+    #plot_packing(ret)
+    #plot_packing(transformed_packing)
+    #plot_packing(normalized_packing)
+    #plot_packing(norm_ret)
+    #plot_packing(mob_norm_ret)
     print("pl")
 
-    print(ret)
+
+    #print(ret)
+    from knotpy.drawing.layout import circlepack_layout
+    from knotpy.notation.pd import from_pd_notation
+
+    #s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+    s = "V[0,1,2],V[3,1,4],X[5,6,0,7],X[2,3,8,9],X[7,10,11,12],X[12,11,6,5],X[4,13,14,8],X[13,10,9,14]"
+    
+    s = "X[4,2,5,1],X[2,6,3,5],X[6,4,1,3]"
+    #s = "X[1,9,2,8],X[3,10,4,11],X[5,3,6,2],X[7,1,8,12],X[9,4,10,5],X[11,7,12,6]"
+    s = "X[0,1,2,3],X[4,5,6,7],X[1,8,9,10],X[11,12,13,9],X[14,15,7,16],X[17,18,19,13],X[10,20,17,12],X[20,19,15,14],V[3,21,22],V[5,23,24],V[6,24,16],V[4,18,23],V[0,22,8],V[2,11,21]"
+
+    print("\n")
+    print(s)
+    k2 = from_pd_notation(s)
+    print(k2)
+    ret = circlepack_layout(k2)
+    
+    pprint.pprint(ret)
+    for key, circle in ret.items():
+        print(circle)
+        print(f"Key: {key}, Transformed Center: {circle}, Transformed Radius: {circle}")
+
+
+    eps = 1e-10
+    #x = ret['d'][0] #+ eps
+    smkey, x, smrad = find_smallest_radius_circle(ret)
+    #x = ret['a'].center
+    x = 1
+    A, B = 1.05, 1.0
+    a = (A + x)
+    b = (B*x - A*x - x*x)
+    c = 1
+    d = (b - x)
+
+    transformed_packing = apply_mobius_to_packing(ret, a, b, c, d)
+
+    plot_layout_packing(ret)
+    plot_packing(transformed_packing)
+
+    import matplotlib.pyplot as plt
+    from knotpy import kp
+    pd = "X[0,1,2,3],X[4,5,6,7],X[1,8,9,10],X[11,12,13,9],X[14,15,7,16],X[17,18,19,13],X[10,20,17,12],X[20,19,15,14],V[3,21,22],V[5,23,24],V[6,24,16],V[4,18,23],V[0,22,8],V[2,11,21]"
+    k = kp.from_pd_notation(pd)
+    print(pd)
+    kp.draw(k, draw_circles=True)
+    plt.show()
+
