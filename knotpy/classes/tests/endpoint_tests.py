@@ -1,5 +1,5 @@
 
-from knotpy.generate.example import trefoil_knot
+from knotpy.catalog.example import trefoil_knot
 
 if __name__ == '__main__':
     k = trefoil_knot()

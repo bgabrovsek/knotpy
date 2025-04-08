@@ -5,8 +5,8 @@ from itertools import product
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import oriented
 from knotpy.algorithms.skein import smoothen_crossing
-from knotpy.algorithms.node_operations import name_for_new_node
-from knotpy.classes.node import Crossing, Vertex, Terminal
+from knotpy.algorithms.naming import unique_new_node_name
+from knotpy.classes.node import Crossing, Vertex #, Terminal
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.invariants.writhe import writhe

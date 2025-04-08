@@ -6,3 +6,9 @@ from .dict_utils import *
 from .geometry import *
 from .set_utils import *
 from .algebra import *
+from .disjoint_union_set import *
+from .chunked import *
+from .multiprogressbar import *
+from .parsing import *
+from .func_utils import *
+from .cache import *

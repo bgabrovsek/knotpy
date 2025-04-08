@@ -6,7 +6,7 @@ __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-abcABC = string.ascii_lowercase + string.ascii_uppercase
+abcABC = string.ascii_lowercase + string.ascii_uppercase  # this is already in from string import ascii_letters
 
 # def multi_replace(s: str, replacements: dict) -> str:
 #     """Performs multiple string replacements

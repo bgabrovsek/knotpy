@@ -2,7 +2,6 @@
 
 import matplotlib.pyplot as plt
 from pathlib import Path
-from tqdm import tqdm
 
 import knotpy as kp
 

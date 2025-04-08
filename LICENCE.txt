@@ -3,7 +3,7 @@ KnotPy is distributed with the 3-clause BSD license.
 ::
 
    Copyright (C) 2023-2024, KnotPy Developers
-   Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>
+   Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without

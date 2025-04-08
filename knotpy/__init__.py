@@ -14,11 +14,8 @@ from knotpy.notation import *
 from knotpy import classes
 from knotpy.classes import *
 
-from knotpy import generate
-from knotpy.generate import *
-
-from knotpy import readwrite
-from knotpy.readwrite import *
+from knotpy import catalog
+from knotpy.catalog import *
 
 from knotpy import algorithms
 from knotpy.algorithms import *
@@ -29,8 +26,8 @@ from knotpy.invariants import *
 from knotpy import drawing
 from knotpy.drawing import *
 
-from knotpy import sanity
-from .sanity import *
+from .algorithms import sanity
+from knotpy.algorithms.sanity import *
 
 from knotpy import reidemeister
 from .reidemeister import *
@@ -38,6 +35,15 @@ from .reidemeister import *
 from knotpy import tabulation
 from .tabulation import *
 
+from knotpy import readwrite
+from .readwrite import *
+
+from knotpy import manipulation
+from .manipulation import *
+
+from knotpy.utils import statistics
+
+from knotpy.algorithms.sanity import sanity_check
 
 # from knotpy import builder
 # from knotpy.builder import *

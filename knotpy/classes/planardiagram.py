@@ -1,38 +1,65 @@
 from functools import cached_property
 from itertools import chain
+from string import ascii_letters
 
 from knotpy.utils.dict_utils import compare_dicts
 from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-from knotpy.classes.node import Node, Crossing, Vertex, Bond, VirtualCrossing, Terminal
+from knotpy.classes.node import Node, Crossing, Vertex, VirtualCrossing
 from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView, FilteredNodeView
 
-from knotpy.classes._abstractdiagram import (_NodeDiagram, _CrossingDiagram, _VertexDiagram,
-                                             _TerminalDiagram, _BondDiagram, _VirtualCrossingDiagram)
-
-import warnings
+from knotpy.classes._abstractdiagram import _CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram
 
 __all__ = ['PlanarDiagram', '_NodeCachedPropertyResetter', 'OrientedPlanarDiagram']
-__version__ = '0.1'
+__version__ = '0.1.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
 class _NodeCachedPropertyResetter:
-    """For info on Data Descriptors see: https://docs.python.org/3/howto/descriptor.html"""
+    """
+    Data Descriptor for resetting cached properties related to node types in planar diagrams.
+    For info on Data Descriptors see https://docs.python.org/3/howto/descriptor.html.
+
+    This class manages cached properties in a `PlanarDiagram` when nodes are modified.
+    It ensures that derived node-type views (e.g., crossings, vertices) are reset when
+    the `_nodes` attribute is updated.
+
+    :param _node_type_property_names: Mapping of node types to their corresponding cached property names.
+    :type _node_type_property_names: dict
+    """
 
     def __init__(self, **_node_type_property_names):
+        """
+        Initialize the property resetter with node-type-specific cached properties.
+
+        :param _node_type_property_names: Dictionary mapping node types to their cached property names.
+        :type _node_type_property_names: dict
+        """
         self._node_type_property_names = _node_type_property_names
 
     def add_property_name(self, **_node_type_property_names):
+        """
+        Add additional node-type-specific property names to be reset.
+
+        :param _node_type_property_names: Additional mappings of node types to property names.
+        :type _node_type_property_names: dict
+        """
         self._node_type_property_names.update(_node_type_property_names)
 
 
     def __set__(self, obj, value):
-        """The instance variable "node" has been changed, reset all cached properties. The class view instances "nodes",
+        """
+        Reset cached properties when `_nodes` is modified.
+        The instance variable "node" has been changed, reset all cached properties. The class view instances "nodes",
         "endpoints", and "arcs" are common for all planar diagrams, additional class view instances are stored in
-        _node_type_property_names."""
+        _node_type_property_names.
 
-        #print(self._node_type_property_names)
+        :param obj: The instance of `PlanarDiagram` where the `_nodes` attribute is modified.
+        :type obj: PlanarDiagram
+        :param value: The new value for `_nodes`.
+        :type value: dict
+        """
+
         od = obj.__dict__
         od["_nodes"] = value
         if "nodes" in od:
@@ -49,114 +76,162 @@ class _NodeCachedPropertyResetter:
 
 
 @total_ordering_from_compare
-class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDiagram, _VirtualCrossingDiagram):
-    """The PlanarDiagram class provides the basic abstract class for all planar objects (planar graph, knots, knotted
-    graphs, ...).  It is intended to be used only as the parent class for Knot, PlanarGraph, etc.
-        
-    A PlanarDiagram class consists of:
-    - the diagram class with optional attributes,
-    - nodes (vertices), that are any hashable objects with optional attributes,
-    - endpoints, that represent part of the edge/arc emanating from the node and is a tuple (node, node_position), with optional attributes
+class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
+    """
+    A class for storing a planar diagram, representing spatial/embedded/knotted graphs, knots, and related structures.
 
-    In addition, we use the following terminology:
-    - arcs are tuples of endpoints,
-    - regions are the faces of the planar graph and are represented as a sequence of endpoints.
+    It provides fundamental operations for managing nodes (vertices), endpoints, arcs, and faces in a planar diagram.
+
+    **Structure of a PlanarDiagram:**
+      - The diagram itself, with optional attributes.
+      - **Nodes (vertices, crossings):** Hashable objects that represent singular points in the diagram. Nodes can have
+      additional attributes (colors, weights, ...)
+      - **Endpoints:** Tuples `(node, node_position)`, representing edges/arcs emanating from nodes. Each endpoint
+      points to another `node` at position `node_position`. Endpoints can have additional attributes (colors, weights,
+      ...)
+      - **Arcs:** Tuples of endpoints representing edges in the diagram (computed on-the-fly from nodes)
+      - **Faces (regions):** Represented as sequences of endpoints, forming enclosed areas (computed on-the-fly from
+      nodes)
+
+    **Terminology:**
+      - **Crossings:** Nodes with degree 4, where odd endpoints (0, 2) are under-endpoints and even endpoints (1, 3)
+      are over-endpoints in knot diagrams.
+      - **Vertices:** Graph-theoretic nodes (that do not act as crossings).
+      - **Virtual Crossings:** Special nodes used in virtual knot theory.
+
+    This class maintains a cached property system to efficiently update derived node views when the diagram changes.
     """
 
-    # cache special node types
+    # Cache views of specific node types (vertices, crossings, virtual crossings)
     _nodes: dict = _NodeCachedPropertyResetter(
         Vertex="vertices",
         Crossing="crossings",
-        Terminal="terminals",
         VirtualCrossing="virtual_crossings",
-        Bond="bonds"
     )
 
     def __init__(self,  incoming_diagram_data=None, **attr):
-        """Initialize a planar diagram.
-        :param incoming_diagram_data: not implemented
-        :param attr: graph attributes (name, framing, ...)
+        """
+        Initialize a planar diagram.
+
+        If no data is provided, an empty diagram is created. Otherwise, the diagram is initialized using the provided
+        data.
+
+        :param incoming_diagram_data: Initial data to construct the diagram (currently not implemented).
+        :type incoming_diagram_data: Optional[Any]
+        :param attr: Additional attributes such as name, framing, etc.
         """
 
         super(_CrossingDiagram, self).__init__()
 
         if incoming_diagram_data is None:
-            self._nodes = dict()
-            self.attr = dict()  # store graph attributes (without a View)
+            self._nodes = dict()  # Stores nodes and their adjacency information
+            self.attr = dict()  # Stores diagram-level attributes (without a view)
         else:
             planar_diagram_from_data(incoming_data=incoming_diagram_data, create_using=self)
 
         self.attr.update(attr)
 
     def clear(self):
-        """Remove/clear all diagram data."""
+        """
+        Remove all data from the diagram, resetting it to an empty state.
+        """
         self._nodes = dict()
         self.attr = dict()
 
     def copy(self, copy_using=None, **attr):
         """
-        Return shallow copy of the diagram.
-        :param copy_using: the planar diagram type of the new diagram
-        :return: shallow copy
+        Return a shallow copy of the diagram.
+
+        :param copy_using: The class type of the new diagram (defaults to the same type as `self`).
+        Serves for converting e.g. oriented to unoriented diagrams.
+        :type copy_using: Optional[type]
+        :return: A new instance of the planar diagram with the same structure and attributes (shallow copy).
+        :rtype: PlanarDiagram
         """
 
         copy_using = copy_using or type(self)
 
         the_copy = planar_diagram_from_data(incoming_data=self, create_using=copy_using)
         the_copy.attr.update(attr)
-        #print(attr,the_copy.attr)
         return the_copy
 
     # node-type views
     @cached_property
     def nodes(self):
-        """Node object holding the adjacencies of each node."""
+        """Return a view of the diagram's nodes, providing adjacency information."""
         return NodeView(self._nodes)
 
 
     @cached_property
     def endpoints(self):
-        """Node object holding the adjacencies of each node."""
+        """Return a view of the diagram's endpoints."""
         return EndpointView(self._nodes)
 
     @cached_property
     def arcs(self):
-        """Node object holding the adjacencies of each node."""
+        """Return a view of the diagram's arcs, represented as pairs of endpoints."""
         return ArcView(self._nodes)
 
     @cached_property
     def faces(self):
-        """Node object holding the adjacencies of each node."""
+        """Return a view of the diagram's faces (regions enclosed by arcs), which are given as tuples of endpoints."""
         return FaceView(self._nodes)
 
     def __len__(self):
-        """Return the number of nodes in the knot."""
+        """Return the number of nodes in the diagram."""
         return len(self._nodes)
 
-    def compare(self, other, compare_attributes=True):
-        """Compare the diagram with other.
-        :param other: planar diagram
-        :param compare_attributes: if False, ignore all attributes when comparing, if True, compare all attributes
-        (except diagram name), if list, set, or tuple, compare only those attributes.
-        :return: 1 if self > other, -1 if self < other, and 0 if self = other.
+    def _compare(self, other, compare_attributes=True):
+        """
+        Compare this diagram with another diagram.
+
+        Comparison is performed based on structural properties, node count, node
+        ordering, and attribute values. The method returns an integer indicating
+        whether the current diagram is greater than, less than, or equal to the
+        other diagram in terms of these properties.
+
+        Args:
+            other (PlanarDiagram): The diagram to compare against.
+            compare_attributes (Union[bool, list, set, tuple]): Specifies how the
+                comparison of attributes is performed:
+                - If `False`, all attributes are ignored during comparison.
+                - If `True`, all attributes except the diagram's name are compared.
+                - If a collection (list, set, or tuple), only the specified
+                  attributes are compared.
+
+        Returns:
+            int: Returns `1` if the current diagram is greater than the other
+            diagram, `-1` if it is less than, and `0` if the diagrams are equal.
         """
 
         # compare type
         if type(self) is not type(other):
             return TypeError(f"Cannot compare {type(self)} with {type(other)}.")
 
-        # compare nodes
-        if self.number_of_nodes != other.number_of_nodes:
-            return 1 if self.number_of_nodes > other.number_of_nodes else -1
+        # compare number of nodes
+        if (s_nn := len(self._nodes)) != (o_nn := len(other._nodes)):
+            return -1 if s_nn < o_nn else 1
 
+        # compare number of endpoints
+        if (s_ep := sum(len(self._nodes[node]._inc) for node in self._nodes)) != (o_ep := sum(len(other._nodes[node]._inc) for node in other._nodes)):
+            return -1 if s_ep < o_ep else 1
+
+        # compare degree sequence
+        deg_seq_self = sorted([len(self._nodes[node]) for node in self._nodes])
+        deg_seq_other = sorted([len(self._nodes[node]) for node in self._nodes])
+        if deg_seq_self != deg_seq_other:
+            return -1 if deg_seq_self < deg_seq_other else 1
+
+
+        # compare nodes themselves
         self_nodes_sorted = sorted(self._nodes)
         other_nodes_sorted = sorted(other._nodes)
 
         if self_nodes_sorted != other_nodes_sorted:
-            return 1 if self_nodes_sorted > other_nodes_sorted else -1
+            return -1 if self_nodes_sorted < other_nodes_sorted else 1
 
         for node in self_nodes_sorted:
-            if cmp := self._nodes[node].compare(other._nodes[node], compare_attributes=compare_attributes):
+            if cmp := self._nodes[node]._compare(other._nodes[node], compare_attributes=compare_attributes):
                 return cmp
 
         if (self.framing is None) ^ (other.framing is None):
@@ -180,19 +255,21 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
     def __getitem__(self, item):
         """ TODO: get item by description"""
-
         raise NotImplementedError()
 
     # node operations
 
     def add_node(self, node_for_adding, create_using: type, degree=None, **attr):
-        """Add a node of type create_using with optional degree and attributes.
+        """
+        Add a node to the diagram.
 
-        :param node_for_adding: any hashable object
-        :param create_using: the node type
-        :param degree: optional degree of the node
-        :param attr:
-        :return: None
+        :param node_for_adding: A hashable object representing the node.
+        :type node_for_adding: Hashable
+        :param create_using: The node type (e.g., `Vertex`, `Crossing`).
+        :type create_using: type
+        :param degree: The degree of the node (optional).
+        :type degree: Optional[int]
+        :param attr: Additional attributes to store for the node.
         """
 
         if create_using is not None and not isinstance(create_using, type):
@@ -214,15 +291,14 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         self._nodes[node].attr.update(attr)
 
     def add_nodes_from(self, nodes_for_adding, create_using=None, **attr):
-        """Add or update a bunch (iterable) of nodes and update attributes.
-        
-        :param nodes_for_adding: an iterable of nodes, which can be any hashable object. If a dictionary of is given,
-            where the values are Node classes,  the newly added nodes will inherit the degree and attributes of nodes in
-            the dict.
-        :param create_using: if nodes_for_adding does not consist of a dictionary of Node instances, the node type must
-            be given in this parameter (e.g. Vertex, Crossing,...)
-        :param attr: the nodes attribute will be updated with these values.
-        :return: None
+        """
+        Add or update a list of nodes to the diagram.
+
+        :param nodes_for_adding: A list/set/tuple of hashable objects representing the nodes.
+        :type nodes_for_adding: List[Hashable]
+        :param create_using: The node type (e.g., `Vertex`, `Crossing`).
+        :type create_using: type
+        :param attr: Additional attributes to store for the node.
         """
         if isinstance(nodes_for_adding, dict):
             for node, inst in nodes_for_adding.items():
@@ -230,10 +306,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         else:
             for node in nodes_for_adding:
                 self.add_node(node_for_adding=node, create_using=create_using, degree=None, **attr)
-
-    # def add_crossing(self, crossing_for_adding, **attr):
-    #     """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
-    #     self.add_node(node_for_adding=crossing_for_adding, create_using=Crossing, degree=4, **attr)
 
     def add_crossings_from(self, crossings_for_adding, **attr):
         """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
@@ -278,6 +350,19 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
     #     for node in self._nodes:
     #         for adj_node in self._nodes[node]:
     #             print(adj_node)
+
+    def convert_node(self, node_for_converting, node_type: type):
+        """ Convert node type, e.g. from vertex to crossing"""
+        node_inst = self._nodes[node_for_converting]
+        if type(node_inst) is not node_type:
+            self._nodes[node_for_converting] = node_type(
+                incoming_node_data=node_inst._inc,
+                degree=len(node_inst),
+                *node_inst.attr)
+
+    def convert_nodes(self, node_for_converting, node_type: type):
+        for node in node_for_converting:
+            self.convert_node(node, node_type)
 
     def remove_node(self, node_for_removing, remove_incident_endpoints=True):
         """Remove the node.
@@ -390,6 +475,9 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         :return: Endpoint instance
         """
 
+        if isinstance(endpoint_pair, Endpoint):
+            return endpoint_pair
+
         # the endpoint instance is the twin of the twin
         return self.twin(self.twin(endpoint_pair))
 
@@ -404,20 +492,69 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
         # adjust change of position for all adjacent endpoints
         for adj_node, adj_pos in self._nodes[node][pos:]:
-            i = self._nodes[adj_node]  # node instance
-            i[adj_pos] = Endpoint(i[adj_pos].node, i[adj_pos].position - 1, attr=i[adj_pos].attr)
+
+            adj_node_inst = self._nodes[adj_node]  # node instance
+
+            # Adjust position if the position has just been removed (this happens in loops and kinks).
+            if adj_node == node and adj_pos >= pos:
+                adj_pos -= 1
+
+            # if adj_node != node:
+            # There is no loop or kink.
+            adj_node_inst[adj_pos] = Endpoint(
+                adj_node_inst[adj_pos].node,
+                adj_node_inst[adj_pos].position - 1,
+                **adj_node_inst[adj_pos].attr
+            )
+            # else:
+                # # There is a loop or kink
+                # if adj_pos > pos:
+                #     adj_node_inst[a]
+
 
     def remove_endpoints_from(self, endpoints_for_removal):
-        endpoints = sorted(endpoints_for_removal, key=lambda _: -_.position)  # start removing from the back
 
-        for i, ep in enumerate(endpoints):
+        # convert to Endpoint instances if they are tuples
+        endpoints_for_removal = [ep if isinstance(ep, Endpoint) else self.endpoint_from_pair(ep) for ep in endpoints_for_removal]
+
+        endpoints_for_removal.sort(key=lambda _: _.position)  # Start removing from the back
+
+        #print("endpoints", endpoints_for_removal)
+
+        while endpoints_for_removal:
+            ep = endpoints_for_removal.pop()
+
+            #print("removing endpoint", ep, "remaining:", endpoints_for_removal)
+
+            #print("  ..", self)
 
             self.remove_endpoint(ep)
 
+            #print(" ...", self)
+
             # adjust change of position for the rest of the endpoints in the list
-            for j in range(i + 1, len(endpoints)):
-                if endpoints[j].node == ep.node and endpoints[j].position > ep.position:
-                    endpoints[j] = (endpoints[j].node, endpoints[j].position - 1)  # the attribute is not needed
+            for i, _ in enumerate(endpoints_for_removal):
+                if _.node == ep.node and _.position > ep.position:
+                    endpoints_for_removal[i] = type(_)(_.node, _.position - 1)  # the attribute is not needed TODO: why not?
+
+        # # convert to Endpoint instances if they are tuples
+        # endpoints_for_removal = [ep if isinstance(ep, Endpoint) else self.endpoint_from_pair(ep) for ep in endpoints_for_removal]
+        #
+        # endpoints = sorted(endpoints_for_removal, key=lambda _: -_.position)  # start removing from the back
+        #
+        # print("endpoints", endpoints)
+        #
+        # for i, ep in enumerate(endpoints):
+        #     print("endpoints", endpoints)
+        #
+        #     self.remove_endpoint(ep)
+        #     print(" ...", self)
+        #
+        #     # adjust change of position for the rest of the endpoints in the list
+        #     for j in range(i + 1, len(endpoints)):
+        #         if endpoints[j].node == ep.node and endpoints[j].position > ep.position:
+        #             endpoints[j] = (endpoints[j].node, endpoints[j].position - 1)  # the attribute is not needed
+
 
     # arc operations
 
@@ -430,12 +567,23 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
 
     def set_arcs_from(self, arcs_for_adding, **attr):
         """Set the list of arcs.
+        Can also add arcs as a string, e.g. "a0b1,a1b0" in this case also vertices are added if the nodes do not yet exist.
         
-        :param arcs_for_adding: a iterable of tuples (v_endpoint, u_endpoint)
+        :param arcs_for_adding: a iterable of tuples (v_endpoint, u_endpoint) or a string like "a1b4,c2d3".
         :return: None
         """
+
+        # Parse string if we are adding simple arcs (e.g., "a1b4,c2d3").
+        if isinstance(arcs_for_adding, str):
+            from knotpy.utils.parsing import parse_arcs
+            arcs_for_adding = parse_arcs(arcs_for_adding)
+            extra_vertices = set(ep[0] for arc in arcs_for_adding for ep in arc if ep[0] not in self.nodes)
+            self.add_vertices_from(extra_vertices)
+
         for arc in arcs_for_adding:
             self.set_arc(arc, **attr)
+
+
 
     def remove_arc(self, arc_for_removing):
         self.remove_endpoints_from(arc_for_removing)
@@ -489,14 +637,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
         return len(self.virtual_crossings)
 
     @property
-    def number_of_bonds(self):
-        return len(self.bonds)
-
-    @property
-    def number_of_terminals(self):
-        return len(self.terminals)
-
-    @property
     def number_of_endpoints(self):
         return sum(len(node) for node in self.nodes.values())
 
@@ -525,20 +665,24 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _TerminalDiagram, _BondDia
     def __str__(self):
         # TODO: get node name from descriptor
 
-        attrib_str = ", ".join([f"{key}={value}" for key, value in self.attr.items() if key != "name" and key != "framing"])
+        attrib_str = " ".join([f"{key}={value}" for key, value in self.attr.items() if key != "name" and key != "framing"])
+
+        friendly_diag_name = "Oriented diagram" if isinstance(type(self), OrientedPlanarDiagram) else "Diagram"
 
         return "".join(
             [
-                f"{self.__class__.__name__} ",
+                f"{friendly_diag_name} ",
                 f"named {self.name} " if self.name else "",
-                f"with {self.number_of_nodes} nodes, ",
-                f"{self.number_of_arcs} arcs, ",
-                f"and adjacencies {self.nodes}" if self.nodes else f"and no adjacencies",
+                #f"with {self.number_of_nodes} nodes, ",
+                #f"{self.number_of_arcs} arcs, ",
+                f"{self.nodes}" if self.nodes else f"and no adjacencies",
                 f" with framing {self.framing}" if self.framing is not None else "",
-                f" ({attrib_str})" if attrib_str else ""
+                f" ({attrib_str})" if attrib_str else "",
             ]
         )
 
+    def __repr__(self):
+        return self.__str__()
 
 class OrientedPlanarDiagram(PlanarDiagram):
 
@@ -598,6 +742,19 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     return k
 
 if __name__ == "__main__":
+
+    k = PlanarDiagram()
+    k.add_vertices_from("bc")
+    k.set_arc((("b",0),("c",1)))
+    k.set_arc((("b",3),("c",0)))
+    k.set_arc((("b",1),("b",2)))
+    print(k)
+
+    k.remove_arc((("b",0),("c", 1)))
+
+    print(k)
+
+    exit()
 
     d = PlanarDiagram()
     d.add_node("a", create_using=Vertex)

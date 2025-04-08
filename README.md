@@ -3,7 +3,7 @@
 KnotPy is a Python package designed for creating, manipulating, visualizing and studying knots, links, virtual links, knotoids, planar graphs and spatial graphs.
 
 - **Website (including documentation):** https://bgabrovsek.github.io/knotpy/
-- **Author:** Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>
+- **Author:** Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>
 - **Publisher:** self-published by Boštjan Gabrovšek
 
 ## Install
@@ -23,7 +23,7 @@ For more information, please see [INSTALL.md](INSTALL.md).
 Released under the 3-Clause BSD license (see `LICENSE.txt`)
 
    Copyright (C) 2024 KnotPy Developer
-   Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>
+   Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>
 
 
 

@@ -1,14 +1,13 @@
-"""Disjoint components are the diagram components that do not share a common node (crossing, vertex, ...).
-"""
 
 __all__ = ["closure"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
+#TODO: no tests
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
-from knotpy.algorithms.graph import bfs_shortest_path
+from knotpy.algorithms.paths import bfs_shortest_path
 
 
 def _face_intersection_arc(k:PlanarDiagram, f, g):
@@ -65,7 +64,7 @@ def closure(k: PlanarDiagram, underpass_closure=True):
     for f, g in zip(path, path[1:]):
         arc = _face_intersection_arc(k, f, g)  # find the arcs we must pass
 
-        k
+
 
 
         print(f, "and", g, "int", arc)
@@ -81,6 +80,8 @@ if __name__ == "__main__":
     print(k)
     c=  closure(k)
 
+
+
     print()
 
     k = kp.from_condensed_em_notation("b1,c1a0c0d3,b2b0e1e0,f1f0g0b3,c3c2g3h0,d1d0h3h2,d2i0h1e2,e3g2f3f2,g1 & 7_45:b0,a0c0d0c1,b1b3e1e0,b2f3g1g0,c3c2g3h0,h3h2i0d1,d3d2h1e2,e3g2f1f0,f2")
@@ -88,5 +89,5 @@ if __name__ == "__main__":
     print(k)
     c = closure(k)
 
-    kp.draw(k)
-    kp.plt.show()
+    # kp.draw(k)
+    # kp.plt.show()

@@ -5,8 +5,8 @@ from itertools import product
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import oriented
 from knotpy.algorithms.skein import smoothen_crossing
-from knotpy.algorithms.node_operations import name_for_new_node
-from knotpy.classes.node import Crossing, Vertex, Terminal
+from knotpy.algorithms.naming import unique_new_node_name
+from knotpy.classes.node import Crossing, Vertex #, Terminal
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.invariants.writhe import writhe
@@ -16,7 +16,7 @@ from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemei
 
 __all__ = ['arrow_polynomial']
 __version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 
 def disoriented_smoothing(k, crossing):
@@ -30,9 +30,9 @@ def disoriented_smoothing(k, crossing):
     node_inst = k.nodes[crossing]
     pos = 0 if type(node_inst[0]) == type(node_inst[1]) else 1  # if 0, join 0 & 1, 2 & 3, else join 1 & 2 and 3 & 0
 
-    node0 = name_for_new_node(k)
+    node0 = unique_new_node_name(k)
     k.add_vertex(node0, degree=2)
-    node1 = name_for_new_node(k)
+    node1 = unique_new_node_name(k)
     k.add_vertex(node1, degree=2)
 
     k.set_endpoint((node0, 0), node_inst[pos])
@@ -165,7 +165,7 @@ def arrow_polynomial(k: PlanarDiagram, variable="A", normalize=True):
         for method, node in zip(state, crossings):
             if (method > 0) ^ (k.nodes[node].sign() < 0):  # "A" oriented smoothing
                 if _DEBUG: print(" smooth", node, k)
-                smoothen_crossing(k, crossing_for_smoothing=node, method="O", in_place=True)
+                smoothen_crossing(k, crossing_for_smoothing=node, method="O", inplace=True)
                 if _DEBUG: print("    -->", node, k)
                 if _DEBUG: print(kp.sanity_check(k))
             else:  # "B" disoriented oriented smoothing

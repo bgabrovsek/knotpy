@@ -4,7 +4,7 @@ import itertools as it
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 import knotpy.algorithms.disjoint_sum as components
-import knotpy.algorithms.structure as structure
+from knotpy.algorithms.topology import edges
 from knotpy.algorithms.canonical import canonical
 
 def _orient_with_edges(k: PlanarDiagram, edges: list):
@@ -39,12 +39,12 @@ def all_orientations(k: PlanarDiagram) -> list:
     :param k:
     :return:
     """
-    edges = list(structure.edges(k))
-    orient = list(it.product((True, False), repeat=len(edges)))  # not needed to be a list
+    all_edges = list(edges(k))
+    orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
     #print(orient)
     return [
         _orient_with_edges(k=k, edges=edge_orientations)
-        for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(edges, o)] for o in orient)
+        for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(all_edges, o)] for o in orient)
     ]
 
 def oriented(k: PlanarDiagram, minimal_orientation=False):
@@ -57,7 +57,7 @@ def oriented(k: PlanarDiagram, minimal_orientation=False):
     if minimal_orientation:
         return min(canonical(o) for o in all_orientations(k))
     else:
-        return _orient_with_edges(k=k, edges=structure.edges(k))
+        return _orient_with_edges(k=k, edges=edges(k))
 
 
 def unoriented(k:OrientedPlanarDiagram) -> PlanarDiagram:
@@ -66,7 +66,7 @@ def unoriented(k:OrientedPlanarDiagram) -> PlanarDiagram:
 
 if __name__ == "__main__":
 
-    from knotpy.generate.example import trefoil_knot
+    from knotpy.catalog.example import trefoil_knot
     k = trefoil_knot()
     print(k)
 

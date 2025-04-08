@@ -1,35 +1,50 @@
 """Disjoint components are the diagram components that do not share a common node (crossing, vertex, ...).
+
+A disjoint sum, in the context of planar knot diagrams, is the combination of two or more planar diagrams 
+such that they remain independent and do not share any nodes or arcs.
 """
 
-__all__ = ['number_of_disjoint_components', 'to_disjoint_sum',
-           'add_unknot', "number_of_unknots", "remove_unknots", "is_disjoint_sum"
+# TODO: write tests
+
+__all__ = ['number_of_disjoint_components', 'split_disjoint_sum',
+           'add_unknot', "number_of_unknots", "remove_unknots", "is_disjoint_sum",
+           "disjoint_sum"
            ]
-__version__ = '0.1'
+__version__ = '0.2'
 __author__ = 'Boštjan Gabrovšek'
 
-import warnings
 from string import ascii_letters
-from itertools import combinations, permutations
+from itertools import permutations
 
-import knotpy as kp
-from knotpy.algorithms.node_operations import name_for_new_node
+from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
-from knotpy.classes.composite import DisjointSum, ConnectedSum
 
 
-def add_unknot(k: PlanarDiagram, number_of_unknots=1, in_place=True):
-    """Add unknot to k (in place). An unknot is a vertex with one edge (loop).
-    :param k: input planar diagram
-    :param number_of_unknots: number of unknots (default is 1)
-    :return: k with a disjoint unknot
+def add_unknot(k: PlanarDiagram, number_of_unknots=1, inplace=True):
+    """Disjointly adds an unknot (or multiple unknots) to the given planar diagram.
+
+    An unknot is represented as a vertex with a single edge forming a loop. The function modifies the diagram in place
+    unless specified otherwise.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :param number_of_unknots: The number of unknots to add. Default is 1.
+    :type number_of_unknots: int, optional
+    :param inplace: If True, modifies the diagram in place; otherwise, returns a copy.
+    :type inplace: bool, optional
+    :return: The modified planar diagram with added unknots.
+    :rtype: PlanarDiagram
+
+    .. note::
+       - The function supports both oriented and unoriented planar diagrams.
     """
-    if not in_place:
+    if not inplace:
         k = k.copy()
     oriented = k.is_oriented()
     for _ in range(number_of_unknots):
-        node = name_for_new_node(k)
+        node = unique_new_node_name(k)
         k.add_vertex(node, degree=2)
         k.set_endpoint((node, 0), (node, 1), IngoingEndpoint if oriented else Endpoint)
         k.set_endpoint((node, 1), (node, 0), OutgoingEndpoint if oriented else Endpoint)
@@ -37,38 +52,61 @@ def add_unknot(k: PlanarDiagram, number_of_unknots=1, in_place=True):
 
 
 def _disjoint_components_nodes(k: PlanarDiagram) -> list:
-    """ Return a list of sets of nodes that belong to the same disjoint components.
+    """
+    Return a list of sets of nodes that belong to the same disjoint components.
+
     :param k: (disjoint) planar diagram
     :return: list of sets of nodes
     """
-    er = EquivalenceRelation(k.nodes)
+    er = EquivalenceRelation(k.nodes)  # TODO: replace with DSU
     for ep0, ep1 in k.arcs:
         er[ep0.node] = ep1.node
     return list(er.classes())
 
 
-def number_of_disjoint_components(k):
+def number_of_disjoint_components(k: PlanarDiagram):
+    """
+    Return the number of disjoint components in the given planar diagram.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :return: The number of disjoint components.
+    :rtype: int
+    """
     return len(_disjoint_components_nodes(k))
 
-def is_disjoint_sum(k):
+
+def is_disjoint_sum(k: PlanarDiagram):
+    """
+    Return whether the given planar diagram consists of multiple disjoint components.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :return: True if the diagram has more than one disjoint component, False otherwise.
+    :rtype: bool
+    """
     return len(_disjoint_components_nodes(k)) > 1
 
 
-def to_disjoint_sum(k: PlanarDiagram) -> DisjointSum:
+def split_disjoint_sum(k: PlanarDiagram) -> list:
     """
-    :param k:
-    :return: DisjointSum instance
+    Return a list of disjoint components of the given planar diagram.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :return: A list of disjoint components as `PlanarDiagram` instances.
+    :rtype: list
     """
-    result = DisjointSum(name=k.name)
+
+    list_of_knot_components = []
 
     for component_nodes in sorted(_disjoint_components_nodes(k), reverse=True):
         g = k.copy(name=f"{k.name} (disjoint component)")
         g.remove_nodes_from(set(g.nodes) - component_nodes,
                             remove_incident_endpoints=False)  # incident ep will be removed automatically
 
-        #print(type(result))
-        result |= g
-    return result
+        list_of_knot_components.append(g)
+    return list_of_knot_components
 
 # def disjoint_components(k: PlanarDiagram) -> list:
 #     """If k is a disjoint sum, return a list  of disjoint components.
@@ -97,28 +135,39 @@ def to_disjoint_sum(k: PlanarDiagram) -> DisjointSum:
 #     return components
 
 
-def disjoint_sum(*knots, return_relabel_dicts=False):
-    """Return the disjoint sum, k[0] ⊔ k[1] ⊔ ... The nodes are relabelled to be "a", "b",... or in case of many
-    nodes, 0, 1,...
-    :param create_using: structure type of disjoint sum
-    :param knots: list of components
-    :param return_relabel_dicts:
-    :return: disjoint sum ⊔k
-
-    # TODO: make from Disjoint sum object
+def disjoint_sum(*knots):
     """
+    Return the disjoint sum of the given planar diagrams.
 
-    #print(">>>",[type(k) for k in knots])
+    The function takes multiple `PlanarDiagram` instances and constructs their disjoint sum.
+    Nodes in the resulting diagram are relabeled to ensure uniqueness, using either letters ("a", "b", ...) or integers
+    if necessary.
+
+    :param knots: The planar diagrams to be combined.
+    :type knots: tuple[PlanarDiagram]
+    :raises TypeError: If a mix of oriented and non-oriented diagrams is provided.
+    :raises ValueError: If fewer than two diagrams are given.
+    :return: The disjoint sum of the input diagrams.
+    :rtype: PlanarDiagram
+
+    .. note::
+       - The function ensures that the result retains attributes of the input diagrams.
+    """
 
     if all(isinstance(k, PlanarDiagram) for k in knots):
         create_using = PlanarDiagram
     elif all(isinstance(k, OrientedPlanarDiagram) for k in knots):
         create_using = OrientedPlanarDiagram
     else:
-        raise TypeError("Cannot create disjoint sum using oriented and non-oriented diagrams.")
+        raise TypeError(
+            "Cannot create a disjoint sum with a mix of oriented and non-oriented diagrams.\n"
+            "Ensure that all input diagrams are either `PlanarDiagram` or `OrientedPlanarDiagram`, but not both."
+        )
 
-    if len(knots) <= 1:
-        raise ValueError("Cannot create disjoint sum of one or less knots.")
+    if len(knots) == 0:
+        raise ValueError("At least one planar diagram must be provided.")
+    elif len(knots) == 1:
+        return knots[0].copy()
 
     new_knot_name = u"\u2294".join(str(k.name) for k in knots)
     new_knot_framing = sum(k.framing for k in knots) if all(k.framing is not None for k in knots) else None
@@ -155,30 +204,54 @@ def disjoint_sum(*knots, return_relabel_dicts=False):
 
     new_knot.name = new_knot_name
     new_knot.framing = new_knot_framing
-    relabel_dicts_inv = [{value: key for key, value in d.items()} for d in relabel_dicts]
 
-    return (new_knot, relabel_dicts_inv) if return_relabel_dicts else new_knot
+    # # node relabelling is obsolete
+    # relabel_dicts_inv = [{value: key for key, value in d.items()} for d in relabel_dicts]
+    # return (new_knot, relabel_dicts_inv) if return_relabel_dicts else new_knot
+
+    return new_knot
+
 
 def _is_vertex_an_unknot(k: PlanarDiagram, vertex):
+    """
+    Return True if the given vertex is an unknot, i.e., a degree-2 vertex with both endpoints forming a loop to itself.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :param vertex: The vertex to check.
+    :type vertex: Hashable
+    :return: True if the vertex is an unknot, False otherwise.
+    :rtype: bool
+    """
     return len(k.nodes[vertex]) == 2 and k.nodes[vertex][0].node == k.nodes[vertex][1].node == vertex
 
+
 def number_of_unknots(k: PlanarDiagram):
-    """Return the number of unknots (degree 1 vertices which have an edge connected to itself)
-    :param k:
-    :return:
+    """
+    Return the number of unknots (degree-1 vertices with a self-loop).
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :return: The count of unknots.
+    :rtype: int
     """
     return sum(1 for v in k.vertices if _is_vertex_an_unknot(k, v))
 
 
 def remove_unknots(k: PlanarDiagram, max_unknots=None):
-    """Remove all unknots in
-    :param k:
-    :param max_unknots:
-    :return: number of unknots removed
     """
+    Remove unknots from the diagram (up to `max_unknots` unknots if given).
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :param max_unknots: Maximum number of unknots to remove (removes all if None).
+    :type max_unknots: int, optional
+    :return: The number of unknots removed.
+    :rtype: int
+    """
+
     vertices_to_remove = []
     for v in k.vertices:
-        #print(v, _is_vertex_an_unknot(k, v), len(k.nodes[v]), k.nodes[v][0].node, "==", v)
         if max_unknots is not None and len(vertices_to_remove) >= max_unknots:
             break
         if _is_vertex_an_unknot(k, v):
@@ -187,13 +260,6 @@ def remove_unknots(k: PlanarDiagram, max_unknots=None):
     for v in vertices_to_remove:
         k.remove_node(v, remove_incident_endpoints=True)
     return len(vertices_to_remove)
-
-
-
-
-
-# Connected sum components
-
 
 
 if __name__ == "__main__":

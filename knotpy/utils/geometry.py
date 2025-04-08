@@ -7,7 +7,8 @@ import cmath
 
 __all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox",
            "antipode", "perpendicular_line", "perpendicular_arc", "bisect", "tangent_line", "middle", "bisector",
-           "is_angle_between", "perpendicular_arc_through_point", "circle_through_points"]
+           "is_angle_between", "perpendicular_arc_through_point", "circle_through_points",
+           "weighted_circle_center_mean"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -359,7 +360,7 @@ def perpendicular_arc_through_point(circle, circle_point, point):
     return arc
 
 
-def perpendicular_arc(circle, circle1, circle2, order=None):
+def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
     # TODO: use perpendicular_arc_through _points
     """Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and
     circle1 and circle2, respectively.
@@ -375,6 +376,7 @@ def perpendicular_arc(circle, circle1, circle2, order=None):
     :param circle1: the 1st circle tangent to circle
     :param circle2: the 2nd circle tangent to circle
     :param order: returns order of circles 1,2 in the arc (if the arcs starts at circle1, order is [1,2], else [2,1]
+    :param approx: the circle do not need to touch or overlap, but the closest possible such point will be assumed
     :return: circle on which the arcs lie in, angles of the circles such that the arc is the part of the circle from
      the 1st angle and the 2nd angle (angles are in radians)
     """
@@ -382,8 +384,93 @@ def perpendicular_arc(circle, circle1, circle2, order=None):
         order = []
     else:
         order.clear()
-    point1 = circle * circle1
-    point2 = circle * circle2
+
+    if approx:
+        # approximate intersection
+        point1 = weighted_circle_center_mean(circle, circle1)
+        point2 = weighted_circle_center_mean(circle, circle2)
+    else:
+        # exact intersection
+        point1 = circle * circle1
+        point2 = circle * circle2
+    if len(point1) == 0 or len(point2) == 0:
+        raise ValueError("No intersection point computing perpendicular arc")
+    if len(point1) == 2 or len(point2) == 2:
+        raise ValueError("two intersection points of tangent circles")
+        print("Warning: two intersection points of tangent circles")
+    point1 = point1[0]
+    point2 = point2[0]
+    midpoint = 0.5 * (point1 + point2)
+    """ 
+    Create a circular arc connecting i1 and i2, which is perpendicular to circle. We obtain such an arc/circle 
+    by inverting the midpoint through the circle. By construction, the new point is the center of the perpendicular
+    circle. 
+    """
+
+
+    # TODO: what if midpoint is in the center?
+    if abs(midpoint - circle.center) > MIN_SEGMENT_SIZE:
+        inv_midpoint = inverse_point_through_circle(circle, midpoint)  # the arc li
+        inv_arc = CircularArc(inv_midpoint,
+                              abs(inv_midpoint - point1),
+                              cmath.phase(point1 - inv_midpoint),  # the angle of the point i1 on the inversed circle
+                              cmath.phase(point2 - inv_midpoint)  # the angle of the point i1 on the inversed circle
+                              )
+
+        if (inv_arc.theta2 - inv_arc.theta1) % (2 * math.pi) > math.pi:  # make the arc the smaller of the two
+            inv_arc.theta1, inv_arc.theta2 = inv_arc.theta2, inv_arc.theta1
+            order += [2, 1]
+        else:
+            order += [1, 2]
+
+        return inv_arc
+    else:
+        # if the arc is the diameter, return a line
+        order += [1, 2]
+        return Segment(point1, point2)
+
+def weighted_circle_center_mean(circle1:Circle, circle2:Circle):
+    """ Compute a weighted mean, so that the intersection of cicles are scaled proportinately so they meet."""
+    radii = circle1.radius + circle2.radius
+    return circle1.center * (circle2.radius / radii) + circle2.center * (circle1.radius / radii)
+
+
+def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
+    # TODO: use perpendicular_arc_through _points
+    """Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and
+    circle1 and circle2, respectively.
+    Circles are given as pairs (complex number representing the center, radius)
+
+    The conditions of the circular arc are thus:
+      - the center z of the circle (z,r),
+      - the intersection i0 of circles (z,r) and (z0,r0),
+      - the intersection i1 of circles (z,r) and (z1,r1),
+    with the extra condition that the arc is perpendicular to all circles (z,r), (z0,r0), and (z1,r1).
+
+    :param circle: the main circle through which the arc is placed
+    :param circle1: the 1st circle tangent to circle
+    :param circle2: the 2nd circle tangent to circle
+    :param order: returns order of circles 1,2 in the arc (if the arcs starts at circle1, order is [1,2], else [2,1]
+    :param approx: the circle do not need to touch or overlap, but the closest possible such point will be assumed
+    :return: circle on which the arcs lie in, angles of the circles such that the arc is the part of the circle from
+     the 1st angle and the 2nd angle (angles are in radians)
+    """
+
+
+    if order is None:
+        order = []
+    else:
+        order.clear()
+
+    if approx:
+        # approximate intersections
+        point1 = [weighted_circle_center_mean(circle, circle1)]
+        point2 = [weighted_circle_center_mean(circle, circle2)]
+    else:
+        # exact intersections
+        point1 = circle * circle1
+        point2 = circle * circle2
+
     if len(point1) == 0 or len(point2) == 0:
         raise ValueError("No intersection point computing perpendicular arc")
     if len(point1) == 2 or len(point2) == 2:

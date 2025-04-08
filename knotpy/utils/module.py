@@ -194,3 +194,142 @@ print("coefficient of 'x':",m['x'])
 m['c'] = module(4,'b') + module(-3,'z')
 print("substitution:", m)
 """
+
+
+# from collections import defaultdict
+# from functools import total_ordering
+# from numbers import Number
+# import operator
+#
+#
+# class Module:
+#     """
+#     A class representing a formal linear combination of generators with coefficients.
+#
+#     Each module element is a sum of the form a0*g0 + a1*g1 + ..., where:
+#     - ai are coefficients (e.g., integers, floats, sympy expressions, ...)
+#     - gi are generators (arbitrary objects that can be compared and hashed)
+#
+#     The class supports addition, subtraction, scalar multiplication, evaluation,
+#     term simplification, indexing, iteration, and comparisons.
+#     """
+#
+#     def __init__(self, terms=None):
+#         """
+#         Initialize the module with an optional list of (coefficient, generator) terms.
+#         """
+#         self.terms = defaultdict(lambda: 0)
+#         if terms:
+#             for coeff, gen in terms:
+#                 self.add_term(coeff, gen)
+#
+#     def add_term(self, coeff, gen):
+#         """
+#         Add a term coeff * gen to the module, combining with existing term if needed.
+#         Removes term if the resulting coefficient is zero.
+#         """
+#         if coeff == 0:
+#             return
+#         self.terms[gen] += coeff
+#         if self.terms[gen] == 0:
+#             del self.terms[gen]
+#
+#     def __add__(self, other):
+#         """Return the sum of two modules."""
+#         result = Module(self.to_list())
+#         for coeff, gen in other.to_list():
+#             result.add_term(coeff, gen)
+#         return result
+#
+#     def __sub__(self, other):
+#         """Return the difference of two modules."""
+#         return self + (-other)
+#
+#     def __neg__(self):
+#         """Return the negation of the module."""
+#         return Module([(-coeff, gen) for gen, coeff in self.terms.items()])
+#
+#     def __mul__(self, scalar):
+#         """Scalar multiplication of the module."""
+#         return Module([(coeff * scalar, gen) for gen, coeff in self.terms.items()])
+#
+#     def __rmul__(self, scalar):
+#         """Right scalar multiplication (scalar * module)."""
+#         return self * scalar
+#
+#     def __imul__(self, scalar):
+#         """In-place scalar multiplication."""
+#         for gen in list(self.terms):
+#             self.terms[gen] *= scalar
+#             if self.terms[gen] == 0:
+#                 del self.terms[gen]
+#         return self
+#
+#     def __truediv__(self, scalar):
+#         """Division of the module by a scalar."""
+#         return Module([(coeff / scalar, gen) for gen, coeff in self.terms.items()])
+#
+#     def __floordiv__(self, scalar):
+#         """Floor division of the module by a scalar."""
+#         return Module([(coeff // scalar, gen) for gen, coeff in self.terms.items()])
+#
+#     def __contains__(self, gen):
+#         """Check if the generator gen appears in the module."""
+#         return gen in self.terms
+#
+#     def __getitem__(self, gen):
+#         """Return the coefficient of the generator gen, or 0 if not present."""
+#         return self.terms.get(gen, 0)
+#
+#     def __iter__(self):
+#         """Iterate over (generator, coefficient) pairs."""
+#         return iter(self.terms.items())
+#
+#     def to_list(self):
+#         """Convert the module to a list of (coefficient, generator) tuples."""
+#         return [(coeff, gen) for gen, coeff in self.terms.items()]
+#
+#     def __eq__(self, other):
+#         """Check equality of two modules (same generators and coefficients)."""
+#         return dict(self.terms) == dict(other.terms)
+#
+#     def __ne__(self, other):
+#         """Check inequality of two modules."""
+#         return not self == other
+#
+#     def sort(self):
+#         """
+#         Return the module's terms as a list sorted by generator.
+#         Assumes generators are comparable.
+#         """
+#         return sorted(self.terms.items(), key=lambda x: x[0])
+#
+#     def evaluate(self, f):
+#         """
+#         Evaluate the module using a function f applied to generators.
+#
+#         Returns the sum: a0*f(g0) + a1*f(g1) + ...
+#         """
+#         return sum(coeff * f(gen) for gen, coeff in self.terms.items())
+# #
+#
+#     def replace(self, gen, replacement_module):
+#         """
+#         Replace the generator `gen` in the module with another module.
+#
+#         For example, if m = a*g + ... and we replace g with b0*h0 + b1*h1,
+#         the result is a*b0*h0 + a*b1*h1 + ...
+#         """
+#         if gen not in self.terms:
+#             return self  # nothing to replace
+#
+#         coeff = self.terms.pop(gen)
+#         for r_coeff, r_gen in replacement_module:
+#             self.add_term(coeff * r_coeff, r_gen)
+#         return self
+
+#     def __repr__(self):
+#         """Return a string representation of the module."""
+#         if not self.terms:
+#             return "0"
+#         return " + ".join(f"{coeff}*{gen}" for gen, coeff in self.sort())

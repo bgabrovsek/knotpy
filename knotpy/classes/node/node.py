@@ -12,7 +12,7 @@ are connected through a tiny bond
 
 from abc import ABC, abstractmethod
 
-from knotpy.utils.dict_utils import compare_dicts
+from knotpy.utils.dict_utils import compare_dicts, identitydict
 from knotpy.utils.decorators import total_ordering_from_compare
 
 """
@@ -22,6 +22,9 @@ define what a node is and what data it consists of
 __all__ = ['Node']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@gmail.si>'
+
+
+_node_name_sort_rank= {"Vertex": 0, "Crossing": 1, "VirtualCrossing": 2}
 
 @total_ordering_from_compare
 class Node(ABC):
@@ -72,12 +75,16 @@ class Node(ABC):
         #       hash((type(self), self.attr.get("color", None), *self._inc)))
         return hash((type(self), self.attr.get("color", None), *self._inc))
 
-    def compare(self, other, compare_attributes=False):
+    def _compare(self, other, compare_attributes=False):
         """Compare node. Replaces obsolete __cmp__ method.
         :param other: Node to compare with
         :param compare_attributes: attributes to compare, if False we do not compare attributes, if True, we compare all attributes
         :return: 1 if self > other, -1 if self < other, or 0 if self == other.
         """
+
+        # compare node degree
+        if (s_deg := len(self._inc)) != (o_deg := len(other._inc)):
+            return -1 if s_deg < o_deg else 1
 
         # compare node type
         if type(self).__name__ != type(other).__name__:
@@ -87,7 +94,7 @@ class Node(ABC):
             return (len(self) > len(other)) * 2 - 1
 
         for ep, ep_other in zip(self, other):
-            if cmp := ep.compare(ep_other, compare_attributes):
+            if cmp := ep._compare(ep_other, compare_attributes):
                 return cmp
 
         if compare_attributes:
@@ -105,10 +112,12 @@ class Node(ABC):
     #     pass
 
     def __str__(self):
-        """Used mostly for debugging. Actual node is usually printed via NodeView."""
-        return "({})".format(
-            " ".join(str(ep) if ep is not None else "?" for ep in self._inc)
-        )
+        """Used mostly for debugging. Actual node is usually printed via NodeView. -- not true"""
+
+        adj_str = " ".join(str(ep) if ep is not None else "?" for ep in self._inc)
+        attr_str = "".join(f" {k}={v}" for k, v in self.attr.items())
+
+        return f"({adj_str}){attr_str}"
 
 
 

@@ -5,4 +5,3 @@ from .native import *
 from .em import *
 from .pd import *
 from .plantri import *
-from .name import *

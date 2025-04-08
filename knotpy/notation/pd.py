@@ -19,9 +19,11 @@ import string
 
 from collections import defaultdict
 
+from knotpy.algorithms.topology import edges
+import knotpy.algorithms.topology
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
-from knotpy.algorithms.node_operations import add_node_to
+#from knotpy.algorithms.node_operations import add_node_to
 from knotpy.classes.node import Vertex, Crossing
 
 __all__ = ['from_pd_notation', 'to_pd_notation', "to_condensed_pd_notation", "from_condensed_pd_notation"]
@@ -44,7 +46,6 @@ __author__ = 'Boštjan Gabrovšek'
 _node_abbreviations = {
     "X": Crossing,
     "V": Vertex,
-    #"B": BivalentVertex
 }
 
 _node_abbreviations_inv = {val: key for key, val in _node_abbreviations.items()}
@@ -99,7 +100,9 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
         for pos, arc in enumerate(node_arcs):
             arc_dict[arc].append((node_name, pos))
 
-    for arc in arc_dict.values():
+    for key, arc in arc_dict.items():
+        if len(arc) != 2:
+            raise ValueError(f"Invalid PD notation: arc {arc} is not a pair at arc number {key} in the PD code.")
         k.set_arc(arc)
 
     k.attr.update(attr)  # update given attribures
@@ -235,13 +238,27 @@ def _test():
 
 if __name__ == "__main__":
 
-    s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
-    k = from_pd_notation(s)
-    print(k)
-    print(to_pd_notation(k))
-    print()
-    s = to_condensed_pd_notation(k)
-    print(s)
-    print(from_condensed_pd_notation(s))
+    import knotpy as kp
+    s = "V[1,2,3],V[8,11,9],V[10,12,11],V[12,13,14],X[8,2,13,10],X[4,5,6,1],X[5,4,3,7],X[14,6,7,9]"
 
-    #_test()
+    k = from_pd_notation(s)
+
+
+    print(knotpy.algorithms.topology.edges.edges(k))
+    print(kp.link_components(k))
+
+
+
+# V[0,1,2],V[3, 4,5],V[6, 7, 4], V[7, 8, 9], X[3,1,8, 6], X[10,11,12,0],X[11,10,2,13],X[9,12,13,5]
+# V[1,2,3],V[8,11,9],V[10,12,11],V[12,13,14],X[8,2,13,10],X[4, 5, 6, 1],X[5 ,4 ,3,7 ],X[14, 6,7,9]
+#
+#     s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
+#     k = from_pd_notation(s)
+#     print(k)
+#     print(to_pd_notation(k))
+#     print()
+#     s = to_condensed_pd_notation(k)
+#     print(s)
+#     print(from_condensed_pd_notation(s))
+#
+#     #_test()

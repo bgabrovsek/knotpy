@@ -58,7 +58,7 @@ def from_notation_dispatcher(notation: str):
     elif notation in  ["knotpy", "native", ]:
         return from_knotpy_notation
     else:
-        raise ValueError(f"Unknown notation '{notation}'.")
+        raise ValueError(f"Unsupported notation format '{notation}'.")
 
     # if notation not in _reversed_notation_aliases:
     #     raise ValueError(f"Unknown notation '{notation}'.")

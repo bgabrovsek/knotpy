@@ -9,7 +9,7 @@ See Louis H. Kauffman, State models and the Jones polynomial. Topology 26 (1987)
 
 __all__ = ['jones_polynomial']
 __version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from sympy import Expr, expand, symbols, Symbol, Rational
 
@@ -18,11 +18,13 @@ from knotpy.invariants.bracket import bracket_polynomial
 
 def jones_polynomial(k, variable="t") -> Expr:
     """
-
+    Compute the jones polynomial from the (Kauffman) bracket polynomial
     :param k:
     :param variable:
     :return:
     """
+
+    # TODO: does not work for links
 
     # if not k.is_oriented():
     #     raise NotImplemented("the jones polynomial is defined for oriented knots or links")

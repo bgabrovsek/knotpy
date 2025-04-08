@@ -9,9 +9,9 @@ from pathlib import Path
 
 
 import knotpy as kp
-from knotpy import SpatialGraph, from_pd_notation, to_pd_notation
+import knotpy.manipulation.permute
+from knotpy import SpatialGraph, from_pd_notation, to_pd_notation, bridges, loops
 from knotpy import export_pdf, draw
-from knotpy import bridges, loops
 
 _DEBUG = False
 data_folder = Path("data")
@@ -54,7 +54,7 @@ for count, (name, pd) in enumerate(data):
         for nodes in chain(*(combinations(nodes3, i) for i in range(1, len(nodes3) + 1))):
             L = deepcopy(k)
             for node in nodes:
-                kp.permute_node(L, node, list(range(len(L.nodes[node]) - 1, -1, -1)))
+                knotpy.manipulation.permute.permute_node(L, node, list(range(len(L.nodes[node]) - 1, -1, -1)))
             if kp.check_faces_sanity(k):
                 has_sane_candidate = True
                 break

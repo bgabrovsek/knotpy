@@ -26,7 +26,7 @@ import re
 
 import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.classes.composite import DisjointSum
+#from knotpy.classes.composite import DisjointSum
 from knotpy.classes.node import Crossing, Vertex
 
 
@@ -69,9 +69,9 @@ def to_condensed_em_notation(g, separator=",") -> str:
     include_name = False
 
     #print(type(g))
-
-    if isinstance(g, DisjointSum):
-        return "  ⊔  ".join(to_condensed_em_notation(_) for _ in g)
+    #
+    # if isinstance(g, DisjointSum):
+    #     return "  ⊔  ".join(to_condensed_em_notation(_) for _ in g)
 
 
     #name_seperator = ":"

@@ -1,74 +1,87 @@
-
-""""connected sum components" are the factors of a composite knot diagram.
-
- are connected components of a link, e.g. a knot has 1 link component, the Hopf link has 2 link
-  components and the Borromean Link has 3 link components,
-
-- "disjoint components": are the components that do not share a common node (crossing or vertex),
-
--
-
-- "strand" a strand is either a closed component or a path between
+"""
+Link components represent distinct closed loops in a link diagram.
+For example, a trefoil knot has one component, while the Hopf link has two.
 """
 
 __all__ = ['number_of_link_components', "link_components"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-import warnings
-from string import ascii_letters
-from copy import deepcopy
-from itertools import combinations, permutations
+from itertools import combinations
 
 import knotpy as kp
-from knotpy.algorithms.node_operations import name_for_new_node
-from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.utils.equivalence import EquivalenceRelation
+from knotpy.utils.disjoint_union_set import DisjointSetUnion
 
 
 def number_of_link_components(k: PlanarDiagram):
-    """ Return the number of link components. E.g. a trefoil has 1 component, the Hopf link has 2.
-    :param k: input planar diagram
-    :return: number of link components
+    """Return the number of link components in a planar diagram.
+
+    This function determines the number of connected components (link
+    components) in a given planar diagram representation of a link.
+    For example, a trefoil knot has 1 component, while the Hopf link
+    consists of 2 components.
+
+    Args:
+        k: The input planar diagram representing the link, from which
+           the number of components will be derived.
+
+    Returns:
+        int: The number of link components present in the given planar
+        diagram.
     """
+
     return len(list(link_components_endpoints(k)))
 
 
 def link_components_endpoints(k: PlanarDiagram):
-    """ Return a list of sets of endpoints belonging to the same link component.
-    :param k: planar diagram
-    :return: a list of sets containing unordered endpoints belonging to the same components
+    """
+    Return a list of sets of endpoints belonging to the same link component.
+
+    This function takes a planar diagram representing a knot or link and determines the groups of endpoints that belong
+    to the same connected link components. Each endpoint is grouped based on equivalence relations derived from the arcs
+    and node connections in the planar diagram.
+
+    Args:
+        k (PlanarDiagram): The planar diagram object that contains arcs, nodes, and endpoints associated with a
+            knot or link structure.
+
+    Returns:
+        list[set]: A list of sets where each set contains unordered endpoints that are determined to belong to the
+            same link component.
     """
 
-    er = EquivalenceRelation(k.endpoints)
+    dsu = DisjointSetUnion(k.endpoints)
 
     # endpoints from arcs are on the same component
     for ep1, ep2 in k.arcs:
-        er[ep1] = ep2
+        dsu[ep1] = ep2
 
     # endpoints from crossings/vertices
     for node in k.nodes:
         if isinstance(k.nodes[node], kp.Crossing):
-            er[k.nodes[node][0]] = k.nodes[node][2]
-            er[k.nodes[node][1]] = k.nodes[node][3]
+            dsu[k.nodes[node][0]] = k.nodes[node][2]
+            dsu[k.nodes[node][1]] = k.nodes[node][3]
         else:
             # assume that everything that is not a crossing is a connected
             for ep0, ep1 in combinations(k.nodes[node], r=2):
-                er[ep0] = ep1
+                dsu[ep0] = ep1
 
-    return er.classes()
+    return list(dsu)
 
 
 def link_components(k: PlanarDiagram) -> set:
-    """Return
-    :param k:
-    :return:
+    """
+    Determine the distinct link components in a planar diagram.
+
+    Link components are individual, closed, connected parts of a link structure,
+    such as in knot theory. This function identifies which parts of the diagram
+    belong to the same connected component.
+
+    :param k: An input planar diagram representing a link.
+    :return: A set representing the link components.
     """
     raise NotImplementedError()
-
-
-
 
 
 if __name__ == "__main__":

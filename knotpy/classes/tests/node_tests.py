@@ -2,6 +2,8 @@
 import pytest
 
 import knotpy as kp
+import knotpy.manipulation.remove
+
 
 def test_remove_bivalent_vertex():
 
@@ -10,7 +12,7 @@ def test_remove_bivalent_vertex():
     assert k.nodes["b"][0].node == "a"
     assert k.nodes["c"][1].node == "a"
 
-    kp.algorithms.remove_bivalent_vertices(k)
+    knotpy.manipulation.remove.remove_bivalent_vertices(k)
 
     assert len(k.nodes) == 2
     assert len(k.crossings) == 2
@@ -21,5 +23,5 @@ def test_remove_bivalent_vertex():
 
     # do not remove
     k = kp.from_pd_notation("V(0,0)", create_using=kp.SpatialGraph)
-    kp.algorithms.remove_bivalent_vertices(k)
+    knotpy.manipulation.remove.remove_bivalent_vertices(k)
     assert len(k.vertices) == 1

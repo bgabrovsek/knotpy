@@ -7,29 +7,25 @@ from matplotlib.collections import PatchCollection, LineCollection, PolyCollecti
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.colors import to_rgb
 from collections import defaultdict
-from sklearn.decomposition import PCA
-from time import time
 
-from tqdm import tqdm
+
 import math
-import cmath
 
-import knotpy as kp
 from knotpy.classes.planardiagram import PlanarDiagram
 
 from knotpy.drawing.layout import circlepack_layout, bezier
-from knotpy.algorithms.structure import loops, bridges
+from knotpy import bridges, loops
 from knotpy.utils.geometry import Circle, CircularArc, Line, Segment
 from knotpy.utils.geometry import (perpendicular_arc, is_angle_between, antipode, tangent_line, middle, bisector, bisect, split,
-                                   perpendicular_arc_through_point, BoundingBox)
+                                   perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean)
 
-from knotpy.notation.native import from_knotpy_notation
-from knotpy.notation.pd import from_pd_notation
-from knotpy.notation import to_pd_notation
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 
-from knotpy.classes.node import Vertex, Crossing, Bond
-from knotpy.algorithms.structure import insert_arc, bridges
+from knotpy.classes.node import Vertex, Crossing #, Bond
+from knotpy.algorithms.topology import bridges
+from knotpy.manipulation.insert import insert_arc
+from knotpy.utils.multiprogressbar import Bar
+from knotpy.manipulation.subdivide import subdivide_arc, subdivide_endpoint
 
 __all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "add_support_arcs", "plt", "export_png"]
 __version__ = '0.1'
@@ -37,6 +33,7 @@ __author__ = 'Boštjan Gabrovšek'
 
 
 
+# default plotting properties
 # default plotting properties
 # node
 DEFAULT_NODE_SIZE = 0.1
@@ -97,7 +94,7 @@ def average_color(color1, color2):
 
 
 
-def add_support_arcs(k: kp.PlanarDiagram):
+def add_support_arcs(k: PlanarDiagram):
     """ Ads support arcs so there are no bridges in the diagram. For every bridge, add two parallel arcs. In the case
     the bridge is a leaf, add two adjacent arcs to the leaf.
 
@@ -137,28 +134,34 @@ def add_support_arcs(k: kp.PlanarDiagram):
             pos_a_right, pos_a_left = 1, 2
         else:
             # add two parallel endpoints (right and left)
-            node_a_right = kp.subdivide_endpoint(k, (node_a, (pos_a + 1) % 4), __support__=True)
-            node_a_left = kp.subdivide_endpoint(k, (node_a, (pos_a - 1) % 4), __support__=True)
+            node_a_right = subdivide_endpoint(k, (node_a, (pos_a + 1) % 4))
+            node_a_left = subdivide_endpoint(k, (node_a, (pos_a - 1) % 4))
             pos_a_right = 1 if k.nodes[node_a_right][0].node == node_a else 2
             pos_a_left = 2 if k.nodes[node_a_right][0].node == node_a else 1
+
+            k.nodes[node_a_right].attr["__support__"] = True
+            k.nodes[node_a_left].attr["__support__"] = True
 
         if k.degree(node_b) == 1:
             # we have a leaf/knotoid terminal at node a
             node_b_right = node_b_left = node_b
             pos_b_right, pos_b_left = 2, 1
         else:
-            node_b_right = kp.subdivide_endpoint(k, (node_b, (pos_b - 1) % 4), __support__=True)
-            node_b_left = kp.subdivide_endpoint(k, (node_b, (pos_b + 1) % 4), __support__=True)
+            node_b_right = subdivide_endpoint(k, (node_b, (pos_b - 1) % 4))
+            node_b_left = subdivide_endpoint(k, (node_b, (pos_b + 1) % 4))
             pos_b_right = 2 if k.nodes[node_b_right][0].node == node_b else 1
             pos_b_left = 1 if k.nodes[node_b_right][0].node == node_b else 2
 
+            k.nodes[node_b_right].attr["__support__"] = True
+            k.nodes[node_b_left].attr["__support__"] = True
+
         if k.degree(node_a) == 1:
             # if pos_a_right <  pos_a_left, first insert the smaller one, otherwise indices will not make sense
-            insert_arc(k, node_a_right, pos_a_right, node_b_right, pos_b_right, __support__=True)
-            insert_arc(k, node_a_left, pos_a_left, node_b_left, pos_b_left, __support__=True)
+            insert_arc(k, ((node_a_right, pos_a_right), (node_b_right, pos_b_right)))
+            insert_arc(k, ((node_a_left, pos_a_left), (node_b_left, pos_b_left)))
         else:
-            insert_arc(k, node_a_left, pos_a_left, node_b_left, pos_b_left, __support__=True)
-            insert_arc(k, node_a_right, pos_a_right, node_b_right, pos_b_right, __support__=True)
+            insert_arc(k, ((node_a_left, pos_a_left), (node_b_left, pos_b_left)))
+            insert_arc(k, ((node_a_right, pos_a_right), (node_b_right, pos_b_right)))
 
     return k
 
@@ -240,6 +243,9 @@ def _plot_middle_arc(k, circles):
     :param circles:
     :return:
     """
+
+    approximate = True
+
     result_curves = []
     for arc in k.arcs.keys():
         ep0, ep1 = arc
@@ -249,7 +255,7 @@ def _plot_middle_arc(k, circles):
             continue
 
         # compute the arc that is perpendicular to the arc circle
-        g_arc = perpendicular_arc(circles[arc], circles[ep0.node], circles[ep1.node])
+        g_arc = perpendicular_arc(circles[arc], circles[ep0.node], circles[ep1.node], approx=approximate)
         color1 = k.nodes[ep0].get("color", DEFAULT_LINE_COLOR)
         color2 = k.nodes[ep1].get("color", DEFAULT_LINE_COLOR)
         if color1 != color2:
@@ -375,6 +381,9 @@ def _plot_endpoint(k: PlanarDiagram, circles: dict, arc, ep: Endpoint, gap=False
 
 
 def _plot_all_endpoints(k, circles, new_vertices: dict):
+
+    approximate = False
+
     result_curves = []
 
     for v in k.nodes:
@@ -461,10 +470,18 @@ def _plot_all_endpoints(k, circles, new_vertices: dict):
             under-arc travels below the over-arc."""
 
             # get circular arcs
-            over_arc = perpendicular_arc(circles[v], circles[arcs[1]], circles[arcs[3]], over_order := [])
-            under_arc = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[2]], under_order := [])
+            over_arc = perpendicular_arc(circles[v], circles[arcs[1]], circles[arcs[3]], over_order := [], approx=approximate)
+            under_arc = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[2]], under_order := [], approx=approximate)
             #print("OO", over_arc, under_arc)
-            point = (over_arc * under_arc)
+
+
+            if approximate:
+                point = [weighted_circle_center_mean(over_arc, under_arc)]
+            else:
+                point = (over_arc * under_arc)
+
+            #point = (over_arc * under_arc)
+
             if not isinstance(point, complex):
                 point = point[0]
 
@@ -508,8 +525,12 @@ def _plot_arcs(k, circles, ax, bounding_box=None):
     """
 
     curves = []  # curves patches
-    new_vertices = dict()  # coordinates of vertices given by intersections
 
+    """In new_vertices, coordinates of vertices given by intersections are stored. 
+    Nodes are not necessarily positioned in the center of the circle, but might be moved inside the
+    circle, so the layout looks more natural. 
+    """
+    new_vertices = dict()
     # draw middle arc
     curves += _plot_middle_arc(k, circles)
 
@@ -603,23 +624,23 @@ def compute_PCA(complex_points: list):
     #print(explained_variance)
 
 
-def canonically_rotate_layout(layout, PCA_degrees=0):
-    """
-
-    :param layout:
-    :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
-    :return:
-    """
-    centers = [circle.center for circle in layout.values()]
-    radii = [circle.radius for circle in layout.values()]
-
-    mass_center = sum(c * r for c, r in zip(centers, radii)) / sum(radii)
-    centers = [c - mass_center for c in centers]
-    centers = aligned_centers = compute_PCA(centers)
-    # rotate centers
-    rotation = complex(math.cos(math.radians(PCA_degrees)), math.sin(math.radians(PCA_degrees)))
-    centers = [c * rotation for c in centers]
-    return {key: Circle(c, r) for key, c, r in zip(layout, centers, radii)}
+# def canonically_rotate_layout(layout, PCA_degrees=0):
+#     """
+#
+#     :param layout:
+#     :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
+#     :return:
+#     """
+#     centers = [circle.center for circle in layout.values()]
+#     radii = [circle.radius for circle in layout.values()]
+#
+#     mass_center = sum(c * r for c, r in zip(centers, radii)) / sum(radii)
+#     centers = [c - mass_center for c in centers]
+#     centers = aligned_centers = compute_PCA(centers)
+#     # rotate centers
+#     rotation = complex(math.cos(math.radians(PCA_degrees)), math.sin(math.radians(PCA_degrees)))
+#     centers = [c * rotation for c in centers]
+#     return {key: Circle(c, r) for key, c, r in zip(layout, centers, radii)}
 
 
 def draw_from_layout(k,
@@ -664,7 +685,6 @@ def draw_from_layout(k,
 
     new_vertices = _plot_arcs(k, layout, ax, bounding_box=bb)
 
-
     layout.update(new_vertices)
 
     _plot_vertices(k, layout, with_labels=with_labels, ax=ax)
@@ -687,15 +707,6 @@ def draw_from_layout(k,
     # Set aspect ratio to be equal
     ax.set_aspect('equal', adjustable='box')
 
-    # if save_to_file is not None:
-    #     #DPI = fig.get_dpi()
-    #     #fig.set_size_inches(512.0 / float(DPI), 512.0 / float(DPI))
-    #
-    #     plt.savefig(save_to_file, bbox_inches='tight')
-    # else:
-    #     plt.show()
-
-    # plt.close(fig)
 
 def draw(k, draw_circles=False, with_labels=False, with_title=False):
     """Draw the planar diagram k using Matplotlib.
@@ -717,11 +728,12 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
     if bridges(k) or loops(k):
         print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
         error = True
+        return
 
     # compute the layout
     try:
         circles = circlepack_layout(k)
-        circles = canonically_rotate_layout(circles, 0)
+        #circles = canonically_rotate_layout(circles, 0)
     except ZeroDivisionError:
         print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
         error = True
@@ -744,6 +756,8 @@ def draw(k, draw_circles=False, with_labels=False, with_title=False):
         ax.set_aspect('equal')
         ax.axis("off")
 
+
+
 def export_png(k, filename, draw_circles=False, with_labels=False, with_title=False):
     try:
         plt.close()
@@ -762,32 +776,24 @@ def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=Fa
     :return:
     """
     plt.close()
-    #print(k)
+
 
     pdf = PdfPages(filename)
     warnings = []
     k = [k] if isinstance(k, PlanarDiagram) else k
-    for pd in (tqdm(k, desc="Exporting to pdf", unit="diagrams", disable=not show_progress) if len(k) >= 5 else k):
+    for pd in (Bar(k, comment="exporting to pdf") if len(k) >= 5 else k):
 
-        #print("exporting", pd)
-        #print("Exporting", to_pd_notation(pd))
-        #if bridges(pd) or loops(pd):
+        # print(pd)
+        # print(kp.to_pd_notation(pd))
         if loops(pd):
             warnings.append(f"Skipped drawing {pd}, since drawing loops or bridges in not yet supported.")
             continue
-        # print(pd)
-        # print(to_pd_notation(pd))
-
-
 
         draw(pd,
              draw_circles=draw_circles,
              with_labels=with_labels,
              with_title=with_title)
 
-
-
-        #plt.show()
         pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
         plt.close()
 
@@ -803,6 +809,30 @@ def export_pdf(k, filename, draw_circles=False, with_labels=False, with_title=Fa
 
 
 if __name__ == '__main__':
+
+    from knotpy import from_pd_notation
+    import random
+
+
+    # EXAMPLE: draw non-perfect layout
+    s = "[[1,13,2,12],[3,9,4,8],[5,1,6,14],[7,10,8,11],[9,3,10,2],[11,6,12,7],[13,5,14,4]]"
+    k = from_pd_notation(s)
+    print(k)
+
+    # case 1: draw from perfect
+    # draw(k, draw_circles=True)
+
+    # case 2: draw from non-perfect
+    l = circlepack_layout(k)
+    # pertube the circles
+    for key, circle in l.items():
+        l[key] = Circle(center=circle.center, radius=circle.radius * (1-random.uniform(-0.3, 0.3)))
+    # try to draw from the approximate layout (circles do not touch, circles overlap)
+    draw_from_layout(k, l, draw_circles=True)
+    kp.plt.show()
+    exit()
+
+
     """
     
     

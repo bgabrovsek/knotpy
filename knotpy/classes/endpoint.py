@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import field
 from typing import Hashable
 
 from knotpy.utils.decorators import total_ordering_from_compare
@@ -35,7 +35,7 @@ class Endpoint:
     def __hash__(self):
         return hash((type(self), self.attr.get("color", None), self.node, self.position))
 
-    def compare(self, other, compare_attributes=False):
+    def _compare(self, other, compare_attributes=False):
 
         # compare types
         if type(self) is Endpoint and (type(other) is IngoingEndpoint or type(other) is OutgoingEndpoint):

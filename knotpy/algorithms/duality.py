@@ -11,13 +11,31 @@ from copy import deepcopy
 from itertools import combinations, permutations
 
 import knotpy as kp
-from knotpy.algorithms.node_operations import name_for_new_node
+from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.equivalence import EquivalenceRelation
 from knotpy.classes.node import Vertex
 
+# TODO: write test
+
 def dual_planar_diagram(k: PlanarDiagram) -> PlanarDiagram:
+    """
+    Generates the dual of a given planar diagram by transforming its structure such
+    that nodes of the dual correspond to faces in the original diagram, and edges
+    represent adjacency relationships between those faces.
+
+    The function takes a `PlanarDiagram` object, constructs its dual by iterating
+    through its faces and endpoints, and establishes the adjacency relationships
+    in the dual. The dual diagram's name is updated to reflect its dual nature
+    if the original diagram has a name.
+
+    Args:
+        k (PlanarDiagram): The planar diagram whose dual is to be generated.
+
+    Returns:
+        PlanarDiagram: The dual planar diagram of the given input diagram.
+    """
     dual = PlanarDiagram()
     faces = list(k.faces)
     ep_face_dict = {ep: face for face in faces for ep in face}

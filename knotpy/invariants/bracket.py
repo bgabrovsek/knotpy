@@ -9,7 +9,7 @@ See Louis H. Kauffman, State models and the Jones polynomial. Topology 26 (1987)
 
 __all__ = ['bracket_polynomial', "kauffman_bracket_skein_module"]
 __version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@fs.uni-lj.si>'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from sympy import Expr, expand, Integer, symbols, Symbol
 from collections import deque
@@ -19,15 +19,12 @@ from knotpy.invariants.writhe import writhe, forced_writhe
 from knotpy.algorithms.orientation import unoriented
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import all_orientations
-from knotpy.algorithms.structure import is_knot, is_planar_graph
+from knotpy.algorithms.topology import is_knot, is_planar_graph, is_empty_diagram
 from knotpy.algorithms.disjoint_sum import number_of_unknots, remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
-from knotpy.reidemeister.simplification import simplify_crossing_reducing
+from knotpy.reidemeister.simplify import simplify_crossing_reducing
 from knotpy.invariants.cache import Cache
-from knotpy.algorithms.detect_diagram_type import is_empty_diagram
-
-
 
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 

@@ -4,6 +4,10 @@ __author__ = 'Boštjan Gabrovšek'
 
 
 class EquivalenceRelation(dict):
+    """
+    TODO: remove and use DSU (disjoint set union), since it has the same functionality
+
+    """
     """Partitions a set of objects into equivalence classes.
     Each key/item of the dictionary is the object and the values are sets that represent the class"""
     def __init__(self, iterable=None):

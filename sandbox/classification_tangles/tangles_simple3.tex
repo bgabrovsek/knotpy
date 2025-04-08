@@ -1,0 +1,44 @@
+\documentclass[sn-mathphys-num]{sn-jnl}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\setlength{\textwidth}{6.5in}   % Adjusts text width
+\setlength{\textheight}{9in}    % Adjusts text height
+\setlength{\oddsidemargin}{0in} % Adjusts left margin
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}  % Adjusts top margin
+
+\newcommand{\T}[3]{
+\begin{minipage}{2cm}
+\begin{tabular}{c}
+\includegraphics[width=\textwidth, page=#1]{tangles-simple.pdf}\\
+{\small\ensuremath{#2}}\\
+{\small\ensuremath{#3}}
+\end{tabular}
+\end{minipage}
+}
+
+\begin{document}
+
+
+\subsection*{Tangles 1 -- 10 (no loops)}
+
+\begin{tabular}{ccccc}
+\T{1}{0}{\mathfrak{0}} &
+\T{2}{1}{\mathfrak{1}} &
+\T{3}{2}{z \rho} &
+\T{4}{3}{z \rho} &
+\T{5}{2\,1}{z \rho}
+\\
+\T{6}{4}{z \rho} &
+\T{7}{3\,1}{z \rho} &
+\T{8}{2\,2}{z \rho} &
+\T{9}{2\,1\,1}{z \rho} &
+\T{10}{5}{z \rho}
+\\
+\end{tabular}
+
+\newpage
+
+
+\end{document}

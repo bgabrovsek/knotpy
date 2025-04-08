@@ -4,6 +4,8 @@ from knotpy.classes.endpoint import Endpoint
 
 
 def copy_and_move_arc(k: PlanarDiagram, arc_dicts: list):
+    # TODO: obsolete, remove this function (fix places where needed)
+
     """Creates a new arc for each dictionary in the list arc_dicts. A new arc is represented by a dictionary
     {old_endpoint_1: new_endpoint_1, old_endpoint_2: new_endpoint_2}.
 

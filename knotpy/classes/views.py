@@ -34,6 +34,7 @@ class NodeView(Mapping, Set):
         return len(self._nodes)
 
     def __iter__(self):
+        # TODO: convert to generator, not iterator
         return iter(self._nodes)
 
     def __getitem__(self, key):
@@ -98,6 +99,7 @@ class FilteredNodeView(NodeView):
         return len(list(filter(self._filter, self._nodes)))  # slow
 
     def __iter__(self):
+        # TODO: convert to generator, not iterator
         return iter(filter(self._filter, self._nodes))
 
     def __getitem__(self, key):
@@ -143,6 +145,7 @@ class EndpointView(NodeView):
         return sum(len(node) for node in self._nodes)
 
     def __iter__(self):
+        # TODO: convert to generator, not iterator
         return chain(*self._nodes.values())
 
     def __getitem__(self, key):
@@ -187,25 +190,55 @@ class EndpointView(NodeView):
 
 
 class ArcView(NodeView):
+    """ Provides a view for arcs of a planar graph.
+
+    The `ArcView` class is designed to provide an interface for accessing and manipulating arcs in a graph.
+    It implements methods to traverse and inspect arcs, ensuring proper handling of graph structures.
+    """
 
     # Mapping methods
     def __len__(self):
-        return sum(len(node) for node in self._nodes) // 2
+        """
+        Return the number of arcs in the graph.
+
+        Returns:
+            int: The total number of edges present in the graph.
+        """
+        return sum(len(self._nodes[node]) for node in self._nodes) // 2
 
     def __iter__(self):
+        """
+        Returns an iterator object for iterating over arcs stored in the node structure.
 
-        self._iter_endpoints = iter(chain(*self._nodes.values()))
-        self._visited_endpoints = set()
-        return self
+        Each call to __iter__ will return a fresh iterator independent of others.
+        """
+        visited_endpoints = set()
+        iter_endpoints = iter(chain(*self._nodes.values()))
 
-    def __next__(self):
-        while True:
-            endpoint = next(self._iter_endpoints)  # can raise StopIteration
-            if endpoint not in self._visited_endpoints:
+        for endpoint in iter_endpoints:
+            if endpoint not in visited_endpoints:
                 adjacent_endpoint = self._nodes[endpoint.node][endpoint.position]
-                self._visited_endpoints.add(adjacent_endpoint)
-                #if endpoint not in self._visited_endpoints:
-                return frozenset((adjacent_endpoint, endpoint))
+                visited_endpoints.add(adjacent_endpoint)
+                yield frozenset((adjacent_endpoint, endpoint))
+
+    # def __next__(self):
+    #     """
+    #     Returns the next unique arc (endpoint pair) encapsulated as a frozenset.
+    #
+    #     Raises:
+    #         StopIteration: If the underlying iterator runs out of endpoints.
+    #
+    #     Returns:
+    #         frozenset: A frozen set containing the arc (unique pair of endpoints),
+    #         including the given endpoint and its adjacent endpoint.
+    #     """
+    #     while True:
+    #         endpoint = next(self._iter_endpoints)  # Can raise StopIteration
+    #         if endpoint not in self._visited_endpoints:
+    #             adjacent_endpoint = self._nodes[endpoint.node][endpoint.position]
+    #             self._visited_endpoints.add(adjacent_endpoint)  # We do not need to add endpoint, since it is already transversed
+    #             #if endpoint not in self._visited_endpoints:
+    #             return frozenset((adjacent_endpoint, endpoint))  # Reverse, since the iterator starts with adjacent endpoints
 
     def __getitem__(self, key):
         """If key is an Endpoints, it returns the arc that the endpoints belong to.
@@ -251,6 +284,18 @@ class ArcView(NodeView):
 
 
 class FaceView(NodeView):
+    """
+    Represents a view of the faces of a planar graph.
+
+    A face (region, are) is a sequence of endpoints. Given a face on the plane, a face is given by the target (second)
+    endpoint when travelling around the face in a CCW faction.
+
+    Provides methods for iterating over, accessing, and representing the
+    faces of the graph calculated based on the sphere's Euler characteristic.
+    A `NodeView` serves as the underlying structure from which this class
+    derives its functionality.
+
+    """
 
     # Mapping methods
     def __len__(self):
@@ -260,6 +305,7 @@ class FaceView(NodeView):
         return 2 - number_of_nodes + number_of_arcs
 
     def __iter__(self):
+        # TODO: convert to generator, not iterator
         # return map(lambda ep: (self._nodes[ep.node][ep.position], ep), chain(*self._nodes.values()))
         endpoints = set(chain(*self._nodes.values()))
         self._unused_endpoints = set(endpoints)

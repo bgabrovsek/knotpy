@@ -7,7 +7,7 @@ sys.path.insert(0, '../../knotpy')
 
 import knotpy as kp
 from knotpy import SpatialGraph, from_pd_notation, to_pd_notation
-from knotpy.algorithms.structure import edges
+from knotpy.algorithms.topology import edges
 from knotpy import export_pdf, draw
 from knotpy.notation.native import to_knotpy_notation
 

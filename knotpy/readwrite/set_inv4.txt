@@ -1,3 +1,0 @@
-Name;CEM notation;jones;homflypt
-3_1;b1c0c3b2,c1a0a3c2,a1b0b3a2;-t**7 + t**6 - t**5 + t**4 + t**2;v**2 - z**2 - 1 + v**(-2)
-4_1;c3d0b3b2,d3c0a3a2,b1d2d1a0,a1c2c1b0;-t**4 + t**3 + t;-v**6*z**2 - 2*v**6 + v**4*z**4 + 4*v**4*z**2 + 3*v**4

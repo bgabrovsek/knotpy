@@ -5,19 +5,19 @@ from knotpy.notation.native import from_knotpy_notation
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.node.vertex import Vertex
-from knotpy.algorithms.structure import edges
+from knotpy.algorithms.topology import edges
 from knotpy.algorithms.orientation import all_orientations
-import knotpy.algorithms.structure as structure
+
 import knotpy.algorithms.orientation as orientation
 from knotpy.notation.native import to_knotpy_notation
 from knotpy import export_pdf, draw
-from knotpy.classes.node.bond import Bond
+#from knotpy.classes.node.bond import Bond
 from knotpy.reidemeister.phantom import (insert_phantom_node,
                                          insert_phantom_nodes_on_internal_arcs)
 from knotpy.reidemeister.elementary import copy_and_move_arc
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from copy import deepcopy
-from knotpy.algorithms.structure import cut_vertices
+from knotpy.algorithms.cut_set import cut_vertices
 
 data_folder = Path("data")
 txt_input_file = data_folder / 'bonded-simple-oriented.txt'

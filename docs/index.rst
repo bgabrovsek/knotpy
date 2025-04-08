@@ -6,7 +6,7 @@ visualizing and studying knots, links, virtual links, knotoids, planar
 graphs and spatial graphs.
 
 -  **Website (including documentation):** https://bgabrovsek.github.io/knotpy/
--  **Author:** Boštjan Gabrovšek bostjan.gabrovsek@fs.uni-lj.si
+-  **Author:** Boštjan Gabrovšek bostjan.gabrovsek@pef.uni-lj.si
 -  **Publisher:** self-published by Boštjan Gabrovšek
 
 License

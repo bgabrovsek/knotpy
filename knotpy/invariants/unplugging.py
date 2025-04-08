@@ -8,7 +8,23 @@ from random import choice
 from itertools import combinations
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.node_operations import unplug
+
+def _unplug(k: PlanarDiagram, node, unplug_endpoint_positions):
+    """Unplug endpoints from the node.
+    :param k: Planar diagram
+    :param node: the node to unplug endpoints
+    :param unplug_endpoint_positions: positions/indices to be unplugged
+    :return:
+    """
+
+    unplug_endpoint_positions = sorted(unplug_endpoint_positions)
+    while unplug_endpoint_positions:
+        position = unplug_endpoint_positions.pop()  # remove (last) endpoint at index
+        # create new leaf node
+        new_node = name_for_new_node(k)
+        k.add_node(node_for_adding=new_node, create_using=Vertex, degree=1)
+        replug_endpoint(k, source_endpoint=(node, position), destination_endpoint=(new_node, 0))
+
 
 def unplugging(k: PlanarDiagram):
     """Computes the "unplugging" invariant T.
@@ -38,7 +54,7 @@ def unplugging(k: PlanarDiagram):
         for p in combinations(range(deg), 2):
             # p=(i,j) are plugged nodes, i.e. keep v[i] and v[j] plugged, remove the rest of the endpoints
             unplug_k = k.copy()
-            unplug(unplug_k, node=v, unplug_endpoint_positions=set(range(deg)) - set(p))
+            _unplug(unplug_k, node=v, unplug_endpoint_positions=set(range(deg)) - set(p))
             stack.append(unplug_k)
 
     return constituent_knots

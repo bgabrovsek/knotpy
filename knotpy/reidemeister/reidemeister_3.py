@@ -1,27 +1,31 @@
-from itertools import product, chain
+from itertools import chain
 from random import choice
 
-from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
-from knotpy.sanity import sanity_check
+from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
-
-_CHECK_SANITY = False
-
-
-class ReidemeisterLocationThree(ReidemeisterLocation):
-    """ Class that stores a position where a  Reidemeister 3 move can be performed."""
-    def __init__(self, face):
-        self.face = face  # a face that contains three endpoints
-        self.color = None  # if color is given, then the arcs involved in the moves will be colored
-
-    def __str__(self):
-        return "R3 " + str(self.face)
 
 
 def find_reidemeister_3_triangle(k):
-    """A generator that yields triangular faces where Reidemeister III moves can be performed.
-    :param k: planar diagram
-    :return: yields a non-alternating triangles
+    """
+    Finds all faces in the given knot diagram `k` that represent a valid
+    Reidemeister III triangle.
+
+    This function iterates over all faces of the knot diagram `k` and identifies
+    those triangular faces that satisfy criteria for being valid Reidemeister III
+    configurations. The validity is determined by checking the face's structure
+    and the associated properties of the crossings in the knot diagram.
+
+    Args:
+        k: The knot diagram object containing faces and nodes. Each face is a
+           sequence of endpoints, and endpoints reference nodes within the diagram.
+           Nodes can either be crossings or other entities relevant in the knot diagram.
+
+    Yields:
+        list of Endpoint: The triangular face endpoints representing a valid
+        Reidemeister III triangle. A face is yielded only if:
+            - It contains exactly three nodes.
+            - All three nodes are crossings.
+            - The positional parity of the nodes does not all match.
     """
     # TODO: make faster by not iterating over all regions
     for face in k.faces:
@@ -30,31 +34,60 @@ def find_reidemeister_3_triangle(k):
 
         if all(type(k.nodes[ep.node]) is Crossing for ep in face) and \
                 not (face[0].position % 2 == face[1].position % 2 == face[2].position % 2):
-            yield ReidemeisterLocationThree(face)
+            yield face
 
 def choose_reidemeister_3_triangle(k, random=False):
-    """Returns a (random) face where a Reidemeister 3 move can be performed.
-    :param k: planar diagram
-    :param random: if True, the function returns a random face, otherwise it returns the first face is finds
-    :return: a triangular face
     """
+    Returns a (random) face where a Reidemeister 3 move can be performed.
+
+    This function identifies a face in a planar diagram `k` where a Reidemeister 3
+    move can be executed. If `random` is set to `True`, the function selects a
+    random triangular face from the potential candidates. Otherwise, it returns
+    the first triangular face found.
+
+    Args:
+        k: The planar diagram on which to find a triangular face for
+            performing a Reidemeister 3 move.
+        random: Specifies whether to select a random face (True) or the first
+            face found (False).
+
+    Returns:
+        The selected triangular face where a Reidemeister 3 move can be
+        performed, or None if no such face exists.
+    """
+
     if random:
         return choice(tuple(find_reidemeister_3_triangle(k)))
     else:
         return next(find_reidemeister_3_triangle(k), None)  # select 1st item
 
 
-def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
-    """Perform a Reidemeister III move on a non-alternating triangular region.
-    :param k: planar diagram
-    :param location: ReidemeisterLocationThree object
-    :param inplace: If True, modify the current instance.
-                    If False, return a new instance with the modified value.
-    :return:
+def reidemeister_3(k, face, inplace=False):
     """
-    DEBUG = False
+    Perform a Reidemeister III move on a non-alternating triangular region of a
+    planar diagram. This function modifies the topology of the triangular region
+    by updating endpoints of arcs and crossings accordingly. The operation can
+    either be performed in place or on a copied instance of the planar diagram.
 
-    if DEBUG: print("R3", k, location)
+    Args:
+        k: The planar diagram object representing the knot or link diagram.
+        face: A ReidemeisterLocationThree object representing a non-alternating
+            triangular region to apply the move. This is a tuple of three endpoints,
+            where each endpoint is represented as a tuple containing the node and
+            the position within that node.
+        inplace: Whether to perform the operation in place on the current instance
+            of the planar diagram (True) or to create and modify a copied instance
+            (False). Defaults to False.
+
+    Raises:
+        ValueError: If the planar diagram is oriented since oriented Reidemeister
+            III moves are not supported.
+
+    Returns:
+        The planar diagram after performing the Reidemeister III move. If `inplace`
+        is False, a new planar diagram instance with the modification is returned;
+        otherwise, the modified diagram is returned.
+    """
 
     if k.is_oriented():
         raise ValueError("Oriented not yet supported")
@@ -62,12 +95,10 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
     if not inplace:
         k = k.copy()
 
-    # if len(region) != 3:
-    #     raise ValueError(f"Cannot perform an Reidemeister III move on a region of length {len(region)}.")
-
-    node_a, pos_a = location.face[0]
-    node_b, pos_b = location.face[1]
-    node_c, pos_c = location.face[2]
+    ep_a, ep_b, ep_c = face
+    node_a, pos_a = ep_a
+    node_b, pos_b = ep_b
+    node_c, pos_c = ep_c
     area_nodes = {node_a, node_b, node_c}
 
     # redirect endpoints on arcs inside the area
@@ -112,15 +143,11 @@ def reidemeister_3(k, location:ReidemeisterLocationThree, inplace=False):
             **k.nodes[dst_ep[0]][dst_ep[1]].attr  # use old type of attributes
         )
 
-    # save the nodes where the R3 was made to the planar diagram (optional)
+    # mark the nodes where the R3 was made to the planar diagram (optional)
     # this is needed when performing multiple R3 moves, so we do not repeat (undo) the moves
-    k.attr["_r3"] = area_nodes
 
-    if _CHECK_SANITY:
-        try:
-            sanity_check(k)
-        except:
-            print("Not sane after R3:", k)
-            sanity_check(k)
+    for r_node in area_nodes:
+        k.nodes[r_node].attr["_r3"] = True
+
 
     return k

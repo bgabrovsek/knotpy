@@ -1,74 +1,68 @@
-from itertools import product, combinations
+from itertools import combinations
 from random import choice
 
-from knotpy.reidemeister._abstract_reidemeister_location import ReidemeisterLocation
 from knotpy.classes import PlanarDiagram
-from knotpy.algorithms.structure import kinks
 from knotpy.algorithms.disjoint_sum import add_unknot
-from knotpy.sanity import sanity_check
+from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.node_operations import name_for_new_node
-
-_DEBUG_REID = False
-_CHECK_SANITY = False
-
-
-class ReidemeisterLocationUnpoke(ReidemeisterLocation):
-    def __init__(self, face):
-        if face[0].position % 2 == 0 and face[0].position % 2 == 1:
-            self.endpoint_under, self.endpoint_over = face
-        else:
-            self.endpoint_over, self.endpoint_under = face
-
-        self.color = None  # if color is given, then the arcs involved in the moves will be colored
-
-    def __str__(self):
-        return "Unpoke " + str(self.endpoint_under) + str(self.endpoint_over)
-
-
-class ReidemeisterLocationPoke(ReidemeisterLocation):
-    def __init__(self, endpoint_under, endpoint_over):
-        self.endpoint_under = endpoint_under
-        self.endpoint_over = endpoint_over
-        self.color = None  # if color is given, then the arcs involved in the moves will be colored
-
-    def __str__(self):
-        return "Poke " + str(self.endpoint_under) + str(self.endpoint_over)
-
+from knotpy.algorithms.naming import unique_new_node_name
 
 def find_reidemeister_2_unpoke(k: PlanarDiagram):
-    """An iterator (generator) over bigon areas/regions that enable us to unpoke (Reidemeister II move). (to reduce the
-    number of crossings by 2)
-    The areas contain the two endpoints that define it.
-    :param k: planar diagram
-    :return: an iterator (generator) over poke faces
+    """
+    Iterates through the planar diagram to identify bigon regions that allow unpoking via a
+    Reidemeister II move, reducing the number of crossings by two.
+
+    Args:
+        k (PlanarDiagram): The planar diagram to evaluate for Reidemeister II faces to unpoke.
+
+    Yields:
+        ReidemeisterLocationUnpoke: An object representing the location of a
+            Reidemeister II unpoke in the planar diagram.
     """
     # loop through all faces and yield bigons with same position parity
     for face in k.faces:
         if (len(face) == 2 and
                 all(isinstance(k.nodes[ep.node], Crossing) for ep in face) and
                 face[0].position % 2 != face[1].position % 2):
-            yield ReidemeisterLocationUnpoke(face)
+            yield face
 
 
 def find_reidemeister_2_poke(k: PlanarDiagram):
-    """A reidemeister poke position is the pair (over endpoint, under endpoint), where both endpoints lie in the same face.
-    :param k:
-    :return: generator over pairs of endpoints
     """
+    Identifies and generates all possible Reidemeister 2 poke positions within a given planar diagram. A Reidemeister
+    poke position denotes a distinct pair of endpoints (over endpoint, under endpoint), both of which reside in the
+    same face of the planar diagram. These poke positions are used for Reidemeister 2 transformations.
+
+    Args:
+        k (PlanarDiagram): A planar diagram object representing the knot or link.
+
+    Returns:
+        Generator[Tuple[Any, Any], None, None]: A generator yielding tuples, where each tuple represents a pair
+        of endpoints (over endpoint, under endpoint) for Reidemeister 2 poke positions.
+    """
+
     for face in k.faces:
-        for ep_over, ep_under in combinations(face, 2):
-            yield ReidemeisterLocationPoke(ep_over, ep_under)
-            yield ReidemeisterLocationPoke(ep_under, ep_over)  # switch over/under
+        for ep_under, ep_over in combinations(face, 2):
+            yield ep_under, ep_over
+            yield ep_over, ep_under   # switch over/under
 
 
 
 def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
     """
-    :param k: planar diagram
-    :param random: if True, the function returns a random ..., otherwise it returns the first ... is finds
-    :return: ... or None
+    Chooses a Reidemeister 2 unpoke move that can be applied to a planar diagram. The function searches
+    for possible moves and either selects a random one if specified or returns the first move it
+    finds. If no moves are applicable, the function returns None.
+
+    Args:
+        k (PlanarDiagram): The planar diagram on which the Reidemeister 2 unpoke move is to be
+            applied.
+        random (bool): If True, selects a random valid move from the available options. If False,
+            returns the first move found.
+
+    Returns:
+        Optional[ReidemeisterMove]: A valid Reidemeister 2 unpoke move if available, otherwise None.
     """
     if random:
         return choice(tuple(find_reidemeister_2_unpoke(k)))
@@ -79,9 +73,19 @@ def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
 
 def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
     """
-    :param k: planar diagram
-    :param random: if True, the function returns a random ..., otherwise it returns the first ... is finds
-    :return: ... or None
+    Selects a Reidemeister 2 poke from a given planar diagram, either the first
+    available or a random one based on the specified parameter.
+
+    Args:
+        k (PlanarDiagram): The planar diagram to be analyzed for possible
+            Reidemeister 2 pokes.
+        random (bool): If True, the function will return a random Reidemeister 2
+            poke. If False, the function will return the first Reidemeister 2 poke
+            found. Defaults to False.
+
+    Returns:
+        Optional[Any]: Returns the selected Reidemeister 2 poke, either random or
+        the first available one. Returns None if no Reidemeister 2 poke is found.
     """
     if random:
         return choice(tuple(find_reidemeister_2_poke(k)))
@@ -89,25 +93,36 @@ def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
         return next(find_reidemeister_2_poke(k), None)  # select 1st item
 
 
-def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke, inplace=False):
-    """Perform a unpoke (Reidemeister type II move) on the endpoints that define a bigon poke region.
-        :param k: knotted planar diagram object
-        :param location: a list of the two endpoints of the poke region
-        :param inplace: If True, modify the current instance.
-                    If False, return a new instance with the modified value.
+def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
+    """
+    Perform a Reidemeister type II "unpoke" operation on a planar diagram.
 
-        :return: knot k with two fewer crossings
-        """
+    This function modifies a planar diagram by unpoking the endpoints that form
+    a bigon poke region. The operation reduces the number of crossings in the
+    diagram by two and adjusts the corresponding endpoints and arcs. This function
+    can either modify the diagram in place or return a modified copy of the diagram,
+    depending on the arguments provided.
+
+    Args:
+        k (PlanarDiagram): The planar diagram object representing the knot to be
+            modified.
+        face: The face of the planar diagram where the unpoke operation is to be
+            performed.
+        inplace (bool, optional): If True, the operation modifies the original diagram.
+            If False, a new diagram is returned with the unpoke applied.
+
+    Returns:
+        PlanarDiagram: The planar diagram after applying the Reidemeister type II
+            unpoke operation.
+    """
+
+    # TODO: the code below is cumbersome, replace by inserting phantom temporary bi-vertices
 
     if not inplace:
         k = k.copy()
 
-    ep_a, ep_b = location.endpoint_under, location.endpoint_over
+    ep_a, ep_b = face
     twin_a, twin_b = k.twin(ep_a), k.twin(ep_b)
-
-
-    DEBUG = _DEBUG_REID or False
-    if DEBUG: print("R2 unpoke", k, ep_a, ep_b)
 
 
     # were instances or tuples provided?
@@ -128,8 +143,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
     k.remove_node(ep_a.node, remove_incident_endpoints=False)
     k.remove_node(ep_b.node, remove_incident_endpoints=False)
 
-    if DEBUG:
-        print("a", ep_a, "b", ep_b, "ta", twin_a, "tb",twin_b, "ja", jump_a, "jb", jump_b,  "tja",twin_jump_a, "tjb", twin_jump_b, "jta", jump_twin_a, "jtb", jump_twin_b, "tjta", twin_jump_twin_a, "tjtb", twin_jump_twin_b)
+    # print("a", ep_a, "b", ep_b, "ta", twin_a, "tb",twin_b, "ja", jump_a, "jb", jump_b,  "tja",twin_jump_a, "tjb", twin_jump_b, "jta", jump_twin_a, "jtb", jump_twin_b, "tjta", twin_jump_twin_a, "tjtb", twin_jump_twin_b)
 
 
     def _set_arc(a:Endpoint, b:Endpoint):
@@ -167,13 +181,6 @@ def reidemeister_2_unpoke(k: PlanarDiagram, location: ReidemeisterLocationUnpoke
         _set_arc(twin_jump_twin_a, twin_jump_a)
         _set_arc(twin_jump_twin_b, twin_jump_b)
 
-    if _CHECK_SANITY:
-        try:
-            sanity_check(k)
-        except:
-            print("Not sane after poke:", k)
-            sanity_check(k)
-
     return k
 
 def _reversed_endpoint_type(ep):
@@ -186,17 +193,32 @@ def _reversed_endpoint_type(ep):
     raise TypeError()
 
 
-def reidemeister_2_poke(k: PlanarDiagram, location: ReidemeisterLocationPoke, inplace=False):
+def reidemeister_2_poke(k: PlanarDiagram, under_over_endpoints, inplace=False):
     """
-    :param k:
-    :param location:
-    :param inplace: If True, modify the current instance.
-                    If False, return a new instance with the modified value.
+    Performs a Reidemeister type II poke operation on a given planar diagram, updating the
+    diagram with new crossings and endpoints according to the operation.
 
-    :return:
+    This function modifies a planar diagram by introducing two crossings and reconnecting
+    endpoints as specified by the over-under relationship of the endpoints provided.
+    The `inplace` flag determines whether the operation modifies the original diagram object
+    or works on a copied version.
+
+    Args:
+        k (PlanarDiagram): The planar diagram on which the poke operation will be performed.
+        under_over_endpoints (tuple): A tuple containing two endpoints (one "under" and one "over"),
+            which determine the nature of the Reidemeister II poke.
+        inplace (bool, optional): If True, the operation modifies the original diagram `k`. If
+            False, a modified copy of `k` is returned. Defaults to False.
+
+    Returns:
+        PlanarDiagram: The modified planar diagram after performing the Reidemeister II poke.
+
+    Raises:
+        TypeError: If `k` is not an instance of `PlanarDiagram`.
+        TypeError: If `over_under_endpoints` does not contain valid `Endpoint` instances.
     """
 
-    DEBUG = _DEBUG_REID or False
+    endpoint_under, endpoint_over = under_over_endpoints
 
 
     if not inplace:
@@ -205,35 +227,26 @@ def reidemeister_2_poke(k: PlanarDiagram, location: ReidemeisterLocationPoke, in
     if not isinstance(k, PlanarDiagram):
         raise TypeError(f"Cannot add poke in instance of type {type(k)}")
 
-    if not isinstance(location.endpoint_over, Endpoint) or not isinstance(location.endpoint_under, Endpoint):
-        raise TypeError(f"Cannot add poke in endpoints of type {type(location.endpoint_over)} and {type(location.endpoint_under)}.")
+    if not isinstance(endpoint_over, Endpoint) or not isinstance(endpoint_under, Endpoint):
+        raise TypeError(f"Cannot add poke in endpoints of type {type(endpoint_over)} and {type(endpoint_under)}.")
 
-
-    if DEBUG: print("R2 poke kink", k, location.endpoint_over, location.endpoint_under)
 
 
     # get endpoint instances and their twins
-    twin_o_node, twin_o_pos = twin_o = k.twin(location.endpoint_over)
-    twin_u_node, twin_u_pos = twin_u = k.twin(location.endpoint_under)
+    twin_o_node, twin_o_pos = twin_o = k.twin(endpoint_over)
+    twin_u_node, twin_u_pos = twin_u = k.twin(endpoint_under)
     ep_o_node, ep_o_pos = ep_o = k.twin(twin_o)  # get instance of endpoint_over
     ep_u_node, ep_u_pos = ep_u = k.twin(twin_u)  # get instance of endpoint_under
-
-    if DEBUG:
-        print("Over", location.endpoint_over, "twin", twin_o, "under", location.endpoint_under, "twin", twin_u)
 
     # get types (endpoint or ingoing/outgoing endpoint)
     type_o, rev_o = type(ep_o), _reversed_endpoint_type(ep_o)
     type_u, rev_u = type(ep_u), _reversed_endpoint_type(ep_u)
 
     # create two new crossings
-    node_e = name_for_new_node(k)
+    node_e = unique_new_node_name(k)
     k.add_crossing(node_e)
-    node_f = name_for_new_node(k)
+    node_f = unique_new_node_name(k)
     k.add_crossing(node_f)
-
-
-    if DEBUG:
-        print("Over", location.endpoint_over, "twin", twin_o, "under", location.endpoint_under, "twin", twin_u, "new nodes", node_e, node_f)
 
 
     # a poke on one arc
@@ -263,21 +276,6 @@ def reidemeister_2_poke(k: PlanarDiagram, location: ReidemeisterLocationPoke, in
     else:
         k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(node_f, 3), create_using=rev_u)
         k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(node_e, 0), create_using=rev_o)
-
-    # color newly created poke
-    if location.color is not None:
-        for face in k.faces:
-            if len(face) == 2 and {face[0].node, face[1].node} == {node_e, node_f}:
-                face[0].attr["color"] = location.color
-                face[1].attr["color"] = location.color
-                k.twin(face[0]).attr["color"] = location.color
-                k.twin(face[1]).attr["color"] = location.color
-    if _CHECK_SANITY:
-        try:
-            sanity_check(k)
-        except:
-            print("Not sane after poke:", k)
-            sanity_check(k)
 
 
     return k

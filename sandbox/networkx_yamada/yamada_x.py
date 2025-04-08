@@ -4,6 +4,9 @@ from copy import deepcopy
 import math
 from collections import defaultdict, deque
 
+from  knotpy.algorithms.topology import edges
+
+
 def parse_pd(s):
     """Parse planar diagram to networkx graph"""
     G = nx.MultiGraph()
@@ -29,7 +32,7 @@ def yamada(G, var):
     stack.append((1, G))  # "1 * G"
     polynomial = 0
 
-    def get_edge(label): return [e for e in G.edges if G.edges[e[0], e[1], e[2]]["label"] == label][0]
+    def get_edge(label): return [e for e in knotpy.algorithms.topology.edges.edges if knotpy.algorithms.topology.edges.edges[e[0], e[1], e[2]]["label"] == label][0]
     def reattach(edge, u, v): return (v, edge[1]) if edge[0] == u else (edge[0], v)  # edge with node u to edge with v
 
     while stack:
@@ -82,7 +85,7 @@ def yamada(G, var):
             continue
 
         # normal edges
-        if edges := [e for e in G.edges if e[0] != e[1]]:
+        if edges := [e for e in knotpy.algorithms.topology.edges.edges if e[0] != e[1]]:
             e = edges[0]  # select an edge
             C = nx.contracted_edge(G, e)
             C.remove_edge(e[0], e[0])
@@ -91,7 +94,7 @@ def yamada(G, var):
             stack.append((poly, C))
             continue
 
-        polynomial -= poly * (-var - 1 - 1/var)**len(G.edges)
+        polynomial -= poly * (-var - 1 - 1/var)**len(knotpy.algorithms.topology.edges.edges)
     return polynomial
 
 A = symbols("A")

@@ -14,10 +14,11 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.drawing.circlepack import CirclePack
 from knotpy.utils.geometry import Circle
 from knotpy.algorithms.components_link import number_of_link_components
-from knotpy.algorithms.structure import bridges, loops, kinks
+from knotpy import loops, kinks, bridges
 from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
 from knotpy.notation.native import to_knotpy_notation
-from knotpy.algorithms.structure import insert_arc
+#from knotpy.algorithms.structure import insert_arc
+from knotpy.manipulation.insert import insert_arc
 
 
 #__all__ = ['draw', 'export_pdf', "circlepack_layout"]
@@ -90,11 +91,11 @@ def circlepack_layout(k):
     """
 
 
-    if len([kinks(k)]):
+    if kinks(k):
         ValueError(f"Cannot plot diagram {k}, since it contains a kink.")
-    if len(loops(k)):
+    if loops(k):
         ValueError(f"Cannot plot diagram {k}, since it contains a loop.")
-    if len(bridges(k)):
+    if bridges(k):
         ValueError(f"Cannot plot diagram {k}, since it contains a bridge.")
     if number_of_disjoint_components(k) > 1:
         ValueError(f"Cannot plot diagram {k}, since it contains disjoint components.")

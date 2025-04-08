@@ -3,9 +3,8 @@ import itertools as it
 
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.structure import edges
+from knotpy.algorithms.topology import edges
 from knotpy.algorithms.orientation import all_orientations
-import knotpy.algorithms.structure as structure
 import knotpy.algorithms.orientation as orientation
 from knotpy.notation.native import to_knotpy_notation
 from knotpy import export_pdf, draw
@@ -20,8 +19,8 @@ pdf_output_file_oriented = image_folder / 'bonded-simple-oriented.pdf'
 
 
 def all_orientations_except_bond(k: PlanarDiagram) -> list:
-    edges = list(e for e in structure.edges(k) if all("color" not in ep.attr for ep in e))
-    colored_edge = structure.edges(k, color=1)
+    edges = list(e for e in edges(k) if all("color" not in ep.attr for ep in e))
+    colored_edge = edges(k, color=1)
     orient = list(it.product((True, False), repeat=len(edges)))  # not needed to be a list
 
     knot_candidates = [
