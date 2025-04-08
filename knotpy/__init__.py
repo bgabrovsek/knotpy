@@ -45,5 +45,3 @@ from knotpy.utils import statistics
 
 from knotpy.algorithms.sanity import sanity_check
 
-# from knotpy import builder
-# from knotpy.builder import *

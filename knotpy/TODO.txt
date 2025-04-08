@@ -1,1 +1,0 @@
-1. k.arcs should return frozensets, unless oriented
