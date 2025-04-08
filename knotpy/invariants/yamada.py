@@ -2,6 +2,12 @@
 Compute the Yamada polynomial of a knotted planar diagram.
 The Yamada polynomial is described in
 [Yamada, S. (1989). An invariant of spatial graphs. Journal of Graph Theory, 13(5), 537-551].
+
+Optimizations:
+* precomputed powers of sigma = A + 1 + 1/A,
+* simplification of the knotted graphs mid-computation (reducing crossings via R1 unkinks and R2 unpokes,
+* caching of the Yamada polynomials for planar graphs,
+* caching of the Yamada polynomials for and knotted graphs.
 """
 
 __all__ = ['yamada_polynomial']
@@ -36,7 +42,7 @@ The 'max_key_length' argument limits the number of vertices a graph should have 
 we prefer to store smaller graphs in the cache, since they are more likely to be used.
 Ideal sizes are subject to testing.
 """
-_yamada_planar_graph_cache = Cache(max_cache_size=1000, max_key_length=6)
+_yamada_planar_graph_cache = Cache(max_cache_size=1000, max_key_length=6)  # stores the pre-computed yamada of the planar graphs
 
 """
 Initialize the global cache for the Yamada of knotted graphs.
