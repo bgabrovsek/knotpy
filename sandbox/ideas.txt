@@ -1,2 +1,0 @@
-
-Use graphoid invariants for tangles, by closing the tangle and inserting endpoints.
