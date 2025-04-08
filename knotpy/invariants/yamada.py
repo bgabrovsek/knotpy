@@ -32,7 +32,7 @@ _sigma_power = [Integer(1)]  # this will dynamically expend to consist of [σ^0,
 """
 Initialize the global cache for the Yamada values of planar graphs without crossings.
 Note that the cache takes about 7KB per element, so we need to limit the number of vertices in the cache.
-The 'max_key_length' arguemnt limits the number of vertices a graph should have to be stored in the cache,
+The 'max_key_length' argument limits the number of vertices a graph should have to be stored in the cache,
 we prefer to store smaller graphs in the cache, since they are more likely to be used.
 Ideal sizes are subject to testing.
 """
@@ -41,7 +41,7 @@ _yamada_planar_graph_cache = Cache(max_cache_size=1000, max_key_length=6)
 """
 Initialize the global cache for the Yamada of knotted graphs.
 Note that the cache takes about 7KB per element, so we need to limit the number of vertices in the cache.
-The 'max_key_length' arguemnt limits the number of crossings and vertices a knotted graph should have to 
+The 'max_key_length' argument limits the number of crossings and vertices a knotted graph should have to 
 be stored in the cache, we prefer to store smaller knots in the cache, since they are more likely to be used.
 Ideal sizes are subject to testing.
 """
@@ -61,8 +61,11 @@ def _yamada_from_cache(k: PlanarDiagram) -> Expr:
     """
     global _yamada_cache
 
+    # The coefficient before the state depends on the number of
+    # "A"-smoothings and "B"-smoothing, which we stored in the diagram's attributes.
     coefficient = _A ** (k.attr["_A"] - k.attr["_B"] - 2 * k.framing)
     k = canonical(k)
+    # Clear the attributes, since we do not store them in knots in the cache.
     k.framing = 0
     k.attr["_A"] = k.attr["_B"] = k.attr["_X"] = 0
 
@@ -74,6 +77,8 @@ def _yamada_from_cache(k: PlanarDiagram) -> Expr:
         kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A")
         kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")
         kX = crossing_to_vertex(k, crossing=crossing)
+
+        # Compute the Yamada of the smoothings semi-recursively.
 
         no_crossing_states_A, other_polynomials_A = _state_sum_yamada(kA)
         no_crossing_states_B, other_polynomials_B = _state_sum_yamada(kB)
