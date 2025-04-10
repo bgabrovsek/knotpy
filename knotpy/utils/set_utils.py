@@ -135,6 +135,8 @@ class LeveledSet:
         """
         return iter(self.global_set)
 
+
+
     # def __len__(self):
     #     NotImplementedError()  # ambiguous (number of elements or number of levels)
 

@@ -6,21 +6,22 @@ from functools import partial
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
-from knotpy.reidemeister.space import reidemeister_3_space, detour_space, crossing_non_increasing_space, crossing_reducing_space
+from knotpy.reidemeister.space import reidemeister_3_space, detour_space, crossing_non_increasing_space, \
+    reduce_crossings_greedy, crossing_non_increasing_space_greedy
 from knotpy.reidemeister.reidemeister_1 import reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
 from knotpy.reidemeister.reidemeister_2 import reidemeister_2_unpoke, choose_reidemeister_2_unpoke
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
 from knotpy.algorithms.topology import is_unknot
 
-__all__ = ['simplify', 'simplify_crossing_reducing', 'simplify_smart', 'simplify_brute_force', 'simplify_non_increasing']
+__all__ = ['simplify', 'simplify_crossing_reducing', 'simplify_smart', 'simplify_brute_force', 'simplify_non_increasing', 'simplify_non_increasing_greedy']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 _METHOD_NON_INCREASING = ("nonincreasing","noninc","ni")
+_METHOD_NON_INCREASING_GREEDY = ("nonincreasinggreedy","greedynonincreasing","nonincgreedy","greedynoninc","gni","nig")
 _METHOD_SMART = ("auto","smart")
 _METHOD_BRUTE_FORCE = ("bf","brute","bruteforce","force")
 _METHOD_DECREASING = ("decreasing","reducing", "crossingreducing", "cr")
-
 
 
 
@@ -42,27 +43,11 @@ def simplify_crossing_reducing(k: PlanarDiagram, inplace=False):
         either modified in-place or as a new object if `inplace` is `False`.
     """
 
-    if isinstance(k, (set, tuple, list)):
-        return type(k)(simplify_crossing_reducing(_, inplace=inplace) for _ in k)
-
-    if not inplace:
-        k = k.copy()
-
-    # Repeat R2 moves and R1 moves, until there are no more moves left (a R1 move can reveal an R2 move)
-    while True:
-        if face := choose_reidemeister_2_unpoke(k, random=False):
-            reidemeister_2_unpoke(k, face, inplace=True)
-            continue
-        if ep := choose_reidemeister_1_remove_kink(k, random=False):
-            reidemeister_1_remove_kink(k, ep, inplace=True)
-            continue
-        break
-
-    return k
+    return reduce_crossings_greedy(k, inplace=inplace)
 
 
 
-def simplify_non_increasing(k:PlanarDiagram):
+def simplify_non_increasing(k:PlanarDiagram, show_progress=False):
     """
     Simplifies a planar diagram by attempting all possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
     moves, iteratively. The simplification process halts when no new diagrams are generated during the process.
@@ -78,7 +63,7 @@ def simplify_non_increasing(k:PlanarDiagram):
     if isinstance(k, (set, tuple, list)):
         return type(k)(simplify_non_increasing(_) for _ in k)
 
-    return min(crossing_non_increasing_space(k))
+    return min(crossing_non_increasing_space(k, show_progress=show_progress))
 
     #
     # # Put simplified diagrams in canonical form into level 0
@@ -90,6 +75,21 @@ def simplify_non_increasing(k:PlanarDiagram):
     #     ls.new_level(simplify_non_increasing(ls[-1]))  # add all possible reductions
     # return min(ls)
 
+def simplify_non_increasing_greedy(k:PlanarDiagram, show_progress=False):
+    """
+    Simplifies a planar diagram by attempting possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
+    moves, iteratively. At each level only take the diagrams with the lowest number of crossings.
+    Args:
+        k (PlanarDiagram): The planar diagram to be simplified.
+
+    Returns:
+        PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
+    """
+
+    if isinstance(k, (set, tuple, list)):
+        return type(k)(simplify_non_increasing_greedy(_, show_progress) for _ in k)
+
+    return min(crossing_non_increasing_space_greedy(k, show_progress=show_progress))
 
 def simplify_brute_force(k: PlanarDiagram, depth: int):
     """
@@ -189,6 +189,8 @@ def simplify(k: PlanarDiagram, method: str = "auto", depth: int = 1):
          return simplify_brute_force(k, depth)
     elif method in _METHOD_NON_INCREASING:
         return simplify_non_increasing(k)
+    elif method in _METHOD_NON_INCREASING_GREEDY:
+        return simplify_non_increasing_greedy(k)
     elif method in _METHOD_DECREASING:
         return simplify_crossing_reducing(k)
     else:

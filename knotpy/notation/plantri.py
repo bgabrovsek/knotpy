@@ -120,46 +120,54 @@ def from_plantri_notation(graph_string: str) -> PlanarDiagram:
         # convert indices 1->"a", 2->"b",...,
         connections = ["".join([ascii_letters[int(i)-1] for i in s]) for s in connections]
 
-    connections = [a[0] + a[:0:-1] for a in connections]  # convert clockwise (CW) to counter-clockwise (CCW)
+    # Make a dictionary from connections. Jets are vertices (a, b, c, ...) values are strings with neighbours
+    # in CW order e.g. "bcde".
+
     connections = dict(zip(ascii_letters[:len(connections)], connections))  # make a dict {vertex: neighbours}
+    connections = {key: value[::-1] for key, value in connections.items()}  # reverse CW -> CCW
 
-    #print("connections", connections)
-    # make the graph
-
+    #print(connections)
     g = PlanarDiagram()
-    g.add_vertices_from(connections.keys())  # vertices are just "a", "b", "c", ... TODO: we can avoid making a dict
+    g.add_vertices_from(connections.keys())  # vertices are just "a", "b", "c", ...
 
     # add arcs
-    
     for vertex, neighbours in connections.items():
-        for position, neighbour in enumerate(neighbours):
-            # support for parallel edges
-            # Count the previous occurrences of neighbor in a vertex’s neighbors.
-            neighbour_occurrence = neighbours[:position].count(neighbour)  # 0 if neighbour appears for the 1st time, 1 if for the 2nd time,...
-            # where in the neighbour's neighbour is vertex, but in reverse, since orientation of arcs is reversed between adjacent nodes
-            vertex_position = [pos for pos, char in enumerate(connections[neighbour]) if char == vertex][-(neighbour_occurrence + 1)]
+        # loop through neighbours of vertex
+        for position, adjacent_vertex in enumerate(neighbours):
 
-            g.set_arc(((vertex, position), (neighbour, vertex_position)))
+            # support for parallel edges
+
+            # Count the previous occurrences of neighbor in a vertex’s neighbors.
+            neighbour_occurrence = neighbours[:position].count(adjacent_vertex)  # 0 if neighbour appears for the 1st time, 1 if for the 2nd time,...
+            # where in the neighbour's neighbour is vertex, but in reverse, since orientation of arcs is reversed between adjacent nodes
+            #vertex_position = [pos for pos, char in enumerate(connections[neighbour]) if char == vertex][-(neighbour_occurrence + 1)]
+
+            adjacent_position = [pos for pos, char in enumerate(connections[adjacent_vertex]) if char == vertex][-(neighbour_occurrence + 1)]
+
+            #print(">>>", vertex, position, "and", adjacent_vertex, adjacent_position)
+
+            g.set_arc(((vertex, position), (adjacent_vertex, adjacent_position)))
 
     return g
 
 
 if __name__ == '__main__':
+    pass
 
-    s = "5 bcde,aedc,abd,acbe,adb"
-    #s = "bcbd,aca,ab,a"
-    k = from_plantri_notation(s)
-    s_ = to_plantri_notation(k)
-    print(s)
-    print(k)
-    print(s_)
-    exit()
-    g = PlanarGraph()
-    g.add_vertices_from(["a","b","c"])
-    g.set_arcs_from([ [("a",0),("b",0)], [("b",1),("c",0)]  ])
-    print(g)
-    n = to_plantri_notation(g)
-    print(n)
-    h = from_plantri_notation(n)
-    print(h)
-    #print(from_plantri_notation("3 cbbb,acaa,ab", prepended_node_count=True, ccw=False))
+    # s = "5 bcde,aedc,abd,acbe,adb"
+    # #s = "bcbd,aca,ab,a"
+    # k = from_plantri_notation(s)
+    # s_ = to_plantri_notation(k)
+    # print(s)
+    # print(k)
+    # print(s_)
+    # exit()
+    # g = PlanarGraph()
+    # g.add_vertices_from(["a","b","c"])
+    # g.set_arcs_from([ [("a",0),("b",0)], [("b",1),("c",0)]  ])
+    # print(g)
+    # n = to_plantri_notation(g)
+    # print(n)
+    # h = from_plantri_notation(n)
+    # print(h)
+    # #print(from_plantri_notation("3 cbbb,acaa,ab", prepended_node_count=True, ccw=False))

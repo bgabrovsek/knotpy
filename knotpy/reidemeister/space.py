@@ -3,21 +3,67 @@ A Reidemeister space is the set of all diagrams after performing all possible Re
 For example, reidemeister_3_space returns the set of all unique knots that are the result of all possible R3 moves
 performed.
 """
+
+import sys
+
 from knotpy.algorithms.canonical import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, reidemeister_1_remove_kink
-from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke
+from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
+from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke, choose_reidemeister_2_unpoke
 from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister_3_triangle
 from knotpy.reidemeister.detour_move import find_detour_moves
 from knotpy.reidemeister.reidemeister import make_reidemeister_move
 from knotpy.manipulation.attributes import clear_node_attributes
 from knotpy.utils.set_utils import LeveledSet
+from knotpy.utils.multiprogressbar import ProgressTracker
 
 
-
-__all__ = ["crossing_reducing_space", "reidemeister_3_space", "detour_space", "crossing_non_increasing_space"]
+__all__ = ["reduce_crossings_greedy", "reidemeister_3_space", "detour_space", "crossing_non_increasing_space", "crossing_non_increasing_space_greedy"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
+
+
+
+def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
+    """
+    Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
+    (R2 unpokes and unkinks), until there are no more such moves left.
+
+    Args:
+        k (PlanarDiagram): The planar diagram to be simplified, if a set/list/tuple is given,
+        the function returns a set/list/tuple of simplified diagrams.
+        inplace (bool): Indicates whether modifications should be performed on
+            the input diagram `k` itself. If `True`, the input `k` will be changed
+            directly. If `False`, a new copy of `k` will be generated and
+            the simplifications will be applied to the copy instead. Defaults
+            to `False`.
+
+    Returns:
+        PlanarDiagram: A canonical simplified version of the input planar diagram where
+        possible crossing-reducing moves have been performed. If `inplace`
+        is `True`, returns the modified input diagram directly, else a new
+        simplified copy is returned.
+    """
+
+    #TODO: add canonical argument flag if we ever need to speed up the computations
+
+    if isinstance(k, (set, tuple, list)):
+        return type(k)(reduce_crossings_greedy(_, inplace=inplace) for _ in k)
+
+    if not inplace:
+        k = k.copy()
+
+    # Repeat R2 moves and R1 moves, until there are no more moves left (a R1 move can reveal an R2 move)
+    while True:
+        if face := choose_reidemeister_2_unpoke(k, random=False):
+            reidemeister_2_unpoke(k, face, inplace=True)
+            continue
+        if ep := choose_reidemeister_1_remove_kink(k, random=False):
+            reidemeister_1_remove_kink(k, ep, inplace=True)
+            continue
+        break
+
+    return canonical(k)
 
 
 def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
@@ -39,6 +85,12 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
     Returns:
         set: A set of planar diagrams with reduced crossings. Each diagram is
         transformed into its canonical form during the reduction process.
+    """
+
+    """
+    This function should not be used if we are just reducing crossings, since we do not need to explore the whole
+    reducing space (including also partial reducing moves). We apply this function when we need to explore the whole 
+    space in case intermediate R3 move, for example, are needed to be made. 
     """
 
     if isinstance(diagrams, PlanarDiagram):
@@ -66,7 +118,7 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
     return set(ls)
 
 
-def reidemeister_3_space(diagrams, assume_canonical=False) -> set:
+def reidemeister_3_space(diagrams, assume_canonical=False, depth=None) -> set:
     """
     Iteratively performs all possible R3 moves on a given planar diagram or a set of planar diagrams.
     The function does not place input diagrams in canonical form initially but ensures that
@@ -88,7 +140,9 @@ def reidemeister_3_space(diagrams, assume_canonical=False) -> set:
     # Put input diagrams in level 0.
     ls = LeveledSet(diagrams if assume_canonical else [canonical(k) for k in diagrams])
 
-    while ls[-1]:
+    depth_counter = 0
+
+    while ls[-1] and (depth is None or depth_counter < depth):
         # Put diagrams after an R3 to the next level.
         ls.new_level()
         ls.extend([
@@ -98,6 +152,7 @@ def reidemeister_3_space(diagrams, assume_canonical=False) -> set:
             if any("_r3" not in k.nodes[ep.node].attr for ep in face)
             ]
         )
+        depth_counter += 1
 
 
     results = set(ls)
@@ -128,7 +183,7 @@ def detour_space(diagrams):
         set: A set of canonical diagrams after performing R2 increasing moves.
     """
     # TODO: test
-    # TODO: make only increasing moves at double over- or souble -under arcs
+    # TODO: make only increasing moves at double over- or double -under arcs
 
     # always assume we have a set of equivalent diagrams
     if isinstance(diagrams, PlanarDiagram):
@@ -145,7 +200,64 @@ def detour_space(diagrams):
         }
 
 
-def crossing_non_increasing_space(diagrams, assume_canonical=False):
+def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progress=False) -> set:
+    """
+    Return the non-increasing "Reidemeister space" of a given set of diagrams.
+    This process transforms the input diagrams iteratively by applying Reidemeister
+    moves 3 and crossing reducing Reidemeister 1 and 2 moves until there are no more
+    unique diagrams left. The function returns a set of all unique diagrams obtained
+    during this process.
+
+    Args:
+        diagrams: A single instance of `PlanarDiagram` or a set/iterable of
+            `PlanarDiagram` objects to process.
+        assume_canonical: A boolean flag indicating whether the input diagrams
+            are already in canonical form. If `False`, the diagrams are converted
+            to canonical form prior to processing. Defaults to `False`.
+
+    Returns:
+        set: A set of diagrams in the non-increasing Reidemeister space.
+    """
+
+    tracker = ProgressTracker("Depth", "Diagrams searched", "Nodes", "Step") if show_progress else None
+
+    if isinstance(diagrams, PlanarDiagram):
+        diagrams = {diagrams, }
+
+    if not isinstance(diagrams, set):
+        diagrams = set(diagrams) if assume_canonical else {canonical(_) for _ in diagrams}
+    elif not assume_canonical:
+        diagrams = {canonical(_) for _ in diagrams}
+
+    if tracker:
+        tracker.update(0, len(diagrams), min(len(_) for _ in diagrams), "Reidemeister 3")
+
+
+    ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
+
+    while True:
+        if tracker:
+            tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "reducing crossings")
+
+        ls.new_level(crossing_reducing_space(ls[-1], assume_canonical=True))
+        if not ls[-1]:
+            break
+
+        if tracker:
+            tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "Reidemeister 3")
+
+        ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
+        if not ls[-1]:
+            break
+
+    return set(ls)
+
+def _filter_minimal_diagrams(diagrams):
+    min_node_count = min(len(_) for _ in diagrams)
+    return {_ for _ in diagrams if len(_) == min_node_count}
+
+
+def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
     """
     Return the non-increasing "Reidemeister space" of a given set of diagrams.
     This process transforms the input diagrams iteratively by applying Reidemeister
@@ -167,22 +279,24 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False):
     if isinstance(diagrams, PlanarDiagram):
         diagrams = {diagrams, }
 
-    if not isinstance(diagrams, set):
-        diagrams = set(diagrams) if assume_canonical else {canonical(_) for _ in diagrams}
-    elif not assume_canonical:
-        diagrams = {canonical(_) for _ in diagrams}
+    tracker = ProgressTracker("Depth", "Diagrams searched", "Nodes") if show_progress else None
 
-    ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
+    ls = LeveledSet(_filter_minimal_diagrams(diagrams))
 
-    while True:
-        ls.new_level(crossing_reducing_space(ls[-1], assume_canonical=True))
-        if not ls[-1]:
-            break
-        ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
-        if not ls[-1]:
-            break
+    while ls[-1]:
+        if tracker:
+            tracker.update(len(ls[-1]), len(ls.global_set), min(len(_) for _ in ls[-1]))
+        diagrams = reidemeister_3_space(ls[-1], assume_canonical=True, depth=1)
+        diagrams = reduce_crossings_greedy(diagrams, inplace=True)
+        diagrams = _filter_minimal_diagrams(diagrams)
+        ls.new_level(diagrams)
 
-    return set(ls)
+    if tracker:
+        tracker.finish()
+
+    return _filter_minimal_diagrams(set(ls))
+
+
 
 # def smart_reidemeister_space(diagram, depth):
 #     """Make depth crossing increasing moves and any number of Reidemesiter 3 moves, then returns the whole set of

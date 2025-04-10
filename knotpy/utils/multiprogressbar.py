@@ -304,3 +304,31 @@ class FakeBar:
     @staticmethod
     def set_comment(_):
         pass
+
+
+
+class ProgressTracker:
+    COLORS = [
+        "\033[91m",  # Red
+        "\033[92m",  # Green
+        "\033[93m",  # Yellow
+        "\033[94m",  # Blue
+        "\033[95m",  # Magenta
+        "\033[96m",  # Cyan
+    ]
+    RESET = "\033[0m"
+
+    def __init__(self, *labels):
+        self.labels = labels
+
+    def update(self, *values):
+        if len(values) != len(self.labels):
+            raise ValueError("Number of values must match number of labels")
+        parts = []
+        for i, (label, value) in enumerate(zip(self.labels, values)):
+            color = self.COLORS[i % len(self.COLORS)]
+            parts.append(f"{color}{label}: {value}{self.RESET}")
+        print("\r" + " | ".join(parts), end="", flush=True)
+
+    def finish(self):
+        print("\r" + " " * 120 + "\r", end="", flush=True)
