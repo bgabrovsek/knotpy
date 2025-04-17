@@ -29,6 +29,7 @@ def _lazy_load_diagrams(filename):
     )
 
 # TODO: fix/unite orientation, mirrors,...
+# TODO: when we get a knot from the table, we should return a copy, not the knot, since someone can modify it.
 
 # Load knot tables with invariants.
 _knot_invariants_10 = _lazy_load_invariants("knot_invariants_up_to_10_crossings.csv.gz")
@@ -228,7 +229,7 @@ def _get_handcuff(crossing_number, index, subindex):
         if key in table:
             return table[key]
     else:
-        key = f"t{crossing_number}_{index}"
+        key = f"h{crossing_number}_{index}"
         if key in table:
             return table[key]
         if key + ".1" in table:
@@ -248,25 +249,26 @@ def get_knot_from_name(name):
     if "l" in name:
         crossing_number, alternating, index, orientation = _parse_link_name(name)
         #print(crossing_number, alternating, index, orientation)
-        return _get_link(crossing_number, alternating, index, orientation)
+        return _get_link(crossing_number, alternating, index, orientation).copy()
 
     # Is the name a theta curve?
     elif "t" in name:
         orientation, crossing_number, index, sub_index = _parse_theta_name(name)
         #print(orientation, crossing_number, index, sub_index)
-        return _get_theta(orientation, crossing_number, index, sub_index)
+        return _get_theta(orientation, crossing_number, index, sub_index).copy()
 
     # Is the name a handcuff link?
     elif "h" in name:
+        print("handcuff name", name)
         crossing_number, index, sub_index = _parse_handcuff_name(name)
         #rint(crossing_number, index, sub_index)
-        return _get_handcuff(crossing_number, index, sub_index)
+        return _get_handcuff(crossing_number, index, sub_index).copy()
 
     # is the name a knot?
     else:
         crossing_number, alternating, index = _parse_knot_name(name)
         #print(crossing_number, alternating, index)
-        return _get_knot(crossing_number, alternating, index)
+        return _get_knot(crossing_number, alternating, index).copy()
 
 
 if __name__ == "__main__":

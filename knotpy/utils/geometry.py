@@ -6,9 +6,9 @@ import cmath
 
 
 __all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox",
-           "antipode", "perpendicular_line", "perpendicular_arc", "bisect", "tangent_line", "middle", "bisector",
+           "antipode", "perpendicular_line", "bisect", "tangent_line", "middle", "bisector",
            "is_angle_between", "perpendicular_arc_through_point", "circle_through_points",
-           "weighted_circle_center_mean"]
+           "weighted_circle_center_mean", "split"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 

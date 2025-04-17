@@ -19,7 +19,7 @@ from itertools import permutations
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.utils.equivalence import EquivalenceRelation
+from knotpy.utils.disjoint_union_set import DisjointSetUnion
 
 
 def add_unknot(k: PlanarDiagram, number_of_unknots=1, inplace=True):
@@ -58,10 +58,10 @@ def _disjoint_components_nodes(k: PlanarDiagram) -> list:
     :param k: (disjoint) planar diagram
     :return: list of sets of nodes
     """
-    er = EquivalenceRelation(k.nodes)  # TODO: replace with DSU
+    dsu = DisjointSetUnion(k.nodes)  # TODO: replace with DSU
     for ep0, ep1 in k.arcs:
-        er[ep0.node] = ep1.node
-    return list(er.classes())
+        dsu[ep0.node] = ep1.node
+    return list(dsu.classes())
 
 
 def number_of_disjoint_components(k: PlanarDiagram):

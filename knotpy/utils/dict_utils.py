@@ -1,7 +1,8 @@
 from collections import defaultdict
 import warnings
 
-__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict","LazyLoadEvalDict","identitydict",]
+__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict","LazyLoadEvalDict","identitydict",
+           "ClassifierDict"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -335,6 +336,42 @@ class LazyLoadEvalDict(dict):
         for key in self:
             _ = self[key]  # Ensure all values are evaluated
         return f"LazyLoadDict({dict().__repr__()})"
+
+
+class ClassifierDict(dict):
+    """
+    A dictionary-like object that partitions items based on values returned by
+    a collection of functions. The keys are tuples of computed values, and the
+    values are lists of items sharing those values.
+    """
+
+    def __init__(self, functions: dict):
+        """
+        Initialize the partitioner with a set of value-producing functions.
+
+        Args:
+            functions (dict): A dictionary mapping labels to functions.
+                              Each function should take an item and return a value.
+        """
+        super().__init__()
+        self.functions = functions
+
+    def append(self, item):
+        """
+        Compute the key for an item using the provided functions and store
+        the item in the corresponding group.
+
+        Args:
+            item: The object to be grouped.
+        """
+        # Build a key from the tuple of values returned by the functions
+        key = tuple(func(item) for func in self.functions.values())
+
+        # Append the item to the corresponding list in the dictionary
+        if key not in self:
+            self[key] = []
+        self[key].append(item)
+
 
 if __name__ == "__main__":
 

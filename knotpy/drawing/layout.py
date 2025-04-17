@@ -162,6 +162,8 @@ def circlepack_layout(k):
 
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
+    print(k)
+
     circles = CirclePack(internal=internal_circles, external=external_circles)
     # we need to conjugate, for knotoids the diagram is in CW order
     return {key: Circle(value[0].conjugate(), value[1]) for key, value in circles.items()}  # return Circle objects

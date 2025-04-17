@@ -14,7 +14,6 @@ import knotpy as kp
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.utils.equivalence import EquivalenceRelation
 from knotpy.classes.node import Vertex
 
 # TODO: write test

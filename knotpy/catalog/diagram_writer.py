@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import gzip
+from pathlib import Path
 
 from knotpy.notation.dispatcher import to_notation_dispatcher
 
@@ -28,9 +29,10 @@ class _BaseDiagramWriter(ABC):
 
         # if mode != "w" and mode != "a":
         #     raise ValueError("Only write 'w' or append 'a' modes are supported in the writer")
-
+        filename = Path(filename)
         self.filename = filename
-        self.file = gzip.open(self.filename, "wt", encoding="utf-8") if filename.endswith(".gz") else open(self.filename, "wt", encoding="utf-8")
+
+        self.file = gzip.open(self.filename, "wt", encoding="utf-8") if filename.name.endswith(".gz") else open(self.filename, "wt", encoding="utf-8")
 
         # Write format header
         self.file.write(f"{notation} notation\n")

@@ -111,6 +111,9 @@ class DisjointSetUnion:
         for s in self:
             yield min(s)
 
+    def classes(self):
+        return list(self)
+
     def __len__(self) -> int:
         """
         Returns the number of disjoint sets in the union-find structure.
@@ -135,17 +138,4 @@ class DisjointSetUnion:
 
 
 if __name__ == "__main__":
-    # Example usage
-    dsu = DisjointSetUnion([0, 1, 2, 3, 4])
-    print(dsu)  # Shows internal state
-    dsu[0] = 0
-    dsu[3] = 0
-    dsu[2] = 4
-    dsu[0] = 0
-    dsu[1] = 3
-
-    print(dsu)  # Shows internal state
-
-    print("Iterating")
-    for x in dsu:
-        print(x)
+    pass

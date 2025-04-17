@@ -2,59 +2,6 @@ __all__ = ["EquivalenceRelation"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-
-class EquivalenceRelation(dict):
-    """
-    TODO: remove and use DSU (disjoint set union), since it has the same functionality
-
-    """
-    """Partitions a set of objects into equivalence classes.
-    Each key/item of the dictionary is the object and the values are sets that represent the class"""
-    def __init__(self, iterable=None):
-        """
-        :param iterable: iterable of objects.
-        """
-        iterable = iterable or []
-        super().__init__()
-        for item in iterable:
-            super().__setitem__(item, {item})
-
-    def __iadd__(self, item):
-        """We add a new item (and class) by the += operator."""
-        if item not in self:
-            super().__setitem__(item, {item})
-        return self
-
-    def __setitem__(self, item1, item2):
-        """Join classes of item1 and item2."""
-
-        self.__iadd__(item1)
-        if item1 == item2:
-            return
-        self.__iadd__(item2)
-
-        new_set = self[item1] | self[item2]
-        for item in new_set:
-            super().__setitem__(item, new_set)
-
-    def set_bunch(self, item, equivalent_elements):
-        for elt in equivalent_elements:
-            self[item] = elt
-
-    def representatives(self):
-        for cls in self.classes():
-            yield min(cls)
-
-    def classes(self):
-        already_yielded = []
-        for c in self.values():
-            if c not in already_yielded:
-                yield c
-                already_yielded.append(c)
-
-    def number_of_classes(self):
-        return sum(1 for c in self.classes())
-
 if __name__ == "__main__":
     # four equivalent classes
     e = EquivalenceRelation([0,1,2])

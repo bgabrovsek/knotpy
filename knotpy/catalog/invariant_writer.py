@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import gzip
 import csv
+from pathlib import Path
 
 from knotpy.notation.dispatcher import to_notation_dispatcher
 
@@ -22,8 +23,9 @@ class InvariantTableWriter(ABC):
         :param notation: The diagram notation ('dowker', 'gauss', etc.).
         :param comment: (Optional) A comment to add at the start of the file.
         """
+        filename = Path(filename)
         self.name_is_key = name_is_key
-        self.file = gzip.open(filename, mode="wt", newline='', encoding='utf-8') if filename.endswith(".gz") else open(filename, mode="wt", newline='',)
+        self.file = gzip.open(filename, mode="wt", newline='', encoding='utf-8') if filename.name.endswith(".gz") else open(filename, mode="wt", newline='',)
         self.notation_key = notation + " notation"  # diagram header
         self.to_notation = to_notation_dispatcher(notation.lower())  # function to convert diagram to notation
 

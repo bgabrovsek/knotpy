@@ -178,6 +178,7 @@ def from_knotpy_notation(notation: str) -> PlanarDiagram:
 
     """
 
+
     compact_notation = True
 
     if compact_notation:

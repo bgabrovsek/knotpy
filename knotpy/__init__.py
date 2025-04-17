@@ -32,12 +32,6 @@ from knotpy.algorithms.sanity import *
 from knotpy import reidemeister
 from .reidemeister import *
 
-from knotpy import tabulation
-from .tabulation import *
-
-from knotpy import readwrite
-from .readwrite import *
-
 from knotpy import manipulation
 from .manipulation import *
 

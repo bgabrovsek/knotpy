@@ -698,6 +698,16 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     :param create_using: type or instance
     :return: planar diagram with data
     """
+    from knotpy.catalog.knot_tables import get_knot_from_name
+
+    if isinstance(incoming_data, str):
+        try:
+            # TODO: convert to create_using (e.g. oriented)
+            k = get_knot_from_name(incoming_data)
+            return planar_diagram_from_data(k, create_using=create_using)  # copy k into create_using
+        except ValueError:
+            # knot not found
+            pass
 
     # initiate the diagram with create_using
     if isinstance(create_using, type):

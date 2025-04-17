@@ -71,7 +71,7 @@ def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None) -> str:
     return new_node_name
 
 
-def subdivide_endpoint(k: PlanarDiagram, endpoint: Endpoint, **attr) -> str:
+def subdivide_endpoint(k: PlanarDiagram, endpoint, **attr) -> str:
     """
     Subdivides an endpoint by introducing a new node. The endpoint is at position 0 of the new node
 
