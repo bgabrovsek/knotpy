@@ -8,7 +8,7 @@ import re
 
 from knotpy.notation.em import from_condensed_em_notation
 #from knotpy.tabulation.reader import _line_reader
-from knotpy.tabulation.lazy_dict import LazyLoadDict, LazyDict
+#from knotpy.tabulation.lazy_dict import LazyLoadDict, LazyDict
 
 _knot_table_csv_filename = pathlib.Path(__file__).parent / "precomputed/knot_invariants_13.csv"
 _link_table_csv_filename = pathlib.Path(__file__).parent / "precomputed/link_invariants_11.csv"

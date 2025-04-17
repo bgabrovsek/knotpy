@@ -93,9 +93,12 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
         node_abbr = subtext[:i0] if 1 <= i0 <= 2 else "X" if len(node_arcs) == 4 else "V"  # str, e.g. "X"
         node_name = abcABC[node] if node_type is str else node  # abc or 123
 
-        k.add_node(node_for_adding=node_name,
-                   create_using=_node_abbreviations[node_abbr],
-                   degree=len(node_arcs))
+        try:
+            k.add_node(node_for_adding=node_name,
+                       create_using=_node_abbreviations[node_abbr],
+                       degree=len(node_arcs))
+        except KeyError:
+            raise ValueError(f"Invalid PD notation {text}, node {node} ({subtext}): unknown node abbreviation {node_abbr} in the PD code.")
 
         for pos, arc in enumerate(node_arcs):
             arc_dict[arc].append((node_name, pos))

@@ -1,14 +1,9 @@
 from collections import defaultdict
 import warnings
 
-__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict"]
+__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict","LazyLoadEvalDict","identitydict",]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
-
-
-
-
-
 
 def compare_dicts(dict1: dict, dict2: dict, exclude_keys=None, include_only_keys=None):
     """
@@ -97,38 +92,250 @@ def inverse_nested_dict(d: dict):
             result[value] = {k, }
     return result
 
-# test
-#print(split_nested_dict({"dict1": {"a":4}, "dict2": {"a":4, "b":1}, "dict3": {"a":4}}))
-
 class identitydict(defaultdict):
     def __missing__(self, key):
         return key
 
+
+class LazyLoadDict(dict):
+    """
+    LazyLoadDict is a custom dictionary class that defers data loading until it is first accessed,
+    optimizing resource usage by delaying expensive initialization operations. It mimics the behavior
+    of a standard Python dictionary while incorporating lazy loading functionality.
+
+    This makes it ideal for scenarios where loading data is expensive, and you want to defer the operation
+    until it’s actually needed.
+    """
+
+    def __init__(self, load_function, *args, **kwargs):
+        """
+        Initializes an instance with a function to load data, along with any additional arguments or keyword arguments.
+
+        Parameters
+        ----------
+        load_function : Callable or None
+            A function responsible for loading the data. The function should return a dictionary or a list or tuples
+            representing the dictionary. If None, the data is assumed to be preloaded.
+        *args :
+            Additional positional arguments passed to the superclass.
+        **kwargs :
+            Additional keyword arguments passed to the superclass.
+
+        Attributes
+        ----------
+        _data_loaded : bool
+            A flag indicating whether the data has already been loaded.
+        _load_function : Callable or None
+            The function used to load data. If None, no loading function is used.
+        """
+        super().__init__(*args, **kwargs)
+        self._data_loaded = load_function is None
+        self._load_function = load_function
+
+    def _ensure_loaded(self):
+        if not self._data_loaded:
+            self.update(self._load_function())
+            self._data_loaded = True
+
+    def __getitem__(self, key):
+        self._ensure_loaded()
+        return super().__getitem__(key)
+
+    def __setitem__(self, key, value):
+        self._ensure_loaded()
+        super().__setitem__(key, value)
+
+    def __contains__(self, key):
+        self._ensure_loaded()
+        return super().__contains__(key)
+
+    def __iter__(self):
+        self._ensure_loaded()
+        return super().__iter__()
+
+    def get(self, key):
+        self._ensure_loaded()
+        return super().get(key)
+
+    def keys(self):
+        self._ensure_loaded()
+        return super().keys()
+
+    def values(self):
+        self._ensure_loaded()
+        return super().values()
+
+    def items(self):
+        self._ensure_loaded()
+        return super().items()
+
+    def __len__(self):
+        self._ensure_loaded()
+        return super().__len__()
+
+    def __repr__(self):
+        self._ensure_loaded()
+        return f"LazyLoadDict({dict().__repr__()})"
+
+
+class LazyEvalDict(dict):
+    """
+    A dictionary that evaluates values lazily upon access.
+
+    This class extends the standard Python dictionary to support lazy evaluation
+    of its values. A user-defined function is applied to the value associated
+    with a key the first time that key is accessed. Subsequent accesses return
+    the already-evaluated value without invoking the evaluation function again.
+    This approach is beneficial in scenarios where the value computation is
+    expensive, and the result is needed only on demand.
+
+    Attributes:
+        _eval_function: Callable function used to lazily evaluate values.
+        _evaluated_keys: Set of keys whose values have already been evaluated.
+    """
+    def __init__(self, eval_function, *args, **kwargs):
+        """
+        Initializes an instance of a class that performs actions based on a provided evaluation function.
+        Ensures the evaluation function is callable and prepares an internal state to track evaluated keys.
+
+        Parameters
+        ----------
+        eval_function : Callable
+            A callable used to perform evaluations. Must be passed and checked for
+            its callable nature.
+        *args
+            Positional arguments passed to the base class initializer.
+        **kwargs
+            Keyword arguments passed to the base class initializer.
+
+        Raises
+        ------
+        TypeError
+            If `eval_function` is not callable.
+        """
+        super().__init__(*args, **kwargs)
+        if not callable(eval_function):
+            raise TypeError("eval_function must be callable")
+        self._eval_function = eval_function
+        self._evaluated_keys = set()
+
+    def __getitem__(self, key):
+        # Evaluate the value of the key if it is not already evaluated.
+        if key not in self._evaluated_keys:
+            super().__setitem__(key, self._eval_function(super().__getitem__(key)))
+            self._evaluated_keys.add(key)
+        return super().__getitem__(key)
+
+    def values(self):
+        """Return all values, forcing evaluation of any unevaluated entries."""
+        for key in self:
+            _ = self[key]  # Ensure all values are evaluated
+        return super().values()
+
+    def items(self):
+        """Return all key-value pairs, forcing evaluation of any unevaluated entries."""
+        for key in self:
+            _ = self[key]  # Ensure all values are evaluated
+        return super().items()
+
+    def __repr__(self):
+        return f"LazyEvalDict(keys={dict().keys()})"
+
+
+class LazyLoadEvalDict(dict):
+    """
+    LazyLoadDict is a custom dictionary class that defers data loading until it is first accessed,
+    optimizing resource usage by delaying expensive initialization operations. It mimics the behavior
+    of a standard Python dictionary while incorporating lazy loading functionality.
+
+    This makes it ideal for scenarios where loading data is expensive, and you want to defer the operation
+    until it’s actually needed.
+    """
+
+    def __init__(self, load_function, eval_function, *args, **kwargs):
+        """
+        Initializes an instance with a function to load data, along with any additional arguments or keyword arguments.
+
+        Parameters
+        ----------
+        load_function : Callable or None
+            A function responsible for loading the data. The function should return a dictionary or a list or tuples
+            representing the dictionary. If None, the data is assumed to be preloaded.
+        *args :
+            Additional positional arguments passed to the superclass.
+        **kwargs :
+            Additional keyword arguments passed to the superclass.
+
+        Attributes
+        ----------
+        _data_loaded : bool
+            A flag indicating whether the data has already been loaded.
+        _load_function : Callable or None
+            The function used to load data. If None, no loading function is used.
+        """
+        super().__init__(*args, **kwargs)
+        self._data_loaded = load_function is None
+        self._load_function = load_function
+        if not callable(eval_function):
+            raise TypeError("eval_function must be callable")
+        self._eval_function = eval_function
+        self._evaluated_keys = set()
+
+    def _ensure_loaded(self):
+        if not self._data_loaded:
+            self.update(self._load_function())
+            self._data_loaded = True
+
+    def __getitem__(self, key):
+        self._ensure_loaded()
+        # Evaluate the value of the key if it is not already evaluated.
+        if key not in self._evaluated_keys:
+            super().__setitem__(key, self._eval_function(super().__getitem__(key)))
+            self._evaluated_keys.add(key)
+        return super().__getitem__(key)
+
+    def __setitem__(self, key, value):
+        self._ensure_loaded()
+        super().__setitem__(key, value)
+
+    def __contains__(self, key):
+        self._ensure_loaded()
+        return super().__contains__(key)
+
+    def __iter__(self):
+        self._ensure_loaded()
+        return super().__iter__()
+
+    def get(self, key):
+        self._ensure_loaded()
+        return super().get(key)
+
+    def keys(self):
+        self._ensure_loaded()
+        return super().keys()
+
+    def values(self):
+        self._ensure_loaded()
+        for key in self:
+            _ = self[key]  # Ensure all values are evaluated
+        return super().values()
+
+    def items(self):
+        self._ensure_loaded()
+        for key in self:
+            _ = self[key]  # Ensure all values are evaluated
+        return super().items()
+
+    def __len__(self):
+        self._ensure_loaded()
+        return super().__len__()
+
+    def __repr__(self):
+        self._ensure_loaded()
+        for key in self:
+            _ = self[key]  # Ensure all values are evaluated
+        return f"LazyLoadDict({dict().__repr__()})"
+
 if __name__ == "__main__":
 
-    from itertools import permutations
-
-    a = "abcdefglmo"
-    b = [0,0,0,1,1,2,2,3,4,5]
-    d = []
-    for q in permutations(b):
-        d.append(dict(zip(a, q)))
-        #print(d)
-
-    from time import time
-
-    t = time()
-    for x in d:
-
-        invd = inverse_multi_dict(x)
-    print(time()-t)
-
-    t = time()
-    for x in d:
-        invd = inverse_multi_dict2(x)
-    print(time()-t)
-
-    exit()
-
-    d = {"a": 1, "b": 3, "c": 1, "d": 2, "e":8, "f":1, "g":8}
-    print(inverse_multi_dict(d))
+    pass

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import gzip
 
 from knotpy.notation.dispatcher import to_notation_dispatcher
 
@@ -7,7 +8,7 @@ __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-class _BaseWriter(ABC):
+class _BaseDiagramWriter(ABC):
     """
     Abstract base class for file writers.
 
@@ -15,7 +16,7 @@ class _BaseWriter(ABC):
     - Supports writing format headers and optional comments.
     """
 
-    def __init__(self, filename, notation="cem", comment=None,):
+    def __init__(self, filename, notation="native", comment=None,):
 
         """
         Initializes the writer.
@@ -29,10 +30,10 @@ class _BaseWriter(ABC):
         #     raise ValueError("Only write 'w' or append 'a' modes are supported in the writer")
 
         self.filename = filename
-        self.file = open(self.filename, "w")
+        self.file = gzip.open(self.filename, "wt", encoding="utf-8") if filename.endswith(".gz") else open(self.filename, "wt", encoding="utf-8")
 
         # Write format header
-        self.file.write(f"FORMAT: {notation}\n")
+        self.file.write(f"{notation} notation\n")
 
         # Write optional comment
         if comment:
@@ -42,7 +43,7 @@ class _BaseWriter(ABC):
         if notation:
             self.to_notation = to_notation_dispatcher(notation.lower())
         else:
-            raise ValueError("Output format (diaram notation) must be provided")
+            raise ValueError("Output format (diagram notation) must be provided")
 
     def write_comment(self, comment):
         self.file.write(f"# {comment}\n")
@@ -58,11 +59,10 @@ class _BaseWriter(ABC):
         self.close()
 
 
-class DiagramWriter(_BaseWriter):
+class DiagramWriter(_BaseDiagramWriter):
     """
     A file writer for knot diagrams.
-    - Writes one diagram at a time, using a specified notation.
-    - Converts diagrams to string representations using format-specific functions.
+    - Writes one diagram at a time per line, using a given notation.
     - Supports adding an optional comment at the start of the file.
     """
 
@@ -82,7 +82,7 @@ class DiagramWriter(_BaseWriter):
             self.write_diagram(diagram)
 
 
-class DiagramSetWriter(_BaseWriter):
+class DiagramSetWriter(_BaseDiagramWriter):
 
     def write_diagram_set(self, diagram_set):
         """
@@ -97,7 +97,7 @@ class DiagramSetWriter(_BaseWriter):
 
     pass
 
-def save_diagrams(filename, diagrams, notation="cem", comment=None):
+def save_diagrams(filename, diagrams, notation="native", comment=None):
     """
     Writes multiple diagrams to a file at once.
 
@@ -112,7 +112,7 @@ def save_diagrams(filename, diagrams, notation="cem", comment=None):
             writer.write_diagram(diagram)
 
 
-def save_diagram_sets(filename, diagram_sets, notation="cem", comment=None):
+def save_diagram_sets(filename, diagram_sets, notation="native", comment=None):
     """
     Writes multiple sets of diagrams to a file at once.
 
