@@ -109,6 +109,9 @@ def save_diagrams(filename, diagrams, notation="native", comment=None):
     :param to_string_func: Function to convert diagrams into strings.
     :param comment: (Optional) A comment to add at the start of the file.
     """
+    if not diagrams:
+        return
+
     with DiagramWriter(filename=filename, notation=notation, comment=comment) as writer:
         for diagram in diagrams:
             writer.write_diagram(diagram)

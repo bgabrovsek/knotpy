@@ -83,6 +83,15 @@ def is_linkoid(k: PlanarDiagram) -> bool:
             all(k.degree(node) == 1 for node in node_sets[Vertex]))
 
 
+def is_leaf(k, node):
+    """Is the node a leaf?"""
+    return k.degree(node) == 1 and isinstance(k.nodes[node], Vertex)
+
+
+def leafs(k):
+    """Returns the leafs of a planar diagram."""
+    return {node for node in k.vertices if k.degree(node) == 1}
+
 def is_loop(k: PlanarDiagram, arc_or_endpoint) -> bool:
     """
     Determine whether the given arc or endpoint forms a loop in the planar diagram.

@@ -7,7 +7,7 @@ These functions are designed to work with planar diagram representations,
 allowing the detection of such critical subsets of arcs and vertices.
 """
 
-__all__ = ["is_arc_cut_set", "arc_cut_sets"]
+__all__ = ["is_arc_cut_set", "arc_cut_sets", "cut_nodes"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
@@ -19,7 +19,7 @@ from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
 
 
-def is_arc_cut_set(k: PlanarDiagram, arcs, include_singletons=True) -> bool:
+def is_arc_cut_set(k: PlanarDiagram, arcs, ignore_isolated_vertices=True) -> bool:
     """Checks if the given list of arcs forms a cut set in the planar diagram.
     
     A cut set is a subset of arcs whose removal breaks the diagram into two or more disjoint components.
@@ -34,7 +34,7 @@ def is_arc_cut_set(k: PlanarDiagram, arcs, include_singletons=True) -> bool:
     """
 
     ndc = number_of_disjoint_components(k)
-    n_singletons = [k.degree(node) == 0 for node in k.nodes]  # number of singletons
+    n_isolated_vertices = [k.degree(node) == 0 for node in k.nodes]  # number of singletons
 
     dsu = DisjointSetUnion(k.nodes)  # stores sets of nodes which are connected
 
@@ -44,14 +44,14 @@ def is_arc_cut_set(k: PlanarDiagram, arcs, include_singletons=True) -> bool:
         ep1, ep2 = arc
         dsu[ep1.node] = ep2.node  # put the nodes in the same set if they are connected
 
-    if include_singletons:
-        return len(dsu) > ndc
+    if ignore_isolated_vertices:
+        return sum(len(c) > 1 for c in dsu) > ndc - sum(n_isolated_vertices)
     else:
-        return sum(len(c) > 1 for c in dsu) > ndc - sum(n_singletons)
+        return len(dsu) > ndc
 
 
 
-def arc_cut_sets(k: PlanarDiagram, order: int, max_cut_sets=None) -> list:
+def arc_cut_sets(k: PlanarDiagram, order: int, ignore_isolated_vertices=False, max_cut_sets=None) -> list:
     """
         Find all arc cut sets of size `k` in a planar diagram.
         
@@ -62,6 +62,7 @@ def arc_cut_sets(k: PlanarDiagram, order: int, max_cut_sets=None) -> list:
         Args:
             k (PlanarDiagram): The planar diagram representing the knot or graph.
             order (int): The size of the arc cut sets to be identified.
+            ignore_isolated_vertices:
             max_cut_sets (int, optional): The maximum number of cut sets to return. If None, all possible cut sets are found.
         
         Returns:
@@ -92,7 +93,7 @@ def arc_cut_sets(k: PlanarDiagram, order: int, max_cut_sets=None) -> list:
     all_cut_sets = []
 
     for cut_set in combinations(all_arcs, order):
-        if is_arc_cut_set(k, cut_set):
+        if is_arc_cut_set(k, cut_set, ignore_isolated_vertices=ignore_isolated_vertices):
             all_cut_sets.append(cut_set)
             if max_cut_sets is not None and len(all_cut_sets) >= max_cut_sets:
                 break
@@ -101,7 +102,7 @@ def arc_cut_sets(k: PlanarDiagram, order: int, max_cut_sets=None) -> list:
 
 #def articulation_nodes(k: PlanarDiagram) -> set:
 
-def cut_vertices(k: PlanarDiagram) -> set:
+def cut_nodes(k: PlanarDiagram) -> set:
     """
     Identify the cut vertices (articulation nodes) in a planar diagram.
     

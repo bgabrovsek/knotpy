@@ -26,7 +26,7 @@ def is_connected_sum(g: PlanarDiagram) -> bool:
     Returns:
         bool: True if the diagram is a connected sum; otherwise, False.
     """
-    return len(arc_cut_sets(g, order=2, max_cut_sets=1)) > 0
+    return len(arc_cut_sets(g, order=2, max_cut_sets=1, ignore_isolated_vertices=True)) > 0
 
 
 def split_connected_sum(k: PlanarDiagram) -> list:

@@ -79,7 +79,7 @@ def insert_arc(k: PlanarDiagram, arc:tuple, **attr) -> None:
     # TODO: use insert_endpoint for inserting arcs
 
 
-def insert_endpoint(k: PlanarDiagram, target_endpoint, adjacent_endpoint) -> None:
+def insert_endpoint(k: PlanarDiagram, target_endpoint, adjacent_endpoint, **attr) -> None:
     """Insert an endpoint in place and shift the other endpoints counter-clockwise.
     Args:
         k (PlanarDiagram): The planar diagram where the endpoint is being inserted.
@@ -88,11 +88,17 @@ def insert_endpoint(k: PlanarDiagram, target_endpoint, adjacent_endpoint) -> Non
     
     Returns:
         None
+
+    TODO: rewrite this entire function: subdivide edges around point, insert none at the end and then permute the edges using the permutation furnction
+    this way no new logic needs to bu built (attributes...). it will all be much cleaner.
     """
 
     target_type = type(target_endpoint) if isinstance(target_endpoint, Endpoint) else Endpoint
     if adjacent_endpoint is not None:
-        adjacent_endpoint = k.endpoint_from_pair(adjacent_endpoint)
+        if not isinstance(adjacent_endpoint, Endpoint):
+            adjacent_endpoint = Endpoint(*adjacent_endpoint)  # TODO: oriented
+
+    adjacent_endpoint.attr.update(**attr)
 
     node, pos = target_endpoint
     node_inst = k.nodes[node]

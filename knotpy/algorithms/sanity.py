@@ -85,10 +85,10 @@ def sanity_check(k):
     Every other node appears once in each face for degree-faces.
     """
 
-    from knotpy.algorithms.cut_set import cut_vertices
+    from knotpy.algorithms.cut_set import cut_nodes
 
     # Check that each node appears only once in a region, except if it is a cut-vertex.
-    cut = cut_vertices(k)
+    cut = cut_nodes(k)
     for face in faces:
         for node, count in Counter([ep.node for ep in face]).items():
             if node not in cut and count != 1:

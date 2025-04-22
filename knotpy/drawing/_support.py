@@ -1,7 +1,13 @@
+from knotpy import from_knotpy_notation
+from knotpy.algorithms.sanity import sanity_check
+from knotpy.manipulation.insert import insert_endpoint
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.topology import bridges
+from knotpy.algorithms.topology import bridges, leafs
+from knotpy.algorithms.cut_set import cut_nodes
 from knotpy.manipulation.insert import insert_arc
 from knotpy.manipulation.subdivide import subdivide_endpoint
+from knotpy.notation.native import to_knotpy_notation
+
 
 def _subdivide_two_adjacent_arcs(k:PlanarDiagram, endpoint):
     """
@@ -44,16 +50,62 @@ def _subdivide_two_adjacent_arcs(k:PlanarDiagram, endpoint):
     return node_left, node_right, k.endpoint_from_pair((node_left, 0)), k.endpoint_from_pair((node_right, 0))
 
 
-def _add_support_arcs(k: PlanarDiagram):
-    """ Ads support arcs so there are no bridges in the diagram. For every bridge, add two parallel arcs. In the case
-    the bridge is a leaf, add two adjacent arcs to the leaf.
+def _add_support_arcs_for_cut_vertices(k:PlanarDiagram):
 
-    :param k:
-    :return:
+    def _cut_nodes_not_leaf_adjacent():
+        # return cut nodes that are not adjacent to a leaf
+        cn = cut_nodes(k)
+        leaf_adj = [k.twin((l, 0)).node for l in leafs(k)]
+        return set(cn) - set(leaf_adj)
+
+    while nodes := _cut_nodes_not_leaf_adjacent():
+
+        # print("CUT VERT", k, "NODE", nodes)
+
+        node = nodes.pop()
+        # print("NODE", node)
+        degree = k.degree(node)
+        #bivertices = [subdivide_endpoint(k, ep) for ep in k.nodes[node]]
+        #print("BS", to_knotpy_notation(k))
+        bivertices = [subdivide_endpoint(k, (node, pos)) for pos in range(degree)]
+
+        #print("adding support around", node, "with", degree, "bivertices", bivertices)
+        #print("AV", to_knotpy_notation(k))
+
+        for v in bivertices:
+            k.nodes[v].attr["__support__"] = True
+
+        for i in range(degree):
+            adj_vert_a, adj_vert_b = bivertices[i], bivertices[(i + 1) % degree]
+            adj_pos_a = k.degree(adj_vert_a)
+            adj_pos_b = 1
+
+            # k.set_endpoint((adj_vert_a, adj_pos_a), (adj_vert_b, adj_pos_b), __support__=True)
+            # k.set_endpoint((adj_vert_b, adj_pos_b), (adj_vert_a, adj_pos_a), __support__=True)
+            insert_endpoint(k, target_endpoint=(adj_vert_a, adj_pos_a), adjacent_endpoint=(adj_vert_b, adj_pos_b), __support__=True)
+            insert_endpoint(k, target_endpoint=(adj_vert_b, adj_pos_b), adjacent_endpoint=(adj_vert_a, adj_pos_a), __support__=True)
+            # insert_arc(k, ((adj_vert_a, adj_pos_a), (adj_vert_b, adj_pos_b)), __support__=True)
+        # print("END", k)
+        assert sanity_check(k)
+        #print("AS", to_knotpy_notation(k))
+
+    # print("FINISH")
+
+def _add_support_arcs_for_bridges(k:PlanarDiagram):
     """
+    Adds support arcs for bridges in the given diagram.
 
-    k = k.copy()
-    is_oriented = k.is_oriented()
+
+    Raises:
+        NotImplementedError: If an unsupported configuration involving degree-2
+            vertices is encountered.
+
+    Args:
+        k (PlanarDiagram): The planar diagram object for which support arcs need to be added.
+
+    Returns:
+        PlanarDiagram: The processed planar diagram without bridges.
+    """
 
     # Support for bridges
     while all_bridges := bridges(k):
@@ -113,4 +165,58 @@ def _add_support_arcs(k: PlanarDiagram):
             insert_arc(k, ((node_a_left, pos_a_left), (node_b_left, pos_b_left)), __support__=True)
             insert_arc(k, ((node_a_right, pos_a_right), (node_b_right, pos_b_right)), __support__=True)
 
+def _add_support_arcs(k: PlanarDiagram):
+    """ Ads support arcs so there are no bridges in the diagram. For every bridge, add two parallel arcs. In the case
+    the bridge is a leaf, add two adjacent arcs to the leaf.
+
+    :param k:
+    :return:
+    """
+
+    #print("\n SUPPORT \n")
+
+
+    k = k.copy()
+    if k.name:
+        name = k.name
+        del k.attr["name"]
+    else:
+        name = None
+    is_oriented = k.is_oriented()
+
+    if not sanity_check(k):
+        raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (before support)")
+
+    #print("BB", to_knotpy_notation(k))
+
+    _add_support_arcs_for_bridges (k)
+
+    #print("AB", to_knotpy_notation(k))
+
+    if bridges(k):
+        raise ValueError(f"HAS BRIDGES!!!")
+
+    if not sanity_check(k):
+        raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (after bridges)")
+
+    #print("BC", to_knotpy_notation(k))
+
+    _add_support_arcs_for_cut_vertices(k)
+
+    #print("AC", to_knotpy_notation(k))
+
+    if not sanity_check(k):
+        raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (after cut vertices)")
+
+    if name:
+        k.name = name
     return k
+
+
+if __name__ == "__main__":
+    pass
+    # k = from_knotpy_notation("BS a=V(b0 i2 j1) b=X(a0 j0 k1 i0) c=X(l0 d0 k0 e0) d=X(c1 f0 g3 i1) e=V(c3 k2 l1) f=X(d1 g2 h3 h2) g=X(h1 h0 f1 d2) h=X(g1 g0 f3 f2) i=V(b3 d3 a1) j=V(b1 a2 l2) k=V(c2 b2 e1) l=V(c0 e2 j2) [; i:{'__support__'=True} j:{'__support__'=True} k:{'__support__'=True} l:{'__support__'=True}; a1:{'__support__'=True} a2:{'__support__'=True} e1:{'__support__'=True} e2:{'__support__'=True} i2:{'__support__'=True} j1:{'__support__'=True} k2:{'__support__'=True} l1:{'__support__'=True}]")
+    # print(k)
+    # print(sanity_check(k))
+    # _add_support_arcs_for_cut_vertices(k)
+    # print(sanity_check(k))

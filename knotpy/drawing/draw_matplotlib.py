@@ -1,9 +1,9 @@
 """Draw a planar graph from a PlanarGraph object."""
 
 import math
-
+import warnings
 from collections import defaultdict
-
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.collections import PatchCollection, LineCollection, PolyCollection
@@ -13,9 +13,8 @@ from matplotlib.colors import to_rgb
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
-from knotpy.algorithms.topology import bridges, loops
-from knotpy.manipulation.insert import insert_arc
-from knotpy.manipulation.subdivide import subdivide_arc, subdivide_endpoint
+from knotpy.algorithms.topology import bridges, loops, kinks, leafs
+from knotpy.algorithms.cut_set import cut_nodes
 from knotpy.utils.multiprogressbar import Bar
 from knotpy.drawing.layout import circlepack_layout, bezier
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
@@ -23,8 +22,10 @@ from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendic
                                    perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean)
 
 from knotpy.drawing._support import _add_support_arcs
+from knotpy.notation.native import to_knotpy_notation
+from sklearn.decomposition import PCA
 
-__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "plt", "export_png"]
+__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "plt", "export_png", "export_pdf_groups"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -135,7 +136,7 @@ def _plot_vertices(k, circles, with_labels, ax):
     for key in circles:
         if isinstance(key, str) and "__BOND__" in key:
             # BONDED NODE
-
+            BONDED_NODE_COLOR = "black"
             value = circles[key]
             xy = (value.real, value.imag)
             circle_patch = plt.Circle(xy, _DEFAULT_NODE_SIZE / 2 * 0.67, color=BONDED_NODE_COLOR, zorder=3)
@@ -415,6 +416,8 @@ def _plot_all_endpoints(k: PlanarDiagram, circles, new_vertices: dict):
             result_curves += _plot_endpoint(k, circles, under_arc2, endpoints[2] if under_order[0] == 1 else endpoints[0], gap=True, arrow=True)
 
         elif isinstance(node, Bond):
+            # TODO: make for bonds...
+            DEFAULT_BOND_COLOR = "black"
             arc01 = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[1]], order01 := [])
             arc23 = perpendicular_arc(circles[v], circles[arcs[2]], circles[arcs[3]], order23 := [])
             arc0, arc1 = bisect(arc01)
@@ -544,23 +547,23 @@ def compute_PCA(complex_points: list):
     #print(explained_variance)
 
 
-# def canonically_rotate_layout(layout, PCA_degrees=0):
-#     """
-#
-#     :param layout:
-#     :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
-#     :return:
-#     """
-#     centers = [circle.center for circle in layout.values()]
-#     radii = [circle.radius for circle in layout.values()]
-#
-#     mass_center = sum(c * r for c, r in zip(centers, radii)) / sum(radii)
-#     centers = [c - mass_center for c in centers]
-#     centers = aligned_centers = compute_PCA(centers)
-#     # rotate centers
-#     rotation = complex(math.cos(math.radians(PCA_degrees)), math.sin(math.radians(PCA_degrees)))
-#     centers = [c * rotation for c in centers]
-#     return {key: Circle(c, r) for key, c, r in zip(layout, centers, radii)}
+def canonically_rotate_layout(layout, PCA_degrees=0):
+    """
+
+    :param layout:
+    :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
+    :return:
+    """
+    centers = [circle.center for circle in layout.values()]
+    radii = [circle.radius for circle in layout.values()]
+
+    mass_center = sum(c * r for c, r in zip(centers, radii)) / sum(radii)
+    centers = [c - mass_center for c in centers]
+    centers = aligned_centers = compute_PCA(centers)
+    # rotate centers
+    rotation = complex(math.cos(math.radians(PCA_degrees)), math.sin(math.radians(PCA_degrees)))
+    centers = [c * rotation for c in centers]
+    return {key: Circle(c, r) for key, c, r in zip(layout, centers, radii)}
 
 
 def draw_from_layout(k,
@@ -651,12 +654,70 @@ def get_style_from_style(style_kwargs):
         "arrow-color": _get(["arrow-color", "arrowcolor", "ac"], _DEFAULT_ARROW_COLOR),
     }
 
+def _draw_error_diagram(k, error_text):
+    # draw an "X"
+    ax = plt.gca()
+    x_values_1 = [0, 1]
+    y_values_1 = [0, 1]
+    x_values_2 = [0, 1]
+    y_values_2 = [1, 0]
+
+    # Plot the "X" shape on the provided axis
+    ax.plot(x_values_1, y_values_1, color="blue", linewidth=2)
+    ax.plot(x_values_2, y_values_2, color="blue", linewidth=2)
+
+    # Add centered text
+    ax.text(0.5, 0.5, "Error (" + ", ".join(error_text) + ")",
+            ha='center', va='center',
+            fontsize=12, color='red', weight='bold')
+
+    title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
+    ax.set_title(str(title))
+
+    ax.set_xlim(-0.5, 1.5)
+    ax.set_ylim(-0.5, 1.5)
+    ax.set_aspect('equal')
+    ax.axis("off")
+
+
+def _check_diagram_drawability(k:PlanarDiagram):
+
+    diagram_drawable = True
+    error_text = []
+
+    if bridges(k):
+        warnings.warn(f"Diagram {to_knotpy_notation(k)} contains bridges (skipping)", UserWarning)
+        error_text.append("bridge")
+        diagram_drawable = False
+
+    if loops(k):
+        warnings.warn(f"Diagram {to_knotpy_notation(k)} contains loops (skipping)", UserWarning)
+        error_text.append("loop")
+        diagram_drawable = False
+
+    if kinks(k):
+        warnings.warn(f"Diagram {to_knotpy_notation(k)} contains kinks (skipping)", UserWarning)
+        error_text.append("kink")
+        diagram_drawable = False
+
+    if leafs(k):
+        warnings.warn(f"Diagram {to_knotpy_notation(k)} contains leafs (skipping)", UserWarning)
+        error_text.append("leaf")
+        diagram_drawable = False
+
+    if cut_nodes(k):
+        warnings.warn(f"Diagram {to_knotpy_notation(k)} contains cut-nodes (skipping)", UserWarning)
+        error_text.append("cut-node")
+        diagram_drawable = False
+
+    return diagram_drawable, error_text
 
 def draw(
     k: PlanarDiagram,
     draw_circles: bool = False,
     with_labels: bool = False,
     with_title: bool = False,
+    ax = None,
     **style_kwargs
 ):
     """
@@ -674,46 +735,29 @@ def draw(
     :return: None
     """
 
-    _DEBUG = True
+    # Add "invisible" support arcs so the diagram has no bridges or cut-vertices.
+    k = _add_support_arcs(k)
 
-    error = False
-    if bridges(k):
-        if _DEBUG: print("Before bridge:", k)
-        k = _add_support_arcs(k)
-        if _DEBUG: print("After bridge:", k)
-
-    if bridges(k) or loops(k):
-        print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
-        error = True
-        return
+    diagram_drawable, error_text = _check_diagram_drawability(k)
 
     # compute the layout
-    try:
-        circles = circlepack_layout(k)
-        #circles = canonically_rotate_layout(circles, 0)
-    except ZeroDivisionError:
-        print(f"Skipping drawing {k}, since drawing loops or bridges in not yet supported.")
-        error = True
+    if diagram_drawable:
+        try:
+            circles = circlepack_layout(k)
+            circles = canonically_rotate_layout(circles, 0)
+            draw_from_layout(k, circles, draw_circles, with_labels, with_title, ax=ax, **style_kwargs)
+        except ZeroDivisionError:
+            warnings.warn(f"Diagram {to_knotpy_notation(k)} yields a zero division error (skipping)", UserWarning)
+            error_text.append("zero division")
+            diagram_drawable = False
+        except KeyError:
+            warnings.warn(f"Diagram {to_knotpy_notation(k)} yields a a key error (skipping)", UserWarning)
+            error_text.append("key error")
+            diagram_drawable = False
 
-    if not error:
-        draw_from_layout(k, circles, draw_circles, with_labels, with_title, **style_kwargs)
 
-    else:
-        # draw an "X"
-        ax = plt.gca()
-        x_values_1 = [0, 1]
-        y_values_1 = [0, 1]
-        x_values_2 = [0, 1]
-        y_values_2 = [1, 0]
-
-        # Plot the "X" shape on the provided axis
-        ax.plot(x_values_1, y_values_1, color="blue", linewidth=2)
-        ax.plot(x_values_2, y_values_2, color="blue", linewidth=2)
-        ax.set_xlim(-0.5, 1.5)
-        ax.set_ylim(-0.5, 1.5)
-        ax.set_aspect('equal')
-        ax.axis("off")
-
+    if not diagram_drawable:
+        _draw_error_diagram(k, error_text)
 
 
 def export_png(k, filename, draw_circles=False, with_labels=False, with_title=False):
@@ -724,6 +768,7 @@ def export_png(k, filename, draw_circles=False, with_labels=False, with_title=Fa
 
     draw(k, draw_circles=draw_circles, with_labels=with_labels, with_title=with_title)
     plt.savefig(filename)
+
 
 def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_title=False, show_progress=True):
     """
@@ -762,13 +807,7 @@ def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_t
         plt.close()
     pdf = PdfPages(filename)
 
-    warnings = []
-
     for k in (Bar(diagrams, comment="exporting to PDF") if show_progress else diagrams):
-
-        if loops(k):
-            warnings.append(f"Skipped drawing {k}, since drawing loops or bridges in not yet supported.")
-            continue
 
         draw(k,
              draw_circles=draw_circles,
@@ -782,13 +821,86 @@ def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_t
     #     pdf.infodict()["Author"] = author
 
     pdf.close()
-    if warnings:
-        print("\n".join(warnings))
+
+
+
+
+def export_pdf_groups(groups, filename, draw_circles=False, with_labels=False, with_title=False, show_progress=True):
+    """
+    Draw the planar diagram(s) using Matplotlib and save to a PDF file.
+
+    This function takes a planar diagram or a list of planar diagrams, draws
+    them using Matplotlib, and exports the resulting visualizations to a PDF
+    file. The drawing behavior can be customized using the optional parameters.
+    If the diagrams contain unsupported features such as loops or bridges,
+    they will be skipped, and a warning message will be generated. Progress
+    indicators can be displayed if the export involves multiple diagrams.
+
+    Parameters:
+    diagrams: PlanarDiagram | list[PlanarDiagram]
+        A planar diagram or a list of planar diagrams to be drawn.
+    filename: str
+        The name of the output PDF file where the drawings will be saved.
+    draw_circles: bool, optional
+        If True, circles will be drawn around the diagrams. Defaults to False.
+    with_labels: bool, optional
+        If True, labels will be displayed on the diagrams. Defaults to False.
+    with_title: bool, optional
+        If True, titles will be added to the diagrams. Defaults to False.
+    show_progress: bool, optional
+        If True, progress indicators will be displayed if the number of diagrams
+        is 10 or more. Defaults to True.
+
+    Returns:
+    None
+    """
+
+    if not isinstance(groups, (list, set, tuple)):
+        raise TypeError("groups must be a list")
+    if not groups:
+        return
+    if not isinstance(groups[0], (list, set, tuple)):
+        raise TypeError("groups must be a list of lists of diagrams")
+
+    show_progress = show_progress and sum(len(g) for g in groups) >= 10
+
+    if plt.get_fignums():  # returns a list of open figure numbers
+        plt.close()
+
+    pdf = PdfPages(filename)
+
+    for group in (Bar(groups, comment="exporting to PDF") if show_progress else groups):
+        n = len(group)
+        cols = math.ceil(math.sqrt(n))
+        rows = math.ceil(n / cols)
+        fig, axes = plt.subplots(rows, cols, figsize=(3 * cols, 3 * rows))  # Adjust size per diagram
+        axes = axes.flatten() if isinstance(axes, (list, np.ndarray)) else [axes]
+
+        for k, ax in zip(group, axes):
+            draw(k,
+                 draw_circles=draw_circles,
+                 with_labels=with_labels,
+                 with_title=with_title,
+                 ax=ax)
+
+        plt.tight_layout(pad=0)
+        pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
+        plt.close()
+
+    # if author is not None:
+    #     pdf.infodict()["Author"] = author
+
+    pdf.close()
+
 
 
 if __name__ == '__main__':
     import knotpy as kp
-    # draw a knot
+
+    k = kp.from_knotpy_notation("a=V(b0 i2 j1) b=X(a0 j0 p0 i0) c=X(j2 l0 e0 k0) d=X(m1 n1 o1 p1) e=V(c2 l2 k1) f=X(h3 h2 g1 m0) g=X(n0 f2 h1 h0) h=X(g3 g2 f1 f0) i=V(b3 l1 a1) j=V(b1 a2 c0) k=V(c3 e2 o0) l=V(c1 i1 e1) m=V(f3 p2 n1) n=V(g0 m2 o1) o=V(k2 n2 p1) p=V(b2 o2 m1) ['name'='koko'; i:{'__support__'=True} j:{'__support__'=True} k:{'__support__'=True} l:{'__support__'=True} m:{'__support__'=True} n:{'__support__'=True} o:{'__support__'=True} p:{'__support__'=True}; a1:{'__support__'=True} a2:{'__support__'=True} e1:{'__support__'=True} e2:{'__support__'=True} i2:{'__support__'=True} j1:{'__support__'=True} k1:{'__support__'=True} l2:{'__support__'=True} m1:{'__support__'=True} m2:{'__support__'=True} n1:{'__support__'=True} n2:{'__support__'=True} o1:{'__support__'=True} o2:{'__support__'=True} p1:{'__support__'=True} p2:{'__support__'=True}]")
+    print(k)
+    print(kp.sanity_check(k))
+    exit()# draw a knot
     k = kp.PlanarDiagram("10_12")
     #print(k)
     # draw(k)
