@@ -1,7 +1,7 @@
 from knotpy import to_knotpy_notation
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Vertex
-from knotpy.manipulation.rewire import rewire_endpoint
+from knotpy.manipulation.rewire import pull_and_plug_endpoint
 
 def contract_arc(k: PlanarDiagram, arc_for_contracting, inplace=True) -> PlanarDiagram:
     """
@@ -63,9 +63,9 @@ def contract_arc(k: PlanarDiagram, arc_for_contracting, inplace=True) -> PlanarD
 
 
         index -= 1
-        rewire_endpoint(k,
-                        source_endpoint=(del_node, max(index, -1) % len(del_node_inst)),
-                        destination_endpoint=(c_node, c_pos))
+        pull_and_plug_endpoint(k,
+                               source_endpoint=(del_node, max(index, -1) % len(del_node_inst)),
+                               destination_endpoint=(c_node, c_pos))
 
         # print("=", k)
 

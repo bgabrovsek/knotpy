@@ -4,8 +4,8 @@ from knotpy.manipulation.insert import insert_new_leaf
 from knotpy.manipulation.remove import remove_bivalent_vertex
 
 
-
-def rewire_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
+# used to be "rewire endpoint"
+def pull_and_plug_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
     """Pull out one endpoint and stick it somewhere else."""
     # TODO: we should distinguish between rewire (overwrites) and pull_and_plug (remove and inserts)
 
@@ -109,20 +109,6 @@ def rewire_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
 
 
 
-if __name__ == "__main__":
-    # test rewire (normal)
-    from knotpy import sanity_check, PlanarDiagram, Crossing
-
-    k = PlanarDiagram()
-    k.set_arcs_from("x0a0,x1y2,x2d0,y0e0,y1f0,y3g0,y4h0,f1d1")
-    print(k)
-    sanity_check(k)
-    print(k)
-    rewire_endpoint(k, source_endpoint=("x",1), destination_endpoint=("y",2))
-    print(k)
-    sanity_check(k)
-
-    exit()
 
 
 def replug_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
@@ -153,3 +139,20 @@ def replug_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
                    **adj_ep.attr)
 
     k.remove_endpoint(src_ep)
+
+
+
+if __name__ == "__main__":
+    # test rewire (normal)
+    from knotpy import sanity_check, PlanarDiagram, Crossing
+
+    k = PlanarDiagram()
+    k.set_arcs_from("x0a0,x1y2,x2d0,y0e0,y1f0,y3g0,y4h0,f1d1")
+    print(k)
+    sanity_check(k)
+    print(k)
+    pull_and_plug_endpoint(k, source_endpoint=("x", 1), destination_endpoint=("y", 2))
+    print(k)
+    sanity_check(k)
+
+    exit()

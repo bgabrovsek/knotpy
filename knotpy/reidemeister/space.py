@@ -12,7 +12,7 @@ from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, 
 from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke, choose_reidemeister_2_unpoke
 from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister_3_triangle
 from knotpy.reidemeister.detour_move import find_detour_moves
-from knotpy.reidemeister.reidemeister import make_reidemeister_move
+from knotpy.reidemeister.reidemeister import make_reidemeister_move, detect_move_type
 from knotpy.manipulation.attributes import clear_node_attributes
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.utils.multiprogressbar import ProgressTracker
@@ -24,7 +24,7 @@ __author__ = 'Boštjan Gabrovšek'
 
 
 
-def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
+def reduce_crossings_greedy(k: PlanarDiagram, inplace=False, allowed_moves=None):
     """
     Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
     (R2 unpokes and unkinks), until there are no more such moves left.
@@ -47,26 +47,29 @@ def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
 
     #TODO: add canonical argument flag if we ever need to speed up the computations
 
+
     if isinstance(k, (set, tuple, list)):
-        return type(k)(reduce_crossings_greedy(_, inplace=inplace) for _ in k)
+        return type(k)(reduce_crossings_greedy(_, inplace=inplace, allowed_moves=allowed_moves) for _ in k)
 
     if not inplace:
         k = k.copy()
 
     # Repeat R2 moves and R1 moves, until there are no more moves left (a R1 move can reveal an R2 move)
     while True:
-        if face := choose_reidemeister_2_unpoke(k, random=False):
-            reidemeister_2_unpoke(k, face, inplace=True)
-            continue
-        if ep := choose_reidemeister_1_remove_kink(k, random=False):
-            reidemeister_1_remove_kink(k, ep, inplace=True)
-            continue
+        if allowed_moves is None or "R2" in allowed_moves:
+            if face := choose_reidemeister_2_unpoke(k, random=False):
+                reidemeister_2_unpoke(k, face, inplace=True)
+                continue
+        if allowed_moves is None or "R1" in allowed_moves:
+            if ep := choose_reidemeister_1_remove_kink(k, random=False):
+                reidemeister_1_remove_kink(k, ep, inplace=True)
+                continue
         break
 
     return canonical(k)
 
 
-def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
+def crossing_reducing_space(diagrams, assume_canonical=False, allowed_moves=None) -> set:
     """
     Remove the crossings in a set of planar diagrams using Reidemeister I and
     Reidemeister II moves and return all possible reduced diagrams.
@@ -102,18 +105,21 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
     while ls[-1]:
         # Put diagrams after removing kinks and unpokes to the next level.
         ls.new_level()
-        ls.extend([
-            canonical(reidemeister_1_remove_kink(k, ep, inplace=False))
-            for k in ls[-2]
-            for ep in find_reidemeister_1_remove_kink(k)
-            ]
-        )
-        ls.extend([
-            canonical(reidemeister_2_unpoke(k, face, inplace=False))
-            for k in ls[-2]
-            for face in find_reidemeister_2_unpoke(k)
-            ]
-        )
+        if allowed_moves is None or "R1" in allowed_moves:
+            ls.extend([
+                canonical(reidemeister_1_remove_kink(k, ep, inplace=False))
+                for k in ls[-2]
+                for ep in find_reidemeister_1_remove_kink(k)
+                ]
+            )
+
+        if allowed_moves is None or "R2" in allowed_moves:
+            ls.extend([
+                canonical(reidemeister_2_unpoke(k, face, inplace=False))
+                for k in ls[-2]
+                for face in find_reidemeister_2_unpoke(k)
+                ]
+            )
 
     return set(ls)
 
@@ -162,7 +168,7 @@ def reidemeister_3_space(diagrams, assume_canonical=False, depth=None) -> set:
     return results
 
 
-def detour_space(diagrams):
+def detour_space(diagrams, allowed_moves=None) -> set:
     """
     Perform all R2 increasing moves to enable an R3 move in the future.
 
@@ -197,10 +203,11 @@ def detour_space(diagrams):
         canonical(make_reidemeister_move(k, location, inplace=False))
         for k in diagrams
         for location in find_detour_moves(k)
+        if allowed_moves is None or detect_move_type(location) in allowed_moves
         }
 
 
-def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progress=False) -> set:
+def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progress=False, allowed_moves=None) -> set:
     """
     Return the non-increasing "Reidemeister space" of a given set of diagrams.
     This process transforms the input diagrams iteratively by applying Reidemeister
@@ -232,21 +239,27 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progres
     if tracker:
         tracker.update(0, len(diagrams), min(len(_) for _ in diagrams), "Reidemeister 3")
 
-
-    ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
+    if allowed_moves is None or "R3" in allowed_moves:
+        ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
+    else:
+        ls = LeveledSet(diagrams)
 
     while True:
         if tracker:
             tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "reducing crossings")
 
-        ls.new_level(crossing_reducing_space(ls[-1], assume_canonical=True))
+        ls.new_level(crossing_reducing_space(ls[-1], assume_canonical=True, allowed_moves=allowed_moves))
         if not ls[-1]:
             break
 
         if tracker:
             tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "Reidemeister 3")
 
-        ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
+        if allowed_moves is None or "R3" in allowed_moves:
+            ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
+        else:
+            ls.new_level()
+
         if not ls[-1]:
             break
 
@@ -257,7 +270,7 @@ def _filter_minimal_diagrams(diagrams):
     return {_ for _ in diagrams if len(_) == min_node_count}
 
 
-def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
+def crossing_non_increasing_space_greedy(diagrams, show_progress=False, allowed_moves=None) -> set:
     """
     Return the non-increasing "Reidemeister space" of a given set of diagrams.
     This process transforms the input diagrams iteratively by applying Reidemeister
@@ -286,8 +299,13 @@ def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
     while ls[-1]:
         if tracker:
             tracker.update(len(ls[-1]), len(ls.global_set), min(len(_) for _ in ls[-1]))
-        diagrams = reidemeister_3_space(ls[-1], assume_canonical=True, depth=1)
-        diagrams = reduce_crossings_greedy(diagrams, inplace=True)
+
+        if allowed_moves is None or "R3" in allowed_moves:
+            diagrams = reidemeister_3_space(ls[-1], assume_canonical=True, depth=1)
+        else:
+            diagrams = ls[-1]
+
+        diagrams = reduce_crossings_greedy(diagrams, inplace=True, allowed_moves=allowed_moves)
         diagrams = _filter_minimal_diagrams(diagrams)
         ls.new_level(diagrams)
 

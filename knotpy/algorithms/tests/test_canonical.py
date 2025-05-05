@@ -1,6 +1,7 @@
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.sanity import sanity_check
+from knotpy.notation.pd import from_pd_notation
 
 def test_canonical():
     native_a = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
@@ -38,6 +39,16 @@ def test_canonical_degenerate():
 
     assert ka == kb
 
+def test_canonical_knots():
+    pd1 = "X[0,1,2,3],X[4,5,3,2],X[5,4,1,0]"
+    pd2 = "X[0,1,2,3],X[4,5,1,0],X[5,4,3,2]"
+    k1 = from_pd_notation(pd1)
+    k2 = from_pd_notation(pd2)
+    c1 = canonical(k1)
+    c2 = canonical(k2)
+    assert c1 == c2
+
 if __name__ == "__main__":
     test_canonical()
     #test_canonical_degenerate()
+    test_canonical_knots()

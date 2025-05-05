@@ -154,6 +154,8 @@ def _state_sum_yamada(k: PlanarDiagram):
             kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")
             kX = crossing_to_vertex(k, crossing=crossing)
 
+            # print("A", kA, "\nB", kB, "\nX", kX)
+
             kA.attr["_A"] = k.attr["_A"] + 1
             kB.attr["_B"] = k.attr["_B"] + 1
             kX.attr["_X"] = k.attr["_X"] + 1
@@ -317,6 +319,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
             and arc counts, which violates the consistency of the diagram's graphical
             properties.
     """
+
     # Extend the sigma lookup table to the number of arcs, just to be safe.
     global _sigma, _sigma_power
     _sigma_power.extend([expand(_sigma**_) for _ in range(len(_sigma_power), len(k.arcs) + 1)])  # should we extend to the number of faces - 1?

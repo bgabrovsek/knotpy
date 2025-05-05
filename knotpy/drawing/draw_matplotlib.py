@@ -615,7 +615,7 @@ def draw_from_layout(k,
 
     if with_title:
         title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
-        ax.set_title(str(title))
+        ax.set_title(str(title), fontsize=5)
 
 
     # Set axis limits for better visualization

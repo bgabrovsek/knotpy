@@ -3,29 +3,12 @@ from  knotpy.classes.node import Vertex
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.naming import unique_new_node_name
 
-# def split_arc_by_bivertex(k: PlanarDiagram, first_endpoint, second_endpoint):
-#
-#     # convert arguments to Endpoint instances (if not)
-#     first_endpoint = k.endpoint_from_pair(first_endpoint)
-#     second_endpoint = k.endpoint_from_pair(second_endpoint)
-#
-#     # split the arc by a temporary vertex
-#     b_node = unique_temporary_new_node_name(k.nodes, "bi")  # bivalent node
-#     k.add_vertex(b_node)
-#     k.set_endpoint(("b_node", 0), first_endpoint, create_using=type(second_endpoint))
-#     k.set_endpoint(("b_node", 1), second_endpoint, create_using=type(first_endpoint))
-#
-#     # add a temporary vertex the planar diagram
-#     t_node = unique_temporary_new_node_name(k.nodes, "temp")
-#     k.add_vertex(t_node)
-#     raise DeprecationWarning("This function is deprecated, use subdivide_arc instead")
-#
-#
 
 
 
 
-def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None) -> str:
+
+def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None, **attr) -> str:
     """
     Subdivides an arc by introducing a new vertex along the arc. If arc is not a set, then the new node will be
     (arc[0], arc[1])
@@ -45,6 +28,9 @@ def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None) -> str:
     endpoint_a = k.endpoint_from_pair(endpoint_a)
     endpoint_b = k.endpoint_from_pair(endpoint_b)
 
+    a_attr = endpoint_a.attr | attr
+    b_attr = endpoint_b.attr | attr
+
     if new_node_name is None:
         new_node_name = unique_new_node_name(k)
 
@@ -53,20 +39,20 @@ def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None) -> str:
     k.set_endpoint(endpoint_for_setting=(new_node_name, 0),
                    adjacent_endpoint=(endpoint_a.node, endpoint_a.position),
                    create_using=type(endpoint_b),
-                   **endpoint_b.attr)
+                   **b_attr)
     k.set_endpoint(endpoint_for_setting=(endpoint_a.node, endpoint_a.position),
                    adjacent_endpoint=(new_node_name, 0),
                    create_using=type(endpoint_a),
-                   **endpoint_a.attr)
+                   **a_attr)
 
     k.set_endpoint(endpoint_for_setting=(new_node_name, 1),
                    adjacent_endpoint=(endpoint_b.node, endpoint_b.position),
                    create_using=type(endpoint_b),
-                   **endpoint_b.attr)
+                   **b_attr)
     k.set_endpoint(endpoint_for_setting=(endpoint_b.node, endpoint_b.position),
                    adjacent_endpoint=(new_node_name, 1),
                    create_using=type(endpoint_a),
-                   **endpoint_a.attr)
+                   **a_attr)
 
     return new_node_name
 
@@ -83,4 +69,50 @@ def subdivide_endpoint(k: PlanarDiagram, endpoint, **attr) -> str:
     Returns:
         str: The name of the newly created node.
     """
-    return subdivide_arc(k, [endpoint, k.twin(endpoint)], **attr)
+    return subdivide_arc(k, [endpoint, k.twin(endpoint)], new_node_name=None, **attr)
+
+
+def subdivide_endpoint_by_crossing(k: PlanarDiagram, endpoint, crossing_position, **attr) -> str:
+    """
+    Subdivides an endpoint by introducing a new node. The endpoint is at position 0 of the new node
+
+    Args:
+        k (PlanarDiagram): The planar diagram.
+        endpoint (Endpoint): The endpoint where the subdivision occurs.
+        attr (dict): Additional attributes for the new node.
+
+    Returns:
+        str: The name of the newly created node.
+    """
+    endpoint = k.endpoint_from_pair(endpoint)
+    twin_endpoint = k.twin(endpoint)
+
+    new_node_name = unique_new_node_name(k)
+    crossing_position = crossing_position % 4
+
+    k.add_crossing(crossing_for_adding=new_node_name, **attr)
+
+    k.set_endpoint(endpoint_for_setting=(new_node_name, crossing_position),
+                   adjacent_endpoint=(endpoint.node, endpoint.position),
+                   create_using=type(twin_endpoint),
+                   **twin_endpoint.attr)
+    k.set_endpoint(endpoint_for_setting=(endpoint.node, endpoint.position),
+                   adjacent_endpoint=(new_node_name, crossing_position),
+                   create_using=type(endpoint),
+                   **endpoint.attr)
+
+    k.set_endpoint(endpoint_for_setting=(new_node_name, (crossing_position + 2) % 4),
+                   adjacent_endpoint=(twin_endpoint.node, twin_endpoint.position),
+                   create_using=type(twin_endpoint),
+                   **twin_endpoint.attr)
+    k.set_endpoint(endpoint_for_setting=(twin_endpoint.node, twin_endpoint.position),
+                   adjacent_endpoint=(new_node_name, (crossing_position + 2) % 4),
+                   create_using=type(endpoint),
+                   **endpoint.attr)
+
+    return new_node_name
+
+
+def subdivide_arcs_around_node(k: PlanarDiagram, arc, inplace=True):
+    raise NotImplementedError()
+    pass

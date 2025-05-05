@@ -42,8 +42,8 @@ def test_all_reidemeister_moves():
     diagrams = _get_examples()
     for k in diagrams:
         j = jones_polynomial(k)
-        moves = list(find_all_reidemeister_moves(k))
-        k_ = make_all_reidemeister_moves(k, moves)
+        #moves = list(find_all_reidemeister_moves(k))
+        k_ = make_all_reidemeister_moves(k, 1)
         for k__ in k_:
             assert sanity_check(k__)
             assert jones_polynomial(k__) == j

@@ -117,6 +117,29 @@ def choose_random_reidemeister_moves(k, count=1):
 
     return sample
 
+def detect_move_type(location, detailed=False):
+
+    # A R3 move is given by a face of length 3
+    if isinstance(location, tuple) and len(location) == 3:
+        return "R3" if detailed else "R3"
+
+    # A R2 unpoke is given by a face of length 2
+    elif isinstance(location, set) and len(location) == 2:
+        return "R2unpoke" if detailed else "R2"
+
+    # A R1 unkink is given by an Endpoint
+    elif isinstance(location, Endpoint):
+        return "R1unkink" if detailed else "R1"
+
+    # A R2 poke is given by an ordered tuple of Endpoints
+    elif isinstance(location, tuple) and len(location) == 2 and isinstance(location[0], Endpoint) and isinstance(location[1], Endpoint):
+        return "R2poke" if detailed else "R2"
+
+    # A R1 make kink is given by a tuple of (Endpoint, int)
+    elif isinstance(location, tuple) and isinstance(location[0], Endpoint) and isinstance(location[1], int):
+        return "R1kink" if detailed else "R1"
+
+
 
 def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
     """
@@ -155,27 +178,19 @@ def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
     """
 
     # Guess the Reidemeister move type.
+    reidemeister_move_type = detect_move_type(location, detailed=True)
 
     # A R3 move is given by a face of length 3
-    if isinstance(location, tuple) and len(location) == 3:
+    if reidemeister_move_type == "R3":
         return reidemeister_3(k, location, inplace=inplace)
-
-    # A R2 unpoke is given by a face of length 2
-    elif isinstance(location, set) and len(location) == 2:
+    elif reidemeister_move_type == "R2unpoke":
         return reidemeister_2_unpoke(k, location, inplace=inplace)
-
-    # A R1 unkink is given by an Endpoint
-    elif isinstance(location, Endpoint):
+    elif reidemeister_move_type == "R1unkink":
         return reidemeister_1_remove_kink(k, location, inplace=inplace)
-
-    # A R2 poke is given by an ordered tuple of Endpoints
-    elif isinstance(location, tuple) and len(location) == 2 and isinstance(location[0], Endpoint) and isinstance(location[1], Endpoint):
+    elif reidemeister_move_type == "R2poke":
         return reidemeister_2_poke(k, location, inplace=inplace)
-
-    # A R1 make kink is given by a tuple of (Endpoint, int)
-    elif isinstance(location, tuple) and isinstance(location[0], Endpoint) and isinstance(location[1], int):
+    elif reidemeister_move_type == "R1kink":
         return reidemeister_1_add_kink(k, location, inplace=inplace)
-
     else:
         raise ValueError(f"Unknown Reidemesiter move type {location}")
 

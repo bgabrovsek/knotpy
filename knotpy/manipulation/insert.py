@@ -92,45 +92,51 @@ def insert_endpoint(k: PlanarDiagram, target_endpoint, adjacent_endpoint, **attr
     TODO: rewrite this entire function: subdivide edges around point, insert none at the end and then permute the edges using the permutation furnction
     this way no new logic needs to bu built (attributes...). it will all be much cleaner.
     """
-
-    target_type = type(target_endpoint) if isinstance(target_endpoint, Endpoint) else Endpoint
-    if adjacent_endpoint is not None:
-        if not isinstance(adjacent_endpoint, Endpoint):
-            adjacent_endpoint = Endpoint(*adjacent_endpoint)  # TODO: oriented
-
-    adjacent_endpoint.attr.update(**attr)
-
     node, pos = target_endpoint
-    node_inst = k.nodes[node]
 
-    if not isinstance(node_inst, Vertex):
+    # make space for the endpoint in the incident list
+    _insert_none_at_node_position(k, node, pos)
+
+    # if an endpoint is not given, create it
+    if not isinstance(adjacent_endpoint, Endpoint):
+        adjacent_endpoint = Endpoint(*adjacent_endpoint)  # todo: orientable case
+
+    if not isinstance(k._nodes[node], Vertex):
         raise ValueError("Cannot insert an endpoint at a non-vertex crossing.")
+
+    # actually place the endpoint
+    # TODO: use k.set_endpoint
+    k._nodes[node]._inc[pos] = adjacent_endpoint
+    k._nodes[node]._inc[pos].attr.update(attr)
+
+    # TODO: should we also adjust twin node? (no)
+
+
+def _insert_none_at_node_position(k:PlanarDiagram, node, position):
+    """Insert a 'None' at a node position. This is a temporary modification of a diagram and changes the diagram
+    to a non-valid diagram. Works inplace."""
+    node_inst = k.nodes[node]
 
     # changes to be made  # TODO: optimize
     changes = []
-    for i, adj_ep in enumerate(node_inst[pos:], start=pos):
+    for i, adj_ep in enumerate(node_inst[position:], start=position):
         ep_target = k.endpoint_from_pair((node, i))
         changes.append((adj_ep.node, adj_ep.position, i + 1, type(ep_target), ep_target.attr))
 
     for adj_node, adj_pos, new_pos, ep_type, ep_attr in changes:
         k.nodes[adj_node][adj_pos] = ep_type(node=node, position=new_pos, **ep_attr)
 
-    # shift twin positions (THE CODE BELOW DOES NOT WORK, IT COMPLICATES ATTRIBUTES ON MULTIPLE (2 OR MORE) LOOPS IN THE NODE.)
-    # for i, adj_ep in enumerate(node_inst[pos:], start=pos):
-    #     ep_target = k.endpoint_from_pair((node, i))  # endpoint at target node for renumerating
-    #     k.nodes[adj_ep.node][adj_ep.position] = type(ep_target)(node=node, position=i + 1, **ep_target.attr)  # set endpoint
-
-    k._nodes[node]._inc.insert(pos, adjacent_endpoint)
-    # TODO: should we also adjust twin node? (no)
+    k._nodes[node]._inc.insert(position, None)
 
 
 def insert_new_leaf(k:PlanarDiagram, target_endpoint, new_node_name=None):
 
     if new_node_name is None:
         new_node_name = unique_new_node_name(k)
+    node, pos = target_endpoint
 
     k.add_vertex(new_node_name)
-    insert_endpoint(k,target_endpoint=target_endpoint, adjacent_endpoint=None)
+    _insert_none_at_node_position(k, node, pos)
     k.set_arc((target_endpoint, (new_node_name, 0)))
 
     return  new_node_name

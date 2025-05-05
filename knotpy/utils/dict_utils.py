@@ -1,8 +1,8 @@
 from collections import defaultdict
 import warnings
 
-__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict","LazyLoadEvalDict","identitydict",
-           "ClassifierDict"]
+__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict",
+           "LazyLoadEvalDict","identitydict","ClassifierDict","common_dict"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -372,6 +372,38 @@ class ClassifierDict(dict):
             self[key] = []
         self[key].append(item)
 
+
+def common_dict(*dicts):
+    """
+    Return a dictionary containing key-value pairs that are common across all input dictionaries.
+
+    A key-value pair is included in the result if:
+    - The key exists in every dictionary.
+    - All dictionaries have the same value associated with that key.
+
+    Parameters:
+        *dicts: Any number of dictionaries to compare.
+
+    Returns:
+        dict: A dictionary of key-value pairs shared by all input dictionaries with equal values.
+              Returns an empty dictionary if no common key-value pairs exist or if no dictionaries are given.
+
+    Example:
+        >>> common_dict({'a': 1, 'b': 2}, {'a': 1, 'b': 3}, {'a': 1})
+        {'a': 1}
+    """
+    if not dicts:
+        return {}
+
+    common_keys = set.intersection(*(set(d.keys()) for d in dicts))
+
+    result = {}
+    for key in common_keys:
+        values = [d[key] for d in dicts]
+        if all(v == values[0] for v in values):
+            result[key] = values[0]
+
+    return result
 
 if __name__ == "__main__":
 
