@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 project = 'KnotPy'
-copyright = '2024, Boštjan Gabrovšek'
+copyright = '2025, Boštjan Gabrovšek'
 author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 

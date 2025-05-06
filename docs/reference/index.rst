@@ -15,11 +15,11 @@ Modules
    :template: custom-module-template.rst
 
    algorithms
+   catalog
    classes
    drawing
-   generate
    invariants
    manipulation
    notation
-   readwrite
+   reidemeister
    utils
