@@ -1,4 +1,7 @@
 #python >=3.9
+sphinx
+pydata-sphinx-theme
+sphinx-gallery
 sympy >=1.8
 pytest >=6.2
 matplotlib >=3.4
@@ -6,4 +9,3 @@ numpy >=1.20
 scipy >=1.6
 tqdm >=4.66.3
 scikit-learn >=0.24
-sphinx-gallery
