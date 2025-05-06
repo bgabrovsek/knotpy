@@ -42,13 +42,19 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3  # Ensures the repository is checked out
+      uses: actions/checkout@v3
+
+    - name: Ensure Python 3.9 is installed
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3.9 python3.9-venv python3.9-distutils
+        python3.9 --version
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.x  # Ensure Python 3.9 or newer is available
-        check-latest: true  # Ensures the latest patch version of Python 3.9 is used
+        python-version: 3.9
+        check-latest: true
 
     - name: Install dependencies
       run: |
