@@ -1,33 +1,3 @@
-#name: "Deploy Sphinx documentation to GitiHub Pages"
-#
-#on:
-#  push:
-#    branches: [main]
-#
-#permissions:
-#  contents: write
-#
-#jobs:
-#  pages:
-#    runs-on: ubuntu-22.04
-#    steps:
-#    - id: deployment
-#      uses: sphinx-notes/pages@v3
-#      with:
-#        publish: false
-#    - uses: peaceiris/actions-gh-pages@v3
-#      with:
-#        github_token: ${{ secrets.GITHUB_TOKEN }}
-#        publish_dir: ${{ steps.deployment.outputs.artifact }}
-#
-## Only run one instance of this GitHub action
-## See: https://github.com/marketplace/actions/sphinx-to-github-pages#cancel-any-in-progress-job
-#concurrency:
-#  group: ${{ github.ref }}
-#  cancel-in-progress: true
-
-
-
 name: "Deploy Sphinx documentation to GitHub Pages"
 
 on:
@@ -43,13 +13,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Ensure Python 3.9 is installed
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3.9
-        python3.9 -m ensurepip --upgrade
-        python3.9 --version
 
     - name: Set up Python
       uses: actions/setup-python@v4
