@@ -1,0 +1,1087 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>tutte &#8212; KnotPy  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.invariants.tutte';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="deletion_contraction" href="knotpy.invariants.tutte.deletion_contraction.html" />
+    <link rel="prev" title="test_yamada_reidemeister" href="knotpy.invariants.tests.test_yamada.test_yamada_reidemeister.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="KnotPy  documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="KnotPy  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Install
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Install
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.algorithms.html">algorithms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.algorithms.canonical.html">canonical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.algorithms.closure.html">closure</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.components_link.html">components_link</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.components_link.link_components.html">link_components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.components_link.link_components_endpoints.html">link_components_endpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.components_link.number_of_link_components.html">number_of_link_components</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.connected_sum.html">connected_sum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.connected_sum.is_connected_sum.html">is_connected_sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.connected_sum.is_connected_sum_third_order.html">is_connected_sum_third_order</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.connected_sum.split_connected_sum.html">split_connected_sum</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.cut_set.html">cut_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.cut_set.arc_cut_sets.html">arc_cut_sets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.cut_set.cut_nodes.html">cut_nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.cut_set.is_arc_cut_set.html">is_arc_cut_set</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.degree_sequence.html">degree_sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.degree_sequence.degree_sequence.html">degree_sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.degree_sequence.neighbour_sequence.html">neighbour_sequence</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.algorithms.disjoint_sum.html">disjoint_sum</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.duality.html">duality</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.duality.dual_planar_diagram.html">dual_planar_diagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.naming.html">naming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.naming.number_to_alpha.html">number_to_alpha</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.naming.unique_new_node_name.html">unique_new_node_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.orientation.html">orientation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.all_orientations.html">all_orientations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.oriented.html">oriented</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unoriented.html">unoriented</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.paths.html">paths</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.bfs_shortest_path.html">bfs_shortest_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.path_from_endpoint.html">path_from_endpoint</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.Kauffman_state_sum.html">Kauffman_state_sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_canonical.html">test_canonical</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_canonical.test_canonical.html">test_canonical</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_canonical.test_canonical_degenerate.html">test_canonical_degenerate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_canonical.test_canonical_knots.html">test_canonical_knots</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_component_links.html">test_component_links</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_component_links.test_number_of_link_components.html">test_number_of_link_components</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_cut_set.html">test_cut_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_cut_set.test_arc_cut_set.html">test_arc_cut_set</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_cut_set.test_cut_set_knotoid.html">test_cut_set_knotoid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_cut_set.test_find_cut_sets.html">test_find_cut_sets</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_degree_sequence.html">test_degree_sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_degree_sequence.test_deg_seq.html">test_deg_seq</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_disjoint_sum.html">test_disjoint_sum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_disjoint_sum.test_disjoint_sum.html">test_disjoint_sum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_disjoint_sum.test_unknots.html">test_unknots</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_features.html">test_features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_features.test_bridges.html">test_bridges</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.html">test_skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.test_skein.html">test_skein</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.topology.html">topology</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.bridges.html">bridges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.edges.html">edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_bridge.html">is_bridge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_empty_diagram.html">is_empty_diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html">is_kink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html">is_knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html">is_knotoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_leaf.html">is_leaf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_linkoid.html">is_linkoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_loop.html">is_loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_planar_graph.html">is_planar_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_unknot.html">is_unknot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.kink_region_iterator.html">kink_region_iterator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.kinks.html">kinks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.leafs.html">leafs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.catalog.html">catalog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.catalog.diagram_reader.html">diagram_reader</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.diagram_writer.html">diagram_writer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.diagram_writer.save_diagram_sets.html">save_diagram_sets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.diagram_writer.save_diagrams.html">save_diagrams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.diagram_writer.DiagramSetWriter.html">DiagramSetWriter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.diagram_writer.DiagramWriter.html">DiagramWriter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.example.html">example</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.example.example_spatial_graph.html">example_spatial_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.example.handcuff_theta.html">handcuff_theta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.example.oriented_trefoil.html">oriented_trefoil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.example.trefoil_knot.html">trefoil_knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.example.trefoil_theta.html">trefoil_theta</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.generate_planar_graphs.html">generate_planar_graphs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.generate_planar_graphs.generate_planar_graphs.html">generate_planar_graphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.generate_planar_graphs.sort_graphs.html">sort_graphs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.graphs.html">graphs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.bouquet.html">bouquet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.cycle_graph.html">cycle_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.handcuff_link.html">handcuff_link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.parallel_edges.html">parallel_edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.path_graph.html">path_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.star_graph.html">star_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.theta_curve.html">theta_curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.graphs.wheel_graph.html">wheel_graph</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.invariant_reader.html">invariant_reader</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.invariant_reader.load_invariant_table.html">load_invariant_table</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.invariant_writer.html">invariant_writer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.invariant_writer.save_invariant_table.html">save_invariant_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.invariant_writer.InvariantTableWriter.html">InvariantTableWriter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.knot_tables.html">knot_tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_from_name.html">get_knot_from_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.catalog.tests.test_get_knot_by_names.html">test_get_knot_by_names</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_get_knot_by_names.test_get_knot_from_name.html">test_get_knot_from_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.catalog.tests.test_knot_table_invariants.html">test_knot_table_invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_knot_table_invariants.compare_lazy_non_lazy.html">compare_lazy_non_lazy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_knot_table_invariants.test_lazy_load_diagram_table.html">test_lazy_load_diagram_table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_knot_table_invariants.test_load_diagram_table.html">test_load_diagram_table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_knot_table_invariants.test_save_diagram_table.html">test_save_diagram_table</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.catalog.tests.test_load_save_diagrams.html">test_load_save_diagrams</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_load_save_diagrams.test_read.html">test_read</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_load_save_diagrams.test_read_write_diagram.html">test_read_write_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.catalog.tests.test_load_save_diagrams.test_read_write_diagram_sets.html">test_read_write_diagram_sets</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.convert.html">convert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.convert.vertices_to_crossings.html">vertices_to_crossings</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.node.html">node</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.node.Node.html">Node</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.planardiagram.html">planardiagram</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.planar_diagram_from_data.html">planar_diagram_from_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html">OrientedPlanarDiagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html">PlanarDiagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.endpoint_tests.html">endpoint_tests</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.node_tests.html">node_tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.node_tests.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_init.test_knot_name.html">test_knot_name</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.views.html">views</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.views.ArcView.html">ArcView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.views.EndpointView.html">EndpointView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.views.FaceView.html">FaceView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html">FilteredNodeView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.views.NodeView.html">NodeView</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.drawing.html">drawing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.circlepack.html">circlepack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.CirclePack.html">CirclePack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.InvertAround.html">InvertAround</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.InvertPacking.html">InvertPacking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.NormalizePacking.html">NormalizePacking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.acxyz.html">acxyz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.flower.html">flower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.place.html">place</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.circlepack.testgrid.html">testgrid</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.average_color.html">average_color</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.canonically_rotate_layout.html">canonically_rotate_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.compute_PCA.html">compute_PCA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.draw.html">draw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.draw_from_layout.html">draw_from_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.export_pdf.html">export_pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.export_pdf_groups.html">export_pdf_groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.export_png.html">export_png</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.get_style_from_style.html">get_style_from_style</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.to_color.html">to_color</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.Arrow.html">Arrow</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.are_continuation.html">are_continuation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.connect.html">connect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.crossings.html">crossings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.draw.html">draw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.draw_smooth.html">draw_smooth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.integral.html">integral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.to_zigzag.html">to_zigzag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleExpr.html">TangleExpr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleProduct.html">TangleProduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleSum.html">TangleSum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html">ZigZag</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.layout.html">layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.layout.bezier.html">bezier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.layout.circlepack_layout.html">circlepack_layout</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_draw.html">test_draw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_bonded.html">test_draw_bonded</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_bridges.html">test_draw_bridges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_knot.html">test_draw_knot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_knotoid.html">test_draw_knotoid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_theta.html">test_draw_theta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.affine_index_polynomial.html">affine_index_polynomial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.arrow_polynomial.html">arrow_polynomial</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.bracket.html">bracket</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.bracket.bracket_polynomial.html">bracket_polynomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.bracket.kauffman_bracket_skein_module.html">kauffman_bracket_skein_module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.jones_polynomial.html">jones_polynomial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.module.Module.html">Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.html">test_colored_yamada</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.color_endpoints.html">color_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.colored_yamada_one_bond_reidemeister.html">colored_yamada_one_bond_reidemeister</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.makeit.html">makeit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.module2str.html">module2str</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_colored_yamada_graph.html">test_colored_yamada_graph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_colored_yamada_one_bond.html">test_colored_yamada_one_bond</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_colored_yamada_three_bonds.html">test_colored_yamada_three_bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_colored_yamada_trivial.html">test_colored_yamada_trivial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_colored_yamada_two_bonds.html">test_colored_yamada_two_bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_colored_yamada.test_expressions.html">test_expressions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_jones.html">test_jones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.html">test_tutte</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.test_deletion_contraction_cycle.html">test_deletion_contraction_cycle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.test_deletion_contraction_parallel_edges.html">test_deletion_contraction_parallel_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.test_deletion_contraction_square_with_diagonal.html">test_deletion_contraction_square_with_diagonal</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.html">test_yamada</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_examples_from_paper.html">test_yamada_examples_from_paper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_moriuchi.html">test_yamada_moriuchi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_reidemeister.html">test_yamada_reidemeister</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">tutte</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.deletion_contraction.html">deletion_contraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.tutte_polynomial.html">tutte_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.unplugging.html">unplugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.writhe.html">writhe</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.yamada.html">yamada</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.yamada.yamada_polynomial.html">yamada_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.yamada_colored.html">yamada_colored</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.yamada_colored.colored_yamada_polynomial.html">colored_yamada_polynomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.yamada_colored.module2str.html">module2str</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.yamada_colored.state_sum_yamada.html">state_sum_yamada</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.manipulation.html">manipulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.attributes.html">attributes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.attributes.clear_attributes.html">clear_attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.attributes.clear_diagram_attributes.html">clear_diagram_attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.attributes.clear_endpoint_attributes.html">clear_endpoint_attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.attributes.clear_node_attributes.html">clear_node_attributes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.contract.html">contract</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.contract.contract_arc.html">contract_arc</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.insert.html">insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.insert.insert_arc.html">insert_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.insert.insert_endpoint.html">insert_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.insert.insert_new_leaf.html">insert_new_leaf</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.permute.html">permute</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.permute.permute_node.html">permute_node</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.remove.html">remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.remove.remove_arc.html">remove_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.remove.remove_bivalent_vertex.html">remove_bivalent_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.remove.remove_bivalent_vertices.html">remove_bivalent_vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.remove.remove_empty_nodes.html">remove_empty_nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.remove.remove_loops.html">remove_loops</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.rewire.html">rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.rewire.pull_and_plug_endpoint.html">pull_and_plug_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.rewire.replug_endpoint.html">replug_endpoint</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.subdivide.subdivide_arc.html">subdivide_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.subdivide.subdivide_arcs_around_node.html">subdivide_arcs_around_node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.subdivide.subdivide_endpoint.html">subdivide_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.subdivide.subdivide_endpoint_by_crossing.html">subdivide_endpoint_by_crossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.symmetry.html">symmetry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.symmetry.flip.html">flip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.manipulation.symmetry.mirror.html">mirror</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.manipulation.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.manipulation.tests.test_contract.html">test_contract</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.manipulation.tests.test_contract.test_contract_edge.html">test_contract_edge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.manipulation.tests.test_contract.test_contract_edge_attributes.html">test_contract_edge_attributes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.manipulation.tests.test_insert.html">test_insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.manipulation.tests.test_insert.test_insert_attr.html">test_insert_attr</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.manipulation.tests.test_remove.html">test_remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.manipulation.tests.test_remove.test_remove_edge.html">test_remove_edge</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.notation.html">notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.dispatcher.html">dispatcher</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dispatcher.from_notation_dispatcher.html">from_notation_dispatcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dispatcher.to_notation_dispatcher.html">to_notation_dispatcher</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.dt.html">dt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.from_dt_notation.html">from_dt_notation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.em.html">em</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.em.from_condensed_em_notation.html">from_condensed_em_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.em.from_em_notation.html">from_em_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.em.to_condensed_em_notation.html">to_condensed_em_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.em.to_em_notation.html">to_em_notation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.notation.name.html">name</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.native.html">native</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.native.from_knotpy_notation.html">from_knotpy_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.native.to_knotpy_notation.html">to_knotpy_notation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.pd.html">pd</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.pd.from_condensed_pd_notation.html">from_condensed_pd_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.pd.from_pd_notation.html">from_pd_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.pd.to_condensed_pd_notation.html">to_condensed_pd_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.pd.to_pd_notation.html">to_pd_notation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.plantri.html">plantri</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.plantri.from_plantri_notation.html">from_plantri_notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.plantri.to_plantri_notation.html">to_plantri_notation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.notation.tests.test_notation.html">test_notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.notation.tests.test_notation.test_native_notation_from.html">test_native_notation_from</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.notation.tests.test_notation.test_native_notation_to.html">test_native_notation_to</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.notation.tests.test_notation.test_native_notation_to_from.html">test_native_notation_to_from</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.notation.tests.test_plantri.html">test_plantri</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.notation.tests.test_plantri.test_from_plantri.html">test_from_plantri</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.reidemeister.html">reidemeister</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.choose_random_reidemeister_moves.html">choose_random_reidemeister_moves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.detect_move_type.html">detect_move_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.find_all_reidemeister_moves.html">find_all_reidemeister_moves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.make_all_reidemeister_moves.html">make_all_reidemeister_moves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.make_random_reidemeister_move.html">make_random_reidemeister_move</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.make_reidemeister_move.html">make_reidemeister_move</a></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.randomize_diagram.html">randomize_diagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.utils.html">utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.algebra.html">algebra</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.algebra.laurent_polynomial_to_tuples.html">laurent_polynomial_to_tuples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.algebra.poly2str.html">poly2str</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.algebra.reciprocal.html">reciprocal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.algebra.str2poly.html">str2poly</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.cache.Cache.html">Cache</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.chunked.html">chunked</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.combinatorics.html">combinatorics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.combinations_with_limited_repetitions.html">combinations_with_limited_repetitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.iterable_depth.html">iterable_depth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.lexicographical_minimal_cyclic_rotation_shift.html">lexicographical_minimal_cyclic_rotation_shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.parted_permutations.html">parted_permutations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.union.html">union</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.decorators.html">decorators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.decorators.multi_variable_invariant.html">multi_variable_invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.decorators.total_ordering_from_compare.html">total_ordering_from_compare</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.dict_utils.html">dict_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.common_dict.html">common_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.compare_dicts.html">compare_dicts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.inverse_dict.html">inverse_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.inverse_multi_dict.html">inverse_multi_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.inverse_nested_dict.html">inverse_nested_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html">ClassifierDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyEvalDict.html">LazyEvalDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html">LazyLoadDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html">LazyLoadEvalDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.identitydict.html">identitydict</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.equivalence.html">equivalence</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.func_utils.html">func_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.func_utils.min_elements_by.html">min_elements_by</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.geometry.html">geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bounding_box.html">bounding_box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.circle_through_points.html">circle_through_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.inverse_point_through_circle.html">inverse_point_through_circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.is_angle_between.html">is_angle_between</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.middle.html">middle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc.html">perpendicular_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc_through_point.html">perpendicular_arc_through_point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.perpendicular_line.html">perpendicular_line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.split.html">split</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.tangent_line.html">tangent_line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.weighted_circle_center_mean.html">weighted_circle_center_mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.BoundingBox.html">BoundingBox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.Circle.html">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html">CircularArc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.Line.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.Segment.html">Segment</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.module.module.html">module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.multiprogressbar.html">multiprogressbar</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar.Bar.html">Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar.FakeBar.html">FakeBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar.ProgressTracker.html">ProgressTracker</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.multiprogressbar2.html">multiprogressbar2</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar2.Bar.html">Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar2.FakeBar.html">FakeBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar2.ProgressBar.html">ProgressBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.multiprogressbar2.ProgressTracker.html">ProgressTracker</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.parsing.html">parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.parsing.parse_arc.html">parse_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.parsing.parse_arcs.html">parse_arcs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.parsing.parse_endpoint.html">parse_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.parsing.universal_list_of_lists_parser.html">universal_list_of_lists_parser</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.set_utils.html">set_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.set_utils.powerset.html">powerset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html">LeveledSet</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.statistics.html">statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.statistics.print_bar_chart.html">print_bar_chart</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.string_utils.html">string_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.multi_replace.html">multi_replace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.nested_split.html">nested_split</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.string_to_nested_tuple_with_prefixes.html">string_to_nested_tuple_with_prefixes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.test.html">test</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dsu.html">test_dsu</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_dsu.html">test_dsu</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.html">test_lazy_dict</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.test_lazy_eval.html">test_lazy_eval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.test_lazy_load.html">test_lazy_load</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.test_lazy_load_eval.html">test_lazy_load_eval</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_module.html">test_module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_module.html">test_module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_parser.html">test_parser</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_parser.test_universal_list_of_lists_parser.html">test_universal_list_of_lists_parser</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_set_utils.html">test_set_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveled_set.html">test_leveled_set</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.html">test_value_partitioner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.mod2.html">mod2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.mod3.html">mod3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.test_value_partitioner.html">test_value_partitioner</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="knotpy.invariants.html" class="nav-link">invariants</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">tutte</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-knotpy.invariants.tutte">
+<span id="tutte"></span><h1>tutte<a class="headerlink" href="#module-knotpy.invariants.tutte" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.tutte.deletion_contraction.html#knotpy.invariants.tutte.deletion_contraction" title="knotpy.invariants.tutte.deletion_contraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deletion_contraction</span></code></a>(k[, contract_bridges])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.tutte.tutte_polynomial.html#knotpy.invariants.tutte.tutte_polynomial" title="knotpy.invariants.tutte.tutte_polynomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tutte_polynomial</span></code></a>(k[, variables])</p></td>
+<td><p>Compute the Tutte polynomial of a planar graph represented as a PlanarDiagram.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Boštjan Gabrovšek.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

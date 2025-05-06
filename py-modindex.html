@@ -13,33 +13,36 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=7f41d439"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'py-modindex';</script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -47,6 +50,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
 
 
   </head>
@@ -56,31 +60,16 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -88,7 +77,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -96,20 +84,27 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class="col-lg-3 navbar-header-items__start">
     
       <div class="navbar-item">
 
+  
+    
   
 
 <a class="navbar-brand logo" href="index.html">
@@ -124,7 +119,7 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="KnotPy  documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="KnotPy  documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="KnotPy  documentation - Home"/>
   
   
 </a></div>
@@ -136,36 +131,36 @@
     <div class="me-auto navbar-header-items__center">
       
         <div class="navbar-item">
-<nav class="navbar-nav">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="install.html">
-                        Install
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Install
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="tutorial.html">
-                        Tutorial
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="reference/index.html">
-                        Reference
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="auto_examples/index.html">
-                        Examples
-                      </a>
-                    </li>
-                
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
   </ul>
 </nav></div>
       
@@ -177,31 +172,23 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
-        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+        <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -212,7 +199,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -224,15 +211,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -249,7 +232,8 @@ document.write(`
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -258,39 +242,42 @@ document.write(`
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item">
-<nav class="navbar-nav">
+          
+          
+            <div class="navbar-item">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="install.html">
-                        Install
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Install
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="tutorial.html">
-                        Tutorial
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="reference/index.html">
-                        Reference
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="auto_examples/index.html">
-                        Examples
-                      </a>
-                    </li>
-                
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
   </ul>
 </nav></div>
+          
         
       </div>
     
@@ -300,17 +287,13 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
-          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+          <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -321,7 +304,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -332,20 +315,25 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
+              <div class="bd-header-article d-print-none"></div>
               
               
               
@@ -383,17 +371,42 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.components.html#module-knotpy.algorithms.components"><code class="xref">knotpy.algorithms.components</code></a></td><td>
+       <a href="reference/generated/knotpy.algorithms.closure.html#module-knotpy.algorithms.closure"><code class="xref">knotpy.algorithms.closure</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.faces.html#module-knotpy.algorithms.faces"><code class="xref">knotpy.algorithms.faces</code></a></td><td>
+       <a href="reference/generated/knotpy.algorithms.components_link.html#module-knotpy.algorithms.components_link"><code class="xref">knotpy.algorithms.components_link</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.node_algorithms.html#module-knotpy.algorithms.node_algorithms"><code class="xref">knotpy.algorithms.node_algorithms</code></a></td><td>
+       <a href="reference/generated/knotpy.algorithms.connected_sum.html#module-knotpy.algorithms.connected_sum"><code class="xref">knotpy.algorithms.connected_sum</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.cut_set.html#module-knotpy.algorithms.cut_set"><code class="xref">knotpy.algorithms.cut_set</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.degree_sequence.html#module-knotpy.algorithms.degree_sequence"><code class="xref">knotpy.algorithms.degree_sequence</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.disjoint_sum.html#module-knotpy.algorithms.disjoint_sum"><code class="xref">knotpy.algorithms.disjoint_sum</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.duality.html#module-knotpy.algorithms.duality"><code class="xref">knotpy.algorithms.duality</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.naming.html#module-knotpy.algorithms.naming"><code class="xref">knotpy.algorithms.naming</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -403,22 +416,17 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.paths.html#module-knotpy.algorithms.paths"><code class="xref">knotpy.algorithms.paths</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.sanity.html#module-knotpy.algorithms.sanity"><code class="xref">knotpy.algorithms.sanity</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.algorithms.skein.html#module-knotpy.algorithms.skein"><code class="xref">knotpy.algorithms.skein</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.structure.html#module-knotpy.algorithms.structure"><code class="xref">knotpy.algorithms.structure</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.symmetry.html#module-knotpy.algorithms.symmetry"><code class="xref">knotpy.algorithms.symmetry</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.tangle_algorithms.html#module-knotpy.algorithms.tangle_algorithms"><code class="xref">knotpy.algorithms.tangle_algorithms</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -428,12 +436,107 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.tests.test_components.html#module-knotpy.algorithms.tests.test_components"><code class="xref">knotpy.algorithms.tests.test_components</code></a></td><td>
+       <a href="reference/generated/knotpy.algorithms.tests.test_canonical.html#module-knotpy.algorithms.tests.test_canonical"><code class="xref">knotpy.algorithms.tests.test_canonical</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.algorithms.tests.test_tangle.html#module-knotpy.algorithms.tests.test_tangle"><code class="xref">knotpy.algorithms.tests.test_tangle</code></a></td><td>
+       <a href="reference/generated/knotpy.algorithms.tests.test_component_links.html#module-knotpy.algorithms.tests.test_component_links"><code class="xref">knotpy.algorithms.tests.test_component_links</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.tests.test_cut_set.html#module-knotpy.algorithms.tests.test_cut_set"><code class="xref">knotpy.algorithms.tests.test_cut_set</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.tests.test_degree_sequence.html#module-knotpy.algorithms.tests.test_degree_sequence"><code class="xref">knotpy.algorithms.tests.test_degree_sequence</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.tests.test_disjoint_sum.html#module-knotpy.algorithms.tests.test_disjoint_sum"><code class="xref">knotpy.algorithms.tests.test_disjoint_sum</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.tests.test_features.html#module-knotpy.algorithms.tests.test_features"><code class="xref">knotpy.algorithms.tests.test_features</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.tests.test_skein.html#module-knotpy.algorithms.tests.test_skein"><code class="xref">knotpy.algorithms.tests.test_skein</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.algorithms.topology.html#module-knotpy.algorithms.topology"><code class="xref">knotpy.algorithms.topology</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.html#module-knotpy.catalog"><code class="xref">knotpy.catalog</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.diagram_reader.html#module-knotpy.catalog.diagram_reader"><code class="xref">knotpy.catalog.diagram_reader</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.diagram_writer.html#module-knotpy.catalog.diagram_writer"><code class="xref">knotpy.catalog.diagram_writer</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.example.html#module-knotpy.catalog.example"><code class="xref">knotpy.catalog.example</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.generate_planar_graphs.html#module-knotpy.catalog.generate_planar_graphs"><code class="xref">knotpy.catalog.generate_planar_graphs</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.graphs.html#module-knotpy.catalog.graphs"><code class="xref">knotpy.catalog.graphs</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.invariant_reader.html#module-knotpy.catalog.invariant_reader"><code class="xref">knotpy.catalog.invariant_reader</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.invariant_writer.html#module-knotpy.catalog.invariant_writer"><code class="xref">knotpy.catalog.invariant_writer</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.knot_tables.html#module-knotpy.catalog.knot_tables"><code class="xref">knotpy.catalog.knot_tables</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.tests.html#module-knotpy.catalog.tests"><code class="xref">knotpy.catalog.tests</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.tests.test_get_knot_by_names.html#module-knotpy.catalog.tests.test_get_knot_by_names"><code class="xref">knotpy.catalog.tests.test_get_knot_by_names</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.tests.test_knot_table_invariants.html#module-knotpy.catalog.tests.test_knot_table_invariants"><code class="xref">knotpy.catalog.tests.test_knot_table_invariants</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.catalog.tests.test_load_save_diagrams.html#module-knotpy.catalog.tests.test_load_save_diagrams"><code class="xref">knotpy.catalog.tests.test_load_save_diagrams</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -443,7 +546,7 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.bondedknot.html#module-knotpy.classes.bondedknot"><code class="xref">knotpy.classes.bondedknot</code></a></td><td>
+       <a href="reference/generated/knotpy.classes.convert.html#module-knotpy.classes.convert"><code class="xref">knotpy.classes.convert</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -453,42 +556,12 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.knot.html#module-knotpy.classes.knot"><code class="xref">knotpy.classes.knot</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.knotoid.html#module-knotpy.classes.knotoid"><code class="xref">knotpy.classes.knotoid</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.classes.node.html#module-knotpy.classes.node"><code class="xref">knotpy.classes.node</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.orientedknot.html#module-knotpy.classes.orientedknot"><code class="xref">knotpy.classes.orientedknot</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.classes.planardiagram.html#module-knotpy.classes.planardiagram"><code class="xref">knotpy.classes.planardiagram</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.planargraph.html#module-knotpy.classes.planargraph"><code class="xref">knotpy.classes.planargraph</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.spatialgraph.html#module-knotpy.classes.spatialgraph"><code class="xref">knotpy.classes.spatialgraph</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.classes.tangle.html#module-knotpy.classes.tangle"><code class="xref">knotpy.classes.tangle</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -499,6 +572,16 @@ document.write(`
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.classes.tests.endpoint_tests.html#module-knotpy.classes.tests.endpoint_tests"><code class="xref">knotpy.classes.tests.endpoint_tests</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.classes.tests.node_tests.html#module-knotpy.classes.tests.node_tests"><code class="xref">knotpy.classes.tests.node_tests</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.classes.tests.test_init.html#module-knotpy.classes.tests.test_init"><code class="xref">knotpy.classes.tests.test_init</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -523,47 +606,22 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.drawing.draw_tangle.html#module-knotpy.drawing.draw_tangle"><code class="xref">knotpy.drawing.draw_tangle</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.drawing.layout.html#module-knotpy.drawing.layout"><code class="xref">knotpy.drawing.layout</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.drawing.test.html#module-knotpy.drawing.test"><code class="xref">knotpy.drawing.test</code></a></td><td>
+       <a href="reference/generated/knotpy.drawing.tests.html#module-knotpy.drawing.tests"><code class="xref">knotpy.drawing.tests</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.drawing.test2.html#module-knotpy.drawing.test2"><code class="xref">knotpy.drawing.test2</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.html#module-knotpy.generate"><code class="xref">knotpy.generate</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.conversions.html#module-knotpy.generate.conversions"><code class="xref">knotpy.generate.conversions</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.example.html#module-knotpy.generate.example"><code class="xref">knotpy.generate.example</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.generate_planar_graphs.html#module-knotpy.generate.generate_planar_graphs"><code class="xref">knotpy.generate.generate_planar_graphs</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.simple.html#module-knotpy.generate.simple"><code class="xref">knotpy.generate.simple</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.generate.simple_tangles.html#module-knotpy.generate.simple_tangles"><code class="xref">knotpy.generate.simple_tangles</code></a></td><td>
+       <a href="reference/generated/knotpy.drawing.tests.test_draw.html#module-knotpy.drawing.tests.test_draw"><code class="xref">knotpy.drawing.tests.test_draw</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -573,7 +631,32 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.affine_index_polynomial.html#module-knotpy.invariants.affine_index_polynomial"><code class="xref">knotpy.invariants.affine_index_polynomial</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.arrow_polynomial.html#module-knotpy.invariants.arrow_polynomial"><code class="xref">knotpy.invariants.arrow_polynomial</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.invariants.bracket.html#module-knotpy.invariants.bracket"><code class="xref">knotpy.invariants.bracket</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.cache.html#module-knotpy.invariants.cache"><code class="xref">knotpy.invariants.cache</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.jones_polynomial.html#module-knotpy.invariants.jones_polynomial"><code class="xref">knotpy.invariants.jones_polynomial</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.mock_alexander_polynomial.html#module-knotpy.invariants.mock_alexander_polynomial"><code class="xref">knotpy.invariants.mock_alexander_polynomial</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -583,7 +666,52 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tests.html#module-knotpy.invariants.tests"><code class="xref">knotpy.invariants.tests</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tests.test_colored_yamada.html#module-knotpy.invariants.tests.test_colored_yamada"><code class="xref">knotpy.invariants.tests.test_colored_yamada</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tests.test_jones.html#module-knotpy.invariants.tests.test_jones"><code class="xref">knotpy.invariants.tests.test_jones</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tests.test_tutte.html#module-knotpy.invariants.tests.test_tutte"><code class="xref">knotpy.invariants.tests.test_tutte</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tests.test_yamada.html#module-knotpy.invariants.tests.test_yamada"><code class="xref">knotpy.invariants.tests.test_yamada</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.tutte.html#module-knotpy.invariants.tutte"><code class="xref">knotpy.invariants.tutte</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.unplugging.html#module-knotpy.invariants.unplugging"><code class="xref">knotpy.invariants.unplugging</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.writhe.html#module-knotpy.invariants.writhe"><code class="xref">knotpy.invariants.writhe</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.invariants.yamada.html#module-knotpy.invariants.yamada"><code class="xref">knotpy.invariants.yamada</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.invariants.yamada_colored.html#module-knotpy.invariants.yamada_colored"><code class="xref">knotpy.invariants.yamada_colored</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -593,22 +721,62 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.manipulation.elementary.html#module-knotpy.manipulation.elementary"><code class="xref">knotpy.manipulation.elementary</code></a></td><td>
+       <a href="reference/generated/knotpy.manipulation.attributes.html#module-knotpy.manipulation.attributes"><code class="xref">knotpy.manipulation.attributes</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.manipulation.phantom.html#module-knotpy.manipulation.phantom"><code class="xref">knotpy.manipulation.phantom</code></a></td><td>
+       <a href="reference/generated/knotpy.manipulation.contract.html#module-knotpy.manipulation.contract"><code class="xref">knotpy.manipulation.contract</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.manipulation.reidemeister.html#module-knotpy.manipulation.reidemeister"><code class="xref">knotpy.manipulation.reidemeister</code></a></td><td>
+       <a href="reference/generated/knotpy.manipulation.insert.html#module-knotpy.manipulation.insert"><code class="xref">knotpy.manipulation.insert</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.manipulation.simplification.html#module-knotpy.manipulation.simplification"><code class="xref">knotpy.manipulation.simplification</code></a></td><td>
+       <a href="reference/generated/knotpy.manipulation.permute.html#module-knotpy.manipulation.permute"><code class="xref">knotpy.manipulation.permute</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.remove.html#module-knotpy.manipulation.remove"><code class="xref">knotpy.manipulation.remove</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.rewire.html#module-knotpy.manipulation.rewire"><code class="xref">knotpy.manipulation.rewire</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.subdivide.html#module-knotpy.manipulation.subdivide"><code class="xref">knotpy.manipulation.subdivide</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.symmetry.html#module-knotpy.manipulation.symmetry"><code class="xref">knotpy.manipulation.symmetry</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.tests.html#module-knotpy.manipulation.tests"><code class="xref">knotpy.manipulation.tests</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.tests.test_contract.html#module-knotpy.manipulation.tests.test_contract"><code class="xref">knotpy.manipulation.tests.test_contract</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.tests.test_insert.html#module-knotpy.manipulation.tests.test_insert"><code class="xref">knotpy.manipulation.tests.test_insert</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.manipulation.tests.test_remove.html#module-knotpy.manipulation.tests.test_remove"><code class="xref">knotpy.manipulation.tests.test_remove</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -623,7 +791,17 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.notation.dt.html#module-knotpy.notation.dt"><code class="xref">knotpy.notation.dt</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.notation.em.html#module-knotpy.notation.em"><code class="xref">knotpy.notation.em</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.notation.name.html#module-knotpy.notation.name"><code class="xref">knotpy.notation.name</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -653,22 +831,32 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.readwrite.html#module-knotpy.readwrite"><code class="xref">knotpy.readwrite</code></a></td><td>
+       <a href="reference/generated/knotpy.notation.tests.test_plantri.html#module-knotpy.notation.tests.test_plantri"><code class="xref">knotpy.notation.tests.test_plantri</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.readwrite.cleanopen.html#module-knotpy.readwrite.cleanopen"><code class="xref">knotpy.readwrite.cleanopen</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.readwrite.text.html#module-knotpy.readwrite.text"><code class="xref">knotpy.readwrite.text</code></a></td><td>
+       <a href="reference/generated/knotpy.reidemeister.html#module-knotpy.reidemeister"><code class="xref">knotpy.reidemeister</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.utils.html#module-knotpy.utils"><code class="xref">knotpy.utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.algebra.html#module-knotpy.utils.algebra"><code class="xref">knotpy.utils.algebra</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.cache.html#module-knotpy.utils.cache"><code class="xref">knotpy.utils.cache</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.chunked.html#module-knotpy.utils.chunked"><code class="xref">knotpy.utils.chunked</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -688,12 +876,17 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.disjoint_union_set.html#module-knotpy.utils.disjoint_union_set"><code class="xref">knotpy.utils.disjoint_union_set</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.utils.equivalence.html#module-knotpy.utils.equivalence"><code class="xref">knotpy.utils.equivalence</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="reference/generated/knotpy.utils.exception.html#module-knotpy.utils.exception"><code class="xref">knotpy.utils.exception</code></a></td><td>
+       <a href="reference/generated/knotpy.utils.func_utils.html#module-knotpy.utils.func_utils"><code class="xref">knotpy.utils.func_utils</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -703,7 +896,72 @@ document.write(`
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.module.html#module-knotpy.utils.module"><code class="xref">knotpy.utils.module</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.multiprogressbar.html#module-knotpy.utils.multiprogressbar"><code class="xref">knotpy.utils.multiprogressbar</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.multiprogressbar2.html#module-knotpy.utils.multiprogressbar2"><code class="xref">knotpy.utils.multiprogressbar2</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.parsing.html#module-knotpy.utils.parsing"><code class="xref">knotpy.utils.parsing</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.set_utils.html#module-knotpy.utils.set_utils"><code class="xref">knotpy.utils.set_utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.statistics.html#module-knotpy.utils.statistics"><code class="xref">knotpy.utils.statistics</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="reference/generated/knotpy.utils.string_utils.html#module-knotpy.utils.string_utils"><code class="xref">knotpy.utils.string_utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.html#module-knotpy.utils.test"><code class="xref">knotpy.utils.test</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_dsu.html#module-knotpy.utils.test.test_dsu"><code class="xref">knotpy.utils.test.test_dsu</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_lazy_dict.html#module-knotpy.utils.test.test_lazy_dict"><code class="xref">knotpy.utils.test.test_lazy_dict</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_module.html#module-knotpy.utils.test.test_module"><code class="xref">knotpy.utils.test.test_module</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_parser.html#module-knotpy.utils.test.test_parser"><code class="xref">knotpy.utils.test.test_parser</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_set_utils.html#module-knotpy.utils.test.test_set_utils"><code class="xref">knotpy.utils.test.test_set_utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="reference/generated/knotpy.utils.test.test_value_partitioner.html#module-knotpy.utils.test.test_value_partitioner"><code class="xref">knotpy.utils.test.test_value_partitioner</code></a></td><td>
        <em></em></td></tr>
    </table>
 
@@ -718,8 +976,6 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
-              
             
           </div>
           <footer class="bd-footer-content">
@@ -731,8 +987,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -743,7 +999,7 @@ document.write(`
 
   <p class="copyright">
     
-      © Copyright 2024, Boštjan Gabrovšek.
+      © Copyright 2025, Boštjan Gabrovšek.
       <br/>
     
   </p>
@@ -752,7 +1008,7 @@ document.write(`
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -765,7 +1021,8 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>
