@@ -1,3 +1,12 @@
+name: "Deploy Sphinx documentation to GitHub Pages"
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
 jobs:
   pages:
     runs-on: ubuntu-22.04
@@ -28,3 +37,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{ steps.deployment.outputs.artifact }}
+        
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
