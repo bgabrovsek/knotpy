@@ -1,7 +1,8 @@
-sphinx>=7.2.6
-pydata-sphinx-theme>=0.14.2
-sphinx-gallery>=0.15.0
-pillow>=10.2.0
-sympy==1.12
-pytest==8.1.1
-matplotlib==3.8.3
+python >=3.9
+sympy >=1.8
+pytest >=6.2
+matplotlib >=3.4
+numpy >=1.20
+scipy >=1.6
+tqdm >=4.66.3
+scikit-learn >=0.24
