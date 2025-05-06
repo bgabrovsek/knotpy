@@ -1,4 +1,4 @@
-python >=3.9
+#python >=3.9
 sympy >=1.8
 pytest >=6.2
 matplotlib >=3.4
