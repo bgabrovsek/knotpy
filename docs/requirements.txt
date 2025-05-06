@@ -6,3 +6,4 @@ numpy >=1.20
 scipy >=1.6
 tqdm >=4.66.3
 scikit-learn >=0.24
+sphinx-gallery
