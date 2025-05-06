@@ -105,7 +105,8 @@ def choose_reidemeister_1_remove_kink(k: PlanarDiagram, random=False):
             otherwise, None.
     """
     if random:
-        return choice(tuple(find_reidemeister_1_remove_kink(k)))
+        locations = tuple(find_reidemeister_1_remove_kink(k))
+        return choice(locations) if locations else None
     else:
         return next(find_reidemeister_1_remove_kink(k), None)
 

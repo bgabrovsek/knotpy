@@ -1,5 +1,6 @@
-from random import choice
+from random import choice, shuffle
 from itertools import chain
+import re
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
@@ -14,6 +15,53 @@ from knotpy.reidemeister.reidemeister_2 import (reidemeister_2_unpoke, reidemeis
 from knotpy.reidemeister.reidemeister_3 import (reidemeister_3,
                                                 choose_reidemeister_3_triangle,
                                                 find_reidemeister_3_triangle)
+
+_DEFAULT_ALLOWED_MOVES = {"R1", "R2", "R3"}
+_POSSIBLE_ALLOWED_MOVES = {"R1", "R2", "R3", "FLIP"}
+
+def _clean_allowed_moves(allowed_moves) -> set:
+    """
+    Validates the list of allowed Reidemeister moves.
+
+    This function ensures that the allowed moves are properly formatted, and converted into
+    a consistent form (uppercased, devoid of invalid characters, and validated against a predefined
+    set of possible allowed moves). If the allowed moves are provided as a string, they are split
+    into a set. If no allowed moves are provided, a default set of allowed moves is used.
+
+    Parameters
+    ----------
+    allowed_moves : str | set | None
+        The allowed moves to be cleaned and validated. This can be a comma-separated string,
+        a set of moves, or None. None denotes that the default set of allowed moves should
+        be used.
+
+    Returns
+    -------
+    set
+        A set of cleaned, validated, and formatted allowed moves.
+
+    Raises
+    ------
+    ValueError
+        If the resulting allowed moves contain items not present in the possible allowed moves.
+    """
+
+    # If no moves are given, set it at the default (R1, R2, R3)
+    if allowed_moves is None:
+        return set(_DEFAULT_ALLOWED_MOVES)
+
+    # If string is given, parse from string
+    if isinstance(allowed_moves, str):
+        allowed_moves = set(allowed_moves.split(","))
+
+    # Clean the set
+    allowed_moves = {re.sub(r'[^A-Za-z0-9]', '', s).upper() for s in allowed_moves}
+    allowed_moves = {s for s in allowed_moves if s}
+
+    if not allowed_moves.issubset(_POSSIBLE_ALLOWED_MOVES):
+        raise ValueError(f"Unknown (Reidemeister) modes {allowed_moves - _POSSIBLE_ALLOWED_MOVES}")
+
+    return allowed_moves
 
 
 def find_all_reidemeister_moves(k):
@@ -192,7 +240,84 @@ def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
     elif reidemeister_move_type == "R1kink":
         return reidemeister_1_add_kink(k, location, inplace=inplace)
     else:
-        raise ValueError(f"Unknown Reidemesiter move type {location}")
+        raise ValueError(f"Unknown Reidemeister move type {location}")
+
+def make_random_reidemeister_move(k, reidemeister_move_types=None, inplace=False):
+    if reidemeister_move_types is None:
+        reidemeister_move_types = ["R3", "R2unpoke", "R1unkink", "R2poke", "R1kink"]
+
+    reidemeister_move_types = list(reidemeister_move_types)
+    shuffle(reidemeister_move_types)
+
+    for move_type in reidemeister_move_types:
+        if move_type == "R3" and (location := choose_reidemeister_3_triangle(k, random=True)) is not None:
+            return reidemeister_3(k, location, inplace=inplace)
+        elif move_type == "R2unpoke" and (location := choose_reidemeister_2_unpoke(k, random=True)) is not None:
+            return reidemeister_2_unpoke(k, location, inplace=inplace)
+        elif move_type == "R2poke" and (location := choose_reidemeister_2_poke(k, random=True)) is not None:
+            return reidemeister_2_poke(k, location, inplace=inplace)
+        elif move_type == "R1kink" and (location := choose_reidemeister_1_add_kink(k, random=True)) is not None:
+            return reidemeister_1_add_kink(k, location, inplace=inplace)
+        elif move_type == "R1unkink" and (location := choose_reidemeister_1_remove_kink(k, random=True)) is not None:
+            return reidemeister_1_remove_kink(k, location, inplace=inplace)
+
+    return k
+
+
+def randomize_diagram(k, crossing_increasing_moves=2, allowed_moves=None):
+    """
+    Perform random Reidemeister moves on a given diagram.
+
+    This function modifies a diagram by applying random Reidemeister moves,
+    which are transformations used in knot theory to simplify or alter the
+    representation of a knot or link. The user can specify the type of moves
+    to include and the number of crossing-increasing moves to perform.
+
+    Parameters:
+        k: The initial diagram to be transformed.
+        crossing_increasing_moves (int): Optional; the number of crossing-increasing
+            moves to perform. Default is 2.
+        allowed_moves (list[str] or None): Optional; the list of allowed Reidemeister
+            moves to perform on the diagram. Valid values include "R1", "R2", "R3".
+            If None, all moves are allowed.
+
+    Raises:
+        ValueError: If crossing_increasing_moves is set to a value greater than 0 but
+            "R2" or "R1" moves are not included in allowed_moves.
+
+    Returns:
+        The transformed diagram after applying the specified random Reidemeister moves.
+    """
+
+    from knotpy.reidemeister.space import reidemeister_3_space
+
+    k = k.copy()
+
+    allowed_moves = _clean_allowed_moves(allowed_moves)
+
+    if crossing_increasing_moves > 0 and ("R2" not in allowed_moves or "R1" not in allowed_moves):
+        raise ValueError("Cannot perform crossing increasing moves without R2 and R1 moves")
+
+    # make random R3 moves
+    if "R3" in allowed_moves:
+        k = choice(list(reidemeister_3_space(k)))
+
+    # check if we can decrease a crossing or two
+    make_random_reidemeister_move(k, (["R1unkink"] if "R1" in allowed_moves else []) + (["R2unpoke"] if "R2" in allowed_moves else []) , inplace=True)
+
+    if "R3" in allowed_moves:
+        k = choice(list(reidemeister_3_space(k)))
+
+    # make increasing moves
+    while (crossing_increasing_moves := crossing_increasing_moves - 1) >= 0:
+
+        make_random_reidemeister_move(k, (["R1kink"] if "R1" in allowed_moves else []) + (["R2poke"] if "R2" in allowed_moves else []), inplace=True)
+
+        if "R3" in allowed_moves:
+            k = choice(list(reidemeister_3_space(k)))
+
+    return k
+
 
     #if we have a tuple
 

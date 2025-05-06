@@ -93,6 +93,11 @@ class DisjointSetUnion:
                 seen.add(root)
                 yield self.set(root)
 
+    @property
+    def elements(self):
+        for element in self.parent:
+            yield element
+
     def set(self, item):
         """
         Returns the set of items connected to 'item'.
@@ -135,7 +140,22 @@ class DisjointSetUnion:
         """
         return f"{list(self)}"
 
-
+    def to_dict(self):
+        """
+        Convert the DSU to a dictionary mapping each representative to its elements (that are not the representative).
+        """
+        return {r: {item for item in self.parent if self.parent[item] == r and item != r} for r in self.representatives()}
 
 if __name__ == "__main__":
-    pass
+    # DSU test
+    dsu = DisjointSetUnion("abcdefg")
+    dsu["a"] = "b"
+    dsu["c"] = "d"
+    dsu["e"] = "f"
+    dsu["b"] = "c"
+    print(dsu)
+    print("Groups:", [group for group in dsu])
+    print("Classes:", [classes for classes in dsu.classes()])
+    print("Representatives:", [rep for rep in dsu.representatives()])
+    print("Elements:", [e for e in dsu.elements])
+    print("Dictionary:", dsu.to_dict())

@@ -65,7 +65,8 @@ def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
         Optional[ReidemeisterMove]: A valid Reidemeister 2 unpoke move if available, otherwise None.
     """
     if random:
-        return choice(tuple(find_reidemeister_2_unpoke(k)))
+        locations = tuple(find_reidemeister_2_unpoke(k))
+        return choice(locations) if locations else None
     else:
         return next(find_reidemeister_2_unpoke(k), None)
 

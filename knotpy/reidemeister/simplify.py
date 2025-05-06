@@ -13,13 +13,12 @@ from knotpy.reidemeister.reidemeister_2 import reidemeister_2_unpoke, choose_rei
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
 from knotpy.algorithms.topology import is_unknot
 from knotpy.manipulation.symmetry import flip
+from knotpy.reidemeister.reidemeister import _clean_allowed_moves
 
 __all__ = ['simplify', 'simplify_crossing_reducing', 'simplify_smart', 'simplify_brute_force', 'simplify_non_increasing', 'simplify_non_increasing_greedy']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-_DEFAULT_ALLOWED_MOVES = {"R1", "R2", "R3"}
-_POSSIBLE_ALLOWED_MOVES = {"R1", "R2", "R3", "FLIP"}
 
 _METHOD_NON_INCREASING = ("nonincreasing","noninc","ni")
 _METHOD_NON_INCREASING_GREEDY = ("nonincreasinggreedy","greedynonincreasing","nonincgreedy","greedynoninc","gni","nig")
@@ -28,16 +27,7 @@ _METHOD_BRUTE_FORCE = ("bf","brute","bruteforce","force")
 _METHOD_DECREASING = ("decreasing","reducing", "crossingreducing", "cr")
 
 
-def _clean_allowed_moves(allowed_moves) -> set:
-    if allowed_moves is None:
-        return set(_DEFAULT_ALLOWED_MOVES)
-    if isinstance(allowed_moves, str):
-        allowed_moves = set(allowed_moves.split(","))
-    allowed_moves = {re.sub(r'[^A-Za-z0-9]', '', s).upper() for s in allowed_moves}
-    allowed_moves = {s for s in allowed_moves if s}
-    if not allowed_moves.issubset(_POSSIBLE_ALLOWED_MOVES):
-        raise ValueError(f"Unknown (Reidemeister) modes {allowed_moves - _POSSIBLE_ALLOWED_MOVES}")
-    return allowed_moves
+
 
 
 def simplify_crossing_reducing(k: PlanarDiagram, inplace=False, allowed_moves=None):

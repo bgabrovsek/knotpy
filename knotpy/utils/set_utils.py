@@ -94,7 +94,7 @@ class LeveledSet:
         :param other: The set to union with.
         :return: A new set containing all elements from both sets.
         """
-        return self.global_set | set(other)
+        return self.global_set | set(other)  # why not global set?
 
     def intersection(self, other):
         """

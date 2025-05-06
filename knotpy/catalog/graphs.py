@@ -18,7 +18,7 @@ def path_graph(number_of_vertices: int):
     k = PlanarDiagram(name=f"P_{n}")
     k.add_vertices_from(ascii_letters[:n])
     for i in range(number_of_vertices-1):
-        k.set_arc(((ascii_letters[i], 0), (ascii_letters[i + 1], 0 if i == number_of_vertices-2else 1)))
+        k.set_arc(((ascii_letters[i], 0), (ascii_letters[i + 1], 0 if i == number_of_vertices-2 else 1)))
 
     return k
 

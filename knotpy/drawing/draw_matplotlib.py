@@ -819,7 +819,6 @@ def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_t
 
     # if author is not None:
     #     pdf.infodict()["Author"] = author
-
     pdf.close()
 
 
