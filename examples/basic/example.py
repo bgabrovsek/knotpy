@@ -1,12 +1,12 @@
 """
 =====================
-Spatial graph example
+Knot example
 =====================
 
-A short description of what the example does.
+Compute the Jones polynomial of the trefoil knot.
 """
 
 import knotpy as kp
 
-k = kp.PlanarDiagram()
-print(k)
+k = kp.PlanarDiagram("3_1")
+print("Jones polynomial:", kp.jones_polynomial(k))

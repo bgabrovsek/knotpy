@@ -3,7 +3,7 @@
 Drawing example
 ===============
 
-A short description of what the example does.
+Draw the trefoil knot.
 """
 import matplotlib.pyplot as plt
 
@@ -20,5 +20,5 @@ k = kp.PlanarDiagram("3_1")
 # ----------------
 # 
 # Draw the know using matplotlib and show it.
-kp.draw(k, with_title=True)
+kp.draw(k)
 plt.show()
