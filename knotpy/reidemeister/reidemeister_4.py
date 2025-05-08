@@ -113,6 +113,74 @@ def find_reidemeister_4_slides(k:PlanarDiagram):
                 yield v, good_positions
             unused_positions.difference_update(set(good_positions))
 
+def _crossing_increase_reidemeister_4_slide(k:PlanarDiagram, node_positions_pair: tuple):
+    """ Number of additional crossings after performing a R4 slide (can be negative if the number decreases or zero
+    if the number stays the same)."""
+    v, positions = node_positions_pair
+    return k.degree(v) - len(positions)
+
+def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=False):
+    """
+    Selects a Reidemeister 4 slide move on a planar diagram.
+
+    This function identifies and selects a Reidemeister 4 slide move based on the
+    specified filtering criteria, allowing optional randomization. The `change`
+    parameter specifies the form of filtering to apply with respect to the number
+    of crossings in the diagram. Users can choose moves that increase, decrease,
+    remain constant, or have no specific constraint on the number of crossings. If
+    randomization is enabled, the function selects any move that satisfies the
+    criteria at random. If no valid moves are found, or the criteria cannot be met,
+    the function returns `None`.
+
+    Parameters:
+        k (PlanarDiagram): The planar diagram on which a Reidemeister 4 slide move
+            will be performed.
+        change (str): A string specifying the filtering criteria for the move.
+            Possible values are:
+              - "any": Return any valid move.
+              - "increase": Only moves that increase the number of crossings.
+              - "decrease": Only moves that decrease the number of crossings.
+              - "constant": Only moves that leave the number unchanged.
+              - "nonincreasing": Moves that do not increase (constant or decrease).
+              - "nondecreasing": Moves that do not decrease (constant or increase).
+            Default is "any".
+        random (bool): A boolean flag. If True, a valid move satisfying the criteria
+            is randomly selected. If False, the first valid move is selected.
+            Default is False.
+
+    Returns:
+        Optional[Any]: The selected location representing a Reidemeister 4 slide
+            move if a valid move is found; otherwise, returns `None`.
+
+    Raises:
+        ValueError: If the `change` parameter value is not one of the accepted
+            strings: "any", "decrease", "constant", "increase", "nonincreasing",
+            or "nondecreasing".
+    """
+
+    def _satisfied(loc):
+        if change == "any": return True
+        ci = _crossing_increase_reidemeister_4_slide(k, loc)
+        if change == "decrease": return ci < 0
+        if change == "constant": return ci == 0
+        if change == "increase": return ci > 0
+        if change == "nonincreasing": return ci <= 0
+        if change == "nondecreasing": return ci >= 0
+
+    change = change.lower().strip()
+    if change not in ["any", "decrease", "constant", "increase", "nonincreasing", "nondecreasing"]:
+        raise ValueError("change parameter must be one of: any, decrease, constant, increase, nonincreasing, nondecreasing")
+
+    if random:
+        locations = [_loc for _loc in find_reidemeister_4_slides(k) if _satisfied(_loc)]
+        return choice(locations) if locations else None
+    else:
+        for _loc in find_reidemeister_4_slides(k):
+            if _satisfied(_loc):
+                return _loc
+    return None
+
+
 def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
     """
     Remove a crossing and join two of its arcs into one (remove it and connect the adjacent endpoints).

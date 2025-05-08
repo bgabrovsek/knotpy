@@ -16,8 +16,8 @@ from knotpy.reidemeister.reidemeister_3 import (reidemeister_3,
                                                 choose_reidemeister_3_triangle,
                                                 find_reidemeister_3_triangle)
 
-_DEFAULT_ALLOWED_MOVES = {"R1", "R2", "R3"}
-_POSSIBLE_ALLOWED_MOVES = {"R1", "R2", "R3", "FLIP"}
+_DEFAULT_ALLOWED_MOVES = {"R1", "R2", "R3", "R4"}  # TODO: should we include R5 (non-rigid)?
+_POSSIBLE_ALLOWED_MOVES = {"R1", "R2", "R3", "R4", "R5", "FLIP"}
 
 def _clean_allowed_moves(allowed_moves) -> set:
     """

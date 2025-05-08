@@ -1,9 +1,10 @@
+from random import choice
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing
-from sandbox.classification_knotoids.knotpy.notation import from_knotpy_notation
+from knotpy.notation import from_knotpy_notation
 
 
 def find_reidemeister_5_twists(k: PlanarDiagram):
@@ -20,6 +21,18 @@ def find_reidemeister_5_twists(k: PlanarDiagram):
             yield k.endpoint_from_pair((v, 1)), k.endpoint_from_pair((v, 0))
 
 
+def choose_reidemeister_5_twist(k: PlanarDiagram, random=False):
+    """
+    Selects a kink to remove a crossing using the Reidemeister 5 move.
+    """
+    if random:
+        locations = tuple(find_reidemeister_5_twists(k))
+        return choice(locations) if locations else None
+    else:
+        return next(find_reidemeister_5_twists(k), None)
+
+
+
 def find_reidemeister_5_untwists(k: PlanarDiagram):
     """ An untwist is given by two incident endpoints, first one is the vertex endpoint, the second one is
     the crossing endpoint."""
@@ -30,6 +43,17 @@ def find_reidemeister_5_untwists(k: PlanarDiagram):
                 yield ep1, ep2
             elif isinstance(k.nodes[ep1.node], Crossing) and isinstance(k.nodes[ep2.node], Vertex):
                 yield ep2, ep1
+
+
+def choose_reidemeister_5_untwist(k: PlanarDiagram, random=False):
+    """
+    Selects a kink to remove a crossing using the Reidemeister 5 move.
+    """
+    if random:
+        locations = tuple(find_reidemeister_5_untwists(k))
+        return choice(locations) if locations else None
+    else:
+        return next(find_reidemeister_5_untwists(k), None)
 
 
 def reidemeister_5_twist(k, endpoints, inplace=False):
