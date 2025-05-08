@@ -271,7 +271,19 @@ def get_knot_from_name(name):
         return _get_knot(crossing_number, alternating, index).copy()
 
 
+def get_theta_curves():
+    return [theta for theta in _theta_table_7.values()]
+
+def get_knot_table(crossings: int | tuple[int, int] | None = None):
+    raise NotImplementedError()
+
+def get_link_table(crossings: int | tuple[int, int] | None = None):
+    raise NotImplementedError()
+
 if __name__ == "__main__":
+
+    for x in get_theta_curves():
+        print(x)
     pass
 
     """

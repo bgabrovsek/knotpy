@@ -1,4 +1,6 @@
-from knotpy import from_knotpy_notation
+from random import choice
+
+from knotpy import from_knotpy_notation, yamada_polynomial
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
@@ -6,6 +8,9 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
 from knotpy.manipulation.rewire import pull_and_plug_endpoint
 from knotpy.utils.dict_utils import common_dict
+from knotpy.manipulation.remove import remove_bivalent_vertex
+from knotpy.algorithms.disjoint_sum import add_unknot
+
 
 def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
     """
@@ -108,6 +113,24 @@ def find_reidemeister_4_slides(k:PlanarDiagram):
                 yield v, good_positions
             unused_positions.difference_update(set(good_positions))
 
+def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
+    """
+    Remove a crossing and join two of its arcs into one (remove it and connect the adjacent endpoints).
+    This ignores the non-parity endpoints and connect the parity endpoints.
+    """
+
+    if not isinstance(k.nodes[crossing], Crossing):
+        raise TypeError("Variable crossing must be of a crossing")
+    parity %= 2
+
+    # connect two arcs of a knot
+    ep_a = k.nodes[crossing][parity]
+    ep_b = k.nodes[crossing][parity + 2]
+    k.set_endpoint(ep_a, ep_b)
+    k.set_endpoint(ep_b, ep_a)
+
+    # remove the crossing
+    k.remove_node(crossing, remove_incident_endpoints=False)
 
 
 def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
@@ -119,9 +142,18 @@ def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
     deg = k.degree(v)
     parity = k.nodes[v][positions[0]].position % 2
 
+
     # get common attributes of old crossings
     crossings = [k.nodes[v][pos].node for pos in positions]
     common_node_attr = common_dict( *(k.nodes[c].attr for c in crossings )  )
+
+    # is there a full circle (disjoint unknot) around the vertex?
+    if len(positions) == deg:
+        # remove the unknot
+        for c in crossings:
+            _crossing_to_arc(k, c, parity)
+        add_unknot(k, 1, inplace=True)  # TODO: attributes
+        return k
 
     # Get endpoint type (in the case we have an orientation)
     ep_first = k.nodes[v][positions[0]]
@@ -158,26 +190,73 @@ def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
         k.set_endpoint(endpoint_for_setting=(crossing, (parity - 1) % 4), adjacent_endpoint=(next_crossing, (parity + 1) % 4), create_using=ep_side_first_type, **common_ep_side_attr)
         k.set_endpoint(endpoint_for_setting=(next_crossing, (parity + 1) % 4), adjacent_endpoint=(crossing, (parity - 1) % 4), create_using=ep_side_last_type, **common_ep_side_attr)
 
-    k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side)
+    # get destination side arcs
+    ep_side_first_twin = k.twin(ep_side_first)
+    ep_side_last_twin = k.twin(ep_side_last)
+    k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin) # TODO: attributes
+    k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4)) # TODO: attributes
+    k.set_endpoint((new_crossings[-1], (parity - 1) % 4), ep_side_first_twin)  # TODO: attributes
+    k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4))  # TODO: attributes
+
+    remove_bivalent_vertex(k, temp_node_first)
+    remove_bivalent_vertex(k, temp_node_last)
+
+    for c in crossings:
+        _crossing_to_arc(k, c, parity)
+
+    # remove bivalent vertices
+
+    #k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side)
     # redirect endpoints # TODO: orientation
     #pull_and_plug_endpoint(k, source_endpoint=ep_side_last, destination_endpoint=(new_crossings[0], (parity + 1) % 4))
     #pull_and_plug_endpoint(k, source_endpoint=ep_side_first, destination_endpoint=(new_crossings[-1], (parity - 1) % 4))
-    k.set_endpoint(endpoint_for_setting=())
 
     return k
 
 if __name__ == "__main__":
-    s = "a=V(c0 b0 d2) b=V(a1 c3 d3) c=X(a0 d1 d0 b1) d=X(c2 c1 a2 b2)"
-    t = "a=V(c3 b0 e3 d3) b=X(a1 c2 c1 e0) c=X(d2 b2 b1 a0) d=X(e2 e1 c0 a3) e=X(b3 d1 d0 a2)"
-    k = from_knotpy_notation(s)
-    print(k, sanity_check(k))
-    for v, good_positions in find_reidemeister_4_slides(k):
-        print(v, good_positions)
-        k_ = reidemeister_4_slide(k, (v, good_positions), inplace=False)
-        print(k_, sanity_check(k_))
+    # from R4 examples
+    h1 = "a=V(b1 e0 f0) b=V(e1 a0 f3) c=V(e2 d0) d=V(c1 f2) e=X(a1 b0 c0 f1) f=X(a2 e3 d1 b2)"
+    h1 = from_knotpy_notation(h1)
+    print(h1, sanity_check(h1))
 
+    r4 = ("a", [1, 2])
 
-    k = from_knotpy_notation(t)
-    print(k, sanity_check(k))
-    for v, good_positions in find_reidemeister_4_slides(k):
-        print(v, good_positions)
+    k1 = reidemeister_4_slide(h1, r4)
+    print(k1, sanity_check(k1))
+
+    print(yamada_polynomial(h1))
+    print(yamada_polynomial(k1))
+
+    from knotpy.catalog.knot_tables import get_theta_curves
+
+    for t in get_theta_curves():
+        locations = list(find_reidemeister_4_slides(t))
+        if locations:
+            location = choice(locations)
+            tt = reidemeister_4_slide(t, location)
+            s = sanity_check(tt)
+            if not s:
+                print(t, "->", tt)
+
+            y1 = yamada_polynomial(t)
+            y2 = yamada_polynomial(tt)
+
+            if y1 != y2:
+                print(t, "->", tt, "(yamada)")
+
+    # for v, good_pos in find_reidemeister_4_slides(h1):
+    #     print(v, good_pos)
+
+    # s = "a=V(c0 b0 d2) b=V(a1 c3 d3) c=X(a0 d1 d0 b1) d=X(c2 c1 a2 b2)"
+    # t = "a=V(c3 b0 e3 d3) b=X(a1 c2 c1 e0) c=X(d2 b2 b1 a0) d=X(e2 e1 c0 a3) e=X(b3 d1 d0 a2)"
+    # k = from_knotpy_notation(s)
+    # print(k, sanity_check(k))
+    # for v, good_positions in find_reidemeister_4_slides(k):
+    #     print(v, good_positions)
+    #     k_ = reidemeister_4_slide(k, (v, good_positions), inplace=False)
+    #     print(k_, sanity_check(k_))
+    #
+    # k = from_knotpy_notation(t)
+    # print(k, sanity_check(k))
+    # for v, good_positions in find_reidemeister_4_slides(k):
+    #     print(v, good_positions)

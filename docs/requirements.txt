@@ -2,7 +2,7 @@
 sphinx
 pydata-sphinx-theme
 sphinx-gallery
-sympy >=1.8
+wsympy >=1.8
 pytest >=6.2
 matplotlib >=3.4
 numpy >=1.20

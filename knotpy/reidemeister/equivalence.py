@@ -18,6 +18,7 @@ from knotpy.manipulation.symmetry import flip
 from knotpy.reidemeister.reidemeister import _clean_allowed_moves
 
 
+
 def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDiagram]], depth=1, allowed_moves=None):
     """
     Input: list of diagrams
@@ -41,14 +42,22 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
     DSU = DisjointSetUnion([canonical(k) for k in diagrams])
 
     # If flip move is allowed, flips are equivalent to the primary diagrams
-    if allowed_moves is not None and "FLIP" in allowed_moves:
-        raise NotImplementedError("Flip moves are not yet implemented for equivalence.")
-        # for k in DSU.elements:
+    # if allowed_moves is not None and "FLIP" in allowed_moves:
+    #     raise NotImplementedError("Flip moves are not yet implemented for equivalence.")
+    #     # for k in DSU.elements:
         #     DSU[k] = canonical(flip(k, inplace=False))
 
     # Store each diagram as a leveled set (levels are Reidemeister depths), the keys are original diagram and the values
     # are the leveled sets.
-    leveled_sets = {k: LeveledSet(crossing_non_increasing_space(k, assume_canonical=False, allowed_moves=allowed_moves)) for k in DSU.elements}
+    # if flips are allowed, include flips at the beginnning
+    if allowed_moves is not None and "FLIP" in allowed_moves:
+        leveled_sets = {
+            k: LeveledSet(crossing_non_increasing_space({k, flip(k, inplace=False)}, assume_canonical=False, allowed_moves=allowed_moves)) for k
+            in DSU.elements}
+    else:
+        leveled_sets = {
+            k: LeveledSet(crossing_non_increasing_space(k, assume_canonical=False, allowed_moves=allowed_moves)) for k
+            in DSU.elements}
 
     # If there are any two diagrams equivalent in different leveled sets, mark them as equivalent
     join_if_equivalent_diagrams()

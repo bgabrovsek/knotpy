@@ -2,57 +2,153 @@ from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing
+from sandbox.classification_knotoids.knotpy.notation import from_knotpy_notation
+
 
 def find_reidemeister_5_twists(k: PlanarDiagram):
-    """ A twist is given by two adjacent endpoints form the vertex, e.g. (vertex, position), (vertex, position + 1)"""
+    """ A twist is given by two adjacent endpoints form the vertex, an over (vertex, position2)
+    and an under (vertex, position1), where |position1 - position2| == 1"""
     for v in k.vertices:
-        if (deg := k.degree(v)) >= 2:
+        deg = k.degree(v)
+        if deg > 2:
             for pos in range(deg):
                 yield k.endpoint_from_pair((v, pos)), k.endpoint_from_pair((v, (pos + 1) % deg))
+                yield k.endpoint_from_pair((v, (pos + 1) % deg)), k.endpoint_from_pair((v, pos))
+        elif deg == 2:
+            yield k.endpoint_from_pair((v, 0)), k.endpoint_from_pair((v, 1))
+            yield k.endpoint_from_pair((v, 1)), k.endpoint_from_pair((v, 0))
+
 
 def find_reidemeister_5_untwists(k: PlanarDiagram):
     """ An untwist is given by two incident endpoints, first one is the vertex endpoint, the second one is
     the crossing endpoint."""
-    for v in k.vertices:
-        for ep in k.vertices[v]:
-            if isinstance(k.nodes[ep.node], Crossing):
-                ep_from_adj_crossing = k.crossings[ep.node][(ep.position - 1) % k.degree(ep.node)]
-                if ep_from_adj_crossing.node == v:
-                    yield ep_from_adj_crossing, ep  # first node, then crossing
+    for face in k.faces:
+        if len(face) == 2:
+            ep1, ep2 = face
+            if isinstance(k.nodes[ep1.node], Vertex) and isinstance(k.nodes[ep2.node], Crossing):
+                yield ep1, ep2
+            elif isinstance(k.nodes[ep1.node], Crossing) and isinstance(k.nodes[ep2.node], Vertex):
+                yield ep2, ep1
 
 
-def reidemeister_5_twist(k, endpoints):
-    NotImplementedError()
+def reidemeister_5_twist(k, endpoints, inplace=False):
 
-def reidemeister_5_untwist(k:PlanarDiagram, face: tuple):
+    ep_under, ep_over = endpoints
 
-    v1_ep, c2_ep = face  # vertex endpoint and crossing endpoint
-    v2_ep, c1_ep = k.nodes[c2_ep.node][c2_ep.position], k.nodes[v1_ep.node][v1_ep.position]
+    if not inplace:
+        k = k.copy()
+
+    # Add the "twist" crossing.
+    crossing = subdivide_endpoint_by_crossing(k, ep_under, 0)
+
+    over_twin = k.twin(ep_over)
+
+    # Insert over-arcs (choose positions 1 and 3 or 3 and 1, depending on the CCW/CW position of the under-arc)
+    if (ep_under.position + 1) % k.degree(ep_under.node) == ep_over.position:
+        k.set_endpoint(over_twin, (crossing, 3))
+        k.set_endpoint((crossing, 3), over_twin)
+        k.set_endpoint(ep_over, (crossing, 1))
+        k.set_endpoint((crossing, 1), ep_over)
+    else:
+        k.set_endpoint(over_twin, (crossing, 1))
+        k.set_endpoint((crossing, 1), over_twin)
+        k.set_endpoint(ep_over, (crossing, 3))
+        k.set_endpoint((crossing, 3), ep_over)
+
+    # switch the endpoints from the vertex
+    ep_under_twin = k.twin(ep_under)
+    ep_over_twin = k.twin(ep_over)
+    k.set_endpoint(ep_under, ep_over_twin)
+    k.set_endpoint(ep_over_twin, ep_under)
+    k.set_endpoint(ep_over, ep_under_twin)
+    k.set_endpoint(ep_under_twin, ep_over)
+    return k
+
+
+
+def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
+    """
+    Reidemeister move 5 untwist operation on a given planar diagram.
+
+    Parameters:
+        k (PlanarDiagram): The PlanarDiagram object to perform the untwisting operation on.
+        face (tuple): A tuple containing two endpoints representing the 2-region (face) of the twist.
+        inplace (bool, optional): A boolean indicating whether the operation should
+                                  modify the provided diagram directly (True) or
+                                  create a modified copy and leave the original
+                                  untouched (False). Default is False.
+
+    Returns:
+        PlanarDiagram: The modified planar diagram with the untwisting operation
+                       applied. If inplace is True, the same object is returned;
+                       otherwise, a new object with the modifications is returned.
+    """
+
+    if not inplace:
+        k = k.copy()
+
+    v1_ep, c2_ep = face  # vertex endpoint and crossing endpoint (CCW)
+    v2_ep, c1_ep = k.nodes[c2_ep.node][c2_ep.position], k.nodes[v1_ep.node][v1_ep.position]  # twins of the endpoints (CCW)
 
     x1_ep = k.nodes[c2_ep.node][(c2_ep.position + 2) % 4]  # this should be connected to v1_ep
     x2_ep = k.nodes[c1_ep.node][(c1_ep.position + 2) % 4]  # this should be connected to v2_ep
 
 
-    # does the twist form a loop?
+    # does the untwist not form a loop?
     if x1_ep.node != v1_ep.node:
-        k.set_endpoint(endpoint_for_setting=v1_ep, adjacent_endpoint=x1_ep)
-        k.set_endpoint(endpoint_for_setting=x1_ep, adjacent_endpoint=v1_ep)
-        k.set_endpoint(endpoint_for_setting=v2_ep, adjacent_endpoint=x2_ep)
-        k.set_endpoint(endpoint_for_setting=x2_ep, adjacent_endpoint=v2_ep)
+        # do we have a Reidemeister 1 loop at the end of the crossing?
+        if x1_ep.node == v2_ep.node == c1_ep.node == c2_ep.node:
+            k.set_endpoint(endpoint_for_setting=v1_ep, adjacent_endpoint=c2_ep)
+            k.set_endpoint(endpoint_for_setting=v2_ep, adjacent_endpoint=c1_ep)
+            # TODO: join this with the loop condition, since it is the same operation on endpoints.
+        else:
+            # we have a "normal situation"
+            k.set_endpoint(endpoint_for_setting=v1_ep, adjacent_endpoint=x1_ep)
+            k.set_endpoint(endpoint_for_setting=x1_ep, adjacent_endpoint=v1_ep)
+            k.set_endpoint(endpoint_for_setting=v2_ep, adjacent_endpoint=x2_ep)
+            k.set_endpoint(endpoint_for_setting=x2_ep, adjacent_endpoint=v2_ep)
     else:
+        # after untwisting, we have a loop
         k.set_endpoint(endpoint_for_setting=v1_ep, adjacent_endpoint=v2_ep)
         k.set_endpoint(endpoint_for_setting=v2_ep, adjacent_endpoint=v1_ep)
 
     k.remove_node(c2_ep.node, remove_incident_endpoints=False)
 
+    return k
+
 if __name__ == "__main__":
 
+    code = "a=V(c1 c0 b0) b=V(a2 b2 b1) c=X(a1 a0 c3 c2)"
+    k = from_knotpy_notation(code)
+    for e in find_reidemeister_5_untwists(k):
+        print(e)
+        k_2 = reidemeister_5_untwist(k, e, inplace=False)
+        print(k_2)
+        exit()
+
+    exit()
+
+
+
     k = from_pd_notation("[[0,1,2],[2,3,5],[7,8,6],[0,13,12],[11,7,12,13],[1,6,8,9],[3,9,4,10],[10,4,11,5]]")
+
+    print(k)
+    for e in find_reidemeister_5_twists(k):
+        print(e)
+        k_2 = reidemeister_5_twist(k, e, inplace=False)
+        print(k_2)
+        exit()
+
+    exit()
+
     sanity_check(k)
     print(k)
 
     while f := list(find_reidemeister_5_untwists(k)):
+        print(f)
         reidemeister_5_untwist(k, f[0])
+        print(k)
         sanity_check(k)
 
     print(k)

@@ -1,7 +1,8 @@
 """
-A Reidemeister space is the set of all diagrams after performing all possible Reidemeister 3 moves.
+A Reidemeister space of a specific type is the set of all diagrams after performing all sequences of all possible
+move types.
 For example, reidemeister_3_space returns the set of all unique knots that are the result of all possible R3 moves
-performed.
+performed any number of times.
 """
 
 import sys
@@ -22,7 +23,11 @@ __all__ = ["reduce_crossings_greedy", "reidemeister_3_space", "detour_space", "c
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-
+def _crossing_increase_reidemeister_4_slide(k:PlanarDiagram, node_positions_pair: tuple):
+    """ Number of additional crossings after performing a R4 slide (can be negative if the number decreases or zero
+    if the number stays the same)."""
+    v, positions = node_positions_pair
+    return k.degree(v) - len(positions)
 
 def reduce_crossings_greedy(k: PlanarDiagram, inplace=False, allowed_moves=None):
     """
@@ -205,7 +210,6 @@ def detour_space(diagrams, allowed_moves=None) -> set:
         for location in find_detour_moves(k)
         if allowed_moves is None or detect_move_type(location) in allowed_moves
         }
-
 
 def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progress=False, allowed_moves=None) -> set:
     """

@@ -271,6 +271,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         :type degree: Optional[int]
         :param attr: Additional attributes to store for the node.
         """
+        #print(node_for_adding)
 
         if create_using is not None and not isinstance(create_using, type):
             raise TypeError(f"Creating node with create_using instance {create_using} not yet supported.")
