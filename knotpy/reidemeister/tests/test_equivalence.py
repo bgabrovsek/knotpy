@@ -1,31 +1,37 @@
+from knotpy.catalog.knot_tables import get_theta_curves
 from knotpy.reidemeister.reidemeister import randomize_diagram
 from knotpy.reidemeister.equivalence import reduce_equivalent_diagrams
 from knotpy.classes.planardiagram import PlanarDiagram
 
-def test_equivalence():
-    a1 = PlanarDiagram("3_1")
-    a2 = randomize_diagram(a1)
-    a3 = randomize_diagram(a1)
-    a4 = randomize_diagram(a1)
+def test_equivalence_knots():
+    """ Create 8 diagrams, four trefoils and four figure-8s, and check that they are reduced to two."""
+    trefoil = PlanarDiagram("3_1")
+    figure8 = PlanarDiagram("4_1")
 
-    b1 = PlanarDiagram("4_1")
-    b2 = randomize_diagram(b1)
-    b3 = randomize_diagram(b1)
-    b4 = randomize_diagram(b1)
-
-    result = reduce_equivalent_diagrams([a1, a2, a3, a4, b1, b2, b3, b4], allowed_moves="r1,r2,r3")
+    diagrams = [trefoil, randomize_diagram(trefoil), randomize_diagram(trefoil), randomize_diagram(trefoil),
+                figure8, randomize_diagram(figure8), randomize_diagram(figure8), randomize_diagram(figure8)]
+    result = reduce_equivalent_diagrams(diagrams, allowed_moves="r1,r2,r3")
 
     assert len(result) == 2
+    assert trefoil in result
+    assert figure8 in result
 
-    assert a1 in result
-    assert b1 in result
-    assert a2 not in result
-    assert b2 not in result
-    assert a3 not in result
-    assert b3 not in result
-    assert a4 not in result
-    assert b4 not in result
-    pass
+    for k in diagrams[1:4] + diagrams[5:]:
+        assert k not in result
+
+def test_equivalence_theta_curves():
+    t1 = PlanarDiagram("t0_1")
+    t2 = PlanarDiagram("+t3_1")
+    t3 = PlanarDiagram("t4_1.1")
+    t4 = PlanarDiagram("h0_1")
+    t5 = PlanarDiagram("h2_1.1")
+
+    thetas = [t1, t2, t3, t4, t5]
+    print("..")
+    for k in thetas:
+        print(k)
+
 
 if __name__ == '__main__':
-    test_equivalence()
+    #test_equivalence_knots()
+    test_equivalence_theta_curves()

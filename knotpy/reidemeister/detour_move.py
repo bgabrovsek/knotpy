@@ -6,10 +6,9 @@ A detour move is a move, where a stran passes through multiple other strands
 from itertools import chain
 
 from knotpy.classes.node import Crossing
-
-# from knotpy.reidemeister.reidemeister_1 import (ReidemeisterLocationAddKink)
-# from knotpy.reidemeister.reidemeister_2 import (ReidemeisterLocationPoke)
-
+from knotpy.reidemeister.reidemeister_4 import find_reidemeister_4_slide
+from knotpy.reidemeister.reidemeister_5 import find_reidemeister_5_twists
+from knotpy._settings import settings
 
 def detour_find_reidemeister_1_add_kinks_bigon(k):
     """Finds positions of R1 moves next to an alternating 2-region (bigon), where, after the R1 move, a non-alternating
@@ -63,7 +62,17 @@ def detour_find_reidemeister_2_pokes_n_gon(k):
 def find_detour_moves(k):
     """Finds all detour moves for a knot."""
     # TODO: spefify what move it is, either as a tuple (move_type, location) or (Reidemeister function, location)
-    for rm in chain(detour_find_reidemeister_1_add_kinks_bigon(k), detour_find_reidemeister_2_pokes_n_gon(k)):
-        yield rm
 
+    # Add kinks
+    if "R1" in settings.allowed_reidemeister_moves:
+        for ep_sign in detour_find_reidemeister_1_add_kinks_bigon(k):
+            yield ep_sign
 
+    # Add R2 pokes
+    if "R2" in settings.allowed_reidemeister_moves:
+        for face in detour_find_reidemeister_2_pokes_n_gon(k):
+            yield face
+
+    if "R4" in settings.allowed_reidemeister_moves:
+        for v_pos in find_reidemeister_4_slide(k, change="nondecreasing"):
+            yield v_pos

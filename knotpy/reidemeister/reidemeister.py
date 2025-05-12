@@ -4,6 +4,7 @@ import re
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
+from knotpy.reidemeister.reidemeister_5 import choose_reidemeister_5_untwist
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.reidemeister_1 import (reidemeister_1_remove_kink, reidemeister_1_add_kink,
@@ -16,52 +17,15 @@ from knotpy.reidemeister.reidemeister_3 import (reidemeister_3,
                                                 choose_reidemeister_3_triangle,
                                                 find_reidemeister_3_triangle)
 
-_DEFAULT_ALLOWED_MOVES = {"R1", "R2", "R3", "R4"}  # TODO: should we include R5 (non-rigid)?
-_POSSIBLE_ALLOWED_MOVES = {"R1", "R2", "R3", "R4", "R5", "FLIP"}
+from knotpy.reidemeister.reidemeister_4 import (reidemeister_4_slide,
+                                                choose_reidemeister_4_slide,
+                                                find_reidemeister_4_slide)
 
-def _clean_allowed_moves(allowed_moves) -> set:
-    """
-    Validates the list of allowed Reidemeister moves.
+from knotpy.reidemeister.reidemeister_5 import (reidemeister_5_twist, reidemeister_5_untwist,
+                                                choose_reidemeister_5_untwist, choose_reidemeister_5_twist,
+                                                find_reidemeister_5_twists, find_reidemeister_5_untwists)
+from knotpy._settings import settings
 
-    This function ensures that the allowed moves are properly formatted, and converted into
-    a consistent form (uppercased, devoid of invalid characters, and validated against a predefined
-    set of possible allowed moves). If the allowed moves are provided as a string, they are split
-    into a set. If no allowed moves are provided, a default set of allowed moves is used.
-
-    Parameters
-    ----------
-    allowed_moves : str | set | None
-        The allowed moves to be cleaned and validated. This can be a comma-separated string,
-        a set of moves, or None. None denotes that the default set of allowed moves should
-        be used.
-
-    Returns
-    -------
-    set
-        A set of cleaned, validated, and formatted allowed moves.
-
-    Raises
-    ------
-    ValueError
-        If the resulting allowed moves contain items not present in the possible allowed moves.
-    """
-
-    # If no moves are given, set it at the default (R1, R2, R3)
-    if allowed_moves is None:
-        return set(_DEFAULT_ALLOWED_MOVES)
-
-    # If string is given, parse from string
-    if isinstance(allowed_moves, str):
-        allowed_moves = set(allowed_moves.split(","))
-
-    # Clean the set
-    allowed_moves = {re.sub(r'[^A-Za-z0-9]', '', s).upper() for s in allowed_moves}
-    allowed_moves = {s for s in allowed_moves if s}
-
-    if not allowed_moves.issubset(_POSSIBLE_ALLOWED_MOVES):
-        raise ValueError(f"Unknown (Reidemeister) modes {allowed_moves - _POSSIBLE_ALLOWED_MOVES}")
-
-    return allowed_moves
 
 
 def find_all_reidemeister_moves(k):
@@ -187,6 +151,11 @@ def detect_move_type(location, detailed=False):
     elif isinstance(location, tuple) and isinstance(location[0], Endpoint) and isinstance(location[1], int):
         return "R1kink" if detailed else "R1"
 
+    elif isinstance(location, tuple) and len(location) == 2 and isinstance(location[1], list):
+        return "R4"
+
+    # TODO: R5
+
 
 
 def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
@@ -243,28 +212,54 @@ def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
         raise ValueError(f"Unknown Reidemeister move type {location}")
 
 def make_random_reidemeister_move(k, reidemeister_move_types=None, inplace=False):
+
+    _DEBUG = True
+
     if reidemeister_move_types is None:
-        reidemeister_move_types = ["R3", "R2unpoke", "R1unkink", "R2poke", "R1kink"]
+        reidemeister_move_types = ["R3", "R2unpoke", "R1unkink", "R2poke", "R1kink", "R4any"]
 
     reidemeister_move_types = list(reidemeister_move_types)
     shuffle(reidemeister_move_types)
 
     for move_type in reidemeister_move_types:
+
         if move_type == "R3" and (location := choose_reidemeister_3_triangle(k, random=True)) is not None:
+            if _DEBUG: print("R3", location)
             return reidemeister_3(k, location, inplace=inplace)
+
         elif move_type == "R2unpoke" and (location := choose_reidemeister_2_unpoke(k, random=True)) is not None:
+            if _DEBUG: print("R2 unpoke", location)
             return reidemeister_2_unpoke(k, location, inplace=inplace)
+
         elif move_type == "R2poke" and (location := choose_reidemeister_2_poke(k, random=True)) is not None:
+            if _DEBUG: print("R2 poke", location)
             return reidemeister_2_poke(k, location, inplace=inplace)
+
         elif move_type == "R1kink" and (location := choose_reidemeister_1_add_kink(k, random=True)) is not None:
+            if _DEBUG: print("R1 kink", location)
             return reidemeister_1_add_kink(k, location, inplace=inplace)
+
         elif move_type == "R1unkink" and (location := choose_reidemeister_1_remove_kink(k, random=True)) is not None:
+            if _DEBUG: print("R1 unkink", location)
             return reidemeister_1_remove_kink(k, location, inplace=inplace)
+
+        elif move_type == "R5untwist" and (location := choose_reidemeister_5_untwist(k, random=True)) is not None:
+            if _DEBUG: print("R5 untwist", location)
+            return reidemeister_5_untwist(k, location, inplace=inplace)
+
+        elif move_type == "R5twist" and (location := choose_reidemeister_5_twist(k, random=True)) is not None:
+            if _DEBUG: print("R5 twist", location)
+            return reidemeister_5_twist(k, location, inplace=inplace)
+
+        elif move_type[:2] == "R4" and (location := choose_reidemeister_4_slide(k, change=move_type[2:], random=True)) is not None:
+            if _DEBUG: print("R4", location)
+            return reidemeister_4_slide(k, location, inplace=inplace)
+
 
     return k
 
 
-def randomize_diagram(k, crossing_increasing_moves=2, allowed_moves=None):
+def randomize_diagram(k, crossing_increasing_moves=2):
     """
     Perform random Reidemeister moves on a given diagram.
 
@@ -277,44 +272,65 @@ def randomize_diagram(k, crossing_increasing_moves=2, allowed_moves=None):
         k: The initial diagram to be transformed.
         crossing_increasing_moves (int): Optional; the number of crossing-increasing
             moves to perform. Default is 2.
-        allowed_moves (list[str] or None): Optional; the list of allowed Reidemeister
-            moves to perform on the diagram. Valid values include "R1", "R2", "R3".
-            If None, all moves are allowed.
 
     Raises:
         ValueError: If crossing_increasing_moves is set to a value greater than 0 but
-            "R2" or "R1" moves are not included in allowed_moves.
+            "R2" or "R1" moves are not included in settings.allowed_reidemeister_moves.
 
     Returns:
         The transformed diagram after applying the specified random Reidemeister moves.
     """
 
     from knotpy.reidemeister.space import reidemeister_3_space
+    from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 
     k = k.copy()
 
-    allowed_moves = _clean_allowed_moves(allowed_moves)
-
-    if crossing_increasing_moves > 0 and ("R2" not in allowed_moves or "R1" not in allowed_moves):
+    if crossing_increasing_moves > 0 and ("R2" not in settings.allowed_reidemeister_moves or "R1" not in settings.allowed_reidemeister_moves):
         raise ValueError("Cannot perform crossing increasing moves without R2 and R1 moves")
 
     # make random R3 moves
-    if "R3" in allowed_moves:
+    if "R3" in settings.allowed_reidemeister_moves:
         k = choice(list(reidemeister_3_space(k)))
 
-    # check if we can decrease a crossing or two
-    make_random_reidemeister_move(k, (["R1unkink"] if "R1" in allowed_moves else []) + (["R2unpoke"] if "R2" in allowed_moves else []) , inplace=True)
+    sanity_check(k)
 
-    if "R3" in allowed_moves:
+    # check if we can decrease a crossing or two
+    decreasing_moves_allowed = []
+    if "R1" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R1unkink")
+    if "R2" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R2unpoke")
+    if "R4" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R4nonincreasing")
+    if "R5" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R5untwist")
+
+    make_random_reidemeister_move(k, decreasing_moves_allowed, inplace=True)
+    sanity_check(k)
+
+    if "R3" in settings.allowed_reidemeister_moves:
         k = choice(list(reidemeister_3_space(k)))
 
     # make increasing moves
     while (crossing_increasing_moves := crossing_increasing_moves - 1) >= 0:
 
-        make_random_reidemeister_move(k, (["R1kink"] if "R1" in allowed_moves else []) + (["R2poke"] if "R2" in allowed_moves else []), inplace=True)
+        increasing_moves_allowed = []
+        if "R1" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R1kink")
+        if "R2" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R2poke")
+        if "R4" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R4increase")
+        if "R5" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R5twist")
 
-        if "R3" in allowed_moves:
+        #print(increasing_moves_allowed)
+        from knotpy import yamada_polynomial
+        print("MRRM 0", k, "  ", yamada_polynomial(k), increasing_moves_allowed)
+
+        k = make_random_reidemeister_move(k, increasing_moves_allowed, inplace=False)
+        #make_random_reidemeister_move(k, increasing_moves_allowed, inplace=True)
+
+        print("MRRM 1", k, "  ", yamada_polynomial(k))
+        sanity_check(k)
+
+
+        if "R3" in settings.allowed_reidemeister_moves:
             k = choice(list(reidemeister_3_space(k)))
+        sanity_check(k)
 
     return k
 
@@ -342,4 +358,16 @@ def randomize_diagram(k, crossing_increasing_moves=2, allowed_moves=None):
     #     raise ValueError(f"Unknown Reidemesiter location {location}")
 
 
+if __name__ == "__main__":
+    from knotpy.notation.native import from_knotpy_notation
+    from knotpy.invariants import yamada_polynomial
 
+    """
+    MRRM 0 Diagram named +t3_1 a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 c2 c1 f0), d → X(f3 e0 b1 a2), e → X(d1 f2 f1 b2), f → X(c3 e2 e1 d0) (_sequence=R1)    A**11 + A**10 + A**9 - A**8 - 2*A**7 - 4*A**6 - 3*A**5 - 2*A**4 + A**2 + A + 1 ['R1kink', 'R2poke', 'R4increase', 'R5twist']
+R4 ('b', [1])
+MRRM 1 Diagram named +t3_1 a → V(j2 c0 j3), b → V(j0 f3 i0), c → X(a1 c2 c1 f0), e → X(i1 f2 f1 i2), f → X(c3 e2 e1 b1), i → X(b2 e0 e3 j1), j → X(b0 i3 a0 a2) (_sequence=R1R4)    -A**10 - 2*A**9 - 4*A**8 - 3*A**7 - 3*A**6 + A**4 + 2*A**3 + 2*A**2 + A + 1
+    """
+    k1 = from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 c2 c1 f0), d → X(f3 e0 b1 a2), e → X(d1 f2 f1 b2), f → X(c3 e2 e1 d0)")
+    k2 = from_knotpy_notation("a → V(j2 c0 j3), b → V(j0 f3 i0), c → X(a1 c2 c1 f0), e → X(i1 f2 f1 i2), f → X(c3 e2 e1 b1), i → X(b2 e0 e3 j1), j → X(b0 i3 a0 a2)")
+    print(yamada_polynomial(k1))
+    print(yamada_polynomial(k2))

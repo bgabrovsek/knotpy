@@ -1,8 +1,11 @@
+from knotpy import simplify_crossing_reducing
 from knotpy.notation.native import from_knotpy_notation
 #from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slides
 from knotpy.reidemeister.reidemeister_5 import reidemeister_5_twist, reidemeister_5_untwist, find_reidemeister_5_twists, find_reidemeister_5_untwists
 from knotpy.invariants.yamada import yamada_polynomial
 from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
+from sandbox.classification_knotoids.knotpy.classes import PlanarDiagram
+from sandbox.classification_knotoids.knotpy.notation import from_pd_notation
 
 
 def test_reidemeister_5():
@@ -98,24 +101,36 @@ def test_reidemeister_5():
     ]
 
     for code in theta_codes[::1]:
-        print(code)
+        #print(code)
         k = from_knotpy_notation(code)
         assert sanity_check(k)
         y = yamada_polynomial(k)
         for location in find_reidemeister_5_twists(k):
-            print(k, location)
+            #print(k, location)
             k_2 = reidemeister_5_twist(k, location, inplace=False)
             assert sanity_check(k_2)
             y_2 = yamada_polynomial(k_2)
-            for location_2 in find_reidemeister_5_untwists(k_2):
-                print(".  ", k_2, location_2)
+            # for location_2 in find_reidemeister_5_untwists(k_2):
+            #     print(".  ", k_2, location_2)
 
+def test_framing_5():
+    from knotpy import settings
+    settings.allowed_reidemeister_moves = "r1, r2, r3, r4, r5"
+    # settings.trace_reidemeister_moves = False
 
+    t = from_knotpy_notation("a=V(b0 b2 b1) b=V(a0 a2 a1)")
+    k = from_knotpy_notation("a=V(b0 c3 c2) b=V(a0 c1 c0) c=X(b2 b1 a2 a1)")
+    q=    simplify_crossing_reducing(k, inplace=False)
+    assert yamada_polynomial(q) == yamada_polynomial(t)
+    # print(q)
+    # print(yamada_polynomial(k))
+    # print(yamada_polynomial(t))
 if __name__ == "__main__":
 
     # s = "a=V(b0 c0 d0) b=V(a0 d2 e3) c=X(a1 e2 e1 f0) d=V(a2 g0 b1) e=X(h3 c2 c1 b2) f=V(c3 i0 g1) g=V(d1 f2 j0) h=X(j3 j2 i1 e0) i=V(f1 h2 j1) j=X(g2 i2 h1 h0)a=V(b0 b2 c0) b=V(a0 d3 a1) c=X(a2 e0 f3 d0) d=X(c3 g0 e1 b1) e=X(c1 d2 g3 h0) f=X(h3 i0 i3 c2) g=X(d1 i2 h1 e2) h=X(e3 g2 i1 f0) i=X(f1 h2 g1 f2)"
     # m = from_knotpy_notation(s)
     # print(m)
 
-
     test_reidemeister_5()
+
+    test_framing_5()

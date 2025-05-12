@@ -1,6 +1,5 @@
 from random import choice
 
-from knotpy import from_knotpy_notation, yamada_polynomial
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
@@ -10,7 +9,7 @@ from knotpy.manipulation.rewire import pull_and_plug_endpoint
 from knotpy.utils.dict_utils import common_dict
 from knotpy.manipulation.remove import remove_bivalent_vertex
 from knotpy.algorithms.disjoint_sum import add_unknot
-
+from knotpy._settings import settings
 
 def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
     """
@@ -100,7 +99,50 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
     return good_positions
 
 
-def find_reidemeister_4_slides(k:PlanarDiagram):
+def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
+    """
+        Find and yield all possible Reidemeister 4 "slide" moves on a given PlanarDiagram.
+        A slide move is given by a vertex and the set of incident positions of the vertex's arcs.
+
+        Parameters
+        ----------
+        k : PlanarDiagram
+            The input planar diagram on which potential Reidemeister 4 slide moves are to be found.
+        change : str, optional
+            Specifies the type of crossing change to consider. Valid values include:
+            - "any": No specific condition for the crossing change.
+            - "decrease": Considers only moves that result in a decrease in crossings.
+            - "constant": Considers only moves that keep crossings constant.
+            - "increase": Considers only moves that result in an increase in crossings.
+            - "nonincreasing": Considers moves allowing non-increasing crossings.
+            - "nondecreasing": Considers moves allowing non-decreasing crossings.
+            Defaults to "any".
+
+        Yields
+        ------
+        tuple
+            Each yielded value is a tuple containing:
+            - A vertex from the PlanarDiagram where the move is found.
+            - A set of positions representing valid Reidemeister 4 slide adjustments.
+
+    """
+
+    def _satisfied(loc):
+        if change == "any": return True
+        ci = _crossing_increase_reidemeister_4_slide(k, loc)
+        if change == "decrease": return ci < 0
+        if change == "constant": return ci == 0
+        if change == "increase": return ci > 0
+        if change == "nonincreasing": return ci <= 0
+        if change == "nondecreasing": return ci >= 0
+
+    change = change.lower().strip()
+    if change.endswith("ing"):
+        change = change[:-3] + "e"
+    if change not in ["any", "decrease", "constant", "increase", "nonincrease", "nondecrease"]:
+        raise ValueError(f"change parameter is '{change}', but it must be one of the following: "
+                         f"any, decrease, constant, increase, nonincrease, or nondecrease")
+
 
     for v in k.vertices:
         unused_positions = set(range(k.degree(v)))
@@ -109,7 +151,8 @@ def find_reidemeister_4_slides(k:PlanarDiagram):
             position = unused_positions.pop()
 
             good_positions = _expand_over_under_adjacent_positions(k, v, position)
-            if good_positions:
+
+            if good_positions and _satisfied((v, good_positions)):
                 yield v, good_positions
             unused_positions.difference_update(set(good_positions))
 
@@ -158,27 +201,14 @@ def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=Fa
             or "nondecreasing".
     """
 
-    def _satisfied(loc):
-        if change == "any": return True
-        ci = _crossing_increase_reidemeister_4_slide(k, loc)
-        if change == "decrease": return ci < 0
-        if change == "constant": return ci == 0
-        if change == "increase": return ci > 0
-        if change == "nonincreasing": return ci <= 0
-        if change == "nondecreasing": return ci >= 0
-
-    change = change.lower().strip()
-    if change not in ["any", "decrease", "constant", "increase", "nonincreasing", "nondecreasing"]:
-        raise ValueError("change parameter must be one of: any, decrease, constant, increase, nonincreasing, nondecreasing")
+    if not change or change is None:
+        change = "any"
 
     if random:
-        locations = [_loc for _loc in find_reidemeister_4_slides(k) if _satisfied(_loc)]
+        locations = list(find_reidemeister_4_slide(k, change))
         return choice(locations) if locations else None
     else:
-        for _loc in find_reidemeister_4_slides(k):
-            if _satisfied(_loc):
-                return _loc
-    return None
+        return next(find_reidemeister_4_slide(k, change), None)
 
 
 def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
@@ -201,12 +231,12 @@ def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
     k.remove_node(crossing, remove_incident_endpoints=False)
 
 
-def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
+def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
 
     if not inplace:
         k = k.copy()
 
-    v, positions = node_positions_pair
+    v, positions = vertex_positions_pair
     deg = k.degree(v)
     parity = k.nodes[v][positions[0]].position % 2
 
@@ -221,6 +251,10 @@ def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
         for c in crossings:
             _crossing_to_arc(k, c, parity)
         add_unknot(k, 1, inplace=True)  # TODO: attributes
+        # backtrack Reidemeister moves
+        if settings.trace_reidemeister_moves:
+            k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
+
         return k
 
     # Get endpoint type (in the case we have an orientation)
@@ -279,9 +313,38 @@ def reidemeister_4_slide(k:PlanarDiagram, node_positions_pair, inplace=False):
     #pull_and_plug_endpoint(k, source_endpoint=ep_side_last, destination_endpoint=(new_crossings[0], (parity + 1) % 4))
     #pull_and_plug_endpoint(k, source_endpoint=ep_side_first, destination_endpoint=(new_crossings[-1], (parity - 1) % 4))
 
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
+
     return k
 
 if __name__ == "__main__":
+
+    """
+    MRRM 0 Diagram named +t3_1 a → V(b0 c0 d3), b → V(a0 e0 f3), c → X(a1 f0 e3 d0), d → X(c3 e2 e1 a2), e → X(b1 d2 d1 c2), f → X(c1 f2 f1 b2) (_sequence=R1)    A**11 + A**10 + A**9 - A**8 - 2*A**7 - 4*A**6 - 3*A**5 - 2*A**4 + A**2 + A + 1 ['R1kink', 'R2poke', 'R4increase', 'R5twist']
+R4 ('a', [1])
+MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e1 i2), e → X(b1 d2 d1 a1), f → X(j3 f2 f1 b2), i → X(a2 d0 d3 j1), j → X(a0 i3 b0 f0) (_sequence=R1R4)    -A**10 - 2*A**9 - 4*A**8 - 3*A**7 - 3*A**6 + A**4 + 2*A**3 + 2*A**2 + A + 1
+    
+    """
+
+
+    from knotpy import from_knotpy_notation, yamada_polynomial
+    t1 = "a → V(b0 c0 d3), b → V(a0 e0 f3), c → X(a1 f0 e3 d0), d → X(c3 e2 e1 a2), e → X(b1 d2 d1 c2), f → X(c1 f2 f1 b2)"
+    t1 = from_knotpy_notation(t1)
+    print(t1, sanity_check(t1), yamada_polynomial(t1))
+    t2 = reidemeister_4_slide(t1, ('a', [1]), inplace=False)
+    print(t2, sanity_check(t2), yamada_polynomial(t2))
+    print("       a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e1 i2), e → X(b1 d2 d1 a1), f → X(j3 f2 f1 b2), i → X(a2 d0 d3 j1), j → X(a0 i3 b0 f0)")
+    exit()
+    #R4 ('b', [1])"
+    """
+    
+    Diagram a → V(i0 e1 h0), b → V(i2 d2 e3), d → X(h1 e0 b1 h2), e → X(d1 a1 i3 b2), h → X(a2 d0 d3 i1), i → X(a0 h3 b0 e2) (_sequence=R4) True -A**12 - A**11 - A**10 - A**9 - A**8 - A**6 - A**4 + 1
+            a → V(i0 e1 h0), b → V(i2 d2 e3), d → X(h1 e0 b1 h2), e → X(d1 a1 i3 b2), h → X(a2 d0 d3 i1), i → X(a0 h3 b0 e2)
+    """
+
+
     # from R4 examples
     h1 = "a=V(b1 e0 f0) b=V(e1 a0 f3) c=V(e2 d0) d=V(c1 f2) e=X(a1 b0 c0 f1) f=X(a2 e3 d1 b2)"
     h1 = from_knotpy_notation(h1)
@@ -298,7 +361,7 @@ if __name__ == "__main__":
     from knotpy.catalog.knot_tables import get_theta_curves
 
     for t in get_theta_curves():
-        locations = list(find_reidemeister_4_slides(t))
+        locations = list(find_reidemeister_4_slide(t))
         if locations:
             location = choice(locations)
             tt = reidemeister_4_slide(t, location)

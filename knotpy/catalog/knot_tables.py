@@ -259,7 +259,7 @@ def get_knot_from_name(name):
 
     # Is the name a handcuff link?
     elif "h" in name:
-        print("handcuff name", name)
+        #print("handcuff name", name)
         crossing_number, index, sub_index = _parse_handcuff_name(name)
         #rint(crossing_number, index, sub_index)
         return _get_handcuff(crossing_number, index, sub_index).copy()

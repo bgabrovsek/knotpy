@@ -120,6 +120,9 @@ def _parse_compact(notation: str) -> PlanarDiagram:
                - 'endpoint_dict': per-endpoint attribute dictionaries
        """
 
+    if "→" in notation:
+        notation = notation.replace(" → ", "=").replace("→", "=").replace("),",")")
+
     _node_abbr = {"X": Crossing, "V": Vertex}
 
     # Separate definition and attribute parts

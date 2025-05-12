@@ -39,3 +39,4 @@ from knotpy.utils import statistics
 
 from knotpy.algorithms.sanity import sanity_check
 
+from knotpy._settings import settings

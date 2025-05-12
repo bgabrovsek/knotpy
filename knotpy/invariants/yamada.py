@@ -5,9 +5,9 @@ The Yamada polynomial is described in
 
 Optimizations:
 * precomputed powers of sigma = A + 1 + 1/A,
-* simplification of the knotted graphs mid-computation (reducing crossings via R1 unkinks and R2 unpokes,
+* simplification of the knotted graphs mid-computation (reducing crossings via R1 unkinks and R2 unpokes,...)
 * caching of the Yamada polynomials for planar graphs,
-* caching of the Yamada polynomials for and knotted graphs.
+* caching of the Yamada polynomials for knotted graphs.
 """
 
 __all__ = ['yamada_polynomial']
@@ -30,10 +30,15 @@ from knotpy.utils.cache import Cache
 # TODO: Implement that the framing/A/B/X markers are kept in _yamada_from_cache (simplify code)
 # TODO: Do not perform crossing smoothings and deletion-contraction in the caching function (simplify code)
 
+# Yamada settings
+_YAMADA_USE_CACHE = True
+_YAMADA_SIMPLIFY = True
+
 # Precompute powers of A + 1 + 1/A.
 _A = symbols("A")
 _sigma = _A + 1 + _A ** (-1)
 _sigma_power = [Integer(1)]  # this will dynamically expend to consist of [σ^0, σ^1, σ^2, σ^3, ...]
+
 
 """
 Initialize the global cache for the Yamada values of planar graphs without crossings.
@@ -53,6 +58,7 @@ Ideal sizes are subject to testing.
 """
 _yamada_cache = Cache(max_cache_size=1000, max_key_length=5)  # stores pre-computed yamada polynomials for the knotted graphs
 
+
 def _yamada_from_cache(k: PlanarDiagram) -> Expr:
     """
     Try to retrieve the Yamada polynomial for a knotted graph from a cache. If the
@@ -68,9 +74,10 @@ def _yamada_from_cache(k: PlanarDiagram) -> Expr:
     global _yamada_cache
 
     # The coefficient before the state depends on the number of
-    # "A"-smoothings and "B"-smoothing, which we stored in the diagram's attributes.
-    coefficient = _A ** (k.attr["_A"] - k.attr["_B"] - 2 * k.framing)
+    # "A"-smoothing and "B"-smoothing, which we stored in the diagram's attributes.
+    coefficient = _A ** (k.attr["_A"] - k.attr["_B"]) * (-_A) ** (- 2 * k.framing)
     k = canonical(k)
+
     # Clear the attributes, since we do not store them in knots in the cache.
     k.framing = 0
     k.attr["_A"] = k.attr["_B"] = k.attr["_X"] = 0
@@ -90,9 +97,9 @@ def _yamada_from_cache(k: PlanarDiagram) -> Expr:
         no_crossing_states_B, other_polynomials_B = _state_sum_yamada(kB)
         no_crossing_states_X, other_polynomials_X = _state_sum_yamada(kX)
 
-        polyA = sum(_A ** (g.attr["_A"] - g.attr["_B"] - 2 * g.framing + 1) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_A)
-        polyB = sum(_A ** (g.attr["_A"] - g.attr["_B"] - 2 * g.framing - 1) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_B)
-        polyC = sum(_A ** (g.attr["_A"] - g.attr["_B"] - 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_X)
+        polyA = sum(_A ** (g.attr["_A"] - g.attr["_B"] + 1) * (-_A) ** int(- 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_A)
+        polyB = sum(_A ** (g.attr["_A"] - g.attr["_B"] - 1) * (-_A) ** int(- 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_B)
+        polyC = sum(_A ** (g.attr["_A"] - g.attr["_B"]    ) * (-_A) ** int(- 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states_X)
 
         polyA += _A * sum(other_polynomials_A)
         polyB += _A**(-1) * sum(other_polynomials_B)
@@ -139,13 +146,14 @@ def _state_sum_yamada(k: PlanarDiagram):
 
     while stack:
         k = stack.pop()
-        simplify_crossing_reducing(k, inplace=True)
+        if _YAMADA_SIMPLIFY:
+            simplify_crossing_reducing(k, inplace=True)
 
 
         if k.crossings:
 
             # For small diagrams, get the value form cache.
-            if len(k) <= _yamada_cache.max_key_length:
+            if _YAMADA_USE_CACHE and len(k) <= _yamada_cache.max_key_length:
                 other_polynomials.append(_yamada_from_cache(k))
                 continue
 
@@ -269,7 +277,7 @@ def _evaluate_yamada_planar_graph(g: PlanarDiagram) -> Expr:
             continue
 
         # For small diagrams, get the value form cache.
-        if len(g) <= _yamada_planar_graph_cache.max_key_length:
+        if _YAMADA_USE_CACHE and len(g) <= _yamada_planar_graph_cache.max_key_length:
             polynomial += _yamada_planar_graph_from_cache(g)
             continue
 
@@ -295,7 +303,8 @@ def _evaluate_yamada_planar_graph(g: PlanarDiagram) -> Expr:
     return expand(polynomial)
 
 
-
+def _unnormalized_yamada_polynomial(k: PlanarDiagram):
+    pass
 
 
 def yamada_polynomial(k: PlanarDiagram, normalize=True):
@@ -335,7 +344,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
 
     # Phase 2: Use deletion-contraction operations all non-loops and non-bridges (i.e. regular arcs)
     # Warning: we must fist get g.attr, since _evaluate_yamada removes the attributes (TODO: maybe fix this?)
-    polynomial = sum(_A ** (g.attr["_A"] - g.attr["_B"] - 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states)
+    polynomial = sum(_A ** (g.attr["_A"] - g.attr["_B"])  * (-_A) ** int(2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states)
     polynomial += sum(other_polynomials)
     polynomial = expand(polynomial)
 
@@ -343,7 +352,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
         # Normalize by multiplying by A^(2n) * (-A^m), so that the lowest term of the polynomial is 1 (constant) or A.
         # This normalization translates to adding some framing (R1 move) or twist at the vertex (R4 move).
         lowest_exponent = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())
-        polynomial = expand((-1 if lowest_exponent % 2 else 1) * polynomial * _A**(-lowest_exponent))
+        polynomial = expand(polynomial * (-_A) ** (-lowest_exponent))
 
     return expand(polynomial)
 

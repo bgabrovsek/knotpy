@@ -4,8 +4,10 @@ from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing
-from knotpy.notation import from_knotpy_notation
-
+from knotpy.notation.native import to_knotpy_notation, from_knotpy_notation
+from fractions import Fraction
+from knotpy._settings import settings
+__f = 1  # TODO: remove this
 
 def find_reidemeister_5_twists(k: PlanarDiagram):
     """ A twist is given by two adjacent endpoints form the vertex, an over (vertex, position2)
@@ -50,8 +52,8 @@ def choose_reidemeister_5_untwist(k: PlanarDiagram, random=False):
     Selects a kink to remove a crossing using the Reidemeister 5 move.
     """
     if random:
-        locations = tuple(find_reidemeister_5_untwists(k))
-        return choice(locations) if locations else None
+        faces = tuple(find_reidemeister_5_untwists(k))
+        return choice(faces) if faces else None
     else:
         return next(find_reidemeister_5_untwists(k), None)
 
@@ -74,11 +76,16 @@ def reidemeister_5_twist(k, endpoints, inplace=False):
         k.set_endpoint((crossing, 3), over_twin)
         k.set_endpoint(ep_over, (crossing, 1))
         k.set_endpoint((crossing, 1), ep_over)
+        # adjust framing
+        if k.is_framed():
+            k.framing = k.framing - __f * Fraction(1, 2)
     else:
         k.set_endpoint(over_twin, (crossing, 1))
         k.set_endpoint((crossing, 1), over_twin)
         k.set_endpoint(ep_over, (crossing, 3))
         k.set_endpoint((crossing, 3), ep_over)
+        if k.is_framed():
+            k.framing = k.framing + __f * Fraction(1, 2)
 
     # switch the endpoints from the vertex
     ep_under_twin = k.twin(ep_under)
@@ -87,6 +94,15 @@ def reidemeister_5_twist(k, endpoints, inplace=False):
     k.set_endpoint(ep_over_twin, ep_under)
     k.set_endpoint(ep_over, ep_under_twin)
     k.set_endpoint(ep_under_twin, ep_over)
+
+
+
+
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
+
+
     return k
 
 
@@ -108,7 +124,7 @@ def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
                        applied. If inplace is True, the same object is returned;
                        otherwise, a new object with the modifications is returned.
     """
-
+    #print("R5u", to_knotpy_notation(k), face, sanity_check(k))
     if not inplace:
         k = k.copy()
 
@@ -139,9 +155,19 @@ def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
 
     k.remove_node(c2_ep.node, remove_incident_endpoints=False)
 
+    if k.is_framed():
+        k.framing = k.framing + __f * (Fraction(-1, 2) if c2_ep.position % 2 else Fraction(1, 2))  # if we remove positive kink, the framing decreases by 1
+
+
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
+
     return k
 
 if __name__ == "__main__":
+
+    # test framing
 
     code = "a=V(c1 c0 b0) b=V(a2 b2 b1) c=X(a1 a0 c3 c2)"
     k = from_knotpy_notation(code)

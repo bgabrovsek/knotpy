@@ -7,6 +7,7 @@ from knotpy.algorithms.topology import kinks
 from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.algorithms.naming import unique_new_node_name
+from knotpy._settings import settings
 
 
 def find_reidemeister_1_remove_kink(k: PlanarDiagram):
@@ -151,6 +152,10 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
     if k.is_framed():
         k.framing = k.framing + (-1 if position % 2 else 1)  # if we remove positive kink, the framing decreases by 1
 
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
+
     return k
 
 
@@ -205,6 +210,10 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
 
     if k.is_framed():
         k.framing += sign  # if we add a positive kink, the framing increases by 1
+
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
 
     return k
 

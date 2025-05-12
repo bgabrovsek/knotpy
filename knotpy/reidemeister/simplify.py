@@ -8,12 +8,8 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.reidemeister.space import reidemeister_3_space, detour_space, crossing_non_increasing_space, \
     reduce_crossings_greedy, crossing_non_increasing_space_greedy
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
-from knotpy.reidemeister.reidemeister_2 import reidemeister_2_unpoke, choose_reidemeister_2_unpoke
-from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
-from knotpy.algorithms.topology import is_unknot
 from knotpy.manipulation.symmetry import flip
-from knotpy.reidemeister.reidemeister import _clean_allowed_moves
+from knotpy._settings import settings
 
 __all__ = ['simplify', 'simplify_crossing_reducing', 'simplify_smart', 'simplify_brute_force', 'simplify_non_increasing', 'simplify_non_increasing_greedy']
 __version__ = '0.1'
@@ -28,9 +24,7 @@ _METHOD_DECREASING = ("decreasing","reducing", "crossingreducing", "cr")
 
 
 
-
-
-def simplify_crossing_reducing(k: PlanarDiagram, inplace=False, allowed_moves=None):
+def simplify_crossing_reducing(k: PlanarDiagram, inplace=False):
     """
     Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
     (remove R1 kinks and R2 unpokes), until there are no more such moves left.
@@ -47,16 +41,15 @@ def simplify_crossing_reducing(k: PlanarDiagram, inplace=False, allowed_moves=No
         PlanarDiagram: The simplified planar diagram with reduced crossings,
         either modified in-place or as a new object if `inplace` is `False`.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
-    if allowed_moves is not None and "FLIP" in allowed_moves:
+    if "FLIP" in settings.allowed_reidemeister_moves:
         pass  # we are just reducing moves, ignore flip
 
-    return reduce_crossings_greedy(k, inplace=inplace, allowed_moves=allowed_moves)
+    return reduce_crossings_greedy(k, inplace=inplace)
 
 
 
-def simplify_non_increasing(k:PlanarDiagram, show_progress=False, allowed_moves=None):
+def simplify_non_increasing(k:PlanarDiagram, show_progress=False):
     """
     Simplifies a planar diagram by attempting all possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
     moves, iteratively. The simplification process halts when no new diagrams are generated during the process.
@@ -68,15 +61,14 @@ def simplify_non_increasing(k:PlanarDiagram, show_progress=False, allowed_moves=
     Returns:
         PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
     if isinstance(k, (set, tuple, list)):
-        return type(k)(simplify_non_increasing(_, allowed_moves=allowed_moves) for _ in k)
+        return type(k)(simplify_non_increasing(_) for _ in k)
 
-    if allowed_moves is not None and "FLIP" in allowed_moves:
+    if "FLIP" in settings.allowed_reidemeister_moves:
         k = {k, flip(k, inplace=False)}
 
-    return min(crossing_non_increasing_space(k, show_progress=show_progress, allowed_moves=allowed_moves))
+    return min(crossing_non_increasing_space(k, show_progress=show_progress))
 
     #
     # # Put simplified diagrams in canonical form into level 0
@@ -88,7 +80,8 @@ def simplify_non_increasing(k:PlanarDiagram, show_progress=False, allowed_moves=
     #     ls.new_level(simplify_non_increasing(ls[-1]))  # add all possible reductions
     # return min(ls)
 
-def simplify_non_increasing_greedy(k:PlanarDiagram, show_progress=False, allowed_moves=None):
+
+def simplify_non_increasing_greedy(k:PlanarDiagram, show_progress=False):
     """
     Simplifies a planar diagram by attempting possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
     moves, iteratively. At each level only take the diagrams with the lowest number of crossings.
@@ -98,17 +91,17 @@ def simplify_non_increasing_greedy(k:PlanarDiagram, show_progress=False, allowed
     Returns:
         PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
     if isinstance(k, (set, tuple, list)):
-        return type(k)(simplify_non_increasing_greedy(_, show_progress, allowed_moves=allowed_moves) for _ in k)
+        return type(k)(simplify_non_increasing_greedy(_, show_progress=show_progress) for _ in k)
 
-    if allowed_moves is not None and "FLIP" in allowed_moves:
+    if "FLIP" in settings.allowed_reidemeister_moves:
         k = {k, flip(k, inplace=False)}
 
-    return min(crossing_non_increasing_space_greedy(k, show_progress=show_progress, allowed_moves=allowed_moves))
+    return min(crossing_non_increasing_space_greedy(k, show_progress=show_progress))
 
-def simplify_brute_force(k: PlanarDiagram, depth: int, allowed_moves=None):
+
+def simplify_brute_force(k: PlanarDiagram, depth: int):
     """
     Simplify a given PlanarDiagram through all possible Reidemeister moves
     up to a specified recursion depth and return the minimum result.
@@ -122,50 +115,56 @@ def simplify_brute_force(k: PlanarDiagram, depth: int, allowed_moves=None):
         PlanarDiagram: The simplest version of the planar diagram obtained
             using the applied Reidemeister moves.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
-    if allowed_moves is not None and "FLIP" in allowed_moves:
+    if "FLIP" in settings.allowed_reidemeister_moves:
         pass
 
     raise NotImplementedError("Not implemented yet.")
 
 
-def simplify_smart(k: PlanarDiagram, depth=1, allowed_moves=None):
-    """ Make "smart" Reidemeister moves:
+def simplify_smart(k: PlanarDiagram, depth=1):
+    """ Make "smart" Reidemeister moves to simplify a diagram. "Smart" moves refer to this process at each step:
 
-    :param k:
-    :param depth:
-    :return:
+    - perform all non-increasing moves (R3, decreasing R1 and R2,...) any number of times, until the set of obtained
+    diagrams stabalizes (no new diagrams are generated with R3, R1, R2, ... moves),
+    - perform all crossing-increasing moves once (increasing R1, R2, and possibly R5), in such a way that at the next
+    step a new R3 move can be performed.
+
+    :param k: Input diagram.
+    :param depth: How many times crossing increasing moves should be performed.
+    :return: The minimal diagram after the above process is applied.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
+    # If multiple diagrams are given, perform steps on each diagram.
     if isinstance(k, (set, list, tuple)):
-        return [simplify_smart(_, depth, allowed_moves=allowed_moves) for _ in k]
+        return [simplify_smart(_, depth) for _ in k]
 
     if not k:
         return set()
 
-    if allowed_moves is not None and "FLIP" in allowed_moves:
-        k = {k, flip(k, inplace=False)}
+    k = canonical(k)
+    # If we allow flipping the diagram, flip it.
+    if "FLIP" in settings.allowed_reidemeister_moves:
+        k = {k, canonical(flip(k, inplace=False))}
 
     # Level 0: perform all R3 and crossing reducing R2 and R1 moves.
-    ls = LeveledSet(crossing_non_increasing_space(k, assume_canonical=False, allowed_moves=allowed_moves))
+    ls = LeveledSet(crossing_non_increasing_space(k, assume_canonical=False,))
 
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in ls):
         return min(ls)
-
-    #print(len(ls.levels),":", len(ls[-1]))
 
     """
     For all next levels, increase the number of crossings by 1 or 2 (via R1 and R2 moves),
     followed by all possible R3 moves and crossing-reducing R1 and R2 moves.
     """
     for depth_index in range(depth):
+
+        # increase crossings
         ls.new_level(detour_space(ls[-1]))
-        #print(len(ls.levels), ":", len(ls[-1]))
-        ls.new_level(crossing_non_increasing_space(ls[-1], allowed_moves=allowed_moves))
-        #print(len(ls.levels), ":", len(ls[-1]))
+
+        # explore the new space and reduce the diagrams
+        ls.new_level(crossing_non_increasing_space(ls[-1]))
 
         # If there are no crossings to reduce, we are done.
         if any(_.number_of_crossings == 0 for _ in ls):
@@ -189,7 +188,7 @@ def simplify_smart(k: PlanarDiagram, depth=1, allowed_moves=None):
     # return min(ls)
 
 
-def simplify(k: PlanarDiagram, method: str = "auto", depth: int = 1, allowed_moves=None):
+def simplify(k: PlanarDiagram, method: str = "auto", depth: int = 1):
     """
     Simplifies a planar diagram using Reidemeister moves.
 
@@ -206,20 +205,19 @@ def simplify(k: PlanarDiagram, method: str = "auto", depth: int = 1, allowed_mov
     :rtype: PlanarDiagram
     :raises ValueError: If the method is not recognized.
     """
-    allowed_moves = _clean_allowed_moves(allowed_moves)
 
     method = ''.join(c for c in method if c.isalpha()).lower()  # remove any hyphens/dashes
 
     if method in _METHOD_SMART:
-        return simplify_smart(k, depth, allowed_moves=allowed_moves)
+        return simplify_smart(k, depth)
     elif method in _METHOD_BRUTE_FORCE:
-         return simplify_brute_force(k, depth, allowed_moves=allowed_moves)
+         return simplify_brute_force(k, depth)
     elif method in _METHOD_NON_INCREASING:
-        return simplify_non_increasing(k, allowed_moves=allowed_moves)
+        return simplify_non_increasing(k)
     elif method in _METHOD_NON_INCREASING_GREEDY:
-        return simplify_non_increasing_greedy(k, allowed_moves=allowed_moves)
+        return simplify_non_increasing_greedy(k)
     elif method in _METHOD_DECREASING:
-        return simplify_crossing_reducing(k, allowed_moves=allowed_moves)
+        return simplify_crossing_reducing(k)
     else:
         raise ValueError("Invalid method. Choose one of 'auto', 'non-increasing', or 'decreasing'.")
 

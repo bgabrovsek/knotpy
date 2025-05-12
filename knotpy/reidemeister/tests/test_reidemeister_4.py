@@ -1,5 +1,5 @@
 from knotpy.notation.native import from_knotpy_notation
-from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slides
+from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slide
 from knotpy.invariants.yamada import yamada_polynomial
 def test_reidemeister_4():
 
@@ -97,12 +97,12 @@ def test_reidemeister_4():
         print(code)
         k = from_knotpy_notation(code)
         y = yamada_polynomial(k)
-        for location in list(find_reidemeister_4_slides(k))[::1]:
+        for location in list(find_reidemeister_4_slide(k))[::1]:
             # compute every 10th option
             k_2 = reidemeister_4_slide(k, location, inplace=False)
             y_2 = yamada_polynomial(k_2)
 
-            for location_2 in list(find_reidemeister_4_slides(k_2))[::1]:
+            for location_2 in list(find_reidemeister_4_slide(k_2))[::1]:
                 k_3 = reidemeister_4_slide(k_2, location_2, inplace=False)
                 y_3 = yamada_polynomial(k_3)
                 assert y == y_2 == y_3

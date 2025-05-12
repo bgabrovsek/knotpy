@@ -3,6 +3,7 @@ from random import choice
 
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
+from knotpy._settings import settings
 
 
 def find_reidemeister_3_triangle(k):
@@ -57,7 +58,8 @@ def choose_reidemeister_3_triangle(k, random=False):
     """
 
     if random:
-        return choice(tuple(find_reidemeister_3_triangle(k)))
+        locations = tuple(find_reidemeister_3_triangle(k))
+        return choice(locations) if locations else None
     else:
         return next(find_reidemeister_3_triangle(k), None)  # select 1st item
 
@@ -149,5 +151,8 @@ def reidemeister_3(k, face, inplace=False):
     for r_node in area_nodes:
         k.nodes[r_node].attr["_r3"] = True
 
+    # backtrack Reidemeister moves
+    if settings.trace_reidemeister_moves:
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R3"
 
     return k
