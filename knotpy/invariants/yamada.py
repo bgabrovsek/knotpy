@@ -33,7 +33,7 @@ from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 # TODO: Do not perform crossing smoothings and deletion-contraction in the caching function (simplify code)
 
 # Yamada settings
-_YAMADA_USE_CACHE = False
+_YAMADA_USE_CACHE = True
 _YAMADA_SIMPLIFY = True
 
 # Precompute powers of A + 1 + 1/A.
