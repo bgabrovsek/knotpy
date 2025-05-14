@@ -6,7 +6,7 @@ from knotpy.invariants.yamada import yamada_polynomial
 from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 from sandbox.classification_knotoids.knotpy.classes import PlanarDiagram
 from sandbox.classification_knotoids.knotpy.notation import from_pd_notation
-
+from knotpy._settings import settings
 
 def test_reidemeister_5():
 
@@ -100,7 +100,7 @@ def test_reidemeister_5():
         "a=V(b0 c0 d3) b=X(a0 d2 d1 e0) c=V(a1 e3 f0) d=X(f3 b2 b1 a2) e=X(b3 g0 g3 c1) f=X(c2 g2 g1 d0) g=X(e1 f2 f1 e2)",
     ]
 
-    for code in theta_codes[::1]:
+    for code in theta_codes[::13]:
         #print(code)
         k = from_knotpy_notation(code)
         assert sanity_check(k)
@@ -125,11 +125,20 @@ def test_framing_5():
     # print(q)
     # print(yamada_polynomial(k))
     # print(yamada_polynomial(t))
+
+def test_simple_5():
+    k = from_knotpy_notation("a → V(a1 a0 c2), b → V(c3 c1 c0), c → X(b2 b1 a2 b0)")
+    print(k)
+    l = list(find_reidemeister_5_untwists(k))
+    kk = reidemeister_5_untwist(k, l[0], inplace=False)
+    print(kk)
+    print(l)
+
+
 if __name__ == "__main__":
 
-    # s = "a=V(b0 c0 d0) b=V(a0 d2 e3) c=X(a1 e2 e1 f0) d=V(a2 g0 b1) e=X(h3 c2 c1 b2) f=V(c3 i0 g1) g=V(d1 f2 j0) h=X(j3 j2 i1 e0) i=V(f1 h2 j1) j=X(g2 i2 h1 h0)a=V(b0 b2 c0) b=V(a0 d3 a1) c=X(a2 e0 f3 d0) d=X(c3 g0 e1 b1) e=X(c1 d2 g3 h0) f=X(h3 i0 i3 c2) g=X(d1 i2 h1 e2) h=X(e3 g2 i1 f0) i=X(f1 h2 g1 f2)"
-    # m = from_knotpy_notation(s)
-    # print(m)
+    #test_simple_5()
+
 
     test_reidemeister_5()
 

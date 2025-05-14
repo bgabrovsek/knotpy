@@ -24,7 +24,8 @@ def find_reidemeister_2_unpoke(k: PlanarDiagram):
     # loop through all faces and yield bigons with same position parity
     for face in k.faces:
         if (len(face) == 2 and
-                all(isinstance(k.nodes[ep.node], Crossing) for ep in face) and
+                isinstance(k.nodes[face[0].node], Crossing) and
+                isinstance(k.nodes[face[1].node], Crossing) and
                 face[0].position % 2 != face[1].position % 2):
             yield face
 
@@ -65,6 +66,7 @@ def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
     Returns:
         Optional[ReidemeisterMove]: A valid Reidemeister 2 unpoke move if available, otherwise None.
     """
+    #print("cr2", k)
     if random:
         locations = tuple(find_reidemeister_2_unpoke(k))
         return choice(locations) if locations else None

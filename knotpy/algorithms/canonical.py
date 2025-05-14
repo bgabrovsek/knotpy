@@ -163,7 +163,11 @@ def _canonical_unoriented(k: PlanarDiagram):
     if number_of_disjoint_components(k) >= 2:
         # split, make each component canonical, sort and add together again
         # TODO: not tested
-        return disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
+        old_name = k.name
+        ds = disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
+        ds.name = old_name
+
+        return ds
 
     # Identify minimal-degree nodes with minimal number of neighbours
     # TODO: one could get minimal endpoints

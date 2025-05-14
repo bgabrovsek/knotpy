@@ -70,7 +70,14 @@ def test_make_undo_reidemeister_1_move():
             assert canonical(k) == canonical(k__)
 
 
+def test_theta_r3():
+    k = from_knotpy_notation("a → V(a1 a0 c2), b → V(c3 c1 c0), c → X(b2 b1 a2 b0)")
+    locations = list(find_reidemeister_2_unpoke(k))
+    print(locations)
+    assert len(locations) == 0, f"There should be no moves for this diagram, but these were found: {locations}"
+
 if __name__ == '__main__':
+    test_theta_r3()
 
     test_r2_find_moves()
     #test_make_reidemeister_1_move()  # slow

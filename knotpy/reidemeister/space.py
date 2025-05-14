@@ -9,6 +9,7 @@ import sys
 
 from knotpy.algorithms.canonical import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
+
 from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
 from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke, choose_reidemeister_2_unpoke
 from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister_3_triangle

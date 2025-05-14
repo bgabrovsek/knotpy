@@ -1,3 +1,4 @@
+from knotpy import sanity_check
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slide
 from knotpy.invariants.yamada import yamada_polynomial
@@ -105,8 +106,45 @@ def test_reidemeister_4():
             for location_2 in list(find_reidemeister_4_slide(k_2))[::1]:
                 k_3 = reidemeister_4_slide(k_2, location_2, inplace=False)
                 y_3 = yamada_polynomial(k_3)
+                if not (y == y_2 == y_3):
+                    print(k)
+                    print(k_2)
+                    print(k_3)
+                    print(y)
+                    print(y_2)
+                    print(y_3)
                 assert y == y_2 == y_3
     pass
+
+def test_case_4():
+    k = from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
+    q = from_knotpy_notation("a → V(b0 c0 d3), b → X(a0 d2 e0 f3), c → X(a1 f2 f1 d0), d → X(c3 e1 b1 a2), e → V(b2 d1 f0), f → X(e2 c2 c1 b3)")
+
+
+    """
+    *** location ('b', [2])
+    *** after  Diagram a → V(h3 c0 d3), b → V(h1 i1 c2), c → X(a1 h2 b2 d0), d → X(c3 i0 i3 a2), h → X(i2 b0 c1 a0), i → X(d1 b1 h0 d2) (_sequence=R4)
+    """
+    # k2 = reidemeister_4_slide(k, ('b', [2]), inplace=False)
+    # y = yamada_polynomial(k)
+    # y2 = yamada_polynomial(k2)
+    # print(y)
+    # print(y2)
+    #
+    # exit()
+    print("*** original", k)
+    index = 0
+    for loc in find_reidemeister_4_slide(k):
+        index = index + 1
+        k_ =  reidemeister_4_slide(k, loc, inplace=False)
+        print(index, "*** location", loc)
+        print(index, "*** after ", k_)
+        if yamada_polynomial(k_) != yamada_polynomial(k):
+            print(index, "***", yamada_polynomial(k))
+            print(index, "***", yamada_polynomial(k_))
+
+    print(sanity_check(k))
+    print(sanity_check(q))
 
 if __name__ == "__main__":
 
@@ -115,4 +153,5 @@ if __name__ == "__main__":
     # print(m)
 
 
-    test_reidemeister_4()
+    #test_reidemeister_4()
+    test_case_4()

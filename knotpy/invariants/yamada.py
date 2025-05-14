@@ -26,12 +26,14 @@ from knotpy.algorithms.topology import bridges, loops
 from knotpy.manipulation.remove import remove_arc
 from knotpy.manipulation.contract import contract_arc
 from knotpy.utils.cache import Cache
+from knotpy._settings import settings
+from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 
 # TODO: Implement that the framing/A/B/X markers are kept in _yamada_from_cache (simplify code)
 # TODO: Do not perform crossing smoothings and deletion-contraction in the caching function (simplify code)
 
 # Yamada settings
-_YAMADA_USE_CACHE = True
+_YAMADA_USE_CACHE = False
 _YAMADA_SIMPLIFY = True
 
 # Precompute powers of A + 1 + 1/A.
@@ -91,6 +93,8 @@ def _yamada_from_cache(k: PlanarDiagram) -> Expr:
         kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")
         kX = crossing_to_vertex(k, crossing=crossing)
 
+
+
         # Compute the Yamada of the smoothings semi-recursively.
 
         no_crossing_states_A, other_polynomials_A = _state_sum_yamada(kA)
@@ -134,6 +138,7 @@ def _state_sum_yamada(k: PlanarDiagram):
             resolved through the application of specific Yamada smoothing methods.
     """
 
+
     # Store in diagram's attributes the number of A/B/X smoothings performed.
     k.attr["_A"] = 0
     k.attr["_B"] = 0
@@ -147,8 +152,7 @@ def _state_sum_yamada(k: PlanarDiagram):
     while stack:
         k = stack.pop()
         if _YAMADA_SIMPLIFY:
-            simplify_crossing_reducing(k, inplace=True)
-
+            k = simplify_crossing_reducing(k, inplace=True)
 
         if k.crossings:
 
@@ -162,7 +166,7 @@ def _state_sum_yamada(k: PlanarDiagram):
             kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")
             kX = crossing_to_vertex(k, crossing=crossing)
 
-            # print("A", kA, "\nB", kB, "\nX", kX)
+
 
             kA.attr["_A"] = k.attr["_A"] + 1
             kB.attr["_B"] = k.attr["_B"] + 1
@@ -303,10 +307,6 @@ def _evaluate_yamada_planar_graph(g: PlanarDiagram) -> Expr:
     return expand(polynomial)
 
 
-def _unnormalized_yamada_polynomial(k: PlanarDiagram):
-    pass
-
-
 def yamada_polynomial(k: PlanarDiagram, normalize=True):
     """
     Computes the Yamada polynomial of a given planar diagram using the skein relation and the contraction-deletion
@@ -329,22 +329,26 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
             properties.
     """
 
+    # Do not allow R5 moves in general when simplifying yamada states
+    allow_reidemeister_5_only_on_trivalent_vertices_old_value = settings.allow_reidemeister_5_only_on_trivalent_vertices
+    settings.allow_reidemeister_5_only_on_trivalent_vertices = True
+
     # Extend the sigma lookup table to the number of arcs, just to be safe.
     global _sigma, _sigma_power
     _sigma_power.extend([expand(_sigma**_) for _ in range(len(_sigma_power), len(k.arcs) + 1)])  # should we extend to the number of faces - 1?
 
     # Initialize the input diagram.
     k = unoriented(k) if k.is_oriented() else k.copy()
-    k.framing = 0  # framing not yet supported
 
-    #simplify_crossing_reducing(k, inplace=True)  # state sum already simplifies
+    if "framing" not in k.attr:
+        k.framing = 0  # framing not yet supported
 
     # Phase 1: Resolve (smoothen) all crossings.
     no_crossing_states, other_polynomials = _state_sum_yamada(k)
 
     # Phase 2: Use deletion-contraction operations all non-loops and non-bridges (i.e. regular arcs)
     # Warning: we must fist get g.attr, since _evaluate_yamada removes the attributes (TODO: maybe fix this?)
-    polynomial = sum(_A ** (g.attr["_A"] - g.attr["_B"])  * (-_A) ** int(2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states)
+    polynomial = sum(_A ** (g.attr["_A"] - g.attr["_B"])  * (-_A) ** int(- 2 * g.framing) * _evaluate_yamada_planar_graph(g) for g in no_crossing_states)
     polynomial += sum(other_polynomials)
     polynomial = expand(polynomial)
 
@@ -354,7 +358,9 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
         lowest_exponent = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())
         polynomial = expand(polynomial * (-_A) ** (-lowest_exponent))
 
-    return expand(polynomial)
+    settings.allow_reidemeister_5_only_on_trivalent_vertices = allow_reidemeister_5_only_on_trivalent_vertices_old_value
+
+    return polynomial
 
 
 

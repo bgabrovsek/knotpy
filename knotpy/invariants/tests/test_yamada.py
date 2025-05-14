@@ -178,10 +178,31 @@ def test_yamada_reidemeister():
     A**18 + A**15 - 2*A**13 + A**12 - A**11 - 2*A**10 + A**9 - 3*A**8 + A**7 - 3*A**6 - 3*A**3 - A - 2 & 
     -A**19 - A**16 + 2*A**14 - A**13 + A**12 + 2*A**11 - A**10 + 3*A**9 - A**8 + 3*A**7 + 3*A**4 + A**2 + 2*A
     """
-
+#
+# def test_yamada_strange_theta():
+#
+#     from knotpy.reidemeister.simplify import reduce_crossings_greedy
+#     from knotpy import choose_reidemeister_2_unpoke, find_reidemeister_2_unpoke, find_reidemeister_5_untwists
+#     k = from_knotpy_notation("a → V(a1 a0 c0), c → V(a2 e3 e2), d → V(d3 e1 e0 d0), e → X(d2 d1 c2 c1)")
+#     k = canonical(k)
+#     print(k, sanity_check(k))
+#
+#     print()
+#     for f in k.faces:
+#         print(f)
+#
+#     print(list(find_reidemeister_5_untwists(k)))
+#     l = reduce_crossings_greedy(k, inplace=True)
+#
+#     print("===simplified", k, sanity_check(k))
+#     print("===simplified", l, sanity_check(l))
+#     print(yamada_polynomial(k))
 
 
 if __name__ == '__main__':
+
+    test_yamada_strange_theta()
+    exit()
 
     from time import time
 

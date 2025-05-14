@@ -106,6 +106,13 @@ def split_disjoint_sum(k: PlanarDiagram) -> list:
                             remove_incident_endpoints=False)  # incident ep will be removed automatically
 
         list_of_knot_components.append(g)
+
+    # put framing only to the first component
+    if "framing" in k.attr:
+        list_of_knot_components[0].framing = k.framing
+        for g in list_of_knot_components[1:]:
+            g.framing = 0
+
     return list_of_knot_components
 
 # def disjoint_components(k: PlanarDiagram) -> list:

@@ -213,7 +213,7 @@ def make_reidemeister_move(k: PlanarDiagram, location, inplace=False):
 
 def make_random_reidemeister_move(k, reidemeister_move_types=None, inplace=False):
 
-    _DEBUG = True
+    _DEBUG = False
 
     if reidemeister_move_types is None:
         reidemeister_move_types = ["R3", "R2unpoke", "R1unkink", "R2poke", "R1kink", "R4any"]
@@ -319,12 +319,12 @@ def randomize_diagram(k, crossing_increasing_moves=2):
 
         #print(increasing_moves_allowed)
         from knotpy import yamada_polynomial
-        print("MRRM 0", k, "  ", yamada_polynomial(k), increasing_moves_allowed)
+        #print("MRRM 0", k, "  ", yamada_polynomial(k), increasing_moves_allowed)
 
         k = make_random_reidemeister_move(k, increasing_moves_allowed, inplace=False)
         #make_random_reidemeister_move(k, increasing_moves_allowed, inplace=True)
 
-        print("MRRM 1", k, "  ", yamada_polynomial(k))
+        #print("MRRM 1", k, "  ", yamada_polynomial(k))
         sanity_check(k)
 
 

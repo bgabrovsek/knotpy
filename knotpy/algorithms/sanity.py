@@ -1,7 +1,7 @@
 from collections import Counter
 
-
 def sanity_check(k):
+    from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
     """
     Perform a consistency check on the planar diagram `k`.
 
@@ -77,7 +77,10 @@ def sanity_check(k):
         print(f"Nodes ({len(nodes)}) + Arcs ({len(arcs)}) + Faces ({len(faces)}) = {len(nodes) - len(arcs) + len(faces)}")
     # Check Euler characteristic
     if (euler_characteristic := len(nodes) - len(arcs) + len(faces)) != 2:
-        raise ValueError(f"Euler characteristic is not satisfied: {euler_characteristic} (expected 2).")
+
+        if euler_characteristic != number_of_disjoint_components(k) * 2:
+
+           raise ValueError(f"Euler characteristic is not satisfied: {euler_characteristic} (expected 2). {k}")
 
 
     """
