@@ -50,7 +50,7 @@ def test_reduce_thetas():
             # the yamada polynomials for each group is the same
             assert kp.yamada_polynomial(value) == kp.yamada_polynomial(key)
 
-    # we expect the list ro reduce to two different thetas
+    # we expect the list to reduce to two different thetas
     assert len(reduced) == 2
 
 if __name__ == '__main__':
