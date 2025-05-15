@@ -42,7 +42,7 @@ def simplify_crossing_reducing(k: PlanarDiagram, inplace=False):
         either modified in-place or as a new object if `inplace` is `False`.
     """
 
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         pass  # we are just reducing moves, ignore flip
 
     return reduce_crossings_greedy(k, inplace=inplace)
@@ -65,7 +65,7 @@ def simplify_non_increasing(k:PlanarDiagram, show_progress=False):
     if isinstance(k, (set, tuple, list)):
         return type(k)(simplify_non_increasing(_) for _ in k)
 
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         k = {k, flip(k, inplace=False)}
 
     return min(crossing_non_increasing_space(k, show_progress=show_progress))
@@ -95,7 +95,7 @@ def simplify_non_increasing_greedy(k:PlanarDiagram, show_progress=False):
     if isinstance(k, (set, tuple, list)):
         return type(k)(simplify_non_increasing_greedy(_, show_progress=show_progress) for _ in k)
 
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         k = {k, flip(k, inplace=False)}
 
     return min(crossing_non_increasing_space_greedy(k, show_progress=show_progress))
@@ -116,7 +116,7 @@ def simplify_brute_force(k: PlanarDiagram, depth: int):
             using the applied Reidemeister moves.
     """
 
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         pass
 
     raise NotImplementedError("Not implemented yet.")
@@ -144,7 +144,7 @@ def simplify_smart(k: PlanarDiagram, depth=1):
 
     k = canonical(k)
     # If we allow flipping the diagram, flip it.
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         k = {k, canonical(flip(k, inplace=False))}
 
     # Level 0: perform all R3 and crossing reducing R2 and R1 moves.

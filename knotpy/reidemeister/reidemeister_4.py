@@ -130,7 +130,7 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
     def _satisfied(loc):
         if change == "any": return True
         ci = _crossing_increase_reidemeister_4_slide(k, loc)
-        if change == "decrease": return ci < 0
+        if change == "decrease" or change == "reduce": return ci < 0
         if change == "constant": return ci == 0
         if change == "increase": return ci > 0
         if change == "nonincreasing": return ci <= 0
@@ -139,7 +139,7 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
     change = change.lower().strip()
     if change.endswith("ing"):
         change = change[:-3] + "e"
-    if change not in ["any", "decrease", "constant", "increase", "nonincrease", "nondecrease"]:
+    if change not in ["any", "decrease", "reduce", "constant", "increase", "nonincrease", "nondecrease"]:
         raise ValueError(f"change parameter is '{change}', but it must be one of the following: "
                          f"any, decrease, constant, increase, nonincrease, or nondecrease")
 
@@ -160,7 +160,7 @@ def _crossing_increase_reidemeister_4_slide(k:PlanarDiagram, node_positions_pair
     """ Number of additional crossings after performing a R4 slide (can be negative if the number decreases or zero
     if the number stays the same)."""
     v, positions = node_positions_pair
-    return k.degree(v) - len(positions)
+    return k.degree(v) - 2 * len(positions)
 
 def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=False):
     """
@@ -236,6 +236,8 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     if not inplace:
         k = k.copy()
 
+    # assert sanity_check(k)
+
     v, positions = vertex_positions_pair
     deg = k.degree(v)
     parity = k.nodes[v][positions[0]].position % 2
@@ -245,17 +247,17 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     crossings = [k.nodes[v][pos].node for pos in positions]
     common_node_attr = common_dict( *(k.nodes[c].attr for c in crossings )  )
 
-    # is there a full circle (disjoint unknot) around the vertex?
-    if len(positions) == deg:
-        # remove the unknot
-        for c in crossings:
-            _crossing_to_arc(k, c, parity)
-        add_unknot(k, 1, inplace=True)  # TODO: attributes
-        # backtrack Reidemeister moves
-        if settings.trace_reidemeister_moves:
-            k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
-
-        return k
+    # # is there a full circle (disjoint unknot) around the vertex?
+    # if len(positions) == deg:
+    #     # remove the unknot
+    #     for c in crossings:
+    #         _crossing_to_arc(k, c, parity)
+    #     add_unknot(k, 1, inplace=True)  # TODO: attributes
+    #     # backtrack Reidemeister moves
+    #     if settings.trace_moves:
+    #         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
+    #
+    #     return k
 
     # Get endpoint type (in the case we have an orientation)
     ep_first = k.nodes[v][positions[0]]
@@ -295,13 +297,20 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     # get destination side arcs
     ep_side_first_twin = k.twin(ep_side_first)
     ep_side_last_twin = k.twin(ep_side_last)
-    k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin) # TODO: attributes
-    k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4)) # TODO: attributes
-    k.set_endpoint((new_crossings[-1], (parity - 1) % 4), ep_side_first_twin)  # TODO: attributes
-    k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4))  # TODO: attributes
 
-    remove_bivalent_vertex(k, temp_node_first)
-    remove_bivalent_vertex(k, temp_node_last)
+    # are there new crossings (there was not a full slide-off)
+    if new_crossings:
+        k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin) # TODO: attributes
+        k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4)) # TODO: attributes
+        k.set_endpoint((new_crossings[-1], (parity - 1) % 4), ep_side_first_twin)  # TODO: attributes
+        k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4))  # TODO: attributes
+    else:
+        k.set_endpoint(ep_side_last_twin, ep_side_first_twin)  # TODO: attributes
+        k.set_endpoint(ep_side_first_twin, ep_side_last_twin)
+
+
+    remove_bivalent_vertex(k, temp_node_first, keep_if_unknot=True)
+    remove_bivalent_vertex(k, temp_node_last, keep_if_unknot=True)
 
     for c in crossings:
         _crossing_to_arc(k, c, parity)
@@ -314,8 +323,11 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     #pull_and_plug_endpoint(k, source_endpoint=ep_side_first, destination_endpoint=(new_crossings[-1], (parity - 1) % 4))
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
+
+    # assert sanity_check(k), "oh no"
+    # print("R4", k)
 
     return k
 

@@ -7,6 +7,7 @@ performed any number of times.
 
 import sys
 
+from knotpy import number_of_disjoint_components
 from knotpy.algorithms.canonical import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
 
@@ -26,6 +27,8 @@ __all__ = ["reduce_crossings_greedy", "reidemeister_3_space", "detour_space",
            "crossing_non_increasing_space", "crossing_non_increasing_space_greedy"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
+
+
 
 
 def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
@@ -55,22 +58,22 @@ def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
     # Repeat R1/R2/R3/R4/R5, until there are no more moves left (e.g. an R1 move can reveal an R2 move).
     while True:
 
-        if "R2" in settings.allowed_reidemeister_moves:
+        if "R2" in settings.allowed_moves:
             if face := choose_reidemeister_2_unpoke(k, random=False):
                 reidemeister_2_unpoke(k, face, inplace=True)
                 continue
 
-        if "R1" in settings.allowed_reidemeister_moves:
+        if "R1" in settings.allowed_moves:
             if ep := choose_reidemeister_1_remove_kink(k, random=False):
                 reidemeister_1_remove_kink(k, ep, inplace=True)
                 continue
 
-        if "R5" in settings.allowed_reidemeister_moves:
+        if "R5" in settings.allowed_moves:
             if face := choose_reidemeister_5_untwist(k, random=False):
                 reidemeister_5_untwist(k, face, inplace=True)
                 continue
 
-        if "R4" in settings.allowed_reidemeister_moves:
+        if "R4" in settings.allowed_moves:
             if vert_pos := choose_reidemeister_4_slide(k, change="decreasing", random=False):
                 reidemeister_4_slide(k, vert_pos, inplace=True)
                 #print("r4", k)
@@ -80,6 +83,13 @@ def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
 
     return canonical(k)
 
+
+# def __temp_test_diag(diagrams):
+#     from knotpy.algorithms import sanity_check
+#     for d in diagrams:
+#         assert sanity_check(d)
+#         if number_of_disjoint_components(d) != 1:
+#             raise ValueError(d)
 
 def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
     """
@@ -113,7 +123,7 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
         # Put diagrams after removing kinks and unpokes to the next level.
         ls.new_level()
 
-        if "R1" in settings.allowed_reidemeister_moves:
+        if "R1" in settings.allowed_moves:
             ls.extend([
                 canonical(reidemeister_1_remove_kink(k, ep, inplace=False))
                 for k in ls[-2]
@@ -121,7 +131,7 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
                 ]
             )
 
-        if "R2" in settings.allowed_reidemeister_moves:
+        if "R2" in settings.allowed_moves:
             ls.extend([
                 canonical(reidemeister_2_unpoke(k, face, inplace=False))
                 for k in ls[-2]
@@ -129,15 +139,46 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
                 ]
             )
 
-        if "R4" in settings.allowed_reidemeister_moves:
+        # from knotpy.algorithms import sanity_check
+        #
+        # mmm = []
+        # for k in ls[-2]:
+        #     for v_pos in find_reidemeister_4_slide(k, "decrease"):
+        #         kkk = reidemeister_4_slide(k, v_pos, inplace=False)
+        #         mmm.append(kkk)
+        #         try:
+        #             s = sanity_check(kkk)
+        #         except:
+        #             print("from", k)
+        #             print("via", v_pos)
+        #             print(f"to {kkk}")
+        #             exit()
+        #
+        #
+        #
+        # ddd = [
+        #         reidemeister_4_slide(k, v_pos, inplace=False)
+        #         for k in ls[-2]
+        #         for v_pos in find_reidemeister_4_slide(k, "decrease")
+        #         ]
+        #
+        # if ddd != mmm:
+        #     raise ValueError("no")
+        #
+        # for x in ddd:
+        #     assert sanity_check(x)
+        #
+
+        if "R4" in settings.allowed_moves:
             ls.extend([
                 canonical(reidemeister_4_slide(k, v_pos, inplace=False))
                 for k in ls[-2]
-                for v_pos in find_reidemeister_4_slide(k, "reducing")
+                for v_pos in find_reidemeister_4_slide(k, "decrease")
                 ]
             )
 
-        if "R5" in settings.allowed_reidemeister_moves:
+
+        if "R5" in settings.allowed_moves:
             ls.extend([
                 canonical(reidemeister_5_untwist(k, face, inplace=False))
                 for k in ls[-2]
@@ -225,7 +266,7 @@ def detour_space(diagrams) -> set:
         canonical(make_reidemeister_move(k, location, inplace=False))
         for k in diagrams
         for location in find_detour_moves(k)
-        if detect_move_type(location) in settings.allowed_reidemeister_moves
+        if detect_move_type(location) in settings.allowed_moves
         }
 
 
@@ -261,7 +302,7 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progres
     if tracker:
         tracker.update(0, len(diagrams), min(len(_) for _ in diagrams), "Reidemeister 3")
 
-    if "R3" in settings.allowed_reidemeister_moves:
+    if "R3" in settings.allowed_moves:
         ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
     else:
         ls = LeveledSet(diagrams)
@@ -277,7 +318,7 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progres
         if tracker:
             tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "Reidemeister 3")
 
-        if "R3" in settings.allowed_reidemeister_moves:
+        if "R3" in settings.allowed_moves:
             ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
         else:
             ls.new_level()
@@ -324,7 +365,7 @@ def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
         if tracker:
             tracker.update(len(ls[-1]), len(ls.global_set), min(len(_) for _ in ls[-1]))
 
-        if "R3" in settings.allowed_reidemeister_moves:
+        if "R3" in settings.allowed_moves:
             diagrams = reidemeister_3_space(ls[-1], assume_canonical=True, depth=1)
         else:
             diagrams = ls[-1]

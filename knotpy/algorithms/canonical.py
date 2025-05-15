@@ -166,7 +166,6 @@ def _canonical_unoriented(k: PlanarDiagram):
         old_name = k.name
         ds = disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
         ds.name = old_name
-
         return ds
 
     # Identify minimal-degree nodes with minimal number of neighbours

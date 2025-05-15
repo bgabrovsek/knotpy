@@ -146,12 +146,27 @@ def test_case_4():
     print(sanity_check(k))
     print(sanity_check(q))
 
+def test_all_strands_over():
+
+    k = from_knotpy_notation("a=V(c3 e3 d3) b=V(e1 c1 d1) c=X(d2 b1 e0 a0) d=X(e2 b2 c0 a2) e=X(c2 b0 d0 a1)")
+    k_ = reidemeister_4_slide(k, ('a', [0, 1, 2]), inplace=False)
+
+    assert sanity_check(k_)
+    assert yamada_polynomial(k_) == yamada_polynomial(k)
+
+    k = from_knotpy_notation("a → V(b0 c3 b1), b → X(a0 a2 d0 e0), c → X(f3 g0 g3 a1), d → X(b2 h0 i0 e1), e → V(b3 d3 i3), f → X(i2 h2 g1 c0), g → X(c1 f2 h1 c2), h → X(d1 g2 f1 i1), i → X(d2 h3 f0 e2)")
+    k_ = reidemeister_4_slide(k, ('e', [0, 1, 2]), inplace=False)
+
+    assert sanity_check(k_)
+    assert yamada_polynomial(k_) == yamada_polynomial(k)
+
+
 if __name__ == "__main__":
 
     # s = "a=V(b0 c0 d0) b=V(a0 d2 e3) c=X(a1 e2 e1 f0) d=V(a2 g0 b1) e=X(h3 c2 c1 b2) f=V(c3 i0 g1) g=V(d1 f2 j0) h=X(j3 j2 i1 e0) i=V(f1 h2 j1) j=X(g2 i2 h1 h0)a=V(b0 b2 c0) b=V(a0 d3 a1) c=X(a2 e0 f3 d0) d=X(c3 g0 e1 b1) e=X(c1 d2 g3 h0) f=X(h3 i0 i3 c2) g=X(d1 i2 h1 e2) h=X(e3 g2 i1 f0) i=X(f1 h2 g1 f2)"
     # m = from_knotpy_notation(s)
     # print(m)
 
-
+    test_all_strands_over()
     #test_reidemeister_4()
-    test_case_4()
+    #test_case_4()

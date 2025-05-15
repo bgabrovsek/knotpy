@@ -64,15 +64,15 @@ def find_detour_moves(k):
     # TODO: spefify what move it is, either as a tuple (move_type, location) or (Reidemeister function, location)
 
     # Add kinks
-    if "R1" in settings.allowed_reidemeister_moves:
+    if "R1" in settings.allowed_moves:
         for ep_sign in detour_find_reidemeister_1_add_kinks_bigon(k):
             yield ep_sign
 
     # Add R2 pokes
-    if "R2" in settings.allowed_reidemeister_moves:
+    if "R2" in settings.allowed_moves:
         for face in detour_find_reidemeister_2_pokes_n_gon(k):
             yield face
 
-    if "R4" in settings.allowed_reidemeister_moves:
+    if "R4" in settings.allowed_moves:
         for v_pos in find_reidemeister_4_slide(k, change="nondecreasing"):
             yield v_pos

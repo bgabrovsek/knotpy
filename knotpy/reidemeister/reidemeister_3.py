@@ -152,7 +152,7 @@ def reidemeister_3(k, face, inplace=False):
         k.nodes[r_node].attr["_r3"] = True
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R3"
 
     return k

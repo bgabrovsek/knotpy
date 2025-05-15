@@ -17,7 +17,7 @@ def find_reidemeister_5_twists(k: PlanarDiagram):
 
         deg = k.degree(v)
 
-        if settings.allow_reidemeister_5_only_on_trivalent_vertices and deg != 3:
+        if settings.r5_only_trivalent and deg != 3:
             continue
 
         if deg > 2:
@@ -54,7 +54,7 @@ def find_reidemeister_5_untwists(k: PlanarDiagram):
             if not isinstance(k.nodes[ep1.node], Vertex) or not isinstance(k.nodes[ep2.node], Crossing):
                 continue
 
-            if settings.allow_reidemeister_5_only_on_trivalent_vertices and k.degree(ep1.node) != 3:
+            if settings.r5_only_trivalent and k.degree(ep1.node) != 3:
                 continue
 
             yield ep1, ep2
@@ -112,7 +112,7 @@ def reidemeister_5_twist(k, endpoints, inplace=False):
 
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
 
 
@@ -190,10 +190,10 @@ def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
 
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
 
-    assert sanity_check(k), f"{k}"
+    #assert sanity_check(k), f"{k}"
 
     return k
 

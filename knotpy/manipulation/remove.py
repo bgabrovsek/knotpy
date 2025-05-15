@@ -50,12 +50,15 @@ def remove_loops(k: PlanarDiagram) -> PlanarDiagram:
 
 
 
-def remove_bivalent_vertex(k:PlanarDiagram, node):
+def remove_bivalent_vertex(k:PlanarDiagram, node, keep_if_unknot=True):
 
     if k.degree(node) != 2:
         raise ValueError(f"Node {node} is not a bivalent vertex")
 
     ep_a, ep_b = k.nodes[node]
+
+    if keep_if_unknot and ep_a.node == ep_b.node == node:
+        return
 
     k.set_endpoint(ep_a, ep_b)
     k.set_endpoint(ep_b, ep_a)

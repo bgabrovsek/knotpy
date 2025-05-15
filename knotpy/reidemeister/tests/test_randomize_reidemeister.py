@@ -9,7 +9,8 @@ from knotpy import settings
 
 def test_randomize_knot():
     """ Make random Reidemeister moves on a knot and check the Jones polynomial."""
-    settings.allowed_reidemeister_moves = "r1,r2,r3"
+    dump = settings.dump()
+    settings.allowed_moves = "r1,r2,r3"
 
     k = PlanarDiagram("3_1")
     j = jones_polynomial(k)
@@ -19,10 +20,12 @@ def test_randomize_knot():
         assert k != k_  # unlikely they are the same
         assert jones_polynomial(k_) == j
 
+    settings.load(dump)
 
 def test_randomize_theta():
     """ Make random Reidemeister moves on a theta curve and check the Yamada polynomial."""
-    settings.allowed_reidemeister_moves = "r1,r2,r3,r4,r5"
+    dump = settings.dump()
+    settings.allowed_moves = "r1,r2,r3,r4,r5"
     thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("t4_1.1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
 
     for theta in thetas:
@@ -33,14 +36,16 @@ def test_randomize_theta():
             y_ = yamada_polynomial(theta_)
             n_ = _naive_yamada_polynomial(theta_)
             assert y_ == y == n_
-    settings.allowed_reidemeister_moves = "r1,r2,r3"
+    settings.load(dump)
 
 def test_randomize_theta_direct():
     from knotpy.reidemeister import choose_reidemeister_1_add_kink, choose_reidemeister_1_remove_kink
     from knotpy.reidemeister import choose_reidemeister_2_unpoke, choose_reidemeister_2_poke
     from knotpy.reidemeister import choose_reidemeister_3_triangle, choose_reidemeister_4_slide, choose_reidemeister_5_twist, choose_reidemeister_5_untwist
     from knotpy.reidemeister import reidemeister_3, reidemeister_1_add_kink, reidemeister_2_poke, reidemeister_4_slide, reidemeister_5_twist, reidemeister_5_untwist, reidemeister_1_remove_kink, reidemeister_2_unpoke
-    settings.allowed_reidemeister_moves = "r1,r2,r3,r4,r5"
+
+    dump = settings.dump()
+    settings.allowed_moves = "r1,r2,r3,r4,r5"
 
     thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("t4_1.1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
 
@@ -66,7 +71,7 @@ def test_randomize_theta_direct():
                     assert nyq == yq, f"G\n{k}\n{name}{location}\n{q}\n{yq}\n{nyq}"
                     assert y == yq, f"\n{k}\n{name}{location}\n{q}\n{y}\n{yq}"
 
-    settings.allowed_reidemeister_moves = "r1,r2,r3"
+    settings.load(dump)
 
 def test_randomize_theta_3_1_direct():
     from knotpy.reidemeister import choose_reidemeister_1_add_kink, choose_reidemeister_1_remove_kink
@@ -83,8 +88,8 @@ def test_randomize_theta_3_1_direct():
          (choose_reidemeister_5_twist, reidemeister_5_twist, "R5 twist"),
          (choose_reidemeister_4_slide, reidemeister_4_slide, "R4 slide")
          ]
-
-    settings.allowed_reidemeister_moves = "r1,r2,r3,r4,r5"
+    dump = settings.dump()
+    settings.allowed_moves = "r1,r2,r3,r4,r5"
 
     theta = PlanarDiagram("+t3_1")
     y = yamada_polynomial(theta)
@@ -99,9 +104,7 @@ def test_randomize_theta_3_1_direct():
                 yq = yamada_polynomial(q)
                 nyq = _naive_yamada_polynomial(q)
                 assert nyq == yq == y, f"G\n{theta}\n{name}{location}\n{q}\n{yq}\n{nyq}\n{y}"
-
-    settings.allowed_reidemeister_moves = "r1,r2,r3"
-
+    settings.load(dump)
 
 if __name__ == '__main__':
     test_randomize_knot()

@@ -329,9 +329,9 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
             properties.
     """
 
-    # Do not allow R5 moves in general when simplifying yamada states
-    allow_reidemeister_5_only_on_trivalent_vertices_old_value = settings.allow_reidemeister_5_only_on_trivalent_vertices
-    settings.allow_reidemeister_5_only_on_trivalent_vertices = True
+    # Do not allow R5 moves in general when simplifying yamada states, Yamada needs different settings than the global diagram
+    settings_dump = settings.dump()
+    settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
 
     # Extend the sigma lookup table to the number of arcs, just to be safe.
     global _sigma, _sigma_power
@@ -358,7 +358,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
         lowest_exponent = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())
         polynomial = expand(polynomial * (-_A) ** (-lowest_exponent))
 
-    settings.allow_reidemeister_5_only_on_trivalent_vertices = allow_reidemeister_5_only_on_trivalent_vertices_old_value
+    settings.load(settings_dump)
 
     return polynomial
 

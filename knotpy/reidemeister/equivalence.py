@@ -29,8 +29,6 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
 
     # TODO: make some sort of progress bar
 
-    _DEBUG = True
-
     def join_if_equivalent_diagrams():
         """If any two leveled sets have non-empty intersection (Reidemeister equivalence found), we join the diagrams in the DSU."""
 
@@ -45,7 +43,7 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
     # Store each diagram as a leveled set (levels are Reidemeister depths), the keys are original diagram and the values
     # are the leveled sets.
     # If flips are allowed, include flips at the beginning.
-    if "FLIP" in settings.allowed_reidemeister_moves:
+    if "FLIP" in settings.allowed_moves:
         leveled_sets = {
             k: LeveledSet(crossing_non_increasing_space({k, flip(k, inplace=False)}, assume_canonical=False)) for k
             in DSU.elements}

@@ -153,7 +153,7 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
         k.framing = k.framing + (-1 if position % 2 else 1)  # if we remove positive kink, the framing decreases by 1
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
 
     return k
@@ -212,7 +212,7 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
         k.framing += sign  # if we add a positive kink, the framing increases by 1
 
     # backtrack Reidemeister moves
-    if settings.trace_reidemeister_moves:
+    if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
 
     return k

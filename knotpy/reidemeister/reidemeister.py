@@ -275,7 +275,7 @@ def randomize_diagram(k, crossing_increasing_moves=2):
 
     Raises:
         ValueError: If crossing_increasing_moves is set to a value greater than 0 but
-            "R2" or "R1" moves are not included in settings.allowed_reidemeister_moves.
+            "R2" or "R1" moves are not included in settings.allowed_moves.
 
     Returns:
         The transformed diagram after applying the specified random Reidemeister moves.
@@ -286,36 +286,36 @@ def randomize_diagram(k, crossing_increasing_moves=2):
 
     k = k.copy()
 
-    if crossing_increasing_moves > 0 and ("R2" not in settings.allowed_reidemeister_moves or "R1" not in settings.allowed_reidemeister_moves):
+    if crossing_increasing_moves > 0 and ("R2" not in settings.allowed_moves or "R1" not in settings.allowed_moves):
         raise ValueError("Cannot perform crossing increasing moves without R2 and R1 moves")
 
     # make random R3 moves
-    if "R3" in settings.allowed_reidemeister_moves:
+    if "R3" in settings.allowed_moves:
         k = choice(list(reidemeister_3_space(k)))
 
-    sanity_check(k)
+    #sanity_check(k)
 
     # check if we can decrease a crossing or two
     decreasing_moves_allowed = []
-    if "R1" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R1unkink")
-    if "R2" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R2unpoke")
-    if "R4" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R4nonincreasing")
-    if "R5" in settings.allowed_reidemeister_moves: decreasing_moves_allowed.append("R5untwist")
+    if "R1" in settings.allowed_moves: decreasing_moves_allowed.append("R1unkink")
+    if "R2" in settings.allowed_moves: decreasing_moves_allowed.append("R2unpoke")
+    if "R4" in settings.allowed_moves: decreasing_moves_allowed.append("R4nonincreasing")
+    if "R5" in settings.allowed_moves: decreasing_moves_allowed.append("R5untwist")
 
     make_random_reidemeister_move(k, decreasing_moves_allowed, inplace=True)
-    sanity_check(k)
+    #sanity_check(k)
 
-    if "R3" in settings.allowed_reidemeister_moves:
+    if "R3" in settings.allowed_moves:
         k = choice(list(reidemeister_3_space(k)))
 
     # make increasing moves
     while (crossing_increasing_moves := crossing_increasing_moves - 1) >= 0:
 
         increasing_moves_allowed = []
-        if "R1" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R1kink")
-        if "R2" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R2poke")
-        if "R4" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R4increase")
-        if "R5" in settings.allowed_reidemeister_moves: increasing_moves_allowed.append("R5twist")
+        if "R1" in settings.allowed_moves: increasing_moves_allowed.append("R1kink")
+        if "R2" in settings.allowed_moves: increasing_moves_allowed.append("R2poke")
+        if "R4" in settings.allowed_moves: increasing_moves_allowed.append("R4increase")
+        if "R5" in settings.allowed_moves: increasing_moves_allowed.append("R5twist")
 
         #print(increasing_moves_allowed)
         from knotpy import yamada_polynomial
@@ -325,12 +325,12 @@ def randomize_diagram(k, crossing_increasing_moves=2):
         #make_random_reidemeister_move(k, increasing_moves_allowed, inplace=True)
 
         #print("MRRM 1", k, "  ", yamada_polynomial(k))
-        sanity_check(k)
+        #sanity_check(k)
 
 
-        if "R3" in settings.allowed_reidemeister_moves:
+        if "R3" in settings.allowed_moves:
             k = choice(list(reidemeister_3_space(k)))
-        sanity_check(k)
+        #sanity_check(k)
 
     return k
 

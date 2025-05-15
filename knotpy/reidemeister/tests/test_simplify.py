@@ -10,7 +10,7 @@ from time import time
 
 _DISPLAY_TIME = False
 
-def _get_hand_knot_examples():
+def _get_hard_knot_examples():
 
     nasty_unknot = from_pd_notation("[[0,3,1,4],[3,10,2,9],[9,2,8,1],[6,10,5,11],[11,7,12,6],[7,13,8,12],[0,4,13,5]]")
     culprit_unknot = from_pd_notation("[[2,15,3,16],[6,4,7,3],[14,6,15,5],[5,13,4,14],[1,13,2,12],[1,8,0,7],[9,0,8,19],[16,9,17,10],[10,17,11,18],[19,12,18,11]]")
@@ -31,7 +31,7 @@ def _get_hand_knot_examples():
 
 def test_simplify_hard_unknots_reducing():
 
-    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase, goeritz_unknot, reducible_unknot = _get_hand_knot_examples()
+    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase, goeritz_unknot, reducible_unknot = _get_hard_knot_examples()
 
     j = jones_polynomial(simple_unknot)
     t = time()
@@ -82,7 +82,7 @@ def test_simplify_hard_unknots_reducing():
 
 def test_simplify_hard_unknots_nonincreasing():
 
-    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hand_knot_examples()
+    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones_polynomial(simple_unknot)
     t = time()
@@ -130,7 +130,7 @@ def test_simplify_hard_unknots_nonincreasing():
 
 def test_simplify_hard_unknots_nonincreasing_greedy():
 
-    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hand_knot_examples()
+    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones_polynomial(simple_unknot)
     t = time()
@@ -176,7 +176,7 @@ def test_simplify_hard_unknots_nonincreasing_greedy():
 
 def test_simplify_hard_unknots_smart():
 
-    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hand_knot_examples()
+    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones_polynomial(simple_unknot)
     t = time()

@@ -25,6 +25,7 @@ from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_crossing_reducing
 from knotpy.invariants.cache import Cache
+from knotpy._settings import settings
 
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
@@ -43,6 +44,11 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
     TODO: canonical
     TODO: expression as defaultdicT?
     """
+
+    # Do not allow R5 moves in general when simplifying yamada states, Yamada needs different settings than the global diagram
+    settings_dump = settings.dump()
+    settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
+
     if k.is_oriented():
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
@@ -100,6 +106,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
         pass
         expression *= (- A ** (-3)) ** original_framing
 
+    settings.load(settings_dump)
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
 
@@ -116,6 +123,11 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
        TODO: take care that we unframe once we add the framing to the polynomial
        TODO: canonical
        """
+
+    # Do not allow R5 moves in general when simplifying yamada states, Yamada needs different settings than the global diagram
+    settings_dump = settings.dump()
+    settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
+
     original_knot = k
     if k.is_oriented():
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
@@ -157,6 +169,8 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
         polynomial *= (- A ** (-3)) ** (forced_writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
         polynomial *= (- A ** (-3)) ** (original_framing)
+
+    settings.load(settings_dump)
 
     return expand(polynomial)
 

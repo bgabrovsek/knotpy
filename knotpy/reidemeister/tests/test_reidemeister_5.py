@@ -115,8 +115,8 @@ def test_reidemeister_5():
 
 def test_framing_5():
     from knotpy import settings
-    settings.allowed_reidemeister_moves = "r1, r2, r3, r4, r5"
-    # settings.trace_reidemeister_moves = False
+    settings.allowed_moves = "r1, r2, r3, r4, r5"
+    # settings.trace_moves = False
 
     t = from_knotpy_notation("a=V(b0 b2 b1) b=V(a0 a2 a1)")
     k = from_knotpy_notation("a=V(b0 c3 c2) b=V(a0 c1 c0) c=X(b2 b1 a2 a1)")
