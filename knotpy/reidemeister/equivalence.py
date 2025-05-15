@@ -28,6 +28,7 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
     """
 
     # TODO: make some sort of progress bar
+    # TODO: implement greedy
 
     def join_if_equivalent_diagrams():
         """If any two leveled sets have non-empty intersection (Reidemeister equivalence found), we join the diagrams in the DSU."""
