@@ -1,6 +1,5 @@
 import knotpy as kp
-from sandbox.classification_knotoids.knotpy.drawing import export_pdf
-from sandbox.classification_knotoids.knotpy.notation import from_knotpy_notation
+
 
 
 def test_simplify_thetas():

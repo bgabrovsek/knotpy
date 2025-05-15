@@ -282,7 +282,7 @@ def randomize_diagram(k, crossing_increasing_moves=2):
     """
 
     from knotpy.reidemeister.space import reidemeister_3_space
-    from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
+
 
     k = k.copy()
 

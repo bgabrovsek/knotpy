@@ -10,16 +10,12 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 from sympy import expand, Integer, symbols, Expr
 from collections import deque
 
-from knotpy import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import unoriented
 from knotpy.algorithms.skein import smoothen_crossing, crossing_to_vertex
-from knotpy.reidemeister.simplify import simplify_crossing_reducing
 from knotpy.algorithms.topology import bridges, loops
 from knotpy.manipulation.remove import remove_arc
 from knotpy.manipulation.contract import contract_arc
-from knotpy.utils.cache import Cache
-from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 
 # Precompute powers of A + 1 + 1/A.
 _A = symbols("A")

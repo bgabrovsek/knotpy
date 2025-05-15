@@ -1,12 +1,9 @@
 from knotpy import simplify_crossing_reducing
 from knotpy.notation.native import from_knotpy_notation
-#from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slides
 from knotpy.reidemeister.reidemeister_5 import reidemeister_5_twist, reidemeister_5_untwist, find_reidemeister_5_twists, find_reidemeister_5_untwists
 from knotpy.invariants.yamada import yamada_polynomial
-from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
-from sandbox.classification_knotoids.knotpy.classes import PlanarDiagram
-from sandbox.classification_knotoids.knotpy.notation import from_pd_notation
-from knotpy._settings import settings
+from knotpy.algorithms import sanity_check
+
 
 def test_reidemeister_5():
 

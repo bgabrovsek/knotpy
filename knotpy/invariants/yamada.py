@@ -27,7 +27,6 @@ from knotpy.manipulation.remove import remove_arc
 from knotpy.manipulation.contract import contract_arc
 from knotpy.utils.cache import Cache
 from knotpy._settings import settings
-from sandbox.classification_knotoids.knotpy.algorithms import sanity_check
 
 # TODO: Implement that the framing/A/B/X markers are kept in _yamada_from_cache (simplify code)
 # TODO: Do not perform crossing smoothings and deletion-contraction in the caching function (simplify code)
