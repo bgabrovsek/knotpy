@@ -49,6 +49,7 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
             k: LeveledSet(crossing_non_increasing_space({k, flip(k, inplace=False)}, assume_canonical=False)) for k
             in DSU.elements}
     else:
+        # TODO: can we assume canonical, check crossing_non_intersecting_space?
         leveled_sets = {
             k: LeveledSet(crossing_non_increasing_space(k, assume_canonical=False)) for k
             in DSU.elements}
@@ -67,7 +68,7 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
 
             if all(_.number_of_crossings != 0 for _ in ls):  # only make additional Reidemeister moves if any were found at a previous level
 
-                ls.new_level(detour_space(ls[-1]))
+                ls.new_level(detour_space(ls[-1]))  # increase number of crossings in a "smart" way
 
                 ls.new_level(crossing_non_increasing_space(ls[-1]))
 
