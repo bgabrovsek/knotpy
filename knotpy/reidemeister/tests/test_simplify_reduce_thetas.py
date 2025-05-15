@@ -15,7 +15,7 @@ def test_simplify_thetas():
         assert kp.yamada_polynomial(theta) == kp.yamada_polynomial(theta_mod)
 
         # simplify the modified theta curve
-        theta_simplified = kp.simplify_smart(theta_mod, depth=1)
+        theta_simplified = kp.simplify_smart(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
 
         # the canonical forms should be the same
         assert kp.canonical(theta) == kp.canonical(theta_simplified)
@@ -40,7 +40,7 @@ def test_reduce_thetas():
 
     # reduce the list
     # reduce_equivalent_diagrams returns a dictionary, the key is the reduced knot (diagram) and the values are diagrams that are reduced to the key
-    reduced = kp.reduce_equivalent_diagrams(list_of_thetas, depth=1)
+    reduced = kp.reduce_equivalent_diagrams(list_of_thetas, depth=1)  # probably depth 0 is enough (no increasing moves)
 
     for key in reduced:
         print("The following diagrams are equivalent to", key)

@@ -76,3 +76,5 @@ def find_detour_moves(k):
     if "R4" in settings.allowed_moves:
         for v_pos in find_reidemeister_4_slide(k, change="nondecreasing"):
             yield v_pos
+
+    # TODO: can twisting the knotted graph via R5 yield an essential configuration?
