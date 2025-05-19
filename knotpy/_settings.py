@@ -8,7 +8,7 @@ import re
 _DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5"]
 _EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP"]
 
-_DEFAULT_trace_moves = True  # let the Reidemeister moves be traced
+_DEFAULT_TRACE_MOVES = True  # let the Reidemeister moves be traced
 _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES = False  # by default graphs are topological (not rigid)
 _DEFAULT_FRAMED = False  # track framing on Reidemeister moves (R1, R4)
 
@@ -28,7 +28,7 @@ def _clean_allowed_moves(allowed_moves) -> list:
     allowed_moves = {s for s in allowed_moves if s}
 
     if not allowed_moves.issubset(_EXISTING_REIDEMEISTER_MOVES):
-        raise ValueError(f"Unknown (Reidemeister) modes {allowed_moves - _EXISTING_REIDEMEISTER_MOVES}")
+        raise ValueError(f"Unknown (Reidemeister) moves {set(allowed_moves) - set(_EXISTING_REIDEMEISTER_MOVES)}")
 
     return list(allowed_moves)
 
@@ -62,7 +62,7 @@ class SettingProxyReidemeisterMoves:
 
 class Settings:
     allowed_moves = SettingProxyReidemeisterMoves(_DEFAULT_ALLOWED_MOVES)
-    trace_moves = SettingProxyBool(_DEFAULT_trace_moves)
+    trace_moves = SettingProxyBool(_DEFAULT_TRACE_MOVES)
     r5_only_trivalent = SettingProxyBool(_DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES)
     framed = SettingProxyBool(_DEFAULT_FRAMED)
 
@@ -90,7 +90,7 @@ class Settings:
     def load(self, data: dict):
         # load settings (default + update data)
         self.allowed_moves = data["allowed_moves"] if "allowed_moves" in data else _DEFAULT_ALLOWED_MOVES
-        self.trace_moves = data["trace_moves"] if "trace_moves" in data else _DEFAULT_trace_moves
+        self.trace_moves = data["trace_moves"] if "trace_moves" in data else _DEFAULT_TRACE_MOVES
         self.r5_only_trivalent = data["r5_only_trivalent"] if "r5_only_trivalent" in data else _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES
         self.framed = data["framed"] if "framed" in data else _DEFAULT_FRAMED
 

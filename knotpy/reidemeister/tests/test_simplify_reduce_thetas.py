@@ -1,5 +1,5 @@
 import knotpy as kp
-
+from sandbox.knotpy.algorithms import sanity_check
 
 
 def test_simplify_thetas():
@@ -52,8 +52,55 @@ def test_reduce_thetas():
     # we expect the list to reduce to two different thetas
     assert len(reduced) == 2
 
+def test_wanda():
+    groups = {}
+    groups["Unknown"] = ['V[0,1,2],V[3,4,5],V[6,5,7],V[1,8,9],X[0,3,6,8],X[4,2,9,7]',
+                         'V[0,1,2],V[0,3,4],V[3,5,6],V[2,7,5],X[4,8,9,1],X[8,6,7,9]']
+    groups['h2_1.1#_3h2_1.2'] = ['V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,2,8,9],X[1,5,10,8],X[9,10,4,7]',
+                                 'V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,2,8,7],X[9,10,4,8],X[1,5,10,9]',
+                                 'V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,8,4,7],X[9,10,8,2],X[1,5,10,9]']
+
+
+    for t, G in groups.items():
+        list_of_bonded = [kp.from_pd_notation(pd) for pd in G]
+        print(list_of_bonded)
+        for k in list_of_bonded:
+            assert sanity_check(k)
+        reduced = kp.reduce_equivalent_diagrams(list_of_bonded, depth=2)
+
+        for key, value in reduced.items():
+            print(key)
+            print("    ", value)
+            # for v in value:
+            #     print("   ", v)
+        # print(t, len(G), len(reduced), [len(v) for k, v in reduced.items()])
+        # print(reduced)
+        print("**")
+
+
+def test_reduce_groups_bonded():
+    groups = {}
+    groups["Unknown"] = ['V[0,1,2],V[3,4,5],V[6,5,7],V[1,8,9],X[0,3,6,8],X[4,2,9,7]',
+                         'V[0,1,2],V[0,3,4],V[3,5,6],V[2,7,5],X[4,8,9,1],X[8,6,7,9]']
+    groups['h2_1.1#_3h2_1.2'] = ['V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,2,8,9],X[1,5,10,8],X[9,10,4,7]',
+                                 'V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,2,8,7],X[9,10,4,8],X[1,5,10,9]',
+                                 'V[0,1,2],V[3,4,5],X[0,6,7,3],X[6,8,4,7],X[9,10,8,2],X[1,5,10,9]']
+
+    # 2 2 0 0
+    # 3 1 2
+    for t, G in groups.items():
+        list_of_bonded = [kp.from_pd_notation(pd) for pd in G]
+        reduced = kp.reduce_equivalent_diagrams(list_of_bonded, depth=1)
+        print(t, len(G), len(reduced), [len(v) for k, v in reduced.items()])
+        print(reduced)
+        print("**")
+
 if __name__ == '__main__':
 
 
+    #test_wanda()
     test_reduce_thetas()
-    test_simplify_thetas()
+    #test_reduce_groups_bonded()
+
+    # test_reduce_thetas()
+    # test_simplify_thetas()

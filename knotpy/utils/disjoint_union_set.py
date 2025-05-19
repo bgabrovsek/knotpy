@@ -144,7 +144,10 @@ class DisjointSetUnion:
         """
         Convert the DSU to a dictionary mapping each representative to its elements (that are not the representative).
         """
-        return {r: {item for item in self.parent if self.parent[item] == r and item != r} for r in self.representatives()}
+        return {
+            min(g): g - {min(g), } for g in self
+        }
+       # return {r: {item for item in self.parent if self.parent[item] == r and item != r} for r in self.representatives()}
 
 if __name__ == "__main__":
     # DSU test

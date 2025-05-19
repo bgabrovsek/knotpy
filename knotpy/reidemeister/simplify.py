@@ -140,14 +140,14 @@ def simplify_smart(k: PlanarDiagram, depth=1):
         return [simplify_smart(_, depth) for _ in k]
 
     if not k:
-        return set()
+        return []
 
     k = canonical(k)
     # If we allow flipping the diagram, flip it.
     if "FLIP" in settings.allowed_moves:
         k = {k, canonical(flip(k, inplace=False))}
 
-    # Level 0: perform all R3 and crossing reducing R2 and R1 moves.
+    # Level 0: perform all R3 and crossing reducing R2, R1, R4, and R5 moves.
     ls = LeveledSet(crossing_non_increasing_space(k, assume_canonical=False,))
 
     # If there are no crossings to reduce, we are done.

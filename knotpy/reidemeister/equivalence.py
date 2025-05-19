@@ -18,6 +18,13 @@ from knotpy.manipulation.symmetry import flip
 from knotpy._settings import settings
 
 
+def _debug_dsu(ls):
+    print("***")
+    for key, ls in ls.items():
+        print(key)
+        print("  ", list(ls))
+    print("HHH")
+
 
 def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDiagram]], depth=1):
     """
@@ -39,23 +46,31 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
                 DSU[key1] = key2  # join the sets (we found a diagram equivalence)
 
     # put the diagrams in a disjoint set union (equivalence relation)
-    DSU = DisjointSetUnion([canonical(k) for k in diagrams])
+    DSU = DisjointSetUnion([k for k in diagrams])
 
     # Store each diagram as a leveled set (levels are Reidemeister depths), the keys are original diagram and the values
     # are the leveled sets.
     # If flips are allowed, include flips at the beginning.
     if "FLIP" in settings.allowed_moves:
         leveled_sets = {
-            k: LeveledSet(crossing_non_increasing_space({k, flip(k, inplace=False)}, assume_canonical=False)) for k
+            k: LeveledSet(crossing_non_increasing_space({canonical(k), canonical(flip(k, inplace=False))}, assume_canonical=True)) for k
             in DSU.elements}
     else:
         # TODO: can we assume canonical, check crossing_non_intersecting_space?
         leveled_sets = {
-            k: LeveledSet(crossing_non_increasing_space(k, assume_canonical=False)) for k
+            k: LeveledSet(crossing_non_increasing_space(canonical(k), assume_canonical=True)) for k
             in DSU.elements}
+
+    # print("0")
+    # _debug_dsu(leveled_sets)
 
     # If there are any two diagrams equivalent in different leveled sets, mark them as equivalent
     join_if_equivalent_diagrams()
+    #print(len(list(DSU.representatives())))
+
+    # print("1")
+    # _debug_dsu(leveled_sets)
+
 
     """
     For all next levels, increase the number of crossings by 1 or 2 (via R1 and R2 moves),
@@ -72,10 +87,26 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
 
                 ls.new_level(crossing_non_increasing_space(ls[-1]))
 
-        join_if_equivalent_diagrams()
 
+        join_if_equivalent_diagrams()
+        #print(len(list(DSU.representatives())))
 
     # return the set of unique diagrams (remove duplicates)
+    # print(DSU)
+    # print(repr(DSU))
+    # print(str(DSU))
+    #
+    # print("Classes", DSU.classes())
+    # print("Representatives")
+    # for r in DSU.representatives():
+    #     print("   ", r)
+    # print("Elements")
+    # for e in DSU.elements:
+    #     print("   ", e)
+    # print("Dictionary")
+    # for g in DSU:
+    #     print("    ", g)
+
     return DSU.to_dict()
 
 if __name__ == "__main__":

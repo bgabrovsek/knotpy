@@ -135,7 +135,7 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
     # Check if there is a double kink at the node
     if k.nodes[node][(position + 1) % 4].node == k.nodes[node][(position + 2) % 4].node == node:
         k.remove_node(node, remove_incident_endpoints=False)
-        add_unknot(k)  # TODO: copy endpoint attributes to new unknot, let it be oriented of oriented
+        add_unknot(k)  # TODO: copy endpoint attributes to new unknot, let it be oriented if oriented
 
     # We only have a single kink
     else:
