@@ -479,6 +479,9 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.knot_tables.html">knot_tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_from_name.html">get_knot_from_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_table.html">get_knot_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_link_table.html">get_link_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_theta_curves.html">get_theta_curves</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -525,13 +528,17 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.endpoint_tests.html">endpoint_tests</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.node_tests.html">node_tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.node_tests.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.test_endpoint.html">test_endpoint</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_faces.html">test_faces</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_faces.test_faces.html">test_faces</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_init.test_knot_name.html">test_knot_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_nodes.html">test_nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_nodes.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1014,30 +1021,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.sanity.sanity_check">
 <span class="sig-name descname"><span class="pre">sanity_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.sanity.sanity_check" title="Link to this definition">#</a></dt>
-<dd><p>Perform a consistency check on the planar diagram <cite>k</cite>.</p>
-<p>This function verifies the structural integrity of the planar diagram by
-checking for issues such as <cite>None</cite> endpoints, repeated endpoints, mismatched
-endpoint counts, and incorrect twin assignments (twins are pairs of endpoints of the same arc connecting two nodes).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The planar diagram to check.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If any of the following conditions are met:
-- A node has an endpoint set to <cite>None</cite>.
-- An endpoint appears more than once.
-- The number of endpoints does not match twice the number of arcs.
-- Not all nodes have associated endpoints.
-- An endpoint’s twin does not correctly reference back to the original.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if all checks pass.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 </section>
 

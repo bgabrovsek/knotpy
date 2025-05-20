@@ -475,6 +475,9 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.knot_tables.html">knot_tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_from_name.html">get_knot_from_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_table.html">get_knot_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_link_table.html">get_link_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_theta_curves.html">get_theta_curves</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -521,13 +524,17 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.endpoint_tests.html">endpoint_tests</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.node_tests.html">node_tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.node_tests.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.test_endpoint.html">test_endpoint</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_faces.html">test_faces</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_faces.test_faces.html">test_faces</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_init.test_knot_name.html">test_knot_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_nodes.html">test_nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_nodes.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1010,7 +1017,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.manipulation.remove.remove_arc.html#knotpy.manipulation.remove.remove_arc" title="knotpy.manipulation.remove.remove_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_arc</span></code></a>(k, arc_for_removing[, inplace])</p></td>
 <td><p>Args:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.manipulation.remove.remove_bivalent_vertex.html#knotpy.manipulation.remove.remove_bivalent_vertex" title="knotpy.manipulation.remove.remove_bivalent_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_bivalent_vertex</span></code></a>(k, node)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.manipulation.remove.remove_bivalent_vertex.html#knotpy.manipulation.remove.remove_bivalent_vertex" title="knotpy.manipulation.remove.remove_bivalent_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_bivalent_vertex</span></code></a>(k, node[, keep_if_unknot])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.manipulation.remove.remove_bivalent_vertices.html#knotpy.manipulation.remove.remove_bivalent_vertices" title="knotpy.manipulation.remove.remove_bivalent_vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_bivalent_vertices</span></code></a>(k[, match_attributes])</p></td>

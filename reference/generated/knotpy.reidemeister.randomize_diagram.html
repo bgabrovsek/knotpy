@@ -479,6 +479,9 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.knot_tables.html">knot_tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_from_name.html">get_knot_from_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_table.html">get_knot_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_link_table.html">get_link_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_theta_curves.html">get_theta_curves</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -525,13 +528,17 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.endpoint_tests.html">endpoint_tests</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.node_tests.html">node_tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.node_tests.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.test_endpoint.html">test_endpoint</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_faces.html">test_faces</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_faces.test_faces.html">test_faces</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_init.test_knot_name.html">test_knot_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_nodes.html">test_nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_nodes.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1010,7 +1017,7 @@
 <h1>randomize_diagram<a class="headerlink" href="#randomize-diagram" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.reidemeister.randomize_diagram">
-<span class="sig-name descname"><span class="pre">randomize_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crossing_increasing_moves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_moves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.reidemeister.randomize_diagram" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">randomize_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crossing_increasing_moves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.reidemeister.randomize_diagram" title="Link to this definition">#</a></dt>
 <dd><p>Perform random Reidemeister moves on a given diagram.</p>
 <p>This function modifies a diagram by applying random Reidemeister moves,
 which are transformations used in knot theory to simplify or alter the
@@ -1022,14 +1029,9 @@ crossing_increasing_moves (int): Optional; the number of crossing-increasing</p>
 <blockquote>
 <div><p>moves to perform. Default is 2.</p>
 </div></blockquote>
-<dl class="simple">
-<dt>allowed_moves (list[str] or None): Optional; the list of allowed Reidemeister</dt><dd><p>moves to perform on the diagram. Valid values include “R1”, “R2”, “R3”.
-If None, all moves are allowed.</p>
-</dd>
-</dl>
 </dd>
 <dt>Raises:</dt><dd><dl class="simple">
-<dt>ValueError: If crossing_increasing_moves is set to a value greater than 0 but</dt><dd><p>“R2” or “R1” moves are not included in allowed_moves.</p>
+<dt>ValueError: If crossing_increasing_moves is set to a value greater than 0 but</dt><dd><p>“R2” or “R1” moves are not included in settings.allowed_moves.</p>
 </dd>
 </dl>
 </dd>

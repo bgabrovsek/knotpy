@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>endpoint_tests &#8212; KnotPy  documentation</title>
+    <title>test_faces &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.classes.tests.endpoint_tests';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.classes.tests.test_faces.test_faces';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="node_tests" href="knotpy.classes.tests.node_tests.html" />
-    <link rel="prev" title="tests" href="knotpy.classes.tests.html" />
+    <link rel="next" title="test_init" href="knotpy.classes.tests.test_init.html" />
+    <link rel="prev" title="test_faces" href="knotpy.classes.tests.test_faces.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -219,6 +219,10 @@
     </div>
   
 
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
   
 </div>
 
@@ -475,6 +479,9 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.knot_tables.html">knot_tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_from_name.html">get_knot_from_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_knot_table.html">get_knot_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_link_table.html">get_link_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.catalog.knot_tables.get_theta_curves.html">get_theta_curves</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.catalog.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -521,13 +528,17 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.classes.tests.html">tests</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">endpoint_tests</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.node_tests.html">node_tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.node_tests.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.test_endpoint.html">test_endpoint</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="knotpy.classes.tests.test_faces.html">test_faces</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">test_faces</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_init.test_knot_name.html">test_knot_name</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_nodes.html">test_nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_nodes.test_remove_bivalent_vertex.html">test_remove_bivalent_vertex</a></li>
 </ul>
 </details></li>
 </ul>
@@ -988,7 +999,10 @@
     
     <li class="breadcrumb-item"><a href="knotpy.classes.tests.html" class="nav-link">tests</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">endpoint_tests</span></li>
+    
+    <li class="breadcrumb-item"><a href="knotpy.classes.tests.test_faces.html" class="nav-link">test_faces</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">test_faces</span></li>
   </ul>
 </nav>
 </div>
@@ -1005,8 +1019,13 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-knotpy.classes.tests.endpoint_tests">
-<span id="endpoint-tests"></span><h1>endpoint_tests<a class="headerlink" href="#module-knotpy.classes.tests.endpoint_tests" title="Link to this heading">#</a></h1>
+  <section id="test-faces">
+<h1>test_faces<a class="headerlink" href="#test-faces" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.classes.tests.test_faces.test_faces">
+<span class="sig-name descname"><span class="pre">test_faces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.tests.test_faces.test_faces" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -1019,6 +1038,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.tests.test_faces.test_faces"><code class="docutils literal notranslate"><span class="pre">test_faces()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
