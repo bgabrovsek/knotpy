@@ -187,7 +187,7 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2-"
 
     return k
 
@@ -287,6 +287,6 @@ def reidemeister_2_poke(k: PlanarDiagram, under_over_endpoints, inplace=False):
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2+"
 
     return k

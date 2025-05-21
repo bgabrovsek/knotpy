@@ -324,7 +324,7 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4 "
 
     # assert sanity_check(k), "oh no"
     # print("R4", k)

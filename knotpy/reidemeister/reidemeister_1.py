@@ -154,7 +154,7 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1-"
 
     return k
 
@@ -213,7 +213,7 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R1+"
 
     return k
 

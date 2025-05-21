@@ -326,6 +326,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
         ValueError: If the deletion-contraction process results in mismatched loop
             and arc counts, which violates the consistency of the diagram's graphical
             properties.
+
     """
 
     # Do not allow R5 moves in general when simplifying yamada states, Yamada needs different settings than the global diagram

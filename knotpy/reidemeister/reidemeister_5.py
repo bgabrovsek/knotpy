@@ -113,7 +113,7 @@ def reidemeister_5_twist(k, endpoints, inplace=False):
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5+"
 
 
     return k
@@ -191,7 +191,7 @@ def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
 
     # backtrack Reidemeister moves
     if settings.trace_moves:
-        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5"
+        k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R5-"
 
     #assert sanity_check(k), f"{k}"
 
