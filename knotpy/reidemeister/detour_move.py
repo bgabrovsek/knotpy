@@ -64,7 +64,7 @@ def find_detour_moves(k):
     # TODO: spefify what move it is, either as a tuple (move_type, location) or (Reidemeister function, location)
 
     # Add kinks
-    if "R1" in settings.allowed_moves:
+    if "R1" in settings.allowed_moves and settings.r1_increase_simplification:
         for ep_sign in detour_find_reidemeister_1_add_kinks_bigon(k):
             yield ep_sign
 
