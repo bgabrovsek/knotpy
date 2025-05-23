@@ -32,13 +32,13 @@ __author__ = 'Boštjan Gabrovšek'
 
 # default styles
 # node
-_DEFAULT_NODE_SIZE = 0.1
+_DEFAULT_NODE_SIZE = 0.01
 _DEFAULT_NODE_COLOR = "black"
 
 # arcs
-_DEFAULT_ARC_WIDTH = 0.5
+_DEFAULT_ARC_WIDTH = 0.3
 _DEFAULT_ARC_COLOR = "tab:blue"
-_DEFAULT_GAP_WIDTH = 0.08  # arc break marking the under-passing
+_DEFAULT_GAP_WIDTH = 0.04  # arc break marking the under-passing
 # text
 _DEFAULT_TEXT_COLOR = "black"
 _DEFAULT_FONT_SIZE = 16

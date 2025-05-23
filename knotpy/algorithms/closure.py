@@ -1,9 +1,9 @@
+# Closure of a knotoid
 
 __all__ = ["closure"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-#TODO: no tests
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
@@ -46,6 +46,8 @@ def closure(k: PlanarDiagram, underpass_closure=True):
     # dual planar graph
     dual = dual_planar_diagram(k)
 
+    print("DUAL", dual)
+
     # get faces of the two leafs
     A_ep = k.endpoint_from_pair((A, 0))
     B_ep = k.endpoint_from_pair((B, 0))
@@ -73,21 +75,12 @@ def closure(k: PlanarDiagram, underpass_closure=True):
 
 if __name__ == "__main__":
 
-    import knotpy as kp
+   import knotpy as kp
 
-    k = kp.from_condensed_em_notation("b0,a0c3c1c0,b3b2d0b1,c2")
-    k.name = "2_1"
-    print(k)
-    c=  closure(k)
+   k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 d2 e0 b2) d=X(f0 e1 c1 b3) e=X(c2 d1 g3 f1) f=X(d0 e3 g2 h0) g=X(h3 h1 f2 e2) h=X(f3 g1 i0 g0) i=V(h2)")
+   print(k)
+   c = closure(k)
+   print(c)
 
 
 
-    print()
-
-    k = kp.from_condensed_em_notation("b1,c1a0c0d3,b2b0e1e0,f1f0g0b3,c3c2g3h0,d1d0h3h2,d2i0h1e2,e3g2f3f2,g1 & 7_45:b0,a0c0d0c1,b1b3e1e0,b2f3g1g0,c3c2g3h0,h3h2i0d1,d3d2h1e2,e3g2f1f0,f2")
-    k.name = "7_44"
-    print(k)
-    c = closure(k)
-
-    # kp.draw(k)
-    # kp.plt.show()
