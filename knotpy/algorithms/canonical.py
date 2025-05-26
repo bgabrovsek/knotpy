@@ -41,10 +41,11 @@ def canonical(k: PlanarDiagram):
     # TODO: speed up by sorting endpoint, not nodes
 
     if isinstance(k, PlanarDiagram):
-        if k.is_oriented():
-            raise NotImplementedError("Canonical form of oriented diagrams not supported")
-        else:
-            return _canonical_unoriented(k)
+        return _canonical_unoriented(k)
+        # if k.is_oriented():
+        #     raise NotImplementedError("Canonical form of oriented diagrams not supported")
+        # else:
+        #     return _canonical_unoriented(k)
     else:
         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
 
@@ -151,18 +152,19 @@ def _canonical_unoriented(k: PlanarDiagram):
         ValueError: If the graph is disconnected and cannot be transformed into a canonical form.
     """
 
+    from knotpy.algorithms.naming import number_to_alpha
+
     # TODO: In case of degree 2 vertices, the canonical form might not be unique.
 
     if len(k) == 0:
         return k.copy()
 
-    # Assign node names: use letters if possible; otherwise, use integers
-    letters = _ascii_letters if len(k) <= len(_ascii_letters) else list(range(len(k)))
+    # Generate node names: a,b,...,z,A,B,...,Z,aa,ab,...
+    letters = _ascii_letters if len(k) <= len(_ascii_letters) else [number_to_alpha(i) for i in range(len(k))]
 
     # Handle disjoint components separately
     if number_of_disjoint_components(k) >= 2:
         # split, make each component canonical, sort and add together again
-        # TODO: not tested
         old_name = k.name
         ds = disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
         ds.name = old_name
@@ -173,12 +175,8 @@ def _canonical_unoriented(k: PlanarDiagram):
     minimal_nodes = min_elements_by(k.nodes, k.degree)
     minimal_nodes = min_elements_by(minimal_nodes, lambda _: neighbour_sequence(k, _))
 
-    #print(minimal_nodes)
-
     # Gather endpoints of minimal nodes
     starting_endpoints = [ep for node in minimal_nodes for ep in _under_endpoints_of_node(k, node)]
-
-    #print(starting_endpoints)
 
     minimal_diagram = None  # Store here current minimal diagram
 
@@ -186,28 +184,37 @@ def _canonical_unoriented(k: PlanarDiagram):
     for ep_start in starting_endpoints:
         node_relabel, node_first_position = _ccw_expand_node_names(k, ep_start, letters)
 
-        #print("ep", ep_start, "node", node_relabel, "first_pos", node_first_position)
-
         if len(node_relabel) != len(k):
             raise ValueError("Cannot put a non-connected graph into canonical form.")
 
         new_graph = k.copy()  # Copy method is faster than built-in deepcopy
 
-        # # Preserve `_r3` attribute if present
-        # if "_r3" in k.attr:
-        #     new_graph.attr["_r3"] = {node_relabel[node] for node in k.attr["_r3"]}
-
         # Perform node relabeling
         new_graph._nodes = {
-            node_relabel[node]: Crossing(
-                [Endpoint(node_relabel[ep.node], ep.position) for ep in node_inst._inc]
-            ) if isinstance(node_inst, Crossing) else Vertex(
-                [Endpoint(node_relabel[node_inst._inc[position].node], node_inst._inc[position].position)
-                 for position in range(len(node_inst))],
-                degree=len(node_inst)
-            )
+            node_relabel[node]:
+                type(node_inst)(
+                    [
+                        type(ep)(node_relabel[ep.node], ep.position)
+                        for ep in node_inst._inc
+                    ]
+                )
             for node, node_inst in k._nodes.items()
         }
+
+        # new_graph._nodes = {
+        #     node_relabel[node]:
+        #         Crossing(
+        #                     [type(ep)(node_relabel[ep.node], ep.position)
+        #                         for ep in node_inst._inc]
+        #         )
+        #         if isinstance(node_inst, Crossing) else
+        #         Vertex(
+        #                     [Endpoint(node_relabel[node_inst._inc[position].node], node_inst._inc[position].position)
+        #                         for position in range(len(node_inst))],
+        #                     degree=len(node_inst)
+        #         )
+        #     for node, node_inst in k._nodes.items()
+        # }
 
         _canonically_permute_nodes_with_given_first_positions(new_graph, node_first_position)
 
@@ -253,8 +260,8 @@ def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node
     :param k: planar diagram
     :return: None
     """
-    if k.is_oriented():
-        raise NotImplementedError()
+    # if k.is_oriented():
+    #     raise NotImplementedError()
 
     for node in k.nodes:
         first_pos = node_first_position[node]
@@ -292,14 +299,6 @@ def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node
         # and if node has endpoints [a, b, c, d] (ccw) then the new endpoints will be [a, d, b, c].
         # """
 
-
-
-#
-# def canonical_parallel(diagrams):
-#     """TODO: modernize using ProcessPoolExecutor"""
-#     with multiprocessing.Pool() as pool:
-#         result = pool.map(canonical, diagrams)
-#     return result
 
 if __name__ == "__main__":
     # degree = 4

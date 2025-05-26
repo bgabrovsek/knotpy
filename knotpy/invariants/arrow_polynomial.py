@@ -3,7 +3,7 @@ from sympy import Expr, expand, Integer, symbols, Symbol
 from itertools import product
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.orientation import oriented
+from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.node import Crossing, Vertex #, Terminal
@@ -156,7 +156,7 @@ def arrow_polynomial(k: PlanarDiagram, variable="A", normalize=True):
     polynomial = Integer(0)
 
     # stack_states = list()
-    original_knot = k if k.is_oriented() else oriented(k)
+    original_knot = k if k.is_oriented() else orient(k)
     crossings = tuple(k.crossings)
     if _STATES: print(crossings)
     # state expansions

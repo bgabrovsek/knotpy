@@ -5,7 +5,7 @@ import math
 import cmath
 
 
-__all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox",
+__all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox", "PolySegment",
            "antipode", "perpendicular_line", "bisect", "tangent_line", "middle", "bisector",
            "is_angle_between", "perpendicular_arc_through_point", "circle_through_points",
            "weighted_circle_center_mean", "split"]
@@ -156,10 +156,68 @@ class Segment(Line):
             else:
                 return None
 
+    def sample(self, n):
+        """Split a segment into n evenly spaced complex points from A to B (inclusive)."""
+
+        if n < 2:
+            raise ValueError("n must be at least 2")
+
+        return [self.A + (self.B - self.A) * i / (n - 1) for i in range(n)]
+
+
     def __str__(self):
         return f"Segment through points {self.A:.5f} and {self.B:.5f}"
 
 
+class PolySegment:
+    """A polyline segment defined by a list of complex points."""
+    def __init__(self, points):
+        self.points = [complex(p) for p in points]
+
+    def length(self):
+        """Return the total length of the piecewise linear curve."""
+        return sum(abs(self.points[i + 1] - self.points[i]) for i in range(len(self.points) - 1))
+
+    def sample(self, n):
+        if n < 2:
+            raise ValueError("n must be at least 2")
+
+        total_length = self.length()
+        segment_lengths = [abs(self.points[i + 1] - self.points[i]) for i in range(len(self.points) - 1)]
+        dist = total_length / (n - 1)
+
+        result = [self.points[0]]
+        i = 0
+        current_pos = self.points[0]
+        remaining = dist
+
+        while len(result) < n:
+            if i >= len(self.points) - 1:
+                break  # in case we run out of segments due to rounding
+
+            start = self.points[i]
+            end = self.points[i + 1]
+            seg_length = segment_lengths[i]
+
+            to_end = abs(end - current_pos)
+
+            if remaining <= to_end:
+                direction = (end - start) / seg_length
+                current_pos += direction * remaining
+                result.append(current_pos)
+                remaining = dist
+            else:
+                current_pos = end
+                remaining -= to_end
+                i += 1
+
+        if len(result) < n:
+            result.append(self.points[-1])
+
+        return result
+
+    def __str__(self):
+        return f"PolySegment through points {', '.join(str(p) for p in self.points)}"
 
 ##### BOUNDING BOX ####
 
@@ -644,6 +702,12 @@ class BoundingBox:
 if __name__ == '__main__':
 
     print("test")
+
+    ps = PolySegment([10j, 0,1,2,3, 10, 10+25j,10+40j])
+    print(ps)
+    print(ps.sample(5))
+
+
 
     c = CircularArc(0.039+0.726j, 0.687, 0.003, 0.76)
     s = Segment(0.976+1.103j, 0.473+0.9j)

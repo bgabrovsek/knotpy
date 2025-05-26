@@ -36,7 +36,8 @@ class Node(ABC):
 
     def __init__(self, incoming_node_data=None, degree=None, **attr):
         incoming_node_data = incoming_node_data or []
-        degree = degree or 0
+        if degree is None:
+            degree = len(incoming_node_data) if incoming_node_data is not None else 0
 
         if len(incoming_node_data) > degree:
             raise ValueError(f"Cannot create node {incoming_node_data} that is larger than its degree ({degree})")

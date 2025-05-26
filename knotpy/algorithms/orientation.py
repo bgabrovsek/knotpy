@@ -3,11 +3,16 @@ import itertools as it
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-import knotpy.algorithms.disjoint_sum as components
 from knotpy.algorithms.topology import edges
-from knotpy.algorithms.canonical import canonical
 
-def _orient_with_edges(k: PlanarDiagram, edges: list):
+
+__all__ = ["orient", "unorient"]
+
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+
+
+def orient_edges(k: PlanarDiagram, edges: list):
     """Orient the diagram so that edges are positively ordered, i.e. the orientations follows the endpoints
     edge[0], edge[1], ..."""
 
@@ -35,34 +40,41 @@ def _orient_with_edges(k: PlanarDiagram, edges: list):
 
 def all_orientations(k: PlanarDiagram) -> list:
     """
+    Return all possible orientations of a given unoriented PlanarDiagram. If the diagram is invertible, both orientations are still returned.
 
-    :param k:
-    :return:
+    Parameters:
+        k (PlanarDiagram): The PlanarDiagram for which all possible orientations are generated.
+
+    Returns:
+        list: A list of oriented planar diagrams.
     """
+
     all_edges = list(edges(k))
     orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
-    #print(orient)
     return [
-        _orient_with_edges(k=k, edges=edge_orientations)
+        orient_edges(k=k, edges=edge_orientations)
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(all_edges, o)] for o in orient)
     ]
 
-def oriented(k: PlanarDiagram, minimal_orientation=False):
-    """Orient the diagram (choose a random orientation). If minimal_orientation is True, then return the minimal diagram
-    out of all possibilities of orientations (this is much slower),
-    :param k:
-    :param minimal_orientation: if True, computes one orientation, otherwise computes the minimal orientation
-    :return:
+
+def orient(k: PlanarDiagram):
     """
-    if minimal_orientation:
-        return min(canonical(o) for o in all_orientations(k))
-    else:
-        return _orient_with_edges(k=k, edges=edges(k))
+    Orient the given unoriented planar. The returned orientation is random.
+    Parameters:
+        k (PlanarDiagram)
+            The planar diagram to be oriented.
+
+    Returns:
+        PlanarDiagram
+            The oriented planar diagram based on the specified configuration.
+    """
+
+    return orient_edges(k=k, edges=edges(k))
 
 
-def unoriented(k:OrientedPlanarDiagram) -> PlanarDiagram:
-    o = k.copy(copy_using=PlanarDiagram)
-    return o
+def unorient(k:OrientedPlanarDiagram) -> PlanarDiagram:
+    return k.copy(copy_using=PlanarDiagram)
+
 
 if __name__ == "__main__":
 

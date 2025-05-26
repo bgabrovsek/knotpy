@@ -4,7 +4,7 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
-from knotpy.algorithms.orientation import all_orientations, oriented
+from knotpy.algorithms.orientation import all_orientations, orient
 
 def writhe(k: PlanarDiagram) -> int:
     """The writhe is the total number of positive crossings minus the total number of negative crossings.
@@ -17,7 +17,7 @@ def writhe(k: PlanarDiagram) -> int:
         if number_of_disjoint_components(k) != 1:
             raise ValueError(f"Cannot determine the writhe of a unoriented link with {number_of_disjoint_components(k)} disjoint components")
         else:
-            k = oriented(k)
+            k = orient(k)
 
 
     return sum(k.nodes[node].sign() for node in k.crossings)

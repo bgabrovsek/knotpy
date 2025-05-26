@@ -3,7 +3,7 @@ from sympy import Expr, expand, Integer, symbols, Symbol
 from itertools import product
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.orientation import oriented
+from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.node import Crossing, Vertex #, Terminal
@@ -24,7 +24,7 @@ def affine_index_polynomial(k:PlanarDiagram, variable="t"):
             pass
 
     t = variable if isinstance(variable, Symbol) else symbols(variable)
-    k = k if k.is_oriented() else oriented(k)
+    k = k if k.is_oriented() else orient(k)
 
     # positive crossing: w = a - b - 1, negative crossing: w = b - a + 1
     weights = {crossing: -k.nodes[crossing].sign() for crossing in k.crossings}  # start with - 1 and + 1

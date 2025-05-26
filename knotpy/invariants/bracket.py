@@ -16,7 +16,7 @@ from collections import deque
 
 from knotpy.algorithms.skein import smoothen_crossing #smoothing_type_A, smoothing_type_B
 from knotpy.invariants.writhe import writhe, forced_writhe
-from knotpy.algorithms.orientation import unoriented
+from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import all_orientations
 from knotpy.algorithms.topology import is_knot, is_planar_graph, is_empty_diagram
@@ -58,7 +58,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
     expression = module()
     stack = deque()
 
-    k = unoriented(k) if k.is_oriented() else k.copy()
+    k = unorient(k) if k.is_oriented() else k.copy()
     # add framing if unframed
     if not k.is_framed():
         k.framing = 0
@@ -136,7 +136,7 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
     _kauffman_term = (-A ** 2 - A ** (-2))
     polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
-    k = unoriented(k) if k.is_oriented() else k.copy()
+    k = unorient(k) if k.is_oriented() else k.copy()
     # add framing if unframed
     if not k.is_framed():
         k.framing = 0

@@ -1,49 +1,56 @@
 from collections import Counter
 
 def sanity_check(k):
+    """
+    Perform a series of sanity checks on a given knot object `k` to validate its structure and properties.
+
+    This function performs consistency checks on the structural elements of a knot object,
+    including nodes, endpoints, arcs, faces, and certain mathematical properties like the Euler characteristic.
+    It ensures that the topology of the knot is well-defined and satisfies required constraints.
+
+    Parameters:
+        k: An instance of a knot object. This object is expected to have the properties and methods
+           required for the checks, such as nodes, endpoints, arcs, faces, degree, and twin.
+
+    Returns:
+        bool: True if all consistency checks pass.
+
+    Raises:
+        ValueError: If any of the checks fail, such as when:
+            - Endpoint nodes are not in the set of nodes.
+            - Endpoint positions are not valid for the given node degrees.
+            - Nodes have unassigned (None) endpoints.
+            - Duplicate endpoints are found.
+            - The number of endpoints does not match twice the number of arcs.
+            - Endpoints do not have valid twins.
+            - Euler characteristic is not satisfied.
+            - Faces are inconsistent, such as when nodes or endpoints are improperly represented in faces.
+    """
     from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
-    """
-    Perform a consistency check on the planar diagram `k`.
+    from knotpy.algorithms.cut_set import cut_nodes
+    from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 
-    This function verifies the structural integrity of the planar diagram by
-    checking for issues such as `None` endpoints, repeated endpoints, mismatched
-    endpoint counts, and incorrect twin assignments (twins are pairs of endpoints of the same arc connecting two nodes).
+    if isinstance(k, (list, set, tuple)):
+        return all(sanity_check(_) for _ in k)
 
-    :param k: The planar diagram to check.
-    :type k: PlanarDiagram
-    :raises ValueError: If any of the following conditions are met:
-        - A node has an endpoint set to `None`.
-        - An endpoint appears more than once.
-        - The number of endpoints does not match twice the number of arcs.
-        - Not all nodes have associated endpoints.
-        - An endpoint's twin does not correctly reference back to the original.
-    :return: True if all checks pass.
-    :rtype: bool
-    """
+    # TODO: empty graph without edges deos not work
+    # TODO: also check directed graphs
 
-    _print_details = False
-
+    # Check if all endpoint nodes are in the set of global nodes.
     for ep in k.endpoints:
         if ep.node not in k.nodes:
             raise ValueError(f"Endpoint {ep} node {ep.node} is not in the expected nodes: {set(k.nodes)}")
 
+    # Check if endpoint positions are in the node's degrees.
     for ep in k.endpoints:
         if k.degree(ep.node) <= ep.position:
             raise ValueError(f"Endpoint {ep} has bigger index than the node {ep.node} with degree {k.degree(ep.node)}")
 
-    faces = list(k.faces)  # TODO: empty graph without edges deos not work
+    faces = list(k.faces)
     endpoints = list(k.endpoints)
     arcs = list(k.arcs)
     nodes = list(k.nodes)
 
-    if _print_details:
-        print(f"Nodes: {nodes}")
-        print(f"Endpoints: {endpoints}")
-        print(f"Arcs: {arcs}")
-        print(f"Faces: {faces}")
-
-    # TODO: also check directed graphs
-        
     # Check if all endpoints are assigned.
     for n in nodes:
         for i in range(len(k.nodes[n])):
@@ -60,10 +67,6 @@ def sanity_check(k):
         raise ValueError(f"There are more endpoints than twice the arcs. \nKnot: {k} \n endpoints: {endpoints}\n arcs {arcs}."
                          f"\n num. endpoints {len(endpoints)}, num. arcs: {len(arcs)}")
 
-
-    # if set(ep.node for ep in endpoints) != set(nodes):
-    #     raise ValueError("Not all nodes have endpoints")
-
     # Check that all endpoints are assigned valid nodes and that twins match.
     for ep in endpoints:
         if ep.node not in k.nodes or not (0 <= ep.position < k.degree(ep.node)):
@@ -73,22 +76,33 @@ def sanity_check(k):
         if twin_twin != ep:
             raise ValueError(f"Twin {twin_twin} of twin {twin} is not the original endpoint {ep}")
 
-    if _print_details:
-        print(f"Nodes ({len(nodes)}) + Arcs ({len(arcs)}) + Faces ({len(faces)}) = {len(nodes) - len(arcs) + len(faces)}")
-    # Check Euler characteristic
+    # Check the Euler characteristic.
     if (euler_characteristic := len(nodes) - len(arcs) + len(faces)) != 2:
 
         if euler_characteristic != number_of_disjoint_components(k) * 2:
 
            raise ValueError(f"Euler characteristic is not satisfied: {euler_characteristic} (expected 2). {k}")
 
+    # Check if oriented diagrams have a consistent orientation
+    if k.is_oriented():
+        for ep in k.endpoints:
+            assert type(ep) is OutgoingEndpoint or type(ep) is IngoingEndpoint, "Oriented diagram has non-oriented endpoints"
+
+        for arc in k.arcs:
+            ep1, ep2 = arc
+            assert (type(ep1) is OutgoingEndpoint and type(ep2) is IngoingEndpoint) or (type(ep1) is IngoingEndpoint and type(ep2) is OutgoingEndpoint)
+        for crossing in k.crossings:
+            ep0, ep1, ep2, ep3 = k.nodes[crossing]
+            assert type(ep0) is not type(ep2)
+            assert type(ep1) is not type(ep3)
+            assert type(ep0) is type(ep1) or type(ep0) is type(ep3)
+            assert type(ep2) is type(ep1) or type(ep2) is type(ep3)
+
 
     """
     Check faces consistency. A bridge must appear twice in a face. A cut-vertex must appear degree-times in a one face.
     Every other node appears once in each face for degree-faces.
     """
-
-    from knotpy.algorithms.cut_set import cut_nodes
 
     # Check that each node appears only once in a region, except if it is a cut-vertex.
     cut = cut_nodes(k)

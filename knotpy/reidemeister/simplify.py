@@ -42,6 +42,8 @@ def simplify_crossing_reducing(k: PlanarDiagram, inplace=False):
         either modified in-place or as a new object if `inplace` is `False`.
     """
 
+    #print("reducing", k)
+
     if "FLIP" in settings.allowed_moves:
         pass  # we are just reducing moves, ignore flip
 

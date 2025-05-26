@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     #test_wanda()
     test_reduce_thetas()
-    #test_reduce_groups_bonded()
+    test_reduce_groups_bonded()
 
-    # test_reduce_thetas()
-    # test_simplify_thetas()
+    test_reduce_thetas()
+    test_simplify_thetas()

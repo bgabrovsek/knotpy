@@ -8,6 +8,7 @@ from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy._settings import settings
+from knotpy.utils.dict_utils import common_dict
 
 
 def find_reidemeister_1_remove_kink(k: PlanarDiagram):
@@ -28,33 +29,16 @@ def find_reidemeister_1_remove_kink(k: PlanarDiagram):
 
 def find_reidemeister_1_add_kink(k: PlanarDiagram):
     """
-    Find locations and signs of where all possible kinks in the planar diagram can be added.
+    Find locations (endpoint and sign) of where all possible kinks in the planar diagram can be added.
 
     Args:
-        k (PlanarDiagram): A planar diagram object containing the endpoints for which possible
-            kink positions need to be determined.
+        k (PlanarDiagram): A planar diagram for which possible kink positions are found.
 
     Returns:
-        Generator[ReidemeisterLocationAddKink, None, None]: A generator yielding pairs of
-            endpoint and associated sign representing possible kink positions.
+        Generator[tuple]: A generator yielding pairs of
+            endpoints and signs representing possible kink positions.
     """
 
-    """
-    Find positions of possible kinks in the planar diagram.
-
-    This function identifies all potential positions for adding a kink to a given planar
-    diagram `k`. A kink position is described as a pair consisting of an endpoint and its
-    corresponding sign (either 1 or -1). It generates all such possible positions based on
-    the provided planar diagram.
-
-    Args:
-        k (PlanarDiagram): A planar diagram object containing the endpoints for which possible
-            kink positions need to be determined.
-
-    Returns:
-        Generator[ReidemeisterLocationAddKink, None, None]: A generator yielding pairs of
-            endpoint and associated sign representing possible kink positions.
-    """
     for ep_sign in product(k.endpoints, (1, -1)):  # could we just return the product?
         yield ep_sign
 
@@ -162,12 +146,8 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
 
 def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace=False):
     """
-    Adds a Reidemeister 1 kink to a planar diagram within a knot projection. The kink can
-    either be positive or negative as determined by the sign included in the input.
-
-    This function introduces a crossing and adjusts the arcs accordingly to represent
-    a kink. A copy of the input diagram is made if `inplace` is set to `False`. The framing
-    of the knot is also adjusted if the diagram is framed.
+    Add a Reidemeister 1 kink to a planar diagram. Add the kink in such a way, that the kink is inside the face that
+    contains the endpoint (the number of endpoints on the face is increased by 1).
 
     Args:
         k (PlanarDiagram): The planar diagram to which the kink will be added.
@@ -186,8 +166,6 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
         modified diagram.
     """
 
-    # TODO: consider orientation
-
     if not inplace:
         k = k.copy()
 
@@ -195,18 +173,32 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
     if sign != 1 and sign != -1:
         raise TypeError(f"Cannot add kink of sign {sign}")
 
-
     twin_endpoint = k.twin(endpoint)
-    k.add_crossing(node := unique_new_node_name(k))
+    common_attr = common_dict(endpoint.attr, twin_endpoint.attr)
+
+    e_type = type(endpoint)
+    t_type = type(twin_endpoint)
+
+    k.add_crossing(crossing := unique_new_node_name(k))
 
     if sign > 0:
-        k.set_arc(((node, 0), (node, 1)))
-        k.set_arc(((node, 2), twin_endpoint))
-        k.set_arc(((node, 3), endpoint))
+        k.set_endpoint((crossing, 0), (crossing, 1), create_using=e_type, **common_attr)
+        k.set_endpoint((crossing, 1), (crossing, 0), create_using=t_type, **endpoint.attr)
+
+        k.set_endpoint((crossing, 2), twin_endpoint)  # attributes are copied
+        k.set_endpoint(twin_endpoint, (crossing, 2), create_using=e_type, **endpoint.attr)
+
+        k.set_endpoint((crossing, 3), endpoint)  # attributes are copied
+        k.set_endpoint(endpoint, (crossing, 3), create_using=t_type, **twin_endpoint.attr)
     else:
-        k.set_arc(((node, 1), (node, 2)))
-        k.set_arc(((node, 3), twin_endpoint))
-        k.set_arc(((node, 0), endpoint))
+        k.set_endpoint((crossing, 1), (crossing, 2), create_using=e_type, **common_attr)
+        k.set_endpoint((crossing, 2), (crossing, 1), create_using=t_type, **endpoint.attr)
+
+        k.set_endpoint((crossing, 3), twin_endpoint)  # attributes are copied
+        k.set_endpoint(twin_endpoint, (crossing, 3), create_using=e_type, **endpoint.attr)
+
+        k.set_endpoint((crossing, 0), endpoint)  # attributes are copied
+        k.set_endpoint(endpoint, (crossing, 0), create_using=t_type, **twin_endpoint.attr)
 
     if k.is_framed():
         k.framing += sign  # if we add a positive kink, the framing increases by 1

@@ -38,7 +38,8 @@ def unique_new_node_name(k, default="a"):
     """Returns a natural next available node name for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
     next available letter, otherwise returns the next available integer, or default if the knot is empty."""
 
-    if not k.number_of_nodes:
+    # TODO: remove default
+    if len(k.nodes) == 0:
         return default
 
     # Check if nodes are integers

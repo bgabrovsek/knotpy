@@ -181,6 +181,14 @@ def test_yamada_reidemeister():
 
 
 if __name__ == '__main__':
+    from time import time
+    t = time()
     test_yamada_examples_from_paper()
     test_yamada_moriuchi()
     test_yamada_reidemeister()
+    print(time() - t)
+
+    """
+    3.2110631465911865, 3.2179839611053467
+    3.224858283996582
+    """

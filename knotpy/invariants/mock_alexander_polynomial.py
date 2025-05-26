@@ -3,7 +3,7 @@ from sympy import Expr, expand, Integer, symbols, Symbol
 from itertools import product
 
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.orientation import oriented
+from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.node import Crossing, Vertex #, Terminal
@@ -17,7 +17,7 @@ from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemei
 def mock_alexander_polynomial(k:PlanarDiagram, variable="W"):
     W = variable if isinstance(variable, Symbol) else symbols(variable)
 
-    k = k if k.is_oriented() else oriented(k)
+    k = k if k.is_oriented() else orient(k)
 
     # get terminal outgoing endpoint
     out_ep = [ep for ep in k.endpoints if k.degree(ep.node) == 1 and type(ep) is OutgoingEndpoint][0]

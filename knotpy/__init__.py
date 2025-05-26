@@ -26,7 +26,7 @@ from knotpy.invariants import *
 from knotpy import drawing
 from knotpy.drawing import *
 
-from .algorithms import sanity
+#from .algorithms import sanity
 from knotpy.algorithms.sanity import *
 
 from knotpy import reidemeister
