@@ -374,7 +374,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.Kauffman_state_sum.html">Kauffman_state_sum</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
@@ -657,10 +656,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.homflypt.html">homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.homflypt.homflypt_polynomial.html">homflypt_polynomial</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.jones_polynomial.html">jones_polynomial</a></li>
@@ -1021,6 +1016,18 @@
                   
   <section id="module-knotpy.invariants">
 <span id="invariants"></span><h1>invariants<a class="headerlink" href="#module-knotpy.invariants" title="Link to this heading">#</a></h1>
+<p>List of possible invairants to implement:</p>
+<p>Alexander Polynomial
+Conway Polynomial
+Jones Polynomial
+HOMFLY-PT Polynomial
+Kauffman 2-variable Polynomial (F polynomial)
+Writhe
+Linking Number
+Seifert Genus (Upper Bound)
+Turaev Genus (more advanced but diagrammatic)
+Tricolorability
+n-Colorability (mod n coloring)</p>
 <p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -1036,28 +1043,25 @@
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.cache.html#module-knotpy.invariants.cache" title="knotpy.invariants.cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.homflypt.html#module-knotpy.invariants.homflypt" title="knotpy.invariants.homflypt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">homflypt</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.jones_polynomial.html#module-knotpy.invariants.jones_polynomial" title="knotpy.invariants.jones_polynomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jones_polynomial</span></code></a>(k[, variable])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.jones_polynomial.html#module-knotpy.invariants.jones_polynomial" title="knotpy.invariants.jones_polynomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jones_polynomial</span></code></a>(k[, variable])</p></td>
 <td><p>Compute the jones polynomial from the (Kauffman) bracket polynomial :param k: :param variable: :return:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.mock_alexander_polynomial.html#module-knotpy.invariants.mock_alexander_polynomial" title="knotpy.invariants.mock_alexander_polynomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mock_alexander_polynomial</span></code></a>(k[, variable])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.mock_alexander_polynomial.html#module-knotpy.invariants.mock_alexander_polynomial" title="knotpy.invariants.mock_alexander_polynomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mock_alexander_polynomial</span></code></a>(k[, variable])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.module.html#module-knotpy.invariants.module" title="knotpy.invariants.module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.module.html#module-knotpy.invariants.module" title="knotpy.invariants.module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module</span></code></a></p></td>
 <td><p>R-module</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.tests.html#module-knotpy.invariants.tests" title="knotpy.invariants.tests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tests</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.tests.html#module-knotpy.invariants.tests" title="knotpy.invariants.tests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tests</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.unplugging.html#module-knotpy.invariants.unplugging" title="knotpy.invariants.unplugging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unplugging</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.unplugging.html#module-knotpy.invariants.unplugging" title="knotpy.invariants.unplugging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unplugging</span></code></a>(k)</p></td>
 <td><p>Computes the &quot;unplugging&quot; invariant T.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.writhe.html#module-knotpy.invariants.writhe" title="knotpy.invariants.writhe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writhe</span></code></a>(k)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.writhe.html#module-knotpy.invariants.writhe" title="knotpy.invariants.writhe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writhe</span></code></a>(k)</p></td>
 <td><p>The writhe is the total number of positive crossings minus the total number of negative crossings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.yamada.html#module-knotpy.invariants.yamada" title="knotpy.invariants.yamada"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yamada</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.yamada.html#module-knotpy.invariants.yamada" title="knotpy.invariants.yamada"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yamada</span></code></a></p></td>
 <td><p>Compute the Yamada polynomial of a knotted planar diagram described in [Yamada, S.</p></td>
 </tr>
 </tbody>

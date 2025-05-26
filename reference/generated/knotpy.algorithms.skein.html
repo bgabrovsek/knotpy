@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.algorithms.skein';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Kauffman_state_sum" href="knotpy.algorithms.skein.Kauffman_state_sum.html" />
+    <link rel="next" title="crossing_to_vertex" href="knotpy.algorithms.skein.crossing_to_vertex.html" />
     <link rel="prev" title="sanity_check" href="knotpy.algorithms.sanity.sanity_check.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -374,7 +374,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">skein</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.Kauffman_state_sum.html">Kauffman_state_sum</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
@@ -657,10 +656,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.homflypt.html">homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.homflypt.homflypt_polynomial.html">homflypt_polynomial</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.jones_polynomial.html">jones_polynomial</a></li>
@@ -1031,13 +1026,10 @@ see [L.H. Kauffman, “State models and the Jones polynomial” Topology , 26 (1
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.skein.Kauffman_state_sum.html#knotpy.algorithms.skein.Kauffman_state_sum" title="knotpy.algorithms.skein.Kauffman_state_sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kauffman_state_sum</span></code></a>(K)</p></td>
-<td><p>Calculates the Kauffman state sum for a given planar diagram.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html#knotpy.algorithms.skein.crossing_to_vertex" title="knotpy.algorithms.skein.crossing_to_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crossing_to_vertex</span></code></a>(k, crossing[, inplace])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html#knotpy.algorithms.skein.crossing_to_vertex" title="knotpy.algorithms.skein.crossing_to_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crossing_to_vertex</span></code></a>(k, crossing[, inplace])</p></td>
 <td><p>Converts a crossing in a planar diagram to a vertex, by projecting it to a vertex.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html#knotpy.algorithms.skein.smoothen_crossing" title="knotpy.algorithms.skein.smoothen_crossing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen_crossing</span></code></a>(k, crossing_for_smoothing, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html#knotpy.algorithms.skein.smoothen_crossing" title="knotpy.algorithms.skein.smoothen_crossing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen_crossing</span></code></a>(k, crossing_for_smoothing, ...)</p></td>
 <td><p>Smoothens a specified crossing in a planar diagram using type &quot;A&quot;, &quot;B&quot;, or oriented (&quot;O&quot;) smoothing, depending on the method specified.</p></td>
 </tr>
 </tbody>
