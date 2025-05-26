@@ -312,7 +312,7 @@ def yamada_polynomial(k: PlanarDiagram, normalize=True):
     _sigma_power.extend([expand(_sigma**_) for _ in range(len(_sigma_power), len(k.arcs) + 1)])  # should we extend to the number of faces - 1?
 
     # Initialize the input diagram.
-    k = unoriented(k) if k.is_oriented() else k.copy()
+    k = unorient(k) if k.is_oriented() else k.copy()
 
     if "framing" not in k.attr:
         k.framing = 0  # framing not yet supported

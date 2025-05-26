@@ -70,6 +70,9 @@ class _CrossingDiagram(_NodeDiagram, metaclass=ABCMeta):
         for node in crossings_for_adding:
             self.add_crossing(crossings_for_adding=node, **attr)
 
+    def sign(self, crossing):
+        return self._nodes[crossing].sign()
+
 
 class _VirtualCrossingDiagram(_NodeDiagram, metaclass=ABCMeta):
     """

@@ -8,8 +8,10 @@ see [L.H. Kauffman, "State models and the Jones polynomial" Topology , 26 (1987)
 
 from knotpy.algorithms.disjoint_sum import add_unknot
 from knotpy.algorithms.topology import kinks
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
+from knotpy.manipulation.symmetry import mirror
+
 
 def crossing_to_vertex(k: PlanarDiagram, crossing, inplace=False):
     """
@@ -40,6 +42,7 @@ def crossing_to_vertex(k: PlanarDiagram, crossing, inplace=False):
     for i, ep in enumerate(node_inst):
         k.set_endpoint((c, i), ep)
     return k
+
 
 def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inplace=False):
     """
@@ -135,23 +138,10 @@ def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inp
 
     return k
 
-
-def Kauffman_state_sum(K: PlanarDiagram):
-    """
-    Calculates the Kauffman state sum for a given planar diagram.
-
-    Args:
-        K: A PlanarDiagram object representing the planar diagram of a
-            knot or link.
-
-    Returns:
-        A float representing the Kauffman state sum for the given planar
-        diagram.
-    """
-    pass
-
-
-
+# def switch_crossing(k: PlanarDiagram | OrientedPlanarDiagram, crossing):
+#     return mirror(k, [crossing], inplace=False)
+#
+# def oriented_smoothing(k: OrientedPlanarDiagram, crossing):
 
 
 if __name__ == "__main__":

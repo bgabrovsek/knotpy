@@ -18,7 +18,8 @@ def mirror(k: PlanarDiagram, crossings=None, inplace=False):
 
 
     if k.is_oriented():
-        raise NotImplementedError("Mirroring not implemented on oriented knots")
+        for c in crossings:
+            permute_node(k, c, (1, 2, 3, 0))
     else:
         for c in crossings:
             permute_node(k, c, (1, 2, 3, 0))
