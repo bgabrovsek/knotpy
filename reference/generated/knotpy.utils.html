@@ -438,6 +438,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_loop.html">is_loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_planar_graph.html">is_planar_graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_unknot.html">is_unknot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_unlink.html">is_unlink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.kink_region_iterator.html">kink_region_iterator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.kinks.html">kinks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.leafs.html">leafs</a></li>
@@ -533,6 +534,11 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.freezing.html">freezing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.freeze.html">freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.frozen.html">frozen</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.node.html">node</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.node.Node.html">Node</a></li>
 </ul>
@@ -547,6 +553,11 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.tests.test_endpoint.html">test_endpoint</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_faces.html">test_faces</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_faces.test_faces.html">test_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_faces.test_hopf.html">test_hopf</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_freezing.html">test_freezing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_freezing.test_freeze.html">test_freeze</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_init.html">test_init</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -658,6 +669,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.homflypt.html">homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.homflypt.homflypt_polynomial.html">homflypt_polynomial</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.jones_polynomial.html">jones_polynomial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -665,11 +680,16 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.html">test_homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_homflypt.html">test_homflypt</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_jones.html">test_jones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.html">test_yamada</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_thetas_recursive.html">test_thetas_recursive</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_examples_from_paper.html">test_yamada_examples_from_paper</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_moriuchi.html">test_yamada_moriuchi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_yamada.test_yamada_reidemeister.html">test_yamada_reidemeister</a></li>
@@ -832,7 +852,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.decorators.html">decorators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.decorators.multi_variable_invariant.html">multi_variable_invariant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.decorators.total_ordering_from_compare.html">total_ordering_from_compare</a></li>
 </ul>
 </details></li>
@@ -854,7 +873,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.equivalence.html">equivalence</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.func_utils.html">func_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.func_utils.min_elements_by.html">min_elements_by</a></li>
 </ul>
@@ -1016,6 +1034,7 @@
                   
   <section id="module-knotpy.utils">
 <span id="utils"></span><h1>utils<a class="headerlink" href="#module-knotpy.utils" title="Link to this heading">#</a></h1>
+<p>In  utils we store general functions that are not knot/graph specific.</p>
 <p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -1040,37 +1059,34 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.disjoint_union_set.html#module-knotpy.utils.disjoint_union_set" title="knotpy.utils.disjoint_union_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">disjoint_union_set</span></code></a></p></td>
 <td><p>The Union-Find structure, also known as the Disjoint Set Union (DSU) structure, is an efficient data structure used to manage a partition of a set into disjoint (non-overlapping) subsets.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.equivalence.html#module-knotpy.utils.equivalence" title="knotpy.utils.equivalence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalence</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.func_utils.html#module-knotpy.utils.func_utils" title="knotpy.utils.func_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func_utils</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.func_utils.html#module-knotpy.utils.func_utils" title="knotpy.utils.func_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func_utils</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.html#module-knotpy.utils.geometry" title="knotpy.utils.geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.html#module-knotpy.utils.geometry" title="knotpy.utils.geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry</span></code></a></p></td>
 <td><p>Library for (numerical) geometry.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.module.html#module-knotpy.utils.module" title="knotpy.utils.module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.module.html#module-knotpy.utils.module" title="knotpy.utils.module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.multiprogressbar.html#module-knotpy.utils.multiprogressbar" title="knotpy.utils.multiprogressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiprogressbar</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.multiprogressbar.html#module-knotpy.utils.multiprogressbar" title="knotpy.utils.multiprogressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiprogressbar</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.multiprogressbar2.html#module-knotpy.utils.multiprogressbar2" title="knotpy.utils.multiprogressbar2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiprogressbar2</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.multiprogressbar2.html#module-knotpy.utils.multiprogressbar2" title="knotpy.utils.multiprogressbar2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiprogressbar2</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.parsing.html#module-knotpy.utils.parsing" title="knotpy.utils.parsing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parsing</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.parsing.html#module-knotpy.utils.parsing" title="knotpy.utils.parsing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parsing</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.set_utils.html#module-knotpy.utils.set_utils" title="knotpy.utils.set_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_utils</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.set_utils.html#module-knotpy.utils.set_utils" title="knotpy.utils.set_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_utils</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.statistics.html#module-knotpy.utils.statistics" title="knotpy.utils.statistics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">statistics</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.statistics.html#module-knotpy.utils.statistics" title="knotpy.utils.statistics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">statistics</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.string_utils.html#module-knotpy.utils.string_utils" title="knotpy.utils.string_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string_utils</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.string_utils.html#module-knotpy.utils.string_utils" title="knotpy.utils.string_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string_utils</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.test.html#module-knotpy.utils.test" title="knotpy.utils.test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.test.html#module-knotpy.utils.test" title="knotpy.utils.test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
