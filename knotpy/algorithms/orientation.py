@@ -72,7 +72,7 @@ def orient(k: PlanarDiagram):
     return orient_edges(k=k, edges=edges(k))
 
 
-def unorient(k:OrientedPlanarDiagram) -> PlanarDiagram:
+def unorient(k:OrientedPlanarDiagram | PlanarDiagram) -> PlanarDiagram:
     return k.copy(copy_using=PlanarDiagram)
 
 

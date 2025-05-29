@@ -19,35 +19,35 @@ _CHECK_SANITY = True
 _ascii_letters = string.ascii_lowercase + string.ascii_uppercase
 
 
-def canonical(k: PlanarDiagram):
-    """
-    Compute the canonical form of a planar diagram.
-
-    The function takes a `PlanarDiagram` instance and finds its canonical form by iterating
-    through its nodes in a counterclockwise (CCW) fashion and applying breadth-first search
-    (BFS) to determine the minimal enumeration.
-
-    Args:
-        k: A `PlanarDiagram` instance representing the planar diagram, knot, or link diagram.
-
-    Raises:
-        TypeError: If `k` is not an instance of `PlanarDiagram`.
-        NotImplementedError: If `k` is an oriented diagram.
-
-    Returns:
-        PlanarDiagram: The canonical form of the given planar diagram.
-    """
-
-    # TODO: speed up by sorting endpoint, not nodes
-
-    if isinstance(k, PlanarDiagram):
-        return _canonical_unoriented(k)
-        # if k.is_oriented():
-        #     raise NotImplementedError("Canonical form of oriented diagrams not supported")
-        # else:
-        #     return _canonical_unoriented(k)
-    else:
-        raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
+# def canonical(k: PlanarDiagram):
+#     """
+#     Compute the canonical form of a planar diagram.
+#
+#     The function takes a `PlanarDiagram` instance and finds its canonical form by iterating
+#     through its nodes in a counterclockwise (CCW) fashion and applying breadth-first search
+#     (BFS) to determine the minimal enumeration.
+#
+#     Args:
+#         k: A `PlanarDiagram` instance representing the planar diagram, knot, or link diagram.
+#
+#     Raises:
+#         TypeError: If `k` is not an instance of `PlanarDiagram`.
+#         NotImplementedError: If `k` is an oriented diagram.
+#
+#     Returns:
+#         PlanarDiagram: The canonical form of the given planar diagram.
+#     """
+#
+#     # TODO: speed up by sorting endpoint, not nodes
+#
+#     if isinstance(k, PlanarDiagram):
+#         return _compute_canonical(k)
+#         # if k.is_oriented():
+#         #     raise NotImplementedError("Canonical form of oriented diagrams not supported")
+#         # else:
+#         #     return _canonical_unoriented(k)
+#     else:
+#         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
 
 
 
@@ -126,7 +126,7 @@ def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
 #     return disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
 
 
-def _canonical_unoriented(k: PlanarDiagram):
+def canonical(k: PlanarDiagram):
     """
     Compute the canonical form of an unoriented planar diagram.
 
@@ -154,6 +154,9 @@ def _canonical_unoriented(k: PlanarDiagram):
 
     from knotpy.algorithms.naming import number_to_alpha
 
+    if not isinstance(k, PlanarDiagram):
+        raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
+
     # TODO: In case of degree 2 vertices, the canonical form might not be unique.
 
     if len(k) == 0:
@@ -166,7 +169,7 @@ def _canonical_unoriented(k: PlanarDiagram):
     if number_of_disjoint_components(k) >= 2:
         # split, make each component canonical, sort and add together again
         old_name = k.name
-        ds = disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
+        ds = disjoint_sum(*sorted([canonical(c) for c in split_disjoint_sum(k)]))
         ds.name = old_name
         return ds
 

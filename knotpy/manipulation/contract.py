@@ -35,7 +35,10 @@ def contract_arc(k: PlanarDiagram, arc_for_contracting, inplace=True) -> PlanarD
     # print("++++ CONTRACTING ****")
     # print(to_knotpy_notation(k), arc_for_contracting)
 
-    k.name = None
+    #k.name = None
+    if "name" in k.attr:
+        del k.attr["name"]
+
     c_ep, del_ep = arc_for_contracting  # "contracted" endpoint c_ep (remains) and deleted endpoint d_ep (removed)
 
     c_node, c_pos = c_ep = k.endpoint_from_pair(c_ep)  # will be kept

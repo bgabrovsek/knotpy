@@ -160,28 +160,22 @@ def disjoint_sum(*knots):
     .. note::
        - The function ensures that the result retains attributes of the input diagrams.
     """
-
-    if all(isinstance(k, PlanarDiagram) for k in knots):
-        create_using = PlanarDiagram
-    elif all(isinstance(k, OrientedPlanarDiagram) for k in knots):
-        create_using = OrientedPlanarDiagram
-    else:
-        raise TypeError(
-            "Cannot create a disjoint sum with a mix of oriented and non-oriented diagrams.\n"
-            "Ensure that all input diagrams are either `PlanarDiagram` or `OrientedPlanarDiagram`, but not both."
-        )
-
     if len(knots) == 0:
         raise ValueError("At least one planar diagram must be provided.")
     elif len(knots) == 1:
         return knots[0].copy()
 
-    new_knot_name = u"\u2294".join(str(k.name) for k in knots)
-    new_knot_framing = sum(k.framing for k in knots) if all(k.framing is not None for k in knots) else None
+    if len({type(k) for k in knots}) != 1:
+        raise TypeError(f"Cannot create a disjoint sum of different type diagrams ({' and '.join({type(k).__name__ for k in knots})})")
 
-    new_knot = (create_using or type(knots[0]))()
+    new_knot = type(knots[0])()
     num_nodes = sum(len(k) for k in knots)
-    node_label_iter = iter(ascii_letters[:num_nodes] if num_nodes <= len(ascii_letters) else range(num_nodes))
+    node_label_iter = iter(ascii_letters[:num_nodes] if num_nodes <= len(ascii_letters) else range(num_nodes))  # TODO: use extended asci (a...z,aa,ab,...ZZ,...)
+
+    new_knot.name = u"\u2294".join(str(k.name) for k in knots)
+    new_knot.framing = None if all(k.framing is None for k in knots) else sum(k.framing if k.framing is not None else 0 for k in knots)
+    #new_knot_framing = sum(k.framing for k in knots) if all(k.framing is not None for k in knots) else None
+
 
     relabel_dicts = []  # dicts that map the node of the component to the new (integer) node in the disjoint sum
     for k in knots:
@@ -208,9 +202,6 @@ def disjoint_sum(*knots):
                     create_using=type(ep1),
                     **ep1.attr
                 )
-
-    new_knot.name = new_knot_name
-    new_knot.framing = new_knot_framing
 
     # # node relabelling is obsolete
     # relabel_dicts_inv = [{value: key for key, value in d.items()} for d in relabel_dicts]

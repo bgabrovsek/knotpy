@@ -27,13 +27,13 @@ def _split_nodes_by_type(k: PlanarDiagram) -> dict:
         result[type(k.nodes[node])].add(node)
     return result
 
-def is_unknot(k: PlanarDiagram) -> bool:
-    if len(k) == 1:
-        node = next(iter(k.nodes))
-        if isinstance(k.nodes[node], Vertex) and k.degree(node) == 2:
-            return True
-    return False
+def is_unlink(k: PlanarDiagram) -> bool:
+    if len(k) == 0:
+        return True
+    return all(k.degree(v) == 2 for v in k.nodes) and all(ep.node == v for v in k.nodes for ep in k.nodes[v]) and all(type(k.nodes[v]) is Vertex for v in k.nodes)
 
+def is_unknot(k: PlanarDiagram) -> bool:
+    return len(k) == 1 and is_unlink(k)
 
 
 def is_knot(k: PlanarDiagram) -> bool:

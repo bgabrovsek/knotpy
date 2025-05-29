@@ -4,18 +4,13 @@ move types.
 For example, reidemeister_3_space returns the set of all unique knots that are the result of all possible R3 moves
 performed any number of times.
 """
-
-import sys
-
-from knotpy import number_of_disjoint_components
 from knotpy.algorithms.canonical import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
-
-from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
-from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke, choose_reidemeister_2_unpoke
+from knotpy.reidemeister.reidemeister_1 import find_reidemeister_1_remove_kink, reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink, reidemeister_1_add_kink, find_reidemeister_1_add_kink
+from knotpy.reidemeister.reidemeister_2 import find_reidemeister_2_unpoke, reidemeister_2_unpoke, choose_reidemeister_2_unpoke, find_reidemeister_2_poke, reidemeister_2_poke
 from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister_3_triangle
 from knotpy.reidemeister.reidemeister_4 import find_reidemeister_4_slide, reidemeister_4_slide, choose_reidemeister_4_slide
-from knotpy.reidemeister.reidemeister_5 import find_reidemeister_5_untwists, reidemeister_5_untwist, choose_reidemeister_5_twist, choose_reidemeister_5_untwist
+from knotpy.reidemeister.reidemeister_5 import find_reidemeister_5_untwists, reidemeister_5_untwist, choose_reidemeister_5_twist, choose_reidemeister_5_untwist, find_reidemeister_5_twists, reidemeister_5_twist
 from knotpy.reidemeister.detour_move import find_detour_moves
 from knotpy.reidemeister.reidemeister import make_reidemeister_move, detect_move_type
 from knotpy.manipulation.attributes import clear_node_attributes
@@ -23,15 +18,17 @@ from knotpy.utils.set_utils import LeveledSet
 from knotpy.utils.multiprogressbar import ProgressTracker
 from knotpy._settings import settings
 
-__all__ = ["reduce_crossings_greedy", "reidemeister_3_space", "detour_space",
-           "crossing_non_increasing_space", "crossing_non_increasing_space_greedy"]
+__all__ = ["reduce_crossings_greedy",
+           "reidemeister_3_space",
+           "detour_space",
+           "crossing_non_increasing_space",
+           "crossing_non_increasing_space_greedy",
+           "simple_reduce_crossings"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
-
-
-def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
+def reduce_crossings_greedy(k: PlanarDiagram, to_canonical=True, inplace=False):
     """
     Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
     (R2, R1, and possibly R4 and R5), until there are no more such moves left.
@@ -55,6 +52,28 @@ def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
     if not inplace:
         k = k.copy()
 
+    simple_reduce_crossings(k)
+
+    return canonical(k) if to_canonical else k
+
+
+
+def simple_reduce_crossings(k: PlanarDiagram):
+    """
+    Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
+    (R2, R1, and possibly R4 and R5), until there are no more such moves left.
+
+    Args:
+        k (PlanarDiagram): The planar diagram to be simplified, if a set/list/tuple is given,
+        the function returns a set/list/tuple of simplified diagrams.
+        inplace (bool): Indicates whether modifications should be performed on the input diagram `k` itself or a new copy.
+
+    Returns:
+        PlanarDiagram: A canonical simplified version of the input planar diagram where
+        possible crossing-reducing moves have been performed. If `inplace`
+        is `True`, returns the modified input diagram directly, else a new
+        simplified copy is returned.
+    """
     # Repeat R1/R2/R3/R4/R5, until there are no more moves left (e.g. an R1 move can reveal an R2 move).
     while True:
 
@@ -81,15 +100,8 @@ def reduce_crossings_greedy(k: PlanarDiagram, inplace=False):
 
         break
 
-    return canonical(k)
+    return k
 
-
-# def __temp_test_diag(diagrams):
-#     from knotpy.algorithms import sanity_check
-#     for d in diagrams:
-#         assert sanity_check(d)
-#         if number_of_disjoint_components(d) != 1:
-#             raise ValueError(d)
 
 def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
     """
@@ -138,36 +150,6 @@ def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
                 for face in find_reidemeister_2_unpoke(k)
                 ]
             )
-
-        # from knotpy.algorithms import sanity_check
-        #
-        # mmm = []
-        # for k in ls[-2]:
-        #     for v_pos in find_reidemeister_4_slide(k, "decrease"):
-        #         kkk = reidemeister_4_slide(k, v_pos, inplace=False)
-        #         mmm.append(kkk)
-        #         try:
-        #             s = sanity_check(kkk)
-        #         except:
-        #             print("from", k)
-        #             print("via", v_pos)
-        #             print(f"to {kkk}")
-        #             exit()
-        #
-        #
-        #
-        # ddd = [
-        #         reidemeister_4_slide(k, v_pos, inplace=False)
-        #         for k in ls[-2]
-        #         for v_pos in find_reidemeister_4_slide(k, "decrease")
-        #         ]
-        #
-        # if ddd != mmm:
-        #     raise ValueError("no")
-        #
-        # for x in ddd:
-        #     assert sanity_check(x)
-        #
 
         if "R4" in settings.allowed_moves:
             ls.extend([
@@ -270,7 +252,7 @@ def detour_space(diagrams) -> set:
         }
 
 
-def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progress=False) -> set:
+def crossing_non_increasing_space(diagrams, assume_canonical=False) -> set:
     """
     Return the non-increasing "Reidemeister space" of a given set of diagrams.
     This process transforms the input diagrams iteratively by applying Reidemeister
@@ -289,8 +271,6 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progres
         set: A set of diagrams in the non-increasing Reidemeister space.
     """
 
-    tracker = ProgressTracker("Depth", "Diagrams searched", "Nodes", "Step") if show_progress else None
-
     if isinstance(diagrams, PlanarDiagram):
         diagrams = {diagrams, }
 
@@ -299,24 +279,16 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False, show_progres
     elif not assume_canonical:
         diagrams = {canonical(_) for _ in diagrams}
 
-    if tracker:
-        tracker.update(0, len(diagrams), min(len(_) for _ in diagrams), "Reidemeister 3")
-
     if "R3" in settings.allowed_moves:
         ls = LeveledSet(reidemeister_3_space(diagrams, assume_canonical=True))  # also stores inside the original diagrams
     else:
         ls = LeveledSet(diagrams)
 
     while True:
-        if tracker:
-            tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "reducing crossings")
 
         ls.new_level(crossing_reducing_space(ls[-1], assume_canonical=True))
         if not ls[-1]:
             break
-
-        if tracker:
-            tracker.update(len(ls.levels), len(ls.global_set), min(len(_) for _ in ls), "Reidemeister 3")
 
         if "R3" in settings.allowed_moves:
             ls.new_level(reidemeister_3_space(ls[-1], assume_canonical=True))
@@ -333,7 +305,7 @@ def _filter_minimal_diagrams(diagrams):
     return {_ for _ in diagrams if len(_) == min_node_count}
 
 
-def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
+def crossing_non_increasing_space_greedy(diagrams) -> set:
     """
     Return the non-increasing "Reidemeister space" of a given set of diagrams.
     This process transforms the input diagrams iteratively by applying Reidemeister
@@ -357,13 +329,9 @@ def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
     if isinstance(diagrams, PlanarDiagram):
         diagrams = {diagrams, }
 
-    tracker = ProgressTracker("Depth", "Diagrams searched", "Nodes") if show_progress else None
-
     ls = LeveledSet(_filter_minimal_diagrams(diagrams))
 
     while ls[-1]:
-        if tracker:
-            tracker.update(len(ls[-1]), len(ls.global_set), min(len(_) for _ in ls[-1]))
 
         if "R3" in settings.allowed_moves:
             diagrams = reidemeister_3_space(ls[-1], assume_canonical=True, depth=1)
@@ -374,52 +342,27 @@ def crossing_non_increasing_space_greedy(diagrams, show_progress=False) -> set:
         diagrams = _filter_minimal_diagrams(diagrams)
         ls.new_level(diagrams)
 
-    if tracker:
-        tracker.finish()
-
     return _filter_minimal_diagrams(set(ls))
 
 
+def all_reidemeister_moves_space(k, depth=1):
 
-# def smart_reidemeister_space(diagram, depth):
-#     """Make depth crossing increasing moves and any number of Reidemesiter 3 moves, then returns the whole set of
-#     obtained diagrams
-#
-#     :param diagram:
-#     :param depth:
-#     :return:
-#     """
-#     """Try to simplify the diagram k in such a way, that we perform all possible R3 moves, followed by crossing
-#      decreasing moves, followed by crossing increasing moves, where the increasing moves are taken in such a way, that
-#      a new non-alternating 3-gon appears. The depth counts how many times crossing increasing moves are made in this
-#      process. If depth = 0, then only R3 and crossing decreasing moves are made.
-#      :param k: planar diagram
-#      :param depth: counts how many times crossing increasing moves are made
-#      :return: the list of all obtained diagrams during the process
-#     """
-#
-#     """
-#     Diagram level is a list of list of sets
-#     Outer list contains distinct diagrams
-#     Inner list contains diagrams at a certain level
-#     Inner inner set contains equivalent diagram at a certain level
-#     I.e. the inner list contains sets of equivalent diagrams
-#     """
-#     # TODO: do we really need this function as it is very similar to "smart simplify"?
-#     from knotpy.reidemeister.simplify import simplify_crossing_reducing
-#
-#     # level 0: original diagrams (reduced in canonical form)
-#     ls = LeveledSet(canonical(simplify_crossing_reducing(diagram)))
-#
-#     # level 1: add R3 moves to the diagrams and simplify
-#     ls.new_level(crossing_reducing_space(reidemeister_3_space(ls[-1])))
-#
-#     # level 2, 3,... make crossing increasing moves, then r3 moves, and repeat
-#     for depth_index in range(depth):
-#         # apply all increasing R2 moves (that form 3-regions) TODO: test
-#         ls.new_level(detour_space(ls[-1]))
-#         # apply all r3 moves
-#         ls.new_level(crossing_reducing_space(reidemeister_3_space(ls[-1])))
-#
-#     return set(ls)
+    ls = LeveledSet([k.copy()])
 
+    for _depth in range(depth):
+        ls.new_level()
+        if "R1" in settings.allowed_moves:
+            ls.extend([canonical(reidemeister_1_remove_kink(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_1_remove_kink(k)])
+            ls.extend([canonical(reidemeister_1_add_kink(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_1_add_kink(k)])
+        if "R2" in settings.allowed_moves:
+            ls.extend([canonical(reidemeister_2_unpoke(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_2_unpoke(k)])
+            ls.extend([canonical(reidemeister_2_poke(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_2_poke(k)])
+        if "R3" in settings.allowed_moves:
+            ls.extend([canonical(reidemeister_3(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_3_triangle(k)])
+        if "R4" in settings.allowed_moves:
+            ls.extend([canonical(reidemeister_4_slide(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_4_slide(k)])
+        if "R5" in settings.allowed_moves:
+            ls.extend([canonical(reidemeister_5_untwist(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_5_untwists(k)])
+            ls.extend([canonical(reidemeister_5_twist(k, loc, inplace=False)) for k in ls[-2] for loc in find_reidemeister_5_twists(k)])
+
+    return set(ls)

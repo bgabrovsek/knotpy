@@ -1,3 +1,7 @@
+"""
+In  utils we store general functions that are not knot/graph specific.
+"""
+
 from .combinatorics import *
 from .decorators import *
 from .string_utils import *

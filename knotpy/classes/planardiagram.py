@@ -375,6 +375,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         if remove_incident_endpoints:
             self.remove_endpoints_from(self._nodes[node])
         del self._nodes[node]
+        return self
 
     def remove_nodes_from(self, nodes_for_removal, remove_incident_endpoints=True):
         for node in nodes_for_removal:
@@ -415,8 +416,10 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         if not isinstance(create_using, type):
             raise TypeError("Creating endpoint with create_using instance not yet supported.")
 
-        if self.is_oriented() ^ create_using.is_oriented():
-            raise ValueError("Cannot add unoriented endpoint to an oriented diagram and vice versa")
+        if self.is_oriented() and not create_using.is_oriented():
+            raise ValueError(f"Cannot add an unoriented endpoint ({create_using.__name__}) to an oriented diagram ({type(self).__name__})")
+        if not self.is_oriented() and create_using.is_oriented():
+            raise ValueError(f"Cannot add an oriented ({create_using.__name__}) endpoint to an unoriented diagram ({type(self).__name__})")
 
         node, node_pos = endpoint_for_setting
 
@@ -615,7 +618,6 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
     def is_oriented():
         return False
 
-
     @property
     def name(self):
         """Name identifier of planar diagram."""
@@ -656,29 +658,28 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
     @name.setter
     def name(self, s):
         """Set planar diagram name identifier."""
+        # we can rename frozen objects, since the name does not influence the hash/compare
         self.attr["name"] = s
 
     @framing.setter
     def framing(self, framing):
         """Set (blackboard) framing of planar diagram."""
+        if self.is_frozen():
+            raise TypeError("Cannot set framing of frozen diagram.")
         self.attr["framing"] = framing
 
     def __str__(self):
-        # TODO: get node name from descriptor
-
         attrib_str = " ".join([f"{key}={value}" for key, value in self.attr.items() if key != "name" and key != "framing"])
-
         friendly_diag_name = "Oriented diagram" if isinstance(type(self), OrientedPlanarDiagram) else "Diagram"
 
         return "".join(
             [
                 f"{friendly_diag_name} ",
                 f"named {self.name} " if self.name else "",
-                #f"with {self.number_of_nodes} nodes, ",
-                #f"{self.number_of_arcs} arcs, ",
                 f"{self.nodes}" if self.nodes else f"and no adjacencies",
                 f" with framing {self.framing}" if self.framing is not None else "",
                 f" ({attrib_str})" if attrib_str else "",
+                f" (frozen)" if self.is_frozen() else ""
             ]
         )
 

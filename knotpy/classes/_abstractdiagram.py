@@ -25,6 +25,13 @@ class _NodeDiagram(ABC):
     def add_nodes_from(self, nodes_for_adding, create_using=None, **attr):
         pass
 
+    def is_frozen(self):
+        """Returns True if the given diagram is frozen, False otherwise."""
+        try:
+            return self.frozen
+        except AttributeError:
+            return False
+
 
 class _CrossingDiagram(_NodeDiagram, metaclass=ABCMeta):
     """

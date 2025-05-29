@@ -241,15 +241,15 @@ def get_theta_curves():
     return [theta for theta in _theta_table_7.values()]
 
 
-def _range_from_value(value: int | tuple[int, int] | None, default_min, default_max):
+def _range_from_value(value: int | tuple[int, int] | list[int, int]  | None, default_min, default_max):
     if isinstance(value, int):
         return value, value
-    elif isinstance(value, tuple):
+    elif isinstance(value, (tuple, list)):
         return value
     elif value is None:
         return default_min, default_max
     else:
-        raise ValueError(f"Value must be an integer or a tuple between {default_min} and {default_max}")
+        raise ValueError(f"Value {value} must be an integer or a tuple between {default_min} and {default_max}")
 
 
 def get_knot_names(crossings: int | tuple[int, int] | None = None):

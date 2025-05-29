@@ -23,7 +23,9 @@ def remove_arc(k: PlanarDiagram, arc_for_removing: tuple, inplace=True) -> Plana
     if not inplace:
         k = k.copy()
 
-    k.name = None
+    if "name" in k.attr:
+        del k.attr["name"]
+    #k.name = None
     k.remove_arc(arc_for_removing=arc_for_removing)
     return k
 
@@ -43,7 +45,10 @@ def remove_loops(k: PlanarDiagram) -> PlanarDiagram:
     while l := loops(k):
         k.remove_arc(l[0])
         count_removed += 1
-    k.name = None
+    #k.name = None
+    if "name" in k.attr:
+        del k.attr["name"]
+
     return count_removed
 
 
