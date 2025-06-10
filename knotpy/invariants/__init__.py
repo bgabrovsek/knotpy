@@ -17,10 +17,10 @@ n-Colorability (mod n coloring)
 
 
 from .bracket import *
-from .jones_polynomial import *
+from .jones import *
 from .unplugging import*
-from .affine_index_polynomial import *
-from .arrow_polynomial import *
-from .mock_alexander_polynomial import *
+from .affine_index import *
+from .arrow import *
+from .mock_alexander import *
 from .yamada import *
 from .homflypt import *

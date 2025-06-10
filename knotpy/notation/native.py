@@ -27,9 +27,9 @@ __author__ = "Boštjan Gabrovšek"
 import re
 from ast import literal_eval
 
-from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes import Vertex, Crossing, Node
-
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.node import Vertex, Crossing, Node
+from knotpy.classes.endpoint import OutgoingEndpoint, IngoingEndpoint, Endpoint
 
 def _attr_to_str(attr):
     """
@@ -100,7 +100,7 @@ def _parse_attributes_dict(attr_string: str) -> dict:
     return result
 
 
-def _parse_compact(notation: str) -> PlanarDiagram:
+def _parse_compact(notation: str) -> PlanarDiagram | OrientedPlanarDiagram:
     """
        Parse a custom knot diagram notation into structured components.
 
@@ -132,7 +132,9 @@ def _parse_compact(notation: str) -> PlanarDiagram:
     # Parse node definitions
     node_pattern = re.compile(r'(\w+)=([VX])\(([^)]+)\)')
 
-    k = PlanarDiagram()
+    oriented = "i)" in notation or "o)" in notation
+
+    k = OrientedPlanarDiagram() if oriented else PlanarDiagram()
 
     # parse diagram structure (nodes, endpoints)
 
@@ -142,8 +144,12 @@ def _parse_compact(notation: str) -> PlanarDiagram:
         k.add_node(node, create_using=_node_abbr[node_type], degree=len(endpoints))
 
         for pos, ep_str in enumerate(endpoints):
-            pair =  tuple(re.match(r'([a-zA-Z]+)(\d+)', ep_str.strip()).groups())
-            k.set_endpoint((node, pos), (pair[0], int(pair[1])))
+            if oriented:
+                triple =  tuple(re.match(r'([a-zA-Z]+)(\d+)([io])', ep_str.strip()).groups())
+                k.set_endpoint((node, pos), (triple[0], int(triple[1])), create_using=OutgoingEndpoint if triple[2] == "o" else IngoingEndpoint)
+            else:
+                pair =  tuple(re.match(r'([a-zA-Z]+)(\d+)', ep_str.strip()).groups())
+                k.set_endpoint((node, pos), (pair[0], int(pair[1])), create_using=Endpoint)
 
     # parse attributes
     attr_split = attribute_string.split(";")
@@ -171,7 +177,7 @@ def _parse_compact(notation: str) -> PlanarDiagram:
     return k
 
 
-def from_knotpy_notation(notation: str) -> PlanarDiagram:
+def from_knotpy_notation(notation: str) -> PlanarDiagram | OrientedPlanarDiagram:
     """
     Example: "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
     Args:

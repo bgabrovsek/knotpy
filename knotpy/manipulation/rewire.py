@@ -1,7 +1,8 @@
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint
 from knotpy.manipulation.insert import insert_new_leaf
 from knotpy.manipulation.remove import remove_bivalent_vertex
+from knotpy.classes.endpoint import Endpoint
 
 
 # used to be "rewire endpoint"
@@ -139,6 +140,24 @@ def replug_endpoint(k: PlanarDiagram, source_endpoint, destination_endpoint):
                    **adj_ep.attr)
 
     k.remove_endpoint(src_ep)
+
+
+
+def swap_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, ep1: Endpoint, ep2: Endpoint):
+    """ Swaps endpoints, no deletion or insertion, just overwriting."""
+    if not isinstance(ep1, Endpoint):
+        ep1 = k.endpoint_from_pair(ep1)
+    if not isinstance(ep2, Endpoint):
+        ep2 = k.endpoint_from_pair(ep2)
+
+    twin1 = k.twin(ep1)
+    twin2 = k.twin(ep2)
+
+    k.set_endpoint(endpoint_for_setting=ep1, adjacent_endpoint=twin2)
+    k.set_endpoint(endpoint_for_setting=twin2, adjacent_endpoint=ep1)
+
+    k.set_endpoint(endpoint_for_setting=ep2, adjacent_endpoint=twin1)
+    k.set_endpoint(endpoint_for_setting=twin1, adjacent_endpoint=ep2)
 
 
 

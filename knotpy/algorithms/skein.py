@@ -6,7 +6,7 @@ see [L.H. Kauffman, "State models and the Jones polynomial" Topology , 26 (1987)
 """
 
 
-from knotpy.algorithms.disjoint_sum import add_unknot
+from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.algorithms.topology import kinks
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing

@@ -1,4 +1,4 @@
-from knotpy.catalog.knot_tables import get_theta_curves
+from knotpy.catalog.knot_tables import thetas
 from knotpy.reidemeister.reidemeister import randomize_diagram
 from knotpy.reidemeister.equivalence import reduce_equivalent_diagrams
 from knotpy.classes.planardiagram import PlanarDiagram

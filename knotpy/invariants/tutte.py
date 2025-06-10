@@ -2,18 +2,20 @@ __all__ = ['tutte_polynomial']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
-from sympy import Expr, expand, Integer, symbols, Symbol
+from sympy import Integer, symbols, Symbol
 from collections import deque
 
-from knotpy import sanity_check, from_pd_notation, bridges, is_loop, loops, is_bridge
+from knotpy import from_pd_notation, bridges, is_loop, loops, is_bridge, OrientedPlanarDiagram
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.orientation import unoriented
 from knotpy.algorithms.topology import is_planar_graph
 from knotpy.catalog.graphs import wheel_graph
 from knotpy.manipulation.contract import contract_arc
 from knotpy.manipulation.remove import remove_arc
+from knotpy.algorithms.orientation import unorient
 
-def deletion_contraction(k, contract_bridges=True):
+_X, _Y = symbols("x y")
+
+def deletion_contraction(k: PlanarDiagram, contract_bridges=True):
     if "_deletions" not in k.attr:
         k.attr["_deletions"] = 0
     if "_contractions" not in k.attr:
@@ -43,7 +45,7 @@ def deletion_contraction(k, contract_bridges=True):
             resolved.append(k)
     return resolved
 
-def tutte_polynomial(k: PlanarDiagram, variables="xy"):
+def tutte_polynomial(k: PlanarDiagram | OrientedPlanarDiagram, variables="xy"):
     """
     Compute the Tutte polynomial of a planar graph represented as a PlanarDiagram.
 
@@ -96,7 +98,7 @@ def tutte_polynomial(k: PlanarDiagram, variables="xy"):
     if not is_planar_graph(k):
         raise ValueError("Tutte polynomial can only be computed on planar graphs without crossings")
 
-    k = unoriented(k) if k.is_oriented() else k.copy()
+    k = unorient(k) if k.is_oriented() else k.copy()
 
     x = variables[0] if isinstance(variables[0], Symbol) else symbols(variables[0])
     y = variables[1] if isinstance(variables[1], Symbol) else symbols(variables[1])
@@ -111,30 +113,6 @@ def tutte_polynomial(k: PlanarDiagram, variables="xy"):
     k.attr["_contractions"] = 0
 
     resolved = deletion_contraction(k, contract_bridges=False)
-
-    #
-    # stack.append(k)  # add the diagram to the stack
-    #
-    # while stack:
-    #
-    #     k = stack.pop()
-    #
-    #     # TODO: this algorithm loops through arcs every time, can we optimize it?
-    #     no_loops_no_bridges = True
-    #     for arc in k.arcs:
-    #
-    #         if not is_loop(k, arc) and not is_bridge(k, arc):
-    #
-    #             k_delete = remove_arc(k, arc_for_removing=arc, inplace=False)
-    #             k_contract = contract_arc(k, arc_for_contracting=arc, inplace=False)
-    #             stack.append(k_delete)
-    #             stack.append(k_contract)
-    #             no_loops_no_bridges = False
-    #             break  # TODO: optimize
-    #
-    #     if no_loops_no_bridges:
-    #         resolved.append(k)
-
     # resolved graphs consists of only of loops and bridges
     polynomial = Integer(0)
     for g in resolved:

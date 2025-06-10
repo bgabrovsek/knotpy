@@ -5,7 +5,7 @@ from knotpy.catalog.graphs import path_graph, parallel_edges, cycle_graph
 from knotpy.manipulation.remove import remove_arc, remove_empty_nodes
 from knotpy.manipulation.contract import contract_arc
 from knotpy.algorithms.canonical import canonical
-from knotpy.algorithms.disjoint_sum import disjoint_sum
+from knotpy.algorithms.disjoint_union import disjoint_union
 
 
 def test_contract_edge():
@@ -29,7 +29,7 @@ def test_contract_edge():
     B = 4
     g_a = bouquet(A)
     g_b = bouquet(B)
-    g_ab = disjoint_sum(g_a, g_b)
+    g_ab = disjoint_union(g_a, g_b)
     node_a, node_b = g_ab.nodes
     g_ab.set_arc( ((node_a, g_ab.degree(node_a)), (node_b, g_ab.degree(node_b))))
     contract_arc(g_ab, ((node_a, g_ab.degree(node_a) - 1), (node_b, g_ab.degree(node_b) - 1)))

@@ -2,7 +2,7 @@ from itertools import combinations
 from random import choice
 
 from knotpy.classes import PlanarDiagram
-from knotpy.algorithms.disjoint_sum import add_unknot
+from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint

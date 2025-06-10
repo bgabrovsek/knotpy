@@ -3,7 +3,7 @@ from knotpy.catalog.graphs import path_graph, parallel_edges, cycle_graph
 from knotpy.manipulation.remove import remove_arc, remove_empty_nodes
 from knotpy.manipulation.contract import contract_arc
 from knotpy.algorithms.canonical import canonical
-from knotpy.algorithms.disjoint_sum import disjoint_sum
+from knotpy.algorithms.disjoint_union import disjoint_union
 
 
 def test_remove_edge():

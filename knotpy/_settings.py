@@ -5,13 +5,14 @@ Using descriptors for verifying the input.
 
 import re
 
-_DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5"]
-_EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP"]
+_DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLYPE"]
+_EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP", "FLYPE"]
 
 _DEFAULT_TRACE_MOVES = True  # let the Reidemeister moves be traced
 _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES = False  # by default graphs are topological (not rigid)
 _DEFAULT_FRAMED = False  # track framing on Reidemeister moves (R1, R4)
 _DEFAULT_R1_INCREASE_SIMPLIFICATION = False  # use increasing R1 move to simplify knots
+_DEFAULT_FLYPE_CROSSINGS_ONLY = True  # allow flyping only tangles consisting only of crossings
 
 def _clean_allowed_moves(allowed_moves) -> list:
     """From the input parameter, e.g. "R1,R2,R3" or {"R1", "R2", "R3"}, return a set of allowed moves as a a set of ."""
@@ -67,6 +68,7 @@ class Settings:
     r5_only_trivalent = SettingProxyBool(_DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES)
     framed = SettingProxyBool(_DEFAULT_FRAMED)
     r1_increase_simplification = SettingProxyBool(_DEFAULT_R1_INCREASE_SIMPLIFICATION)
+    flype_crossings_only = SettingProxyBool(_DEFAULT_FLYPE_CROSSINGS_ONLY)
 
     def dump(self) -> dict:
         # return settings in form of a dictionary
@@ -75,7 +77,8 @@ class Settings:
             "trace_moves": self.trace_moves,
             "r5_only_trivalent": self.r5_only_trivalent,
             "framed": self.framed,
-            "r1_increase_simplification": self.r1_increase_simplification
+            "r1_increase_simplification": self.r1_increase_simplification,
+            "flype_crossings_only": self.flype_crossings_only,
         }
 
     def update(self, data: dict):
@@ -90,6 +93,8 @@ class Settings:
             self.framed = data["framed"]
         if "r1_increase_simplification" in data:
             self.r1_increase_simplification = data["r1_increase_simplification"]
+        if "flype_crossings_only" in data:
+            self.flype_crossings_only = data["flype_crossings_only"]
 
 
     def load(self, data: dict):
@@ -99,6 +104,7 @@ class Settings:
         self.r5_only_trivalent = data["r5_only_trivalent"] if "r5_only_trivalent" in data else _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES
         self.framed = data["framed"] if "framed" in data else _DEFAULT_FRAMED
         self.r1_increase_simplification = data["r1_increase_simplification"] if "r1_increase_simplification" in data else _DEFAULT_R1_INCREASE_SIMPLIFICATION
+        self.flype_crossings_only = data["flype_crossings_only"] if "flype_crossings_only" in data else _DEFAULT_FLYPE_CROSSINGS_ONLY
 
 
 settings = Settings()

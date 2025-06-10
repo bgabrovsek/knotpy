@@ -1,3 +1,4 @@
+from knotpy import sanity_check
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.manipulation.insert import insert_endpoint
 
@@ -6,11 +7,12 @@ def test_insert_attr():
     k.add_vertex("f", degree=1)
     k.nodes["a"]._inc[1].attr = {"color":1}
     k.nodes["a"]._inc[2].attr = {"color":1}
+    insert_endpoint(k, ("a", 0), ("f",0))
+    k.set_endpoint(("f", 0),("a", 0))
 
-    print(k)
-    insert_endpoint(k, ("a", 0), None)
-    print(k)
-
+    assert sanity_check(k)
+    assert k.nodes["a"]._inc[2].attr == {"color":1}
+    assert k.nodes["a"]._inc[3].attr == {"color":1}
 
 if __name__ == '__main__':
     test_insert_attr()

@@ -4,6 +4,9 @@ from collections import defaultdict
 _reverse_alphabet = {char: index for index, char in enumerate(string.ascii_letters)}
 _base = len(string.ascii_letters)
 
+def generate_node_names(number_of_nodes:int):
+    return [number_to_alpha(i) for i in range(number_of_nodes)]
+
 def _alpha_to_number(s: str):
     """ Convert ASCII string to number, e.g. "a" -> 0, "b" -> 1, "Z" -> 51, "aa" -> 52,... """
     index = 0
@@ -34,13 +37,12 @@ def _is_alpha(s: str) -> bool:
     return s.isalpha() and s.isascii()
 
 
-def unique_new_node_name(k, default="a"):
-    """Returns a natural next available node name for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
+def unique_new_node_name(k):
+    """Returns a natural next available node names for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
     next available letter, otherwise returns the next available integer, or default if the knot is empty."""
 
-    # TODO: remove default
     if len(k.nodes) == 0:
-        return default
+        return number_to_alpha(0)
 
     # Check if nodes are integers
     if all(isinstance(node, int) for node in k.nodes):
@@ -50,5 +52,17 @@ def unique_new_node_name(k, default="a"):
     max_number = max(_alpha_to_number(node) for node in k.nodes if _is_alpha(node))
     return number_to_alpha(max_number + 1)
 
+def multiple_unique_new_node_names(k, count):
+    """Returns a natural next available node names for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
+    next available letter, otherwise returns the next available integer, or default if the knot is empty."""
 
+    if len(k.nodes) == 0:
+        return [number_to_alpha(i) for i in range(count)]
 
+    # Check if nodes are integers
+    if all(isinstance(node, int) for node in k.nodes):
+        return max(k.nodes) + 1
+
+    # Assume nodes are strings
+    max_number = max(_alpha_to_number(node) for node in k.nodes if _is_alpha(node))
+    return [number_to_alpha(max_number + 1 + i) for i in range(count)]

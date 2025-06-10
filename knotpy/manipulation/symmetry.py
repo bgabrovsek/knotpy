@@ -28,7 +28,7 @@ def mirror(k: PlanarDiagram, crossings=None, inplace=False):
     # a → X(d0 b1 c1 c0), b → X(e0 a1 c3 c2), c → X(a3 a2 b3 b2), d → V(a0), e → V(b0) with framing 0
 
 
-def flip(k:PlanarDiagram, inplace=False):
+def flip(k:PlanarDiagram, nodes=None, inplace=False):
     """Flip the diagram by 180 degrees. This should not change the knot type or planar diagram type in S^3 and R^3.
         :param k:
         :return:
@@ -36,7 +36,10 @@ def flip(k:PlanarDiagram, inplace=False):
     if not inplace:
         k = k.copy()
 
-    for node in list(k.nodes):
+    if nodes is None:
+        nodes = list(k.nodes)
+
+    for node in nodes:
         permute_node(k, node, list(range(k.degree(node) - 1, -1, -1)))
 
 

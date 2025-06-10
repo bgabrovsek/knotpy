@@ -1,11 +1,25 @@
 from collections import defaultdict
 
+from knotpy.algorithms.components_link import link_components_endpoints
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.cut_set import is_arc_cut_set
+from knotpy.algorithms.cut_set import _is_arc_cut_set
 from knotpy.algorithms.paths import path_from_endpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
+from knotpy.algorithms.components_link import number_of_link_components
 
+def _is_vertex_an_unknot(k: PlanarDiagram, vertex):
+    """
+    Return True if the given vertex is an unknot, i.e., a degree-2 vertex with both endpoints forming a loop to itself.
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :param vertex: The vertex to check.
+    :type vertex: Hashable
+    :return: True if the vertex is an unknot, False otherwise.
+    :rtype: bool
+    """
+    return len(k.nodes[vertex]) == 2 and k.nodes[vertex][0].node == k.nodes[vertex][1].node == vertex
 
 def _split_nodes_by_type(k: PlanarDiagram) -> dict:
     """
@@ -28,15 +42,42 @@ def _split_nodes_by_type(k: PlanarDiagram) -> dict:
     return result
 
 def is_unlink(k: PlanarDiagram) -> bool:
-    if len(k) == 0:
-        return True
-    return all(k.degree(v) == 2 for v in k.nodes) and all(ep.node == v for v in k.nodes for ep in k.nodes[v]) and all(type(k.nodes[v]) is Vertex for v in k.nodes)
+    return len(k) == 0 or all(_is_vertex_an_unknot(k, v) for v in k.nodes)
 
 def is_unknot(k: PlanarDiagram) -> bool:
     return len(k) == 1 and is_unlink(k)
 
 
+def number_of_unknots(k: PlanarDiagram):
+    """
+    Return the number of unknots (degree-1 vertices with a self-loop).
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :return: The count of unknots.
+    :rtype: int
+    """
+    return sum(1 for v in k.vertices if _is_vertex_an_unknot(k, v))
+
+
 def is_knot(k: PlanarDiagram) -> bool:
+    """
+    Determines whether the given planar diagram represents a knot.
+
+    A diagram is a knot if all its nodes are crossings.
+
+    Args:
+        k (PlanarDiagram): The planar diagram.
+
+    Returns:
+        bool: True if all nodes are crossings, False otherwise.
+    """
+
+    return all(type(k.nodes[node]) is Crossing for node in k.nodes) and number_of_link_components(k) == 1
+
+
+
+def is_link(k: PlanarDiagram) -> bool:
     """
     Determines whether the given planar diagram represents a knot.
 
@@ -236,10 +277,10 @@ def is_bridge(k: PlanarDiagram, arc_or_endpoint) -> bool:
     """
 
     if isinstance(arc_or_endpoint, Endpoint):
-        return is_arc_cut_set(k, (arc_or_endpoint, k.twin(arc_or_endpoint)))
+        return _is_arc_cut_set(k, ((arc_or_endpoint, k.twin(arc_or_endpoint)),))
 
     elif isinstance(arc_or_endpoint, (set, frozenset, tuple, list)):
-        return is_arc_cut_set(k, (arc_or_endpoint,))
+        return _is_arc_cut_set(k, (arc_or_endpoint,))
 
     else:
         raise TypeError("arc_or_endpoint must be an Endpoint or an arc (set of two Endpoints).")

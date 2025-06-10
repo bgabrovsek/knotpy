@@ -58,6 +58,13 @@ class NodeView(Mapping, Set):
             self._nodes[key] = value
 
 
+    def __call__(self, *attr_keys, **attr):
+        return [node for node in self
+                if all(k in self._nodes[node].attr for k in attr_keys)
+                and all(k in self._nodes[node].attr and self._nodes[node].attr[k] == v for k, v in attr.items())]
+
+
+
     # Set methods
     def __contains__(self, key):
         return key in self._nodes
@@ -247,12 +254,22 @@ class ArcView(NodeView):
         :param key: Endpoint instance or node
         :return: arc
         """
+
         if isinstance(key, slice):
             raise ValueError(f"{type(self).__name__} does not support slicing.")
+
+        if isinstance(key, Endpoint) or isinstance(key, tuple) and key and len(key) == 2 and key[0] in self._nodes:
+            if isinstance(key, Endpoint):
+                return frozenset((self._nodes[key.node][key.position], key))
+            else:
+                twin = self._nodes[key[0]][key[1]]
+                twin_twin = self._nodes[twin.node][twin.position]
+                return frozenset((twin, twin_twin))
 
         if isinstance(key, Node):
             # return arcs connected to node
             raise NotImplementedError()
+
 
         if key in self._nodes:
             return [

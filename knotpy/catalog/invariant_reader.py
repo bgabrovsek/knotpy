@@ -38,6 +38,8 @@ def _lazy_invariant_value_eval(fieldname, unevaluated_value):
 
     fieldname = fieldname.lower()
     if fieldname in _keyword_evaluation_function:
+        if not unevaluated_value:
+            return None
         return _keyword_evaluation_function[fieldname](unevaluated_value)
     elif "notation" in fieldname:
         from_notation = from_notation_dispatcher(fieldname.split(" ")[0])

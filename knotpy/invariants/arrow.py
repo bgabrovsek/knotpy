@@ -1,25 +1,22 @@
-from collections import deque
-from sympy import Expr, expand, Integer, symbols, Symbol
+from sympy import expand, Integer, symbols, Symbol
 from itertools import product
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy.algorithms.naming import unique_new_node_name
-from knotpy.classes.node import Crossing, Vertex #, Terminal
-from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.disjoint_sum import add_unknot
+from knotpy.classes.endpoint import OutgoingEndpoint
+from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.invariants.writhe import writhe
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemeister_1_remove_kink
-
 
 __all__ = ['arrow_polynomial']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
+_A = symbols("A")
 
-def disoriented_smoothing(k, crossing):
+def disoriented_smoothing(k: OrientedPlanarDiagram, crossing):
     """
     See https://arxiv.org/pdf/1602.03579, page 40, Figure 36.
     :param k:
@@ -46,6 +43,7 @@ def disoriented_smoothing(k, crossing):
     k.set_endpoint(node_inst[(pos + 3) % 4], (node1, 1), create_using=type(node_inst[(pos + 3) % 4]).reverse_type(), acute=True)
 
     k.remove_node(crossing, remove_incident_endpoints=False)
+
 
 def _components_paths(k:PlanarDiagram):
     long_components = []
@@ -81,26 +79,18 @@ def _components_paths(k:PlanarDiagram):
         circ_components.append(path)
 
     return circ_components, long_components
+
+
 def _remove_consecutive_cusps(k:PlanarDiagram):
-    #circ_components, long_components = _components_paths(k)
-    #poly = Integer(1)
-    #print("cons", k)
-    #for g in long_components:
 
     # TODO: write better, just loop through arcs and stop when no reductions were made
     reductions_were_made = True
     while reductions_were_made:
         reductions_were_made = False
         nodes = list(k.vertices)
-        #c → V(f0o), d → V(g1i), f → V(c0i g0i), g → V(f1o d0o)
-        # for ep in k.endpoints:
-        #     print(ep, ep["acute"])
-        # if kp.number_of_unknots(k) == 0:
-        #     pass
         for node in nodes:
             for pos in (0, 1):
                 if node in k.nodes and k.degree(node) == 2:
-                    #pos = 0 if type(k.nodes[node][0]) is IngoingEndpoint else 1  # position for the adjacent node so that the direction goes from node to adj node
                     ep = k.endpoint_from_pair((node, pos))  # endpoint in the "valley"
                     twin = k.twin(ep)  # the other endpoint in the "valley"
                     adj_node = twin.node  # the other node of the possible reduction
@@ -120,14 +110,14 @@ def _remove_consecutive_cusps(k:PlanarDiagram):
                         k.remove_node(adj_node, remove_incident_endpoints=False)
                         reductions_were_made = True
 
-def _generator_to_variables(k: PlanarDiagram, variable="A"):
+
+def _generator_to_variables(k: PlanarDiagram):
     """Return a sympy expression for a reduced diagram. A reduced diagram does not have consecutive acute cusps.
     :param k:
     :return:
     """
-    A = variable if isinstance(variable, Symbol) else symbols(variable)
     polynomial = Integer(1)
-    _kauffman_term = (-A ** 2 - A ** (-2))
+    _kauffman_term = (-_A ** 2 - _A ** (-2))
 
     circ_comp, line_comp = _components_paths(k)
 
@@ -138,76 +128,38 @@ def _generator_to_variables(k: PlanarDiagram, variable="A"):
 
     return polynomial
 
-def arrow_polynomial(k: PlanarDiagram, variable="A", normalize=True):
-    """
 
+def arrow_polynomial(k: PlanarDiagram | OrientedPlanarDiagram, normalize=True):
+    """Compute the arrow polynomial of a knotoid. The arrow polynomial is defined in https://arxiv.org/pdf/1602.03579.pdf,
     :param k:
     :param variable:
     :param normalize:
     :return:
     """
 
-    _DEBUG = False
-    _STATES = False
-
-    A = variable if isinstance(variable, Symbol) else symbols(variable)
-    # gens_circ = symbols([f"K{i}" for i in range(1, len(k)//2)])
-    # gens_long = symbols([f"L{i}" for i in range(1, len(k)//2)])
     polynomial = Integer(0)
 
     # stack_states = list()
     original_knot = k if k.is_oriented() else orient(k)
     crossings = tuple(k.crossings)
-    if _STATES: print(crossings)
     # state expansions
     for state in product((1, -1), repeat=len(crossings)):
         k = original_knot.copy()
         for method, node in zip(state, crossings):
             if (method > 0) ^ (k.nodes[node].sign() < 0):  # "A" oriented smoothing
-                if _DEBUG: print(" smooth", node, k)
                 smoothen_crossing(k, crossing_for_smoothing=node, method="O", inplace=True)
-                if _DEBUG: print("    -->", node, k)
-                if _DEBUG: print(kp.sanity_check(k))
             else:  # "B" disoriented oriented smoothing
-                if _DEBUG: print(" disori", node, k)
                 disoriented_smoothing(k, node)
-                if _DEBUG: print("    -->", node, k)
 
-        if _STATES: print("  state",state, k )
-        if _DEBUG: print("a", k)
         _remove_consecutive_cusps(k)
-        if _STATES: print("  remove", " "*len(str(state)), k )
-        if _STATES: print("    gen",  A ** sum(state)," & ",_generator_to_variables(k, variable))
-        if _DEBUG: print("b", k)
-
-
-
-        polynomial += A ** sum(state) * _generator_to_variables(k, variable)
-
-    #print("not norm", expand(polynomial))
+        polynomial += _A ** sum(state) * _generator_to_variables(k)
 
     if normalize:
-        #polynomial *= (- A ** 3) ** (-_forced_writhe(original_knot) - original_knot.framing)
-        #print("   ", expand(polynomial))
-        #print(writhe(original_knot))
-        polynomial *= (- A ** 3) ** (-writhe(original_knot))  # ignore framing if normalized
+        polynomial *= (- _A ** 3) ** (-writhe(original_knot))  # ignore framing if normalized
     else:
-        polynomial *= (- A ** 3) ** (-original_knot.framing)
+        polynomial *= (- _A ** 3) ** (-original_knot.framing)
 
     return expand(polynomial)
-
-    #     stack_states.append((A ** sum(state), k))
-    #     print(stack_states[-1][0])
-    #     print(stack_states[-1][1])
-    #     # for ep in k.endpoints:
-    #     #     print("  ", ep, ep["acute"] if "acute" in ep else None )
-    #     print(_components_paths(k))
-    #     _remove_consecutive_cusps(k)
-    #     print("reducrtion", k)
-    #     print(_components_paths(k))
-    #     #remove_consecutive_cusps(k)
-    # print("-------")
-
 
 if __name__ == '__main__':
     import knotpy as kp

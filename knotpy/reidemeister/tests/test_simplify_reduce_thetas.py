@@ -1,5 +1,5 @@
 import knotpy as kp
-from sandbox.knotpy.algorithms import sanity_check
+from knotpy.algorithms.sanity import sanity_check
 
 
 def test_simplify_thetas():

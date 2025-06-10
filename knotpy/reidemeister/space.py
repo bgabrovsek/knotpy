@@ -15,15 +15,15 @@ from knotpy.reidemeister.detour_move import find_detour_moves
 from knotpy.reidemeister.reidemeister import make_reidemeister_move, detect_move_type
 from knotpy.manipulation.attributes import clear_node_attributes
 from knotpy.utils.set_utils import LeveledSet
-from knotpy.utils.multiprogressbar import ProgressTracker
+
+
 from knotpy._settings import settings
 
 __all__ = ["reduce_crossings_greedy",
            "reidemeister_3_space",
            "detour_space",
            "crossing_non_increasing_space",
-           "crossing_non_increasing_space_greedy",
-           "simple_reduce_crossings"]
+           "crossing_non_increasing_space_greedy"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -52,29 +52,6 @@ def reduce_crossings_greedy(k: PlanarDiagram, to_canonical=True, inplace=False):
     if not inplace:
         k = k.copy()
 
-    simple_reduce_crossings(k)
-
-    return canonical(k) if to_canonical else k
-
-
-
-def simple_reduce_crossings(k: PlanarDiagram):
-    """
-    Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
-    (R2, R1, and possibly R4 and R5), until there are no more such moves left.
-
-    Args:
-        k (PlanarDiagram): The planar diagram to be simplified, if a set/list/tuple is given,
-        the function returns a set/list/tuple of simplified diagrams.
-        inplace (bool): Indicates whether modifications should be performed on the input diagram `k` itself or a new copy.
-
-    Returns:
-        PlanarDiagram: A canonical simplified version of the input planar diagram where
-        possible crossing-reducing moves have been performed. If `inplace`
-        is `True`, returns the modified input diagram directly, else a new
-        simplified copy is returned.
-    """
-    # Repeat R1/R2/R3/R4/R5, until there are no more moves left (e.g. an R1 move can reveal an R2 move).
     while True:
 
         if "R2" in settings.allowed_moves:
@@ -95,12 +72,13 @@ def simple_reduce_crossings(k: PlanarDiagram):
         if "R4" in settings.allowed_moves:
             if vert_pos := choose_reidemeister_4_slide(k, change="decreasing", random=False):
                 reidemeister_4_slide(k, vert_pos, inplace=True)
-                #print("r4", k)
+                # print("r4", k)
                 continue
 
         break
+    return canonical(k) if to_canonical else k
 
-    return k
+
 
 
 def crossing_reducing_space(diagrams, assume_canonical=False) -> set:
@@ -301,6 +279,7 @@ def crossing_non_increasing_space(diagrams, assume_canonical=False) -> set:
     return set(ls)
 
 def _filter_minimal_diagrams(diagrams):
+    """ From the set of diagrams, return only the ones with minimal number of nodes."""
     min_node_count = min(len(_) for _ in diagrams)
     return {_ for _ in diagrams if len(_) == min_node_count}
 
@@ -346,6 +325,7 @@ def crossing_non_increasing_space_greedy(diagrams) -> set:
 
 
 def all_reidemeister_moves_space(k, depth=1):
+    """ Make all possible Reidemeister moves on a diagram."""
 
     ls = LeveledSet([k.copy()])
 

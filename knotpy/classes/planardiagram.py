@@ -234,11 +234,12 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
             if cmp := self._nodes[node]._compare(other._nodes[node], compare_attributes=compare_attributes):
                 return cmp
 
-        if (self.framing is None) ^ (other.framing is None):
-            return 1 if self.framing is None else -1
+        # self_fr = 0 if self.framing is None else self.framing  # convert None to 0
+        # other_fr = 0 if other.framing is None else other.framing  # convert None to 0
 
-        if self.framing != other.framing:
-            return 1 if self.framing > other.framing else -1
+        if (self_fr := self.framing or 0) != (other_fr := other.framing or 0):
+            return 1 if self_fr > other_fr else -1
+
 
         # TODO: exclude "_" keys in nodes and endpoints also
         exclude_keys = ({"name", "framing"} |
@@ -306,7 +307,10 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
                 self.add_node(node_for_adding=node, create_using=type(inst), degree=len(inst), **(inst.attr | attr))
         else:
             for node in nodes_for_adding:
-                self.add_node(node_for_adding=node, create_using=create_using, degree=None, **attr)
+                if "degree" in attr:
+                    self.add_node(node_for_adding=node, create_using=create_using, **attr)
+                else:
+                    self.add_node(node_for_adding=node, create_using=create_using, degree=None, **attr)
 
     def add_crossings_from(self, crossings_for_adding, **attr):
         """Add or update a bunch (iterable) of crossings and update the crossings attributes. Crossings can be any
@@ -482,8 +486,24 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         if isinstance(endpoint_pair, Endpoint):
             return endpoint_pair
 
+        # Is endpoint given by description?
+        if isinstance(endpoint_pair[1], str):
+            node, desc = endpoint_pair
+            if node not in self.crossings:
+                raise ValueError(f"Cannot get a descriptive endpoint from a node that is not a crossings: {node}")
+            desc = desc.strip().lower()
+            if desc in ("oi", "io"", over ingoing","ingoing over"):
+                return self.twin(self.twin((node, 1))) if isinstance(self.nodes[node][1], OutgoingEndpoint) else self.twin(self.twin((node, 3)))
+            elif desc in ("oo", "over outgoing", "outgoing over"):
+                return self.twin(self.twin((node, 1))) if isinstance(self.nodes[node][1], IngoingEndpoint) else self.twin(self.twin((node, 3)))
+            elif desc in ("ui", "iu", "under ingoing", "ingoing under"):
+                return self.twin(self.twin((node, 0))) if isinstance(self.nodes[node][0], OutgoingEndpoint) else self.twin(self.twin((node, 1)))
+            elif desc in ("uo", "uo", "under outgoing", "outgoing under"):
+                return self.twin(self.twin((node, 0))) if isinstance(self.nodes[node][0], IngoingEndpoint) else self.twin(self.twin((node, 1)))
+            else:
+                raise ValueError(f"Unknown description {desc} for endpoint {endpoint_pair}")
         # the endpoint instance is the twin of the twin
-        return self.twin(self.twin(endpoint_pair))
+        return self.twin(self.twin(endpoint_pair))  # TODO: can this be faster?
 
     def remove_endpoint(self, endpoint_for_removal):
         _debug = False
@@ -665,7 +685,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
     def framing(self, framing):
         """Set (blackboard) framing of planar diagram."""
         if self.is_frozen():
-            raise TypeError("Cannot set framing of frozen diagram.")
+            raise RuntimeError("Cannot set framing of frozen diagram.")
         self.attr["framing"] = framing
 
     def __str__(self):
@@ -700,12 +720,12 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     :param create_using: type or instance
     :return: planar diagram with data
     """
-    from knotpy.catalog.knot_tables import get_diagram_from_name
+    from knotpy.catalog.knot_tables import diagram_from_name
 
     if isinstance(incoming_data, str):
         try:
             # TODO: convert to create_using (e.g. oriented)
-            k = get_diagram_from_name(incoming_data)
+            k = diagram_from_name(incoming_data)
             return planar_diagram_from_data(k, create_using=create_using)  # copy k into create_using
         except ValueError:
             # knot not found

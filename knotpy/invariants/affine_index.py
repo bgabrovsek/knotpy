@@ -1,29 +1,18 @@
-from collections import deque
-from sympy import Expr, expand, Integer, symbols, Symbol
-from itertools import product
-
+from sympy import symbols, Symbol
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
-from knotpy.algorithms.skein import smoothen_crossing
-from knotpy.algorithms.naming import unique_new_node_name
-from knotpy.classes.node import Crossing, Vertex #, Terminal
-from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.disjoint_sum import add_unknot
-from knotpy.invariants.writhe import writhe
+from knotpy.classes.node import Crossing
+from knotpy.classes.endpoint import OutgoingEndpoint, IngoingEndpoint
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemeister_1_remove_kink
+from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
 
+_T = symbols("t")
 
+def affine_index_polynomial(k: PlanarDiagram):
+    """
+    The affine index polynomial of a knotoid.
+    """
 
-
-def affine_index_polynomial(k:PlanarDiagram, variable="t"):
-    def _weight(labels, crossing):
-        if k.nodes[crossing].sign > 0:
-            pass
-        else:
-            pass
-
-    t = variable if isinstance(variable, Symbol) else symbols(variable)
     k = k if k.is_oriented() else orient(k)
 
     # positive crossing: w = a - b - 1, negative crossing: w = b - a + 1
@@ -41,7 +30,7 @@ def affine_index_polynomial(k:PlanarDiagram, variable="t"):
         label += 1 if type(ccw_ep) is IngoingEndpoint else -1
 
     #print(weights)
-    polynomial = sum(k.nodes[crossing].sign() * (t ** weights[crossing] - 1) for crossing in k.crossings)
+    polynomial = sum(k.nodes[crossing].sign() * (_T ** weights[crossing] - 1) for crossing in k.crossings)
     return polynomial
 
 

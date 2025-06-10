@@ -103,7 +103,14 @@ def test_native_notation_to():
     k.nodes["a"][1].attr = {"color": 9}
     k.nodes["d"][3].attr = {"color": 10}
 
-    assert to_knotpy_notation(k) == notation_e
+
+    notation_e_ = to_knotpy_notation(k)
+
+    notation_e = notation_e.split("[")
+    notation_e_ = notation_e_.split("[")
+    assert notation_e[0] == notation_e_[0]
+
+    assert set(notation_e[1].replace("]","").split(" ")) == set(notation_e_[1].replace("]","").split(" "))
 
 
 if __name__ == "__main__":

@@ -1,8 +1,11 @@
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import loops
+from knotpy.algorithms.topology import _is_vertex_an_unknot
+def remove_empty_nodes(k:PlanarDiagram, inplace=True) -> PlanarDiagram:
 
-def remove_empty_nodes(k:PlanarDiagram) -> PlanarDiagram:
-    """allways inplace"""
+    if not inplace:
+        k = k.copy()
+
     for n in list(k.nodes):
         if not k.nodes[n]:
             k.remove_node(n)
@@ -52,6 +55,32 @@ def remove_loops(k: PlanarDiagram) -> PlanarDiagram:
     return count_removed
 
 
+def remove_unknots(k: PlanarDiagram, max_unknots=None):
+    """
+    Remove unknots from the diagram (up to `max_unknots` unknots if given).
+
+    :param k: The input planar diagram.
+    :type k: PlanarDiagram
+    :param max_unknots: Maximum number of unknots to remove (removes all if None).
+    :type max_unknots: int, optional
+    :return: The number of unknots removed.
+    :rtype: int
+    """
+    vertices_to_remove = [v for v in k.vertices if _is_vertex_an_unknot(k, v)]
+
+    if max_unknots is not None:
+        vertices_to_remove = vertices_to_remove[:max_unknots]
+
+    # vertices_to_remove = []
+    # for v in k.vertices:
+    #     if max_unknots is not None and len(vertices_to_remove) >= max_unknots:
+    #         break
+    #     if _is_vertex_an_unknot(k, v):
+    #         vertices_to_remove.append(v)
+
+    for v in vertices_to_remove:
+        k.remove_node(v, remove_incident_endpoints=True)
+    return len(vertices_to_remove)
 
 
 

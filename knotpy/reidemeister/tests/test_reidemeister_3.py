@@ -5,7 +5,7 @@ from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.canonical import canonical
 from knotpy.invariants.yamada import yamada_polynomial
-from knotpy.invariants.jones_polynomial import jones_polynomial
+from knotpy.invariants.jones import jones_polynomial
 from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 

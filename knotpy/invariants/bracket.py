@@ -14,13 +14,12 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 from sympy import Expr, expand, Integer, symbols, Symbol
 from collections import deque
 
-from knotpy.algorithms.skein import smoothen_crossing #smoothing_type_A, smoothing_type_B
-from knotpy.invariants.writhe import writhe, forced_writhe
+from knotpy.algorithms.skein import smoothen_crossing
+from knotpy.invariants.writhe import forced_writhe
 from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.orientation import all_orientations
-from knotpy.algorithms.topology import is_knot, is_planar_graph, is_empty_diagram
-from knotpy.algorithms.disjoint_sum import number_of_unknots, remove_unknots
+from knotpy.algorithms.topology import is_empty_diagram
+from knotpy.manipulation.remove import remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_crossing_reducing
@@ -29,11 +28,12 @@ from knotpy._settings import settings
 
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
+_A = symbols("A")
+_kauffman_term = -_A ** 2 - _A ** (-2)
 
 
-def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True):
+def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
     """
-
     :param k:
     :param variable:
     :param normalize:
@@ -53,8 +53,6 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
     original_knot = k
-    A = variable if isinstance(variable, Symbol) else symbols(variable)
-    _kauffman_term = (-A ** 2 - A ** (-2))
     expression = module()
     stack = deque()
 
@@ -65,9 +63,6 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
 
     stack.append((Integer(1), k))
 
-    CACHE_NODES = 7
-    precomputed = {}
-
     while stack:
         coeff, k = stack.pop()
 
@@ -77,12 +72,8 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
 
         if k.crossings:
             crossing = next(iter(k.crossings))
-            #print(crossing)
             kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A") # smoothing_type_A(k, crossing)
             kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B") # smoothing_type_A(k, crossing)
-            from knotpy import to_pd_notation
-            # print("kA", to_pd_notation(kA))
-            # print("kB", to_pd_notation(kB))
             stack.append((coeff * A, kA))
             stack.append((coeff * (A**-1), kB))
         else:
@@ -90,31 +81,24 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, variable="A", normalize=True
             k_canonical = canonical(k)
             framing = k_canonical.framing
             k_canonical.framing = 0
-
-            expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- A ** 3) ** (-framing)), k_canonical)
+            expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- _A ** 3) ** (-framing)), k_canonical)
 
     original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
-        #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
         wr = forced_writhe(original_knot)
-        #print("    wr", wr)
-        expression *= (- A ** (-3)) ** (wr + original_framing)
-        #print("  expr", [(expand(r), s) for r, s in expression.to_tuple()])
-        #print()
+        expression *= (- _A ** (-3)) ** (wr + original_framing)
     else:
-        pass
-        expression *= (- A ** (-3)) ** original_framing
+        expression *= (- _A ** (-3)) ** original_framing
 
     settings.load(settings_dump)
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
 
-def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
+def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
     """Return the (Kauffman) Bracket polynomial defined via the skein relations <L_X> = A <L_0> + 1/A <L_inf>,
     <L ⊔ U> = (-A^2 - A^-2) <L> and <unknot> = 1.
        :param k: Planar diagram
-       :param variable: variable used for the polynomial
        :param normalize: should we normalize it by multiplying by the factor (-A^3)^wr(k), where wr is the writhe of the
        diagram d
        :return: (Laurent) polynomial in variable
@@ -132,8 +116,6 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
     if k.is_oriented():
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
-    A = variable if isinstance(variable, Symbol) else symbols(variable)
-    _kauffman_term = (-A ** 2 - A ** (-2))
     polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
     k = unorient(k) if k.is_oriented() else k.copy()
@@ -152,23 +134,22 @@ def bracket_polynomial(k: PlanarDiagram, variable="A", normalize=True) -> Expr:
             crossing = next(iter(k.crossings))
             kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A")  # smoothing_type_A(k, crossing)
             kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B")  # smoothing_type_A(k, crossing)
-            stack.append((coeff * A, kA))
-            stack.append((coeff * (A ** -1), kB))
+            stack.append((coeff * _A, kA))
+            stack.append((coeff * (_A ** -1), kB))
         else:
             number_of_unknots = remove_unknots(k)
             if not is_empty_diagram(k):
                 raise ValueError("Obtained non-empty diagram when removing crossings from knot.")
 
-            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- A ** 3) ** (-k.framing))
+            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- _A ** 3) ** (-k.framing))
 
 
     original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
-        #polynomial *= (- A ** 3) ** (-_forced_writhe(original_knot) - original_knot.framing)
-        polynomial *= (- A ** (-3)) ** (forced_writhe(original_knot) + original_framing)  # ignore framing if normalized
+        polynomial *= (- _A ** (-3)) ** (forced_writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
-        polynomial *= (- A ** (-3)) ** (original_framing)
+        polynomial *= (- _A ** (-3)) ** (original_framing)
 
     settings.load(settings_dump)
 

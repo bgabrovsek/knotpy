@@ -13,28 +13,24 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from sympy import Expr, expand, symbols, Symbol, Rational
 
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.invariants.bracket import bracket_polynomial
 
+_A, _T = symbols("A t")
 
-def jones_polynomial(k, variable="t") -> Expr:
+def _jones_polynomial_from_bracket(k: PlanarDiagram | OrientedPlanarDiagram) -> Expr:
+    # TODO: does not work for links
+    polynomial = bracket_polynomial(k, normalize=True)
+    return expand(polynomial.subs({_A: _T ** Rational(-1, 4)}))
+
+
+def jones_polynomial(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     Compute the jones polynomial from the (Kauffman) bracket polynomial
     :param k:
-    :param variable:
     :return:
     """
-
-    # TODO: does not work for links
-
-    # if not k.is_oriented():
-    #     raise NotImplemented("the jones polynomial is defined for oriented knots or links")
-
-    t = variable if isinstance(variable, Symbol) else symbols(variable)
-
-    A = symbols("A")
-    polynomial = bracket_polynomial(k, A, normalize=True)
-    return expand(polynomial.subs(A, t ** Rational(-1, 4)))
-
+    return _jones_polynomial_from_bracket(k)
 
 
 if __name__ == '__main__':

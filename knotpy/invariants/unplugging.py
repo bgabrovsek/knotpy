@@ -9,6 +9,7 @@ from itertools import combinations
 
 from knotpy.classes.planardiagram import PlanarDiagram
 
+
 def _unplug(k: PlanarDiagram, node, unplug_endpoint_positions):
     """Unplug endpoints from the node.
     :param k: Planar diagram

@@ -1,7 +1,7 @@
 from collections import defaultdict
 import warnings
 
-__all__ = ['compare_dicts', 'inverse_dict', 'inverse_multi_dict', "inverse_nested_dict", "LazyEvalDict","LazyLoadDict",
+__all__ = ['compare_dicts', 'invert_dict', 'invert_multi_dict', "invert_nested_dict", "LazyEvalDict", "LazyLoadDict",
            "LazyLoadEvalDict","identitydict","ClassifierDict","common_dict", "JointDict"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -15,6 +15,8 @@ def compare_dicts(dict1: dict, dict2: dict, exclude_keys=None, include_only_keys
     :param exclude_keys: a set of keys to exclude from comparison
     :param include_only_keys: only compare this set of keys
     :return: 1 if dict1 > dict2, -1 if dict1 < dict2, 0 if dict1 == dict2.
+
+    TODO: simplify
     """
 
     exclude_keys = exclude_keys or set()
@@ -58,27 +60,35 @@ def compare_dicts(dict1: dict, dict2: dict, exclude_keys=None, include_only_keys
 
     return 0
 
-def inverse_multi_dict(d):
+def invert_dict_of_sets(d):
+    inverse = {}
+    for key, value_set in d.items():
+        for item in value_set:
+            inverse.setdefault(item, set()).add(key)
+    return inverse
+
+def invert_multi_dict(d):
     """ exchanges keys & vals, but stores keys in a set """
-    invd = dict()  # defaultdict is slower (tested)
+    inverse = dict()  # defaultdict is slower (tested)
     for key, value in d.items():
-        if value in invd:
-            invd[value].add(key)
+        if value in inverse:
+            inverse[value].add(key)
         else:
-            invd[value] = {key, }
-    return invd
+            inverse[value] = {key, }
+    return inverse
 
-def inverse_dict(d):
+def invert_dict(d):
     """Exchange keys & vals, assume there are no duplicate vals."""
-    invd = dict()
+    #TODO: use items() tuple
+    inverse = dict()
     for key, value in d.items():
-        if value in invd:
+        if value in inverse:
             raise ValueError("Cannot make inverse dictionary of {d}.")
-        invd[value] = key
-    return invd
+        inverse[value] = key
+    return inverse
 
 
-def inverse_nested_dict(d: dict):
+def invert_nested_dict(d: dict):
     """split the dictionary into several dictionaries, such that each dictionary has the same values
     :param d:
     :return:

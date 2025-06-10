@@ -29,5 +29,8 @@ def test_freeze():
     q = k.copy()
     assert not q.is_frozen()
 
+    assert k == q
+    assert k is not q
+
 if __name__ == "__main__":
     test_freeze()

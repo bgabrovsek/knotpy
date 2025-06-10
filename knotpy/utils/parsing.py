@@ -88,6 +88,37 @@ def universal_list_of_lists_parser(input_str):
                     group.append(item)
             result.append(group)
 
+    return result
+
+def parse_spaced_rows(data_str):
+    """
+    Parses a string into a list of integers or a list of lists of integers.
+    Supports comma (,) or semicolon (;) as row separators.
+    Trims whitespace and normalizes spacing.
+
+    Examples:
+        "1 2 3"            -> [1, 2, 3]
+        "1 2 3, 4 5 -6"    -> [[1, 2, 3], [4, 5, -6]]
+        "1 2 3 ; 4 5 -6"   -> [[1, 2, 3], [4, 5, -6]]
+    """
+    data_str = data_str.strip()
+    if not data_str:
+        return []
+
+    # Normalize delimiters
+    for delim in [';', ',']:
+        data_str = data_str.replace(delim, '|')
+
+    rows = data_str.split('|')
+    parsed = []
+    for row in rows:
+        row = row.strip()
+        if not row:
+            continue
+        numbers = [int(num) for num in row.split()]
+        parsed.append(numbers)
+
+    return parsed[0] if len(parsed) == 1 else parsed
 
 
 if __name__ == "__main__":

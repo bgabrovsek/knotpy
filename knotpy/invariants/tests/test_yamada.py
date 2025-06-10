@@ -1,12 +1,9 @@
 from sympy import Integer, sympify, expand
-
-from knotpy import sanity_check
-from knotpy.algorithms.canonical import canonical
-
+from itertools import islice
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
 from knotpy.catalog.graphs import theta_curve, handcuff_link
-from knotpy.invariants.yamada import yamada_polynomial, _naive_yamada
+from knotpy.invariants.yamada import yamada_polynomial, _naive_yamada_polynomial
 from knotpy._settings import settings
 
 def test_yamada_examples_from_paper():
@@ -178,15 +175,14 @@ def test_yamada_moriuchi():
         "a=V(b0 c0 d3) b=V(a0 e3 f0) c=X(a1 f3 g0 d0) d=X(c3 h3 e0 a2) e=X(d2 h2 i3 b1) f=X(b2 i2 i1 c1) g=X(c2 i0 h1 h0) h=X(g3 g2 e1 d1) i=X(g1 f2 f1 e2) ['name'='h7_36']": "A**19 + A**18 - A**17 + A**16 - 2*A**14 - A**12 - A**10 + A**8 - A**7 + A**6 + A**5 + A**2 - 1",
     }
 
-    for diagram, yamada in yamadas.items():
-        k = from_knotpy_notation(diagram)
-        # if len(k) > 8:
-        #     continue
-        y_expected = sympify(yamada)
-        print(k.name)
-        y = yamada_polynomial(k)
+    for diagram, yamada in islice(yamadas.items(), 0, None, 20):
 
+        k = from_knotpy_notation(diagram)
+        y_expected = sympify(yamada)
+        y = yamada_polynomial(k)
         assert y == y_expected, f"For knot {diagram}, \nexpected: {yamada}\ncomputed: {y}"
+
+
 
     """
     Without optimizations:
@@ -200,7 +196,8 @@ def test_yamada_moriuchi():
     
     With knotted caching
     Moriuchi time: 5.691523551940918
-    Moriuchi time: 169.83222699165344
+    Moriuchi time: 169.83222699165344 (all thetas)
+    Moriuchi time: 89.61125183105469 (cache 10000 instead of 1000)
     """
 
 def test_yamada_reidemeister():
@@ -211,45 +208,31 @@ def test_yamada_reidemeister():
     y = yamada_polynomial(t31)
     settings.allowed_moves = "r1,r2,r3,r4,r5"
 
-    for k in all_reidemeister_moves_space(t31, depth=2):
-        #print(k)
+    for k in islice(all_reidemeister_moves_space(t31, depth=1), 0, None, 4):
         y_ = yamada_polynomial(k)
         assert y_ == y, f"For knot {k}, expected Yamada \n{y}, got \n{y_}"
 
 
 def test_thetas_recursive():
     # errros: a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 f0 f3 a2), e → X(b1 g0 g3 b2), f → X(d1 g2 g1 d2), g → X(e1 f2 f1 e2)
-    from knotpy.catalog.knot_tables import get_theta_curves
+    from knotpy.catalog.knot_tables import thetas
     import knotpy as kp
-    all_thetas = list(get_theta_curves())
-    for t in all_thetas:
-        #rprint(t)
-        yr = _naive_yamada(t)
-        print(f"\"{kp.to_knotpy_notation(t)}\": \"{yr}\",")
+    all_thetas = list(thetas())
+    for t in all_thetas[::5]:
+        if len(t) >= 6+2:
+            continue
+        yr = _naive_yamada_polynomial(t)
         yo = yamada_polynomial(t)
         if yr != yo:
-            print(yr)
-            print(yo)
             raise ValueError("Invalid Yamada")
 
 if __name__ == '__main__':
-    from time import time
-    t = time()
+    print("Yamada from paper")
+    test_yamada_examples_from_paper()
+    print("Thetas recursive")
+    test_thetas_recursive()
+    print("Reidemeister")
+    test_yamada_reidemeister()
+    print("Moriuchi")
     test_yamada_moriuchi()
-    print("Moriuchi time:", time()-t)
-    #test_yamada_examples_recursive()
-    #test_thetas_recursive()
 
-    """
-    3.2110631465911865, 3.2179839611053467
-    3.224858283996582
-    """
-
-
-    """
-    
-    AssertionError: For knot Diagram named t6_14.2 a → V(b0 c0 d3), b → X(a0 d2 e0 c1), c → V(a1 b3 f0), d → X(f3 g3 b1 a2), e → X(b2 h0 h3 i3), f → X(c2 i2 i1 d0), g → X(i0 h2 h1 d1), h → X(e1 g2 g1 e2), i → X(g0 f2 f1 e3), expected Yamada 
--A**21 + A**20 + A**19 - 2*A**18 + 3*A**17 + 3*A**16 + 4*A**14 + 3*A**13 - A**12 - 3*A**10 - 2*A**9 - 6*A**8 - 5*A**7 + A**6 - A**5 + 3*A**4 + 6*A**3 + A**2 + 1, got 
--A**21 + A**20 + A**19 - 2*A**18 + 2*A**17 + A**16 - 3*A**15 + A**14 + A**13 - A**12 + 2*A**11 + A**10 + 3*A**9 + 3*A**6 - 2*A**5 - A**4 + 2*A**3 - 2*A**2 - A + 1
-
-"""

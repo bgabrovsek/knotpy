@@ -1,7 +1,7 @@
 from sympy import sympify
 
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
-from knotpy.invariants.jones_polynomial import jones_polynomial
+from knotpy.invariants.jones import jones_polynomial
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.reidemeister.space import reidemeister_3_space, crossing_reducing_space, crossing_non_increasing_space, detour_space
 

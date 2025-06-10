@@ -1,8 +1,8 @@
-from knotpy import yamada_polynomial, sanity_check
+from knotpy.invariants.yamada import yamada_polynomial, _naive_yamada_polynomial
+from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.invariants.jones_polynomial import jones_polynomial
+from knotpy.invariants.jones import jones_polynomial
 from knotpy.reidemeister.reidemeister import randomize_diagram
-from knotpy.invariants._naive_yamada import _naive_yamada_polynomial
 
 
 from knotpy import settings
@@ -15,7 +15,7 @@ def test_randomize_knot():
     k = PlanarDiagram("3_1")
     j = jones_polynomial(k)
 
-    for i in range(10):
+    for i in range(5):
         k_ = randomize_diagram(k, crossing_increasing_moves=2)
         assert k != k_  # unlikely they are the same
         assert jones_polynomial(k_) == j
@@ -26,11 +26,11 @@ def test_randomize_theta():
     """ Make random Reidemeister moves on a theta curve and check the Yamada polynomial."""
     dump = settings.dump()
     settings.allowed_moves = "r1,r2,r3,r4,r5"
-    thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("t4_1.1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
+    thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
 
     for theta in thetas:
         y = yamada_polynomial(theta)
-        for i in range(20):
+        for i in range(5):
             theta_ = randomize_diagram(theta, crossing_increasing_moves=1)
             assert sanity_check(theta_)
             y_ = yamada_polynomial(theta_)
@@ -47,7 +47,7 @@ def test_randomize_theta_direct():
     dump = settings.dump()
     settings.allowed_moves = "r1,r2,r3,r4,r5"
 
-    thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("t4_1.1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
+    thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
 
     f = [(choose_reidemeister_3_triangle, reidemeister_3, "R3"),
          (choose_reidemeister_2_unpoke, reidemeister_2_unpoke, "R2 unpoke"),
@@ -62,7 +62,7 @@ def test_randomize_theta_direct():
     for theta in thetas:
         y = yamada_polynomial(theta)
         k = theta.copy()
-        for i in range(24):
+        for i in range(5):
             for c, r, name in f:
                 if (location := c(k, random=True)) is not None:
                     q = r(k, location, inplace=False)

@@ -8,7 +8,7 @@ from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdiv
 from knotpy.manipulation.rewire import pull_and_plug_endpoint
 from knotpy.utils.dict_utils import common_dict
 from knotpy.manipulation.remove import remove_bivalent_vertex
-from knotpy.algorithms.disjoint_sum import add_unknot
+from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy._settings import settings
 
 def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
@@ -370,9 +370,9 @@ MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e
     print(yamada_polynomial(h1))
     print(yamada_polynomial(k1))
 
-    from knotpy.catalog.knot_tables import get_theta_curves
+    from knotpy.catalog.knot_tables import thetas
 
-    for t in get_theta_curves():
+    for t in thetas():
         locations = list(find_reidemeister_4_slide(t))
         if locations:
             location = choice(locations)

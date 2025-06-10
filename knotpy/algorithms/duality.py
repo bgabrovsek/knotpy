@@ -50,6 +50,29 @@ def dual_planar_diagram(k: PlanarDiagram) -> PlanarDiagram:
         dual.name = k.name + "^*"
     return dual
 
+def arc_face_graph(k:PlanarDiagram):
+    """Generate an arc-face graph for a given planar diagram.
+
+    An arc-face graph is a graph where the nodes represent arcs in the planar diagram, and
+    two arcs are adjacent if they lie on the same face in the planar diagram.
+
+    Args:
+        k (PlanarDiagram): The planar diagram object containing arcs and faces, where arcs define
+            the edges and faces represent connected regions of the planar diagram.
+
+    Returns:
+        dict: A dictionary where keys are arcs from the planar diagram, and values are sets of arcs that
+        share a face with the key arc.
+    """
+    faces = list(k.faces)
+
+    arcs_near_arcs = {arc: set() for arc in k.arcs}  # keys are arcs, values are arcs that share a face with the key arc
+    for face in faces:
+        for ep1, ep2 in combinations(face, 2):
+            arc1, arc2 = k.arcs[ep1], k.arcs[ep2]
+            arcs_near_arcs[arc1].add(arc2)
+            arcs_near_arcs[arc2].add(arc1)
+    return arcs_near_arcs
 
 if __name__ == "__main__":
     from knotpy.notation.pd import from_pd_notation

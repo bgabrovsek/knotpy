@@ -1,32 +1,26 @@
 import knotpy as kp
+from knotpy import export_png, from_knotpy_notation
+
 
 def test_homflypt():
-    for knot_name, invariants in kp.get_knot_table_invariants([0,8]).items():
-        real_h = invariants['homflypt']
 
-        d = invariants['diagram']
+    # problem: 13a_3436
+    for knot, real_h in kp.knot_invariants(crossings=9,invariant="homflypt"):
+        h = kp.homflypt_polynomial(knot)
+        h_ = kp.homflypt_polynomial(kp.mirror(knot))
 
-        h = kp.homflypt_polynomial(d)
-        h_ = kp.homflypt_polynomial(kp.mirror(d))
+        if real_h == h or real_h == h_:
+            #print(knot.name)
+            pass
+        else:
+            print(knot.name, real_h, "     ", h, "     ", h_)
+        assert real_h == h or real_h == h_, f"{knot.name} \n{real_h}\n{h}\n{h_}"
 
-        print(knot_name, "OK" if h == real_h else "NOT OK")
-        print("real", real_h)
-        print("   h", h)
-        print("mirh", h_)
 
         #assert real_h == h
 
     pass
 
 if __name__ == '__main__':
-
-    k = kp.PlanarDiagram("3_1")
-    kp.draw(k)
-    kp.plt.show()
+    import knotpy as kp
     test_homflypt()
-
-    """
-    -v**4 + v**2*z**2 + 2*v**2 vs 
-    z**2/v**2 + 2/v**2 - 1/v**4
-       
-    """

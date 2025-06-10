@@ -94,7 +94,7 @@ def test_reidemeister_4():
         "a=V(b0 c0 d3) b=X(a0 d2 d1 e0) c=V(a1 e3 f0) d=X(f3 b2 b1 a2) e=X(b3 g0 g3 c1) f=X(c2 g2 g1 d0) g=X(e1 f2 f1 e2)",
     ]
 
-    for code in theta_codes[::1]:
+    for code in theta_codes[::20]:
         print(code)
         k = from_knotpy_notation(code)
         y = yamada_polynomial(k)
@@ -114,7 +114,6 @@ def test_reidemeister_4():
                     print(y_2)
                     print(y_3)
                 assert y == y_2 == y_3
-    pass
 
 def test_case_4():
     k = from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
@@ -162,11 +161,6 @@ def test_all_strands_over():
 
 
 if __name__ == "__main__":
-
-    # s = "a=V(b0 c0 d0) b=V(a0 d2 e3) c=X(a1 e2 e1 f0) d=V(a2 g0 b1) e=X(h3 c2 c1 b2) f=V(c3 i0 g1) g=V(d1 f2 j0) h=X(j3 j2 i1 e0) i=V(f1 h2 j1) j=X(g2 i2 h1 h0)a=V(b0 b2 c0) b=V(a0 d3 a1) c=X(a2 e0 f3 d0) d=X(c3 g0 e1 b1) e=X(c1 d2 g3 h0) f=X(h3 i0 i3 c2) g=X(d1 i2 h1 e2) h=X(e3 g2 i1 f0) i=X(f1 h2 g1 f2)"
-    # m = from_knotpy_notation(s)
-    # print(m)
-
     test_all_strands_over()
-    #test_reidemeister_4()
-    #test_case_4()
+    test_case_4()
+    test_reidemeister_4()

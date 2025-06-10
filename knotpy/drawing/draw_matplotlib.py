@@ -105,6 +105,19 @@ def _plot_vertices(k, circles, with_labels, ax):
 
     vertices = k.vertices if hasattr(k, "vertices") else []
 
+    crossings = k.crossings if hasattr(k, "crossings") else []
+
+    for node in crossings:
+        circle = circles[node]
+        xy = (circle.center.real, circle.center.imag) if isinstance(circle, Circle) else (circle.real, circle.imag)
+
+        ax.text(*xy,
+                s=str(node),
+                ha="center",
+                va="center",
+                fontsize=_DEFAULT_FONT_SIZE//2,
+                color=_DEFAULT_TEXT_COLOR,
+                zorder=4)
 
     for node in vertices:
         circle = circles[node]

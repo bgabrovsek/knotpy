@@ -20,7 +20,7 @@ from knotpy import canonical, sanity_check
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import unorient
 from knotpy.algorithms.skein import smoothen_crossing, crossing_to_vertex
-from knotpy.reidemeister.space import simple_reduce_crossings
+from knotpy.reidemeister.space import reduce_crossings_greedy
 from knotpy.algorithms.topology import bridges, loops
 from knotpy.manipulation.remove import remove_arc, remove_bivalent_vertices
 from knotpy.manipulation.contract import contract_arc
@@ -28,7 +28,7 @@ from knotpy.utils.cache import Cache
 from knotpy._settings import settings
 from knotpy.classes.freezing import freeze
 # Yamada settings
-_YAMADA_KNOTTED_CACHE = False
+_YAMADA_KNOTTED_CACHE = True
 _YAMADA_GRAPH_CACHE = True
 _YAMADA_SIMPLIFY = True  # simplify the diagrams during computation
 
@@ -41,7 +41,7 @@ _sigma_power = [Integer(1)]  # this will dynamically expend to consist of [σ^0,
 The global cache storing precomputed Yamada polynomials of planar graphs without crossings (approx. 7KB per diagram).
 The 'max_key_length' argument limits the number of vertices a graph should have to be stored in the cache,
 """
-_yamada_graph_cache = Cache(max_cache_size=1000, max_key_length=6)  # stores the pre-computed yamada of the planar graphs
+_yamada_graph_cache = Cache(max_cache_size=10000, max_key_length=6)  # stores the pre-computed yamada of the planar graphs
 """
 The global cache storing precomputed Yamada polynomials of knotted graphs (approx. 7KB per diagram).
 The 'max_key_length' argument limits the number of vertices a graph should have to be stored in the cache,
@@ -95,7 +95,7 @@ def _compute_yamada(k: PlanarDiagram, first_pass_use_cache=True) -> Expr:
         k = stack.pop()
 
         if _YAMADA_SIMPLIFY:
-            simple_reduce_crossings(k)
+            k = reduce_crossings_greedy(k, to_canonical=False, inplace=True)
 
         # resolve a crossing
         if k.crossings:
@@ -229,6 +229,16 @@ def _remove_loops_isolated_and_bivalent_vertices(g:PlanarDiagram):
         g.remove_node(v, remove_incident_endpoints=False)
         g.attr["_isolated_vertices"] += 1
 
+def _print_cache():
+    import sys
+    print("Knotted cache size:", len(_yamada_knotted_cache), "items", f"({sys.getsizeof(_yamada_knotted_cache)/1024} KB)")
+    for k in sorted(_yamada_knotted_cache)[:25]:
+        print("  ",k)
+
+    print("  Graph cache size:", len(_yamada_graph_cache), "items", f"({sys.getsizeof(_yamada_graph_cache) / 1024} KB)")
+    for k in sorted(_yamada_graph_cache)[:25]:
+        print("  ", k)
+
 
 # Naive recursive Yamada implementation for testing purposes
 
@@ -262,7 +272,7 @@ def _yamada_rec(k: PlanarDiagram):
     if len(k) == 0:
         return Integer(1)
 
-def _naive_yamada(k: PlanarDiagram, normalize=True):
+def _naive_yamada_polynomial(k: PlanarDiagram, normalize=True):
     polynomial = expand(_yamada_rec(k.copy()))
 
     if normalize:

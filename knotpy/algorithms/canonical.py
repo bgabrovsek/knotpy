@@ -7,7 +7,7 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.manipulation.permute import permute_node
-from knotpy.algorithms.disjoint_sum import number_of_disjoint_components, split_disjoint_sum, disjoint_sum
+from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
 from knotpy.utils.func_utils import min_elements_by
 
 __all__ = ['canonical']
@@ -123,7 +123,7 @@ def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
 #     Puts a knot that is a disjoint sum into canonical form. Assumes (does not check) that the knot is a disjoint sum.
 #     TODO: not tested
 #     """
-#     return disjoint_sum(*sorted([_canonical_unoriented(c) for c in split_disjoint_sum(k)]))
+#     return disjoint_union(*sorted([_canonical_unoriented(c) for c in disjoint_union_decomposition(k)]))
 
 
 def canonical(k: PlanarDiagram):
@@ -169,7 +169,7 @@ def canonical(k: PlanarDiagram):
     if number_of_disjoint_components(k) >= 2:
         # split, make each component canonical, sort and add together again
         old_name = k.name
-        ds = disjoint_sum(*sorted([canonical(c) for c in split_disjoint_sum(k)]))
+        ds = disjoint_union(*sorted([canonical(c) for c in disjoint_union_decomposition(k)]))
         ds.name = old_name
         return ds
 

@@ -26,7 +26,7 @@ def sanity_check(k):
             - Euler characteristic is not satisfied.
             - Faces are inconsistent, such as when nodes or endpoints are improperly represented in faces.
     """
-    from knotpy.algorithms.disjoint_sum import number_of_disjoint_components
+    from knotpy.algorithms.disjoint_union import number_of_disjoint_components
     from knotpy.algorithms.cut_set import cut_nodes
     from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 

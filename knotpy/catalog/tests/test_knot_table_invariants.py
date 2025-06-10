@@ -61,7 +61,7 @@ def test_save_diagram_table():
     #
     # t.close()
 
-def test_load_diagram_table():
+def helper_load_diagram_table():
     table1 = load_invariant_table("test_knot_table.csv")
     table2 = load_invariant_table("test_knot_table2.csv")
 
@@ -78,7 +78,7 @@ def test_load_diagram_table():
     return table1, table2
 
 
-def test_lazy_load_diagram_table():
+def helper_lazy_load_diagram_table():
 
     lazy1 = LazyLoadEvalDict(load_function=partial(load_invariant_table, filename="test_knot_table.csv", lazy=True),
                              eval_function=_lazy_invariant_dict_eval)
@@ -100,8 +100,8 @@ def test_lazy_load_diagram_table():
 
 
 def compare_lazy_non_lazy():
-    t1, t2 = test_load_diagram_table()
-    l1, l2 = test_lazy_load_diagram_table()
+    t1, t2 = helper_load_diagram_table()
+    l1, l2 = helper_lazy_load_diagram_table()
 
     # print(type(t1), type(t2))
     # print(type(l1), type(l2))

@@ -1,57 +1,43 @@
 from collections import deque
-from sympy import Expr, expand, Integer, symbols, Symbol
-from itertools import product
+from sympy import expand, Integer, symbols, Symbol
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
-from knotpy.algorithms.skein import smoothen_crossing
-from knotpy.algorithms.naming import unique_new_node_name
-from knotpy.classes.node import Crossing, Vertex #, Terminal
-from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
-from knotpy.algorithms.disjoint_sum import add_unknot
-from knotpy.invariants.writhe import writhe
+from knotpy.classes.node import Crossing
+from knotpy.classes.endpoint import OutgoingEndpoint
 from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemeister_1_remove_kink
+from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
 
+_W = symbols("W")
 
-def mock_alexander_polynomial(k:PlanarDiagram, variable="W"):
-    W = variable if isinstance(variable, Symbol) else symbols(variable)
-
+def mock_alexander_polynomial(k: PlanarDiagram):
     k = k if k.is_oriented() else orient(k)
 
     # get terminal outgoing endpoint
     out_ep = [ep for ep in k.endpoints if k.degree(ep.node) == 1 and type(ep) is OutgoingEndpoint][0]
-    # out_ep = None
-    # for node in k.vertices:
-    #     if k.degree(node) == 1 and type(ep := k.endpoint_from_pair((node, 0))) == OutgoingEndpoint:
-    #         out_ep = ep
-    #         break
-    # if out_ep is None:
-    #     raise ValueError("Cannot find outoing endpoint")
-
     unstarred_faces = [face for face in k.faces if out_ep not in face]
+
     stack = deque([(Integer(1), set())])
     for face in unstarred_faces:
         new_stack = deque()
         while stack:
-            #face_marked = False
             weight, marked_vertices = stack.pop()
             for ep in face:
                 if ep.node not in marked_vertices and type(k.nodes[ep.node]) is Crossing:
 
                     # consider ep as new mark
                     b_outgoing = type(ep) is OutgoingEndpoint  # is the endpoint outgoing?
-                    b_over = ep.position % 2  # is the endpoint an overstrand?
+                    b_over = ep.position % 2  # is the endpoint an over-strand?
                     b_positive = k.nodes[ep.node].sign() > 0  # is the sign positive?
 
                     if b_outgoing and not b_over and b_positive:
-                        new_weight = W
+                        new_weight = _W
                     elif not b_outgoing and b_over and not b_positive:
-                        new_weight = -W
+                        new_weight = -_W
                     elif b_outgoing and b_over and not b_positive:
-                        new_weight = W**(-1)
+                        new_weight = _W**(-1)
                     elif not b_outgoing and not b_over and b_positive:
-                        new_weight = -W**(-1)
+                        new_weight = -_W**(-1)
                     else:
                         new_weight = Integer(1)
 
@@ -59,19 +45,8 @@ def mock_alexander_polynomial(k:PlanarDiagram, variable="W"):
 
         stack = new_stack
 
-    # print("--")
-    # for w, m in stack:
-    #     print(w, m)
-    # print("--")
-
     polynomial = sum(w for w,_ in stack)
     return expand(polynomial)
-
-
-
-
-
-    pass
 
 if __name__ == '__main__':
     import knotpy as kp

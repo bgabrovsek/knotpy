@@ -90,9 +90,9 @@ def reidemeister_3(k, face, inplace=False):
         is False, a new planar diagram instance with the modification is returned;
         otherwise, the modified diagram is returned.
     """
-
-    if k.is_oriented():
-        raise ValueError("Oriented not yet supported")
+    #
+    # if k.is_oriented():
+    #     raise ValueError("Oriented not yet supported")
 
     if not inplace:
         k = k.copy()
@@ -136,12 +136,14 @@ def reidemeister_3(k, face, inplace=False):
         dst_ep: src_ep for src_ep, dst_ep in new_outer_endpoints.items() if dst_ep[0] not in area_nodes
     }
 
+
+
     # actually make the endpoint changes
     for src_ep, dst_ep in chain(new_inner_endpoints.items(), new_outer_endpoints.items(), new_external_endpoints.items()):
         k.set_endpoint(
             endpoint_for_setting=src_ep,
             adjacent_endpoint=dst_ep,
-            create_using=type(k.nodes[dst_ep[0]][dst_ep[1]]),  # use old type of endpoint
+            create_using=type(k.nodes[src_ep[0]][src_ep[1]]),  # use old type of endpoint
             **k.nodes[dst_ep[0]][dst_ep[1]].attr  # use old type of attributes
         )
 

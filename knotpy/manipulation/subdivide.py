@@ -38,11 +38,11 @@ def subdivide_arc(k: PlanarDiagram, arc, new_node_name=None, **attr) -> str:
 
     k.set_endpoint(endpoint_for_setting=(new_node_name, 0),
                    adjacent_endpoint=(endpoint_a.node, endpoint_a.position),
-                   create_using=type(endpoint_b),
+                   create_using=type(endpoint_a),
                    **b_attr)
     k.set_endpoint(endpoint_for_setting=(endpoint_a.node, endpoint_a.position),
                    adjacent_endpoint=(new_node_name, 0),
-                   create_using=type(endpoint_a),
+                   create_using=type(endpoint_b),
                    **a_attr)
 
     k.set_endpoint(endpoint_for_setting=(new_node_name, 1),

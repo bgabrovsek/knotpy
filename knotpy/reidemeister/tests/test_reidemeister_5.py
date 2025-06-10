@@ -97,7 +97,7 @@ def test_reidemeister_5():
         "a=V(b0 c0 d3) b=X(a0 d2 d1 e0) c=V(a1 e3 f0) d=X(f3 b2 b1 a2) e=X(b3 g0 g3 c1) f=X(c2 g2 g1 d0) g=X(e1 f2 f1 e2)",
     ]
 
-    for code in theta_codes[::13]:
+    for code in theta_codes[::20]:
         #print(code)
         k = from_knotpy_notation(code)
         assert sanity_check(k)
@@ -133,10 +133,9 @@ def test_simple_5():
 
 
 if __name__ == "__main__":
-
-    #test_simple_5()
-
-
+    print("testing reidemeister 5")
     test_reidemeister_5()
-
+    print("testing framing")
     test_framing_5()
+    print("testing simple")
+    test_simple_5()

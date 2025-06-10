@@ -6,8 +6,8 @@ __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 from collections import deque
 
 from knotpy.classes.node import Crossing
-from knotpy.classes.endpoint import Endpoint
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 
 
 # TODO: write tests
@@ -98,3 +98,5 @@ def bfs_shortest_path(graph: PlanarDiagram, start, goal):
                 queue.append(new_path)
 
     return None  # Return None if no path exists between start and goal
+
+

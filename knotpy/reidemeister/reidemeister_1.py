@@ -4,7 +4,7 @@ from random import choice
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.topology import kinks
-from knotpy.algorithms.disjoint_sum import add_unknot
+from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy._settings import settings
