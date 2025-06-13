@@ -1,14 +1,12 @@
 from random import choice
+import warnings
 
-from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
-from knotpy.manipulation.rewire import pull_and_plug_endpoint
 from knotpy.utils.dict_utils import common_dict
 from knotpy.manipulation.remove import remove_bivalent_vertex
-from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy._settings import settings
 
 def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
@@ -127,6 +125,9 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
 
     """
 
+    if "R4" not in settings.allowed_moves:
+        return
+
     def _satisfied(loc):
         if change == "any": return True
         ci = _crossing_increase_reidemeister_4_slide(k, loc)
@@ -201,6 +202,9 @@ def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=Fa
             or "nondecreasing".
     """
 
+    if "R4" not in settings.allowed_moves:
+        return None
+
     if not change or change is None:
         change = "any"
 
@@ -232,6 +236,9 @@ def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
 
 
 def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
+
+    if "R4" not in settings.allowed_moves:
+        warnings.warn("An R4 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()

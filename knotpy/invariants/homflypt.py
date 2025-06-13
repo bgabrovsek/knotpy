@@ -18,7 +18,7 @@ from collections import deque
 from knotpy.algorithms.alternating import alternating_crossings
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.orientation import orient
-from knotpy.reidemeister.simplify import reduce_crossings_greedy
+from knotpy.reidemeister.simplify import simplify_greedy_decreasing
 from knotpy.manipulation.symmetry import mirror
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy._settings import settings
@@ -120,7 +120,7 @@ def _compute_homflypt(k: OrientedPlanarDiagram):
 
     while stack:
         k = stack.pop()
-        k = reduce_crossings_greedy(k, inplace=True)
+        k = simplify_greedy_decreasing(k, inplace=True)
         k.attr["_coefficient"] *= _SUM_XYZ ** remove_unknots(k)
 
         k, crossing = _choose_crossing_for_switching(k)

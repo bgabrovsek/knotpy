@@ -57,5 +57,6 @@ def test_make_reidemeister_3_move():
 
 
 if __name__ == '__main__':
+
     test_r3_find_moves()
     test_make_reidemeister_3_move()

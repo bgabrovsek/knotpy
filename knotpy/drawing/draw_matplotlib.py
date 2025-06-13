@@ -24,6 +24,7 @@ from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendic
 from knotpy.drawing._support import _add_support_arcs
 from knotpy.notation.native import to_knotpy_notation
 from sklearn.decomposition import PCA
+from knotpy.notation import to_knotpy_notation
 
 __all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "plt", "export_png", "export_pdf_groups"]
 __version__ = '0.1'
@@ -32,13 +33,13 @@ __author__ = 'Boštjan Gabrovšek'
 
 # default styles
 # node
-_DEFAULT_NODE_SIZE = 0.01
+_DEFAULT_NODE_SIZE = 0.1
 _DEFAULT_NODE_COLOR = "black"
 
 # arcs
-_DEFAULT_ARC_WIDTH = 0.3
+_DEFAULT_ARC_WIDTH = 1.5
 _DEFAULT_ARC_COLOR = "tab:blue"
-_DEFAULT_GAP_WIDTH = 0.04  # arc break marking the under-passing
+_DEFAULT_GAP_WIDTH = 0.2  # arc break marking the under-passing
 # text
 _DEFAULT_TEXT_COLOR = "black"
 _DEFAULT_FONT_SIZE = 16
@@ -56,11 +57,7 @@ _ARROW_WIDTH = 0.25
 _ARROW_FLOW = 0.5  # arrow slant so it appears more natural, 0 = tangent
 _DEFAULT_ARROW_COLOR = _DEFAULT_ARC_COLOR
 
-
-_PHANTOM_NODE_COLOR = "gray"
-_PHANTOM_NODE_ALPHA = 0.5
-
-_SHOW_SUPPORT_ARCS = True
+_SHOW_SUPPORT_ARCS = False
 _SUPPORT_COLOR = "yellow"
 
 
@@ -111,13 +108,14 @@ def _plot_vertices(k, circles, with_labels, ax):
         circle = circles[node]
         xy = (circle.center.real, circle.center.imag) if isinstance(circle, Circle) else (circle.real, circle.imag)
 
-        ax.text(*xy,
-                s=str(node),
-                ha="center",
-                va="center",
-                fontsize=_DEFAULT_FONT_SIZE//2,
-                color=_DEFAULT_TEXT_COLOR,
-                zorder=4)
+        if with_labels:
+            ax.text(*xy,
+                    s=str(node),
+                    ha="center",
+                    va="center",
+                    fontsize=_DEFAULT_FONT_SIZE//2,
+                    color=_DEFAULT_TEXT_COLOR,
+                    zorder=4)
 
     for node in vertices:
         circle = circles[node]
@@ -356,11 +354,6 @@ def _plot_all_endpoints(k: PlanarDiagram, circles, new_vertices: dict):
             # draw the single endpoint that is of different color
 
             result_curves += _plot_endpoint(k, circles, diff_arc, ep_b, gap=False, arrow=True)
-            # print(k)
-            # print(circles)
-            # print(diff_arc)
-            # print(ep_b)
-            # print()
 
 
             same_arc1, same_arc2 = bisect(same_arc)
@@ -395,7 +388,8 @@ def _plot_all_endpoints(k: PlanarDiagram, circles, new_vertices: dict):
                 int_point = circles[arc] * circles[v]  # intersection point
                 int_point = int_point[0]
 
-                result_curves.append((Segment(int_point, circles[v].center), color if _visible(ep0) else "red"))
+                if _visible(ep0):
+                    result_curves.append((Segment(int_point, circles[v].center), color))
 
 
         elif isinstance(node, Crossing):
@@ -406,7 +400,6 @@ def _plot_all_endpoints(k: PlanarDiagram, circles, new_vertices: dict):
             # get circular arcs
             over_arc = perpendicular_arc(circles[v], circles[arcs[1]], circles[arcs[3]], over_order := [], approx=approximate)
             under_arc = perpendicular_arc(circles[v], circles[arcs[0]], circles[arcs[2]], under_order := [], approx=approximate)
-            #print("OO", over_arc, under_arc)
 
 
             if approximate:
@@ -508,11 +501,6 @@ def _plot_arcs(k, circles, ax, bounding_box=None):
                                      ))
 
     # Create a PolyCollection with the triangles
-    # print(arrows)
-    # for a in arrows:
-    #     print("  ",a)
-    #     print("    ", a.points())
-    # print([a.points() for a in arrows])
 
     ax.add_collection(
         PolyCollection(
@@ -552,12 +540,6 @@ def compute_PCA(complex_points: list):
     return [c*conj_print_comp for c in complex_points]
 
 
-    #
-
-    #print("Principal Components:")
-    #print(conjugated_principal_components, abs(conjugated_principal_components[0]), abs(conjugated_principal_components[1]))
-    #print("Explained Variance:")
-    #print(explained_variance)
 
 
 def canonically_rotate_layout(layout, PCA_degrees=0):
@@ -627,8 +609,9 @@ def draw_from_layout(k,
     _plot_vertices(k, layout, with_labels=with_labels, ax=ax)
 
     if with_title:
-        title = str(k.name) if len(str(k.name)) > 0 else str(type(k).__name__)
-        ax.set_title(str(title), fontsize=5)
+
+        ax.set_title(k.attr["_title"], fontsize=5)
+
 
 
     # Set axis limits for better visualization
@@ -749,6 +732,7 @@ def draw(
     """
 
     # Add "invisible" support arcs so the diagram has no bridges or cut-vertices.
+
     k = _add_support_arcs(k)
 
     diagram_drawable, error_text = _check_diagram_drawability(k)
@@ -813,19 +797,34 @@ def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_t
     None
     """
 
+
     diagrams = [diagrams] if isinstance(diagrams, PlanarDiagram) else diagrams
     show_progress = show_progress and len(diagrams) >= 10
+
+    if with_title:
+        for k in diagrams:
+            if k.name is None or len(str(k.name)) == 0:
+                k.attr["_title"] = to_knotpy_notation(k)
+            else:
+                k.attr["_title"] = str(k.name)
+
 
     if plt.get_fignums():  # returns a list of open figure numbers
         plt.close()
     pdf = PdfPages(filename)
 
     for k in (Bar(diagrams, comment="exporting to PDF") if show_progress else diagrams):
+        #
+        # print()
+        # print(k)
+
+
 
         draw(k,
              draw_circles=draw_circles,
              with_labels=with_labels,
              with_title=with_title)
+
 
         pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
         plt.close()
@@ -833,6 +832,11 @@ def export_pdf(diagrams, filename, draw_circles=False, with_labels=False, with_t
     # if author is not None:
     #     pdf.infodict()["Author"] = author
     pdf.close()
+
+
+    if with_title:
+        for k in diagrams:
+            del k.attr["_title"]
 
 
 

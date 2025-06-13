@@ -1,5 +1,4 @@
 import string
-from collections import defaultdict
 
 _reverse_alphabet = {char: index for index, char in enumerate(string.ascii_letters)}
 _base = len(string.ascii_letters)

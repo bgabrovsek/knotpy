@@ -3,7 +3,7 @@ from sympy import sympify
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.invariants.jones import jones_polynomial
 from knotpy.algorithms.sanity import sanity_check
-from knotpy.reidemeister.space import reidemeister_3_space, crossing_reducing_space, crossing_non_increasing_space, detour_space
+from knotpy.reidemeister.space import reidemeister_3_space, crossing_decreasing_space, crossing_non_increasing_space, detour_space
 
 
 def _get_examples():
@@ -17,7 +17,7 @@ def _get_examples():
 def test_r3_space():
     for diagram in _get_examples():
         j = jones_polynomial(diagram)
-        r3s = reidemeister_3_space(diagram)
+        r3s = reidemeister_3_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
             jd = jones_polynomial(d)
@@ -27,7 +27,7 @@ def test_r3_space():
 def test_crossing_reducing_space():
     for diagram in _get_examples():
         j = jones_polynomial(diagram)
-        r3s = crossing_reducing_space(diagram)
+        r3s = crossing_decreasing_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
             jd = jones_polynomial(d)
@@ -36,7 +36,7 @@ def test_crossing_reducing_space():
 def test_non_increasing_space():
     for diagram in _get_examples():
         j = jones_polynomial(diagram)
-        r3s = crossing_non_increasing_space(diagram)
+        r3s = crossing_non_increasing_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
             jd = jones_polynomial(d)
@@ -45,7 +45,7 @@ def test_non_increasing_space():
 def test_detour_space():
     for diagram in _get_examples():
         j = jones_polynomial(diagram)
-        r3s = detour_space(diagram)
+        r3s = detour_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
             jd = jones_polynomial(d)
@@ -53,10 +53,10 @@ def test_detour_space():
 
 
 def test_empty_space():
-    assert reidemeister_3_space(set()) == set()
-    assert crossing_reducing_space(set()) == set()
-    assert crossing_non_increasing_space(set()) == set()
-    assert detour_space(set()) == set()
+    assert reidemeister_3_space(set(), assume_canonical=True) == set()
+    assert crossing_decreasing_space(set(), assume_canonical=True) == set()
+    assert crossing_non_increasing_space(set(), assume_canonical=True) == set()
+    assert detour_space(set(), assume_canonical=True) == set()
 
 if __name__ == '__main__':
     test_r3_space()

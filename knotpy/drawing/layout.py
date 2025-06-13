@@ -14,7 +14,7 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.drawing.circlepack import CirclePack
 from knotpy.utils.geometry import Circle
 from knotpy.algorithms.components_link import number_of_link_components
-from knotpy import loops, kinks, bridges
+from knotpy.algorithms.topology import loops, kinks, bridges
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.notation.native import to_knotpy_notation
 #from knotpy.algorithms.structure import insert_arc

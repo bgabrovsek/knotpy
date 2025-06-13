@@ -3,11 +3,9 @@ A detour move is a move, where a stran passes through multiple other strands
 
 
 """
-from itertools import chain
 
 from knotpy.classes.node import Crossing
 from knotpy.reidemeister.reidemeister_4 import find_reidemeister_4_slide
-from knotpy.reidemeister.reidemeister_5 import find_reidemeister_5_twists
 from knotpy._settings import settings
 
 def detour_find_reidemeister_1_add_kinks_bigon(k):
@@ -16,8 +14,12 @@ def detour_find_reidemeister_1_add_kinks_bigon(k):
     :param k:
     :return:
     """
+
     # TODO: could optimize, so that we only add a kink where we have two overstrands, so that there is a possibility
     #  that we are able to reduce it (we cannot reduce alternating diagrams
+
+    if "R1" not in settings.allowed_moves:
+        return None
 
     # loop through all faces and create R1 moves where the bigons have same position parity
     for face in k.faces:
@@ -34,6 +36,9 @@ def detour_find_reidemeister_2_pokes_n_gon(k):
     :param k:
     :return:
     """
+
+    if "R2" not in settings.allowed_moves:
+        return None
 
     # loop through all faces with length > 3 and create R3 moves
     for face in k.faces:
@@ -63,10 +68,11 @@ def find_detour_moves(k):
     """Finds all detour moves for a knot."""
     # TODO: spefify what move it is, either as a tuple (move_type, location) or (Reidemeister function, location)
 
+    # Do not use R1 increasing moves for simplification
     # Add kinks
-    if "R1" in settings.allowed_moves and settings.r1_increase_simplification:
-        for ep_sign in detour_find_reidemeister_1_add_kinks_bigon(k):
-            yield ep_sign
+    # if "R1" in settings.allowed_moves and settings.r1_increase_simplification:
+    #     for ep_sign in detour_find_reidemeister_1_add_kinks_bigon(k):
+    #         yield ep_sign
 
     # Add R2 pokes
     if "R2" in settings.allowed_moves:

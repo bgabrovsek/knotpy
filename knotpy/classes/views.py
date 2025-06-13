@@ -149,7 +149,7 @@ class EndpointView(NodeView):
 
     # Mapping methods
     def __len__(self):
-        return sum(len(node) for node in self._nodes)
+        return sum(len(node_inst._inc) for node_inst in self._nodes.values())
 
     def __iter__(self):
         # TODO: convert to generator, not iterator

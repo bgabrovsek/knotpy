@@ -22,7 +22,7 @@ from knotpy.algorithms.topology import is_empty_diagram
 from knotpy.manipulation.remove import remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
-from knotpy.reidemeister.simplify import simplify_crossing_reducing
+from knotpy.reidemeister.simplify import simplify_greedy_decreasing
 from knotpy.invariants.cache import Cache
 from knotpy._settings import settings
 
@@ -67,7 +67,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
         coeff, k = stack.pop()
 
         #print("> ",coeff, k)
-        simplify_crossing_reducing(k, inplace=True)
+        simplify_greedy_decreasing(k, inplace=True)
         #print("s ", coeff, k)
 
         if k.crossings:
@@ -128,7 +128,7 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
     while stack:
         coeff, k = stack.pop()
 
-        simplify_crossing_reducing(k, inplace=True)
+        simplify_greedy_decreasing(k, inplace=True)
 
         if k.crossings:
             crossing = next(iter(k.crossings))

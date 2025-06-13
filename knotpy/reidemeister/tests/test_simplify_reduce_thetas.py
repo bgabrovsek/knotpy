@@ -15,6 +15,7 @@ def test_simplify_thetas():
         assert kp.yamada_polynomial(theta) == kp.yamada_polynomial(theta_mod)
 
         # simplify the modified theta curve
+
         theta_simplified = kp.simplify_smart(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
 
         # the canonical forms should be the same

@@ -1,6 +1,6 @@
 import knotpy as kp
 from knotpy import sanity_check
-
+from knotpy.reidemeister.space import reidemeister_3_space
 
 def test_r1():
 
@@ -66,7 +66,7 @@ def test_r3():
                 k_r3 = kp.reidemeister_3(k_, location)
                 #print("OUT:", k_r3)
                 assert sanity_check(k_r3)
-            k_r3 = kp.reidemeister_3_space(k_)
+            k_r3 = reidemeister_3_space(k_)
             if len(k_r3) > 1:
                 print("*", len(k_r3), knot, csings)
                 assert kp.sanity_check(k_r3)

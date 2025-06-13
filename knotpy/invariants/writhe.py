@@ -1,10 +1,17 @@
-__all__ = ['writhe', "forced_writhe"]
+__all__ = ['writhe', "forced_writhe", "knot_crossing_signs"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.algorithms.orientation import all_orientations, orient
+
+def knot_crossing_signs(k: PlanarDiagram):
+    """ works only for knots"""
+    if not k.is_oriented():
+        k = orient(k)
+
+    return {c:k.sign(c) for c in k.crossings}
 
 def writhe(k: PlanarDiagram) -> int:
     """The writhe is the total number of positive crossings minus the total number of negative crossings.

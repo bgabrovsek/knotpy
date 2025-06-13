@@ -1,9 +1,9 @@
 from itertools import combinations
 from random import choice
+import warnings
 
 from knotpy.classes import PlanarDiagram
 from knotpy.algorithms.disjoint_union import add_unknot
-from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.naming import unique_new_node_name
@@ -21,7 +21,11 @@ def find_reidemeister_2_unpoke(k: PlanarDiagram):
         ReidemeisterLocationUnpoke: An object representing the location of a
             Reidemeister II unpoke in the planar diagram.
     """
-    # loop through all faces and yield bigons with same position parity
+
+    if "R2" not in settings.allowed_moves:
+        return
+
+    # Loop through all faces and yield 2-faces (bigons) with same position parity.
     for face in k.faces:
         if (len(face) == 2 and
                 isinstance(k.nodes[face[0].node], Crossing) and
@@ -43,6 +47,9 @@ def find_reidemeister_2_poke(k: PlanarDiagram):
         Generator[Tuple[Any, Any], None, None]: A generator yielding tuples, where each tuple represents a pair
         of endpoints (over endpoint, under endpoint) for Reidemeister 2 poke positions.
     """
+
+    if "R2" not in settings.allowed_moves:
+        return
 
     for face in k.faces:
         for ep_under, ep_over in combinations(face, 2):
@@ -66,7 +73,10 @@ def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
     Returns:
         Optional[ReidemeisterMove]: A valid Reidemeister 2 unpoke move if available, otherwise None.
     """
-    #print("cr2", k)
+
+    if "R2" not in settings.allowed_moves:
+        return None
+
     if random:
         locations = tuple(find_reidemeister_2_unpoke(k))
         return choice(locations) if locations else None
@@ -91,6 +101,10 @@ def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
         Optional[Any]: Returns the selected Reidemeister 2 poke, either random or
         the first available one. Returns None if no Reidemeister 2 poke is found.
     """
+
+    if "R2" not in settings.allowed_moves:
+        return None
+
     if random:
         return choice(tuple(find_reidemeister_2_poke(k)))
     else:
@@ -121,6 +135,9 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
     """
 
     # TODO: the code below is cumbersome, replace by inserting phantom temporary bi-vertices
+
+    if "R2" not in settings.allowed_moves:
+        warnings.warn("An R2 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()

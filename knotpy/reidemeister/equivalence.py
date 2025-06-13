@@ -5,15 +5,9 @@ from functools import partial
 import re
 
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
-from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
-from knotpy.reidemeister.space import reidemeister_3_space, detour_space, crossing_non_increasing_space, \
-    reduce_crossings_greedy, crossing_non_increasing_space_greedy
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink
-from knotpy.reidemeister.reidemeister_2 import reidemeister_2_unpoke, choose_reidemeister_2_unpoke
-from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
-from knotpy.algorithms.topology import is_unknot
+from knotpy.reidemeister.space import detour_space, crossing_non_increasing_space
 from knotpy.manipulation.symmetry import flip
 from knotpy._settings import settings
 
@@ -26,7 +20,7 @@ def _debug_dsu(ls):
     print("HHH")
 
 
-def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDiagram]], depth=1):
+def reduce_equivalent_diagrams(diagrams: set | list, depth=1):
     """
     Input: list of diagrams
     Output: dictionary of unique diagrams (keys are the original diagrams that are unique, values are list of diagrams equivalent to the key)
@@ -83,9 +77,9 @@ def reduce_equivalent_diagrams(diagrams: Union[Set[PlanarDiagram], List[PlanarDi
 
             if all(_.number_of_crossings != 0 for _ in ls):  # only make additional Reidemeister moves if any were found at a previous level
 
-                ls.new_level(detour_space(ls[-1]))  # increase number of crossings in a "smart" way
+                ls.new_level(detour_space(ls[-1], assume_canonical=True))  # increase number of crossings in a "smart" way
 
-                ls.new_level(crossing_non_increasing_space(ls[-1]))
+                ls.new_level(crossing_non_increasing_space(ls[-1], assume_canonical=True ))
 
 
         join_if_equivalent_diagrams()

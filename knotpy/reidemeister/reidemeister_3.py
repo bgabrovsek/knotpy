@@ -1,7 +1,7 @@
 from itertools import chain
 from random import choice
+import warnings
 
-from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing
 from knotpy._settings import settings
 
@@ -29,6 +29,10 @@ def find_reidemeister_3_triangle(k):
             - The positional parity of the nodes does not all match.
     """
     # TODO: make faster by not iterating over all regions
+
+    if "R3" not in settings.allowed_moves:
+        return
+
     for face in k.faces:
         if len(face) != 3 or len({ep.node for ep in face}) != 3:
             continue
@@ -56,6 +60,9 @@ def choose_reidemeister_3_triangle(k, random=False):
         The selected triangular face where a Reidemeister 3 move can be
         performed, or None if no such face exists.
     """
+
+    if "R3" not in settings.allowed_moves:
+        return None
 
     if random:
         locations = tuple(find_reidemeister_3_triangle(k))
@@ -90,9 +97,9 @@ def reidemeister_3(k, face, inplace=False):
         is False, a new planar diagram instance with the modification is returned;
         otherwise, the modified diagram is returned.
     """
-    #
-    # if k.is_oriented():
-    #     raise ValueError("Oriented not yet supported")
+
+    if "R3" not in settings.allowed_moves:
+        warnings.warn("An R3 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()

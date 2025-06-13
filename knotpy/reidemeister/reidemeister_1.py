@@ -1,15 +1,14 @@
 from itertools import product
 from random import choice
+import warnings
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.endpoint import Endpoint
 from knotpy.algorithms.topology import kinks
 from knotpy.algorithms.disjoint_union import add_unknot
-from knotpy.algorithms.sanity import sanity_check
 from knotpy.algorithms.naming import unique_new_node_name
-from knotpy._settings import settings
 from knotpy.utils.dict_utils import common_dict
-
+from knotpy._settings import settings
 
 def find_reidemeister_1_remove_kink(k: PlanarDiagram):
     """
@@ -24,6 +23,10 @@ def find_reidemeister_1_remove_kink(k: PlanarDiagram):
         The endpoint of each identified kink in the planar diagram as the
         removal point.
     """
+
+    if "R1" not in settings.allowed_moves:
+        return
+
     for ep in kinks(k):
         yield ep
 
@@ -38,6 +41,9 @@ def find_reidemeister_1_add_kink(k: PlanarDiagram):
         Generator[tuple]: A generator yielding pairs of
             endpoints and signs representing possible kink positions.
     """
+
+    if "R1" not in settings.allowed_moves:
+        return
 
     for ep_sign in product(k.endpoints, (1, -1)):  # could we just return the product?
         yield ep_sign
@@ -65,6 +71,9 @@ def choose_reidemeister_1_add_kink(k: PlanarDiagram, random=False):
         "Add Kink" move if one is found. If no moves are available, returns None.
     """
 
+    if "R1" not in settings.allowed_moves:
+        return None
+
     if random:
         return choice(tuple(find_reidemeister_1_add_kink(k)))
     else:
@@ -89,6 +98,10 @@ def choose_reidemeister_1_remove_kink(k: PlanarDiagram, random=False):
         Optional[PlanarDiagram]: The selected kink for removal if available;
             otherwise, None.
     """
+
+    if "R1" not in settings.allowed_moves:
+        return None
+
     if random:
         locations = tuple(find_reidemeister_1_remove_kink(k))
         return choice(locations) if locations else None
@@ -110,6 +123,9 @@ def reidemeister_1_remove_kink(k: PlanarDiagram, endpoint:Endpoint, inplace=Fals
     Returns:
         PlanarDiagram: The planar diagram with one fewer crossing after the operation.
     """
+
+    if "R1" not in settings.allowed_moves:
+        warnings.warn("An R1 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()
@@ -165,6 +181,9 @@ def reidemeister_1_add_kink(k: PlanarDiagram, endpoint_sign_pair: tuple, inplace
         `False`, a new diagram containing the kink is returned, otherwise the original
         modified diagram.
     """
+
+    if "R1" not in settings.allowed_moves:
+        warnings.warn("An R1 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()

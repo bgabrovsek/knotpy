@@ -1,4 +1,4 @@
-from .elementary import *
+
 from .simplify import *
 from .reidemeister_1 import *
 from .reidemeister_2 import *

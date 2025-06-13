@@ -1,4 +1,4 @@
-from knotpy import simplify_crossing_reducing
+from knotpy import simplify_greedy_decreasing
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.reidemeister.reidemeister_5 import reidemeister_5_twist, reidemeister_5_untwist, find_reidemeister_5_twists, find_reidemeister_5_untwists
 from knotpy.invariants.yamada import yamada_polynomial
@@ -117,7 +117,7 @@ def test_framing_5():
 
     t = from_knotpy_notation("a=V(b0 b2 b1) b=V(a0 a2 a1)")
     k = from_knotpy_notation("a=V(b0 c3 c2) b=V(a0 c1 c0) c=X(b2 b1 a2 a1)")
-    q=    simplify_crossing_reducing(k, inplace=False)
+    q=    simplify_greedy_decreasing(k, inplace=False)
     assert yamada_polynomial(q) == yamada_polynomial(t)
     # print(q)
     # print(yamada_polynomial(k))

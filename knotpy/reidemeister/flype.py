@@ -1,5 +1,6 @@
 from random import choice
 from itertools import product
+import warnings
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
@@ -51,6 +52,9 @@ def find_flype(k: PlanarDiagram | OrientedPlanarDiagram):
         represented in the context of the provided diagram.
     """
 
+    if "FLYPE" not in settings.allowed_moves:
+        return
+
     for arcs, partition_, ccw_endpoints_ in arc_cut_sets(k, order=4, minimum_partition_nodes=2, return_partition=True, return_ccw_ordered_endpoints=True):
 
 
@@ -76,16 +80,23 @@ def find_flype(k: PlanarDiagram | OrientedPlanarDiagram):
             yield partition, ccw_endpoints
 
 
-
 def choose_flype(k, random=False):
     """ Return one flype."""
+
+    if "FLYPE" not in settings.allowed_moves:
+        return None
+
     if random:
         locations = tuple(find_flype(k))
         return choice(locations) if locations else None
     else:
         return next(find_flype(k), None)  # select 1st item
 
+
 def flype(k:PlanarDiagram | OrientedPlanarDiagram, partition_endpoints_pair: tuple, inplace=False):
+
+    if "FLYPE" not in settings.allowed_moves:
+        warnings.warn("A flype move is being performed, although it is disabled in the global KnotPy settings.")
 
     partition, endpoints_quadruple = partition_endpoints_pair
 

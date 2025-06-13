@@ -1,4 +1,6 @@
 from random import choice
+import warnings
+
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
@@ -13,6 +15,10 @@ from knotpy._settings import settings
 def find_reidemeister_5_twists(k: PlanarDiagram):
     """ A twist is given by two adjacent endpoints form the vertex, an over (vertex, position2)
     and an under (vertex, position1), where |position1 - position2| == 1"""
+
+    if "R5" not in settings.allowed_moves:
+        return
+
     for v in k.vertices:
 
         deg = k.degree(v)
@@ -33,6 +39,9 @@ def choose_reidemeister_5_twist(k: PlanarDiagram, random=False):
     """
     Selects a kink to remove a crossing using the Reidemeister 5 move.
     """
+    if "R5" not in settings.allowed_moves:
+        return None
+
     if random:
         locations = tuple(find_reidemeister_5_twists(k))
         return choice(locations) if locations else None
@@ -44,6 +53,11 @@ def choose_reidemeister_5_twist(k: PlanarDiagram, random=False):
 def find_reidemeister_5_untwists(k: PlanarDiagram):
     """ An untwist is given by two incident endpoints, first one is the vertex endpoint, the second one is
     the crossing endpoint."""
+
+    if "R5" not in settings.allowed_moves:
+        return
+
+
     for face in k.faces:
         if len(face) == 2:
             ep1, ep2 = face
@@ -64,6 +78,10 @@ def choose_reidemeister_5_untwist(k: PlanarDiagram, random=False):
     """
     Selects a kink to remove a crossing using the Reidemeister 5 move.
     """
+
+    if "R5" not in settings.allowed_moves:
+        return None
+
     if random:
         faces = tuple(find_reidemeister_5_untwists(k))
         return choice(faces) if faces else None
@@ -72,6 +90,9 @@ def choose_reidemeister_5_untwist(k: PlanarDiagram, random=False):
 
 
 def reidemeister_5_twist(k, endpoints, inplace=False):
+
+    if "R5" not in settings.allowed_moves:
+        warnings.warn("An R5 twist move is being performed, although it is disabled in the global KnotPy settings.")
 
     ep_under, ep_over = endpoints
 
@@ -139,6 +160,9 @@ def reidemeister_5_untwist(k:PlanarDiagram, face: tuple, inplace=False):
     """
 
     # TODO: attributes
+
+    if "R5" not in settings.allowed_moves:
+        warnings.warn("An R5 untwist move is being performed, although it is disabled in the global KnotPy settings.")
 
     #print("R5u", to_knotpy_notation(k), face, sanity_check(k))
     if not inplace:

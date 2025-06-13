@@ -20,7 +20,7 @@ from knotpy import canonical, sanity_check
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import unorient
 from knotpy.algorithms.skein import smoothen_crossing, crossing_to_vertex
-from knotpy.reidemeister.space import reduce_crossings_greedy
+from knotpy.reidemeister.simplify import simplify_greedy_decreasing
 from knotpy.algorithms.topology import bridges, loops
 from knotpy.manipulation.remove import remove_arc, remove_bivalent_vertices
 from knotpy.manipulation.contract import contract_arc
@@ -95,7 +95,7 @@ def _compute_yamada(k: PlanarDiagram, first_pass_use_cache=True) -> Expr:
         k = stack.pop()
 
         if _YAMADA_SIMPLIFY:
-            k = reduce_crossings_greedy(k, to_canonical=False, inplace=True)
+            k = simplify_greedy_decreasing(k, inplace=True)
 
         # resolve a crossing
         if k.crossings:

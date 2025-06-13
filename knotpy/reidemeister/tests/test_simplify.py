@@ -2,9 +2,7 @@ from knotpy import canonical, find_reidemeister_1_remove_kink
 from knotpy.invariants.jones import jones_polynomial
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
-from knotpy.reidemeister.simplify import simplify
-from knotpy.reidemeister.space import detour_space, crossing_reducing_space
-from knotpy.notation.native import to_knotpy_notation
+from knotpy.reidemeister.simplify import simplify_non_increasing, simplify_non_increasing_greedy, simplify_greedy_decreasing, simplify_smart
 from knotpy.algorithms.topology import is_unknot
 from time import time
 
@@ -35,21 +33,21 @@ def test_simplify_hard_unknots_reducing():
 
     j = jones_polynomial(simple_unknot)
     t = time()
-    s = simplify(simple_unknot, "reducing")
+    s = simplify_greedy_decreasing(simple_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(nasty_unknot)
     t = time()
-    s = simplify(nasty_unknot, "reducing")
+    s = simplify_greedy_decreasing(nasty_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(reducible_unknot)
     t = time()
-    s = simplify(reducible_unknot, "reducing")
+    s = simplify_greedy_decreasing(reducible_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
@@ -57,7 +55,7 @@ def test_simplify_hard_unknots_reducing():
 
     j = jones_polynomial(culprit_unknot)
     t = time()
-    s = simplify(culprit_unknot, "reducing")
+    s = simplify_greedy_decreasing(culprit_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert len(s) == len(culprit_unknot)
@@ -65,7 +63,7 @@ def test_simplify_hard_unknots_reducing():
 
     j = jones_polynomial(culprit_after_increase)
     t = time()
-    s = simplify(culprit_after_increase, "reducing")
+    s = simplify_greedy_decreasing(culprit_after_increase)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert len(s) < len(culprit_after_increase)
@@ -73,7 +71,7 @@ def test_simplify_hard_unknots_reducing():
 
     j = jones_polynomial(goeritz_unknot)
     t = time()
-    s = simplify(goeritz_unknot, "reducing")
+    s = simplify_greedy_decreasing(goeritz_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert len(s) == len(goeritz_unknot)
@@ -86,42 +84,42 @@ def test_simplify_hard_unknots_nonincreasing():
 
     j = jones_polynomial(simple_unknot)
     t = time()
-    s = simplify(simple_unknot, "nonincreasing")
+    s = simplify_non_increasing(simple_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(nasty_unknot)
     t = time()
-    s = simplify(nasty_unknot, "nonincreasing")
+    s = simplify_non_increasing(nasty_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(reducible_unknot)
     t = time()
-    s = simplify(reducible_unknot, "nonincreasing")
+    s = simplify_non_increasing(reducible_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(culprit_unknot)
     t = time()
-    s = simplify(culprit_unknot, "nonincreasing")
+    s = simplify_non_increasing(culprit_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(culprit_after_increase)
     t = time()
-    s = simplify(culprit_after_increase, "nonincreasing")
+    s = simplify_non_increasing(culprit_after_increase)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(goeritz_unknot)
     t = time()
-    s = simplify(goeritz_unknot, "nonincreasing")
+    s = simplify_non_increasing(goeritz_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
@@ -134,42 +132,42 @@ def test_simplify_hard_unknots_nonincreasing_greedy():
 
     j = jones_polynomial(simple_unknot)
     t = time()
-    s = simplify(simple_unknot, "nig")
+    s = simplify_non_increasing_greedy(simple_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(nasty_unknot)
     t = time()
-    s = simplify(nasty_unknot, "nig")
+    s = simplify_non_increasing_greedy(nasty_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(reducible_unknot)
     t = time()
-    s = simplify(reducible_unknot, "nig")
+    s = simplify_non_increasing_greedy(reducible_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(culprit_unknot)
     t = time()
-    s = simplify(culprit_unknot, "nig")
+    s = simplify_non_increasing_greedy(culprit_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(culprit_after_increase)
     t = time()
-    s = simplify(culprit_after_increase, "nig")
+    s = simplify_non_increasing_greedy(culprit_after_increase)
     if _DISPLAY_TIME: print("Time:", time() - t)
     #assert is_unknot(s)
     assert jones_polynomial(s) == j
 
     j = jones_polynomial(goeritz_unknot)
     t = time()
-    s = simplify(goeritz_unknot, "nig")
+    s = simplify_non_increasing_greedy(goeritz_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
@@ -180,7 +178,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones_polynomial(simple_unknot)
     t = time()
-    s = simplify(simple_unknot, "smart")
+    s = simplify_smart(simple_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
@@ -188,7 +186,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones_polynomial(reducible_unknot)
     t = time()
-    s = simplify(reducible_unknot, "smart")
+    s = simplify_smart(reducible_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
@@ -196,7 +194,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones_polynomial(nasty_unknot)
     t = time()
-    s = simplify(nasty_unknot, "smart")
+    s = simplify_smart(nasty_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
@@ -204,7 +202,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones_polynomial(culprit_unknot)
     t = time()
-    s = simplify(culprit_unknot, "smart", depth=1)
+    s = simplify_smart(culprit_unknot,  depth=1)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j

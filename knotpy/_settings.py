@@ -11,7 +11,7 @@ _EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP", "FLYPE"]
 _DEFAULT_TRACE_MOVES = True  # let the Reidemeister moves be traced
 _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES = False  # by default graphs are topological (not rigid)
 _DEFAULT_FRAMED = False  # track framing on Reidemeister moves (R1, R4)
-_DEFAULT_R1_INCREASE_SIMPLIFICATION = False  # use increasing R1 move to simplify knots
+#_DEFAULT_R1_INCREASE_SIMPLIFICATION = False  # use increasing R1 move to simplify knots
 _DEFAULT_FLYPE_CROSSINGS_ONLY = True  # allow flyping only tangles consisting only of crossings
 
 def _clean_allowed_moves(allowed_moves) -> list:
@@ -67,7 +67,7 @@ class Settings:
     trace_moves = SettingProxyBool(_DEFAULT_TRACE_MOVES)
     r5_only_trivalent = SettingProxyBool(_DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES)
     framed = SettingProxyBool(_DEFAULT_FRAMED)
-    r1_increase_simplification = SettingProxyBool(_DEFAULT_R1_INCREASE_SIMPLIFICATION)
+    #r1_increase_simplification = SettingProxyBool(_DEFAULT_R1_INCREASE_SIMPLIFICATION)
     flype_crossings_only = SettingProxyBool(_DEFAULT_FLYPE_CROSSINGS_ONLY)
 
     def dump(self) -> dict:
@@ -77,7 +77,7 @@ class Settings:
             "trace_moves": self.trace_moves,
             "r5_only_trivalent": self.r5_only_trivalent,
             "framed": self.framed,
-            "r1_increase_simplification": self.r1_increase_simplification,
+            #"r1_increase_simplification": self.r1_increase_simplification,
             "flype_crossings_only": self.flype_crossings_only,
         }
 
@@ -91,8 +91,8 @@ class Settings:
             self.r5_only_trivalent = data["r5_only_trivalent"]
         if "framed" in data:
             self.framed = data["framed"]
-        if "r1_increase_simplification" in data:
-            self.r1_increase_simplification = data["r1_increase_simplification"]
+        #if "r1_increase_simplification" in data:
+        #    self.r1_increase_simplification = data["r1_increase_simplification"]
         if "flype_crossings_only" in data:
             self.flype_crossings_only = data["flype_crossings_only"]
 
@@ -103,7 +103,7 @@ class Settings:
         self.trace_moves = data["trace_moves"] if "trace_moves" in data else _DEFAULT_TRACE_MOVES
         self.r5_only_trivalent = data["r5_only_trivalent"] if "r5_only_trivalent" in data else _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES
         self.framed = data["framed"] if "framed" in data else _DEFAULT_FRAMED
-        self.r1_increase_simplification = data["r1_increase_simplification"] if "r1_increase_simplification" in data else _DEFAULT_R1_INCREASE_SIMPLIFICATION
+        #self.r1_increase_simplification = data["r1_increase_simplification"] if "r1_increase_simplification" in data else _DEFAULT_R1_INCREASE_SIMPLIFICATION
         self.flype_crossings_only = data["flype_crossings_only"] if "flype_crossings_only" in data else _DEFAULT_FLYPE_CROSSINGS_ONLY
 
 
