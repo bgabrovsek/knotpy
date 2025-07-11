@@ -18,11 +18,6 @@ from knotpy.invariants.bracket import bracket_polynomial
 
 _A, _T = symbols("A t")
 
-def _jones_polynomial_from_bracket(k: PlanarDiagram | OrientedPlanarDiagram) -> Expr:
-    # TODO: does not work for links
-    polynomial = bracket_polynomial(k, normalize=True)
-    return expand(polynomial.subs({_A: _T ** Rational(-1, 4)}))
-
 
 def jones_polynomial(k: PlanarDiagram | OrientedPlanarDiagram):
     """
@@ -30,7 +25,8 @@ def jones_polynomial(k: PlanarDiagram | OrientedPlanarDiagram):
     :param k:
     :return:
     """
-    return _jones_polynomial_from_bracket(k)
+    polynomial = bracket_polynomial(k, normalize=True)
+    return expand(polynomial.subs({_A: _T ** Rational(-1, 4)}))
 
 
 if __name__ == '__main__':

@@ -99,7 +99,9 @@ def disjoint_union_decomposition(k: PlanarDiagram) -> list:
     list_of_knot_components = []
 
     for component_nodes in sorted(_disjoint_components_nodes(k), reverse=True):
-        g = k.copy(name=f"{k.name} (disjoint component)")
+        g = k.copy()
+        if "name" in g.attr:
+            del g.attr["name"]
         g.remove_nodes_from(set(g.nodes) - component_nodes,
                             remove_incident_endpoints=False)  # incident ep will be removed automatically
 

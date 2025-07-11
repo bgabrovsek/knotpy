@@ -42,10 +42,19 @@ class NodeView(Mapping, Set):
         if isinstance(key, slice):
             raise ValueError(f"{type(self).__name__} does not support slicing.")
 
+        # return instance of node
+        if key in self._nodes:
+            return self._nodes[key]
+
+        # return endpoint
         if isinstance(key, Endpoint):
             return self[key.node][key.position]
 
-        return self._nodes[key]
+        if isinstance(key, int):
+            # return n-th node
+            return list(self._nodes.keys())[key]
+
+        raise KeyError(f"{key}")
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
@@ -93,6 +102,7 @@ class NodeView(Mapping, Set):
 
 
 class FilteredNodeView(NodeView):
+    # TODO: getitem does not work. it gets the node, not the crossing
     __slots__ = ("_nodes", "_filter")
 
     def __init__(self, nodes, node_type):
@@ -109,17 +119,17 @@ class FilteredNodeView(NodeView):
         # TODO: convert to generator, not iterator
         return iter(filter(self._filter, self._nodes))
 
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            raise ValueError(f"{type(self).__name__} does not support slicing.")
-
-        if isinstance(key, Endpoint):
-            return self[key.node][key.position]
-
-        if key in self:
-            return self._nodes[key]
-        else:
-            raise KeyError(f"{key}")
+    # def __getitem__(self, key):
+    #     if isinstance(key, slice):
+    #         raise ValueError(f"{type(self).__name__} does not support slicing.")
+    #
+    #     if isinstance(key, Endpoint):
+    #         return self[key.node][key.position]
+    #
+    #     if key in self:
+    #         return self._nodes[key]
+    #     else:
+    #         raise KeyError(f"{key}")
 
     def __bool__(self):
         # returns True if the filter contains at least one object, False otherwise
@@ -253,6 +263,7 @@ class ArcView(NodeView):
         order.
         :param key: Endpoint instance or node
         :return: arc
+
         """
 
         if isinstance(key, slice):

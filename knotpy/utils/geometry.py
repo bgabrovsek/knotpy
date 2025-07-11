@@ -7,11 +7,12 @@ import cmath
 
 __all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox", "PolySegment",
            "antipode", "perpendicular_line", "bisect", "tangent_line", "middle", "bisector",
-           "is_angle_between", "perpendicular_arc_through_point", "circle_through_points",
+           "is_angle_between", "perpendicular_arc_through_point", "perpendicular_arc",  "circle_through_points",
            "weighted_circle_center_mean", "split"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
+from mpmath import kfrom
 
 DIAMETER_ERROR = 0.0001  # error for a point that is still considered that lies on the circle
 MIN_SEGMENT_SIZE = 1E-8  # what distance do we still consider to be a segment?
@@ -21,19 +22,52 @@ CIRCLE_DISTANCE_ERROR = 1E-6 # distance for determining tangent/disjoint/interse
 
 
 class Circle:
+    """
+    Representation of a geometric circle in the complex plane.
 
-    def __init__(self, center, radius):
+    Attributes:
+        center (Any): The center of the circle, typically represented as a complex number or
+            a coordinate pair (depending on the context of usage).
+        radius (float): The radius of the circle, defining its size and extent.
+    """
+
+    def __init__(self, center: complex, radius: float):
+        """
+        Represents a circle characterized by a center point and a radius.
+
+        Attributes:
+            center: A complex number representing the circle's center.
+            radius: A float representing the radius of the circle.
+        """
         self.center = center
         self.radius = radius
 
-    def __contains__(self, point):
-        """Does the point lie on the circle?"""
-        #print(abs(abs(point - self.center) - self.radius))
+    def __contains__(self, point: complex) -> bool:
+        """
+        Check whether a given point lies on the circle.
+
+        Args:
+            point: Complex coordinate representing the point to be checked.
+
+        Returns:
+            bool: True if the point lies on the circle, False otherwise.
+        """
         return abs(abs(point - self.center) - self.radius) <= DIAMETER_ERROR
 
     def __mul__(self, other):
-        """Intersection between geometric objects."""
+        """
+        Compute the intersection between the circle and another geometric object.
 
+        Args:
+            other (Circle | Line): The geometric object to intersect with.
+
+        Returns:
+            Resultant geometric objects representing the intersection. The return type
+            and structure depend on the intersection method and the input types.
+
+        Raises:
+            TypeError: If the type of `other` is not Circle or Line.
+        """
 
         if isinstance(other, Circle):
             return _intersection_circle_circle(self, other)
@@ -43,14 +77,37 @@ class Circle:
 
         raise TypeError(f"Intersection of a circle and {type(other)} not supported")
 
+    # def antipodal(self, point: complex) -> complex:
+    #     """
+    #     Return the antipodal point (reflection of the given point) through the center of the circle.
+    #
+    #     Args:
+    #         point (complex): The point to be reflected through the  circle's center.
+    #
+    #     Returns:
+    #         complex: The reflected point (antipodal point).
+    #     """
+    #     return 2 * self.center - point
+
     def length(self):
+        """Return the circumference of the circle."""
         return 2 * math.pi * self.radius  # 2pi*r
 
-    def __call__(self, angle1, angle2=None):
-        """The point line at angle or the circular arc if two angles are give."""
-        if angle2 is not None:
-            return CircularArc(self.center, self.radius, angle1, angle2)
-        raise NotImplementedError()
+    def __call__(self, angle1, angle2):
+        """
+        Return the circular atc between two angles, lying on the circle.
+
+        Args:
+            angle1: The starting angle (in radians).
+            angle2: Optional; The second angle (in degrees).
+
+        Returns:
+            CircularArc: An object representing the arc defined by the center, radius, and the angles.
+
+        Raises:
+            NotImplementedError: If the second angle (angle2) is not provided.
+        """
+        return CircularArc(self.center, self.radius, angle1, angle2)
 
     def __str__(self):
         return f"Circle at {self.center:.5f} with radius {self.radius:.5f}"
@@ -70,9 +127,11 @@ class CircularArc(Circle):
         # is the angle on the arc?
         return is_angle_between(self.theta1, cmath.phase(point - self.center), self.theta2)
 
+    def angle(self):
+        return ((self.theta2 % (2 * math.pi)) - (self.theta1 % (2 * math.pi))) % (2 * math.pi)
+
     def length(self):
-        diff_angle = ((self.theta2 % (2 * math.pi)) - (self.theta1 % (2 * math.pi))) % (2 * math.pi)
-        return diff_angle * self.radius  # arc length is angle * radius
+        return self.angle() * self.radius  # arc length is angle * radius
 
     def __call__(self, angle1, angle2=None):
         """The point line at angle or the circular arc if two angles are give."""
@@ -84,8 +143,96 @@ class CircularArc(Circle):
         else:
             raise ValueError(f"The angle {angle1} does not lie on the circular arc {self}")
 
+    def __neg__(self):
+        return CircularArc(self.center, self.radius, self.theta2, self.theta1)
+
+    @property
+    def A(self):
+        return self(self.theta1)
+    @property
+    def B(self):
+        return self(self.theta2)
+
+
     def __str__(self):
         return f"Circular arc at {self.center:.5f} with radius {self.radius:.5f} and angles {self.theta1:.5f} and {self.theta2:.5f}"
+
+
+class OrientedCircularArc(CircularArc):
+
+    def __init__(self, center, radius, theta1, theta2, reversed=False):
+        self.reversed = reversed
+        super().__init__(center, radius, theta1, theta2)
+
+    def set_orientation(self, start_point, end_point):
+        """
+        Set the orientation so that the point at angle theta1 is closer to start_point and point at angle theta2 is closer to end_point.
+        """
+        point1 = self.center + self.radius * math.cos(self.theta1) + 1j * self.radius * math.sin(self.theta1)
+        point2 = self.center + self.radius * math.cos(self.theta2) + 1j * self.radius * math.sin(self.theta2)
+
+        if end_point is None:
+            self.reversed = abs(point1 - start_point) > abs(point2 - start_point)
+        elif start_point is None:
+            self.reversed = abs(point1 - end_point) < abs(point2 - end_point)
+        elif end_point is not None and start_point is not None:
+            self.reversed = abs(point1 - end_point) + abs(point2 - start_point) > abs(point1 - start_point) + abs(point2 - end_point)
+        else:
+            raise ValueError("start_point and/or end_point must be specified")
+
+    def shorten(self, length, side, inplace=False):
+        """ Shorten arc from side 'A' (start) or 'B' (end). """
+        if self.length() <= length:
+            return None
+        if side not in ['A', 'B']:
+            raise ValueError(f"side must be 'A' or 'B', not {side}")
+
+        #print("delta angle", round((self.theta2 - self.theta1) * (180 / math.pi)) )
+
+        delta = ((self.theta2 - self.theta1) % (2 * math.pi)) * length / self.length()  # maybe mode 2*pi?
+
+        #print("reversed", reversed, side, round(self.theta1 * (180 / math.pi)), round(self.theta2 * (180 / math.pi)), round(delta * (180 / math.pi)), )
+
+        if self.reversed == (side == 'A'):
+            if inplace:
+                self.theta2 = (self.theta2 - delta) % (2 * math.pi)
+            else:
+                return OrientedCircularArc(self.center, self.radius, self.theta1, (self.theta2 - delta) % (2 * math.pi), reversed=self.reversed)
+        else:
+            if inplace:
+                self.theta1 = self.theta1 + delta
+            else:
+                return OrientedCircularArc(self.center, self.radius, self.theta1 + delta, self.theta2, reversed=self.reversed)
+
+
+
+
+    # def __call__(self, angle1, angle2=None):
+    #     """The point line at angle or the circular arc if two angles are give."""
+    #     if angle2 is not None:
+    #         return OrientedCircularArc(self.center, self.radius, angle1, angle2, reversed=self.reversed)
+    #
+    #     if is_angle_between(self.theta1, angle1, self.theta2) or is_angle_between(self.theta2, angle1, self.theta1):
+    #         if self.reversed:
+    #             pass
+    #         else:
+    #             return self.center + self.radius * math.cos(angle1) + 1j * self.radius * math.sin(angle1)
+    #     else:
+    #         raise ValueError(f"The angle {angle1} does not lie on the circular arc {self}")
+
+    # def __neg__(self):
+    #     return OrientedCircularArc(self.center, self.radius, self.theta2, self.theta1, reversed=not self.reversed)
+
+    @property
+    def A(self):
+        return self(self.theta2) if self.reversed else self(self.theta1)
+    @property
+    def B(self):
+        return self(self.theta1) if self.reversed else self(self.theta2)
+
+
+    def __str__(self):
+        return f"Oriented Circular arc at {self.center:.5f} with radius {self.radius:.5f} and angles {self.theta1:.5f} and {self.theta2:.5f}" + (" reversed" if self.reversed else "")
 
 
 class Line:
@@ -112,6 +259,7 @@ class Line:
         if isinstance(other, Line):
             return _intersection_line_line(self, other)
 
+
     def parameter_from_point(self, point):
         """ For the line T = A + t(B-A) get the parameter t so that T = point."""
         t = (point - self.A) / (self.B - self.A)
@@ -120,6 +268,8 @@ class Line:
             return None  # point does not lie on the line
         return t.real
 
+    def __neg__(self):
+        return Line(self.B, self.A)
 
     @staticmethod
     def length(self):
@@ -145,6 +295,43 @@ class Segment(Line):
 
     def length(self):
         return abs(self.B - self.A)  # |B-A|
+
+    def set_orientation(self, start_point, end_point):
+        """
+        Set the orientation so that the point A is closer to start_point and point B closer to end_point.
+        """
+
+        if end_point is None:
+            if abs(self.A - start_point) > abs(self.B - start_point):
+                self.A, self.B = self.B, self.A
+        elif start_point is None:
+            if abs(self.A - end_point) < abs(self.B - end_point):
+                self.A, self.B = self.B, self.A
+        elif end_point is not None and start_point is not None:
+            if abs(self.A - end_point) + abs(self.B - start_point) > abs(self.A - start_point) + abs(self.B - end_point):
+                self.A, self.B = self.B, self.A
+        else:
+            raise ValueError("start_point and/or end_point must be specified")
+
+
+
+    def shorten(self, length, side, inplace=False):
+        """Shorten by length on the side indicated by side ('A' or 'B')."""
+        if self.length() <= length:
+            return None
+        s = (self.B - self.A) / abs(self.B - self.A)  # Normalize the direction
+        if side == 'A':
+            if inplace:
+                self.A = self.A + length * s
+            else:
+                return Segment(self.A + length * s, self.B)
+        elif side == 'B':
+            if inplace:
+                self.B = self.A + length * s
+            else:
+                return Segment(self.A, self.B - length * s)
+        else:
+            raise ValueError("side must be 'A' or 'B'")
 
     def __call__(self, t1, t2=None):
         """The point on the line A + t * directional vector. if both t1 and t2 are given, return the segment from t1 to t2."""
@@ -221,23 +408,23 @@ class PolySegment:
 
 ##### BOUNDING BOX ####
 
-def bounding_box(a):
-    if isinstance(a, CircularArc):
-        pass
-
-    if isinstance(a, Circle):
-        pass
-
-    if isinstance(a, Segment):
-        pass
-
-    if isinstance(a, Line):
-        pass
-
-    if isinstance(a, complex):
-        pass
-
-    raise TypeError("Parameter is not a geometric object or point.")
+# def bounding_box(a):
+#     if isinstance(a, CircularArc):
+#         pass
+#
+#     if isinstance(a, Circle):
+#         pass
+#
+#     if isinstance(a, Segment):
+#         pass
+#
+#     if isinstance(a, Line):
+#         pass
+#
+#     if isinstance(a, complex):
+#         pass
+#
+#     raise TypeError("Parameter is not a geometric object or point.")
 
 
 ##### INTERSECTION #####
@@ -365,6 +552,7 @@ def tangent_line(c: Circle, p: complex):
 
 
 def antipode(circle, point):
+    # TODO: this is a duplicate of the class method
     return circle.center - (point - circle.center)
 
 
@@ -418,7 +606,7 @@ def perpendicular_arc_through_point(circle, circle_point, point):
     return arc
 
 
-def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
+def perpendicular_arc(circle, circle1, circle2):
     # TODO: use perpendicular_arc_through _points
     """Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and
     circle1 and circle2, respectively.
@@ -438,19 +626,16 @@ def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
     :return: circle on which the arcs lie in, angles of the circles such that the arc is the part of the circle from
      the 1st angle and the 2nd angle (angles are in radians)
     """
+    order = []
+    approx = False
     if order is None:
         order = []
     else:
         order.clear()
 
-    if approx:
-        # approximate intersection
-        point1 = weighted_circle_center_mean(circle, circle1)
-        point2 = weighted_circle_center_mean(circle, circle2)
-    else:
-        # exact intersection
-        point1 = circle * circle1
-        point2 = circle * circle2
+    # exact intersection
+    point1 = circle * circle1
+    point2 = circle * circle2
     if len(point1) == 0 or len(point2) == 0:
         raise ValueError("No intersection point computing perpendicular arc")
     if len(point1) == 2 or len(point2) == 2:
@@ -459,10 +644,10 @@ def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
     point1 = point1[0]
     point2 = point2[0]
     midpoint = 0.5 * (point1 + point2)
-    """ 
-    Create a circular arc connecting i1 and i2, which is perpendicular to circle. We obtain such an arc/circle 
+    """
+    Create a circular arc connecting i1 and i2, which is perpendicular to circle. We obtain such an arc/circle
     by inverting the midpoint through the circle. By construction, the new point is the center of the perpendicular
-    circle. 
+    circle.
     """
 
 
@@ -477,93 +662,109 @@ def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
 
         if (inv_arc.theta2 - inv_arc.theta1) % (2 * math.pi) > math.pi:  # make the arc the smaller of the two
             inv_arc.theta1, inv_arc.theta2 = inv_arc.theta2, inv_arc.theta1
-            order += [2, 1]
-        else:
-            order += [1, 2]
 
         return inv_arc
     else:
         # if the arc is the diameter, return a line
-        order += [1, 2]
         return Segment(point1, point2)
+
+def arc_from_circle_and_points(circle, point1, point2):
+    """Return the circular arcs lying on circle going from point1 to point2."""
+    if point1 not in circle and point2 not in circle:
+        raise ValueError("The points to not lie on the circle")
+
+    return CircularArc(circle.center, abs(circle.center - point1), cmath.phase(point1 - circle.center), cmath.phase(point2 - circle.center))
+
+def arc_from_diamater(point1, point2):
+    """Return the circular arcs lying on circle going from point1 to point2."""
+    return arc_from_circle_and_points(Circle((point1 + point2) / 2, abs(point1 - point2) / 2), point1, point2)
 
 def weighted_circle_center_mean(circle1:Circle, circle2:Circle):
     """ Compute a weighted mean, so that the intersection of cicles are scaled proportinately so they meet."""
     radii = circle1.radius + circle2.radius
     return circle1.center * (circle2.radius / radii) + circle2.center * (circle1.radius / radii)
 
+#
+# def perpendicular_arc2(circle, circle1, circle2):
+#     # TODO: use perpendicular_arc_through _points
+#     """Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and
+#     circle1 and circle2, respectively.
+#     Circles are given as pairs (complex number representing the center, radius)
+#
+#     The conditions of the circular arc are thus:
+#       - the center z of the circle (z,r),
+#       - the intersection i0 of circles (z,r) and (z0,r0),
+#       - the intersection i1 of circles (z,r) and (z1,r1),
+#     with the extra condition that the arc is perpendicular to all circles (z,r), (z0,r0), and (z1,r1).
+#
+#     :param circle: the main circle through which the arc is placed
+#     :param circle1: the 1st circle tangent to circle
+#     :param circle2: the 2nd circle tangent to circle
+#     """
+#
+#
+#     # if approx:
+#     #     # approximate intersections
+#     #     point1 = [weighted_circle_center_mean(circle, circle1)]
+#     #     point2 = [weighted_circle_center_mean(circle, circle2)]
+#     # else:
+#     #     # exact intersections
+#     #     point1 = circle * circle1
+#     #     point2 = circle * circle2
+#
+#     point1 = circle * circle1
+#     point2 = circle * circle2
+#
+#     if len(point1) == 0 or len(point2) == 0:
+#         raise ValueError("No intersection point computing perpendicular arc")
+#     if len(point1) == 2 or len(point2) == 2:
+#         raise ValueError("two intersection points of tangent circles")
+#
+#     point1 = point1[0]
+#     point2 = point2[0]
+#     midpoint = 0.5 * (point1 + point2)
+#     """
+#     Create a circular arc connecting i1 and i2, which is perpendicular to circle. We obtain such an arc/circle
+#     by inverting the midpoint through the circle. By construction, the new point is the center of the perpendicular
+#     circle.
+#     """
+#
+#
+#     # TODO: what if midpoint is in the center?
+#     if abs(midpoint - circle.center) > MIN_SEGMENT_SIZE:
+#         inv_midpoint = inverse_point_through_circle(circle, midpoint)  # the arc li
+#         inv_arc = CircularArc(inv_midpoint,
+#                               abs(inv_midpoint - point1),
+#                               cmath.phase(point1 - inv_midpoint),  # the angle of the point i1 on the inversed circle
+#                               cmath.phase(point2 - inv_midpoint)  # the angle of the point i1 on the inversed circle
+#                               )
+#         #
+#         # if (inv_arc.theta2 - inv_arc.theta1) % (2 * math.pi) > math.pi:  # make the arc the smaller of the two
+#         #     inv_arc.theta1, inv_arc.theta2 = inv_arc.theta2, inv_arc.theta1
+#         #     order += [2, 1]
+#         # else:
+#         #     order += [1, 2]
+#
+#         return inv_arc
+#     else:
+#         # if the arc is the diameter, return a line
+#         return Segment(point1, point2)
+#
 
-def perpendicular_arc(circle, circle1, circle2, order=None, approx=False):
-    # TODO: use perpendicular_arc_through _points
-    """Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and
-    circle1 and circle2, respectively.
-    Circles are given as pairs (complex number representing the center, radius)
+def orient_arc(g: CircularArc | Segment, start_point=None, end_point=None):
+    """ From an unoriented arc/segment, return an oriented one so that the (starting) point 'A' is on average closer to
+    start_point and the (ending) point 'B' is on average closer to end_point."""
+    if type(g) is CircularArc:
+        arc = OrientedCircularArc(g.center, g.radius, g.theta1, g.theta2, reversed=False)
+        arc.set_orientation(start_point, end_point)
+        return arc
 
-    The conditions of the circular arc are thus:
-      - the center z of the circle (z,r),
-      - the intersection i0 of circles (z,r) and (z0,r0),
-      - the intersection i1 of circles (z,r) and (z1,r1),
-    with the extra condition that the arc is perpendicular to all circles (z,r), (z0,r0), and (z1,r1).
+    if type(g) is Segment:
+        segment = Segment(start_point, end_point)
+        segment.set_orientation(start_point, end_point)
+        return segment
 
-    :param circle: the main circle through which the arc is placed
-    :param circle1: the 1st circle tangent to circle
-    :param circle2: the 2nd circle tangent to circle
-    :param order: returns order of circles 1,2 in the arc (if the arcs starts at circle1, order is [1,2], else [2,1]
-    :param approx: the circle do not need to touch or overlap, but the closest possible such point will be assumed
-    :return: circle on which the arcs lie in, angles of the circles such that the arc is the part of the circle from
-     the 1st angle and the 2nd angle (angles are in radians)
-    """
-
-
-    if order is None:
-        order = []
-    else:
-        order.clear()
-
-    if approx:
-        # approximate intersections
-        point1 = [weighted_circle_center_mean(circle, circle1)]
-        point2 = [weighted_circle_center_mean(circle, circle2)]
-    else:
-        # exact intersections
-        point1 = circle * circle1
-        point2 = circle * circle2
-
-    if len(point1) == 0 or len(point2) == 0:
-        raise ValueError("No intersection point computing perpendicular arc")
-    if len(point1) == 2 or len(point2) == 2:
-        raise ValueError("two intersection points of tangent circles")
-        print("Warning: two intersection points of tangent circles")
-    point1 = point1[0]
-    point2 = point2[0]
-    midpoint = 0.5 * (point1 + point2)
-    """ 
-    Create a circular arc connecting i1 and i2, which is perpendicular to circle. We obtain such an arc/circle 
-    by inverting the midpoint through the circle. By construction, the new point is the center of the perpendicular
-    circle. 
-    """
-
-
-    # TODO: what if midpoint is in the center?
-    if abs(midpoint - circle.center) > MIN_SEGMENT_SIZE:
-        inv_midpoint = inverse_point_through_circle(circle, midpoint)  # the arc li
-        inv_arc = CircularArc(inv_midpoint,
-                              abs(inv_midpoint - point1),
-                              cmath.phase(point1 - inv_midpoint),  # the angle of the point i1 on the inversed circle
-                              cmath.phase(point2 - inv_midpoint)  # the angle of the point i1 on the inversed circle
-                              )
-
-        if (inv_arc.theta2 - inv_arc.theta1) % (2 * math.pi) > math.pi:  # make the arc the smaller of the two
-            inv_arc.theta1, inv_arc.theta2 = inv_arc.theta2, inv_arc.theta1
-            order += [2, 1]
-        else:
-            order += [1, 2]
-
-        return inv_arc
-    else:
-        # if the arc is the diameter, return a line
-        order += [1, 2]
-        return Segment(point1, point2)
+    raise TypeError("Can only orient an arc or a segment.")
 
 
 def split(g, point):
@@ -580,6 +781,7 @@ def split(g, point):
 
 def bisect(g):
     """Split object (Segment or CircularArc) into two equal halves."""
+
     if isinstance(g, Segment):
         return Segment(g.A, 0.5 * (g.A + g.B)), Segment(0.5 * (g.A + g.B), g.B)
 
@@ -598,7 +800,7 @@ def bisector(s: Segment) -> Line:
     """Return the bisector line of the segment"""
     return perpendicular_line(s, 0.5 * (s.A + s.B))
 
-def middle(g):
+def middle(g) -> complex:
     """Returns geometric center of a segment or arc"""
     if isinstance(g, Segment):
         return 0.5 * (g.A + g.B)
@@ -610,6 +812,9 @@ def middle(g):
             return g(angle + math.pi)
         else:
             return g(angle)
+
+    if isinstance(g, complex):
+        return g
 
     raise TypeError("Can only bisect an arc or a segment.")
 
@@ -627,7 +832,9 @@ def circle_through_points(A, B, C):
     return Circle(center, radius)
 
 
+
 class BoundingBox:
+    # TODO: obsolete
 
     def __init__(self, g=None):
 
@@ -698,6 +905,51 @@ class BoundingBox:
         self.bottom_left = min(self.bottom_left.real, other.bottom_left.real) + 1J * min(self.bottom_left.imag, other.bottom_left.imag)
         self.top_right = max(self.top_right.real, other.top_right.real) + 1J * max(self.top_right.imag, other.top_right.imag)
         return self
+
+def translate(element, displacement):
+    if type(element) is Segment:
+        return Segment(element.A + displacement, element.B + displacement)
+    if type(element) is Line:
+        return Line(element.A + displacement, element.B + displacement)
+    if type(element) is Circle:
+        return Circle(element.center + displacement, element.radius)
+    if type(element) is PolySegment:
+        return PolySegment([p + displacement for p in element.points])
+    if type(element) is CircularArc:
+        return CircularArc(element.center + displacement, element.radius, element.theta1, element.theta2)
+    if type(element) is OrientedCircularArc:
+        return OrientedCircularArc(element.center + displacement, element.radius, element.theta1, element.theta2, element.reversed)
+    if type(element) is complex or type(element) is int or type(element) is float:
+        return element + displacement
+    if element is None:
+        return None
+    raise TypeError(f"Translation is not defined for {type(element)}")
+
+
+def bounding_box(g):
+    # TODO: also consider angles 0, 90, 180, 270 for arcs
+
+    if isinstance(g, CircularArc):
+        min_x, max_x = min(g.A.real, g.B.real), max(g.A.real, g.B.real)
+        min_y, max_y = min(g.A.imag, g.B.imag), max(g.A.imag, g.B.imag)
+        for angle in [0, math.pi / 2, math.pi, math.pi * 3 / 2]:
+            if is_angle_between(g.theta1, angle, g.theta2):
+                p = g(angle)
+                min_x, max_x = min(min_x, p.real), max(max_x, p.real)
+                min_y, max_y = min(min_y, p.imag), max(max_y, p.imag)
+        return complex(min_x, min_y), complex(max_x, max_y)
+    if isinstance(g, Segment):
+        return complex(min(g.A.real, g.B.real), min(g.A.imag, g.B.imag)), complex(max(g.A.real, g.B.real), max(g.A.imag, g.B.imag))
+    elif isinstance(g, Circle):
+        return g.center - (1 + 1j) * g.radius, g.center + (1 + 1j) * g.radius
+    elif g is None:
+        return 0, 0
+    elif isinstance(g, complex):
+        return complex(g), complex(g)
+    else:
+        bb = [bounding_box(_) for _ in g]
+        return complex(min(_.real for _, __ in bb), min(_.imag for _, __ in bb)), complex(max(__.real for _, __ in bb), max(__.imag for _, __ in bb))
+
 
 if __name__ == '__main__':
 

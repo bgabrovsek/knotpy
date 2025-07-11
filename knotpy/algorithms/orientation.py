@@ -6,7 +6,7 @@ from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.algorithms.topology import edges
 
 
-__all__ = ["orient", "unorient"]
+__all__ = ["orient", "unorient", "all_orientations"]
 
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'

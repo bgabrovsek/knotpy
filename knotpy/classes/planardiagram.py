@@ -437,6 +437,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         adjacent_endpoint = create_using(*adjacent_endpoint, **attr)
 
         # insert missing positions missing in the node
+        #print(node, self._nodes)
         for i in range(node_pos + 1 - len(self._nodes[node])):
             self._nodes[node].append(Node)
 

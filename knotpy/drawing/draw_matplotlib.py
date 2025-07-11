@@ -16,7 +16,7 @@ from knotpy.classes.endpoint import IngoingEndpoint, Endpoint
 from knotpy.algorithms.topology import bridges, loops, kinks, leafs
 from knotpy.algorithms.cut_set import cut_nodes
 from knotpy.utils.multiprogressbar import Bar
-from knotpy.drawing.layout import circlepack_layout, bezier
+from knotpy.drawing.layout_circle_packing import layout_circle_packing
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
                                    tangent_line, middle, bisector, bisect, split,
                                    perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean)
@@ -26,7 +26,7 @@ from knotpy.notation.native import to_knotpy_notation
 from sklearn.decomposition import PCA
 from knotpy.notation import to_knotpy_notation
 
-__all__ = ['draw', 'export_pdf', "circlepack_layout", "draw_from_layout", "plt", "export_png", "export_pdf_groups"]
+__all__ = ['draw', 'export_pdf', "layout_circle_packing", "draw_from_layout", "plt", "export_png", "export_pdf_groups"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -549,6 +549,9 @@ def canonically_rotate_layout(layout, PCA_degrees=0):
     :param PCA_degrees: https://en.wikipedia.org/wiki/Principal_component_analysis
     :return:
     """
+    #layout, rest_layout = {key: val for key, val in layout.items() if isinstance(val, Circle)}, {key: val for key, val in layout.items() if not isinstance(val, Circle)}
+    for key, val in layout.items():
+        print(key, val)
     centers = [circle.center for circle in layout.values()]
     radii = [circle.radius for circle in layout.values()]
 
@@ -623,6 +626,7 @@ def draw_from_layout(k,
     else:
         ax.set_xlim(x_min, x_max)
         ax.set_ylim(y_min, y_max)
+
 
     # Set aspect ratio to be equal
     ax.set_aspect('equal', adjustable='box')
@@ -740,7 +744,7 @@ def draw(
     # compute the layout
     if diagram_drawable:
         try:
-            circles = circlepack_layout(k)
+            circles = layout_circle_packing(k)
             circles = canonically_rotate_layout(circles, 0)
             draw_from_layout(k, circles, draw_circles, with_labels, with_title, ax=ax, **style_kwargs)
         except ZeroDivisionError:

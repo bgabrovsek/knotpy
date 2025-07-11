@@ -113,6 +113,6 @@ def subdivide_endpoint_by_crossing(k: PlanarDiagram, endpoint, crossing_position
     return new_node_name
 
 
-def subdivide_arcs_around_node(k: PlanarDiagram, arc, inplace=True):
-    raise NotImplementedError()
-    pass
+def subdivide_arcs_around_node(k: PlanarDiagram, node):
+    """ always in place"""
+    return [subdivide_endpoint(k, endpoint=ep) for ep in k.nodes[node]]

@@ -154,6 +154,9 @@ def canonical(k: PlanarDiagram):
 
     from knotpy.algorithms.naming import number_to_alpha
 
+    if isinstance(k, (set, list, tuple)):
+        return type(k)(canonical(_) for _ in k)
+
     if not isinstance(k, PlanarDiagram):
         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
 

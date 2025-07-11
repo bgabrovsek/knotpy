@@ -1,6 +1,5 @@
 
 import knotpy as kp
-from knotpy import export_png
 from knotpy.algorithms.cut_set import arc_cut_sets
 
 def test_order_2():
@@ -42,7 +41,7 @@ def test_order_2():
     # assert len(kp.arc_cut_sets(ab, 2, skip_isolating_cuts=False)) == 1
     # assert len(kp.arc_cut_sets(ab, 2, skip_isolating_cuts=True)) == 1
 
-def test_arc_cut_set():
+def  test_arc_cut_set():
     N = 4
     w = kp.wheel_graph(N)  # "a" is the center node
 

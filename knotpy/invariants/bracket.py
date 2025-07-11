@@ -15,16 +15,18 @@ from sympy import Expr, expand, Integer, symbols, Symbol
 from collections import deque
 
 from knotpy.algorithms.skein import smoothen_crossing
-from knotpy.invariants.writhe import forced_writhe
+from knotpy.invariants.writhe import writhe
 from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import is_empty_diagram
 from knotpy.manipulation.remove import remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
-from knotpy.reidemeister.simplify import simplify_greedy_decreasing
+from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.invariants.cache import Cache
 from knotpy._settings import settings
+
+_USE_JONES_CACHE = False
 
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
@@ -67,7 +69,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
         coeff, k = stack.pop()
 
         #print("> ",coeff, k)
-        simplify_greedy_decreasing(k, inplace=True)
+        simplify_decreasing(k, inplace=True)
         #print("s ", coeff, k)
 
         if k.crossings:
@@ -86,7 +88,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
     original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
-        wr = forced_writhe(original_knot)
+        wr = writhe(original_knot)
         expression *= (- _A ** (-3)) ** (wr + original_framing)
     else:
         expression *= (- _A ** (-3)) ** original_framing
@@ -128,7 +130,7 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
     while stack:
         coeff, k = stack.pop()
 
-        simplify_greedy_decreasing(k, inplace=True)
+        simplify_decreasing(k, inplace=True)
 
         if k.crossings:
             crossing = next(iter(k.crossings))
@@ -143,11 +145,10 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
 
             polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- _A ** 3) ** (-k.framing))
 
-
     original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
-        polynomial *= (- _A ** (-3)) ** (forced_writhe(original_knot) + original_framing)  # ignore framing if normalized
+        polynomial *= (- _A ** (-3)) ** (writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
         polynomial *= (- _A ** (-3)) ** (original_framing)
 

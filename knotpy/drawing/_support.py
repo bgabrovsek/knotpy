@@ -10,6 +10,18 @@ from knotpy.notation.native import to_knotpy_notation
 
 _DEBUG_SUPPORT = False
 
+
+def _visible(__obj):
+    """Should object (node, endpoint, ...) be shown in diagram?
+    :param __obj:
+    :return:
+    """
+    if not hasattr(__obj, "attr"):
+        return True
+    if "__support__" in __obj.attr and __obj.attr["__support__"]:
+        return False
+    return True
+
 def _subdivide_two_adjacent_arcs(k:PlanarDiagram, endpoint):
     """
         Subdivide the two adjacent arcs in a planar diagram at a given endpoint.

@@ -1,14 +1,8 @@
-from knotpy import PlanarDiagram
+from knotpy import PlanarDiagram, OrientedPlanarDiagram
 
-
-def clear_node_attributes(k, attr=None):
-    """Clear node attributes of the planar diagram k, or the list of planar diagrams k.
-
-    This function operates in-place to remove specified attributes from nodes
-    in a given object or collection of objects. If the collection is a list,
-    set, or tuple, the function is applied recursively to each object within
-    the collection. If the `attr` parameter is not specified, all attributes
-    of the nodes are cleared.
+def clear_node_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
+    """Clear node attributes of the planar diagram k, or the list of planar
+    diagrams k.
 
     Args:
         k (Union[PlanarDiagram, List[PlanarDiagram], Set[PlanarDiagram]]):
@@ -21,14 +15,12 @@ def clear_node_attributes(k, attr=None):
     """
 
     if isinstance(k, (list, set, tuple)):
-        for sub_knot in k:
-            clear_node_attributes(sub_knot, attr)
+        for _ in k:
+            clear_node_attributes(_, attr)
         return
 
-    if isinstance(attr, (list, set, tuple)):
-        for key in attr:
-            clear_node_attributes(k, key)
-        return
+    if not isinstance(k, PlanarDiagram):
+        raise TypeError(f"k should be a PlanarDiagram, got {type(k)}")
 
     if attr is None:
         for node in k.nodes:
@@ -39,7 +31,7 @@ def clear_node_attributes(k, attr=None):
                 del k.nodes[node].attr[attr]
 
 
-def clear_endpoint_attributes(k, attr=None):
+def clear_endpoint_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
     """Clear endpoint attributes of the planar diagram k, or the list of planar diagrams k.
 
     This function operates in-place to remove specified attributes from nodes
@@ -58,10 +50,13 @@ def clear_endpoint_attributes(k, attr=None):
             will be cleared.
     """
 
+
     if isinstance(k, (list, set, tuple)):
-        for sub_knot in k:
-            clear_endpoint_attributes(sub_knot, attr)
+        for _ in k:
+            clear_endpoint_attributes(_, attr)
         return
+
+    # Clear single diagram attributes.
 
     if isinstance(attr, (list, set, tuple)):
         for key in attr:
@@ -77,16 +72,20 @@ def clear_endpoint_attributes(k, attr=None):
                 del k.nodes[ep.node][ep.position].attr[attr]
 
 
-def clear_diagram_attributes(k, attr=None):
+def clear_diagram_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
     """Clear main diagram-level attributes of the diagram k, or the list of planar diagrams k.
+
+    This function removes specified attributes from a given diagram or collection of diagrams.
+    If no attribute is specified, all attributes will be cleared. The function supports individual
+    diagrams or collections of diagrams such as lists, sets, or tuples. If a collection of attributes
+    is provided, all specified attributes will be removed.
 
     Args:
         k (Union[PlanarDiagram, List[PlanarDiagram], Set[PlanarDiagram]]):
-            The object or a collection of objects whose attributes  are to be cleared.
-        attr (Optional[Union[List, Set, Tuple, str]]): The attribute(s) to
-            remove. Can be a single attribute (str), or a collection of
-            attributes (list, set, or tuple). If None, all attributes
-            will be cleared.
+            The object or a collection of objects whose attributes are to be cleared.
+        attr (Optional[Union[List, Set, Tuple, str]]): The attribute(s) to remove. Can
+            be a single attribute (str), or a collection of attributes (list, set, or
+            tuple). If None, all attributes will be cleared.
     """
 
     if isinstance(k, (list, set, tuple)):
@@ -105,8 +104,8 @@ def clear_diagram_attributes(k, attr=None):
         del k.attr[attr]
 
 
-def clear_attributes(k: PlanarDiagram):
-    """ Clear all attributes from a PlanarDiagram."""
+def clear_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple):
+    """ Clear all attributes from a PlanarDiagram or a list of planar diagrams."""
 
     clear_node_attributes(k)
     clear_endpoint_attributes(k)

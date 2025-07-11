@@ -1,6 +1,6 @@
 from math import pi
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.drawing.draw_matplotlib import draw, plt, circlepack_layout
+from knotpy.drawing.draw_matplotlib import draw, plt, layout_circle_packing
 from knotpy.utils.geometry import Segment, PolySegment
 from knotpy.drawing.dynamic_network import Network, animate_simulation, plot_static_frame, simulation
 
@@ -19,7 +19,7 @@ def _vector_to_segment(p: complex, z1: complex, z2: complex):
 def init_network(k: PlanarDiagram):
     n = 3  # number of points per edge
     network = Network(ideal_bond_length=1.0)
-    layout = circlepack_layout(k)  # initial layout
+    layout = layout_circle_packing(k)  # initial layout
 
     # add points, connections,...
     node_neighbours = {node: [None] * k.degree(node) for node in k.nodes}  # store ccw neighbour points of node

@@ -1,5 +1,5 @@
 import knotpy as kp
-from knotpy import export_png, from_knotpy_notation
+from knotpy import from_knotpy_notation
 
 
 def test_homflypt():

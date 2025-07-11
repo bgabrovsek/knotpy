@@ -1,10 +1,11 @@
 from collections import defaultdict
 
+from knotpy import DisjointSetUnion
 from knotpy.algorithms.components_link import link_components_endpoints
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.cut_set import _is_arc_cut_set
 from knotpy.algorithms.paths import path_from_endpoint
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.algorithms.components_link import number_of_link_components
 
@@ -175,6 +176,7 @@ def loops(k: PlanarDiagram) -> list:
     # return set(arc for arc in k.arcs if
     #            len({ep.node for ep in arc}) == 1
     #            and all(not isinstance(k.nodes[ep.node], Crossing) for ep in arc))
+
 
 
 def is_kink(k: PlanarDiagram, endpoint: Endpoint) -> bool:
@@ -350,3 +352,15 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
             list_of_edges.append(strand)
 
     return list_of_edges
+
+
+def overstrands(k: PlanarDiagram | OrientedPlanarDiagram):
+    # return sets of endpoints that are on the same overstrand
+    dsu = DisjointSetUnion(k.endpoints)
+    for c in k.crossings:
+        eps = k.endpoints[c]
+        print(c, eps)
+        dsu[eps[1]] = k.endpoint_from_pair(eps[3])
+    for ep1, ep2 in k.arcs:
+        dsu[ep1] = k.endpoint_from_pair(ep2)
+    return dsu.classes()

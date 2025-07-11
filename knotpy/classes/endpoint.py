@@ -4,6 +4,16 @@ from typing import Hashable
 from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.utils.dict_utils import compare_dicts
 
+def _dict2str(d):
+    if not d:
+        return ""
+    items = []
+    for k, v in d.items():
+        if isinstance(v, bool):
+            items.append(f"{k}" if v else f"!{k}")
+        else:
+            items.append(f"{k}={v}")
+    return "[" + ",".join(items) + "]"
 
 #@dataclass(unsafe_hash=True)
 @total_ordering_from_compare
@@ -28,8 +38,19 @@ class Endpoint:
             s += f"{self.node}{self.position}"  # ⇢⇠⤍➤⤞
         else:
             s += f"({self.node},{self.position})"
-        if "color" in self.attr:
-            s += "=" + str(self.attr["color"])
+
+        if type(self) is IngoingEndpoint:
+            s += "i"
+        elif type(self) is OutgoingEndpoint:
+            s += "o"
+
+
+        #a = str(self.attr).replace(" ", "").replace("{","").replace("}","").replace(":","=").replace("'","")
+        #s += ("[" + a + "]") if a else ""
+        s += _dict2str(self.attr)
+
+        # if "color" in self.attr:
+        #     s += "=" + str(self.attr["color"])
         return s
 
     def __hash__(self):
@@ -88,16 +109,19 @@ class Endpoint:
 
 class IngoingEndpoint(Endpoint):
 
-    def __str__(self):
-        s = ""
-        if isinstance(self.node, str):
-            s = f"{self.node}{self.position}i"  # ⇢⇠⤍➤⤞
-        else:
-            s = f"({self.node},{self.position})i"
-
-        if "color" in self.attr:
-            s += "=" + str(self.attr["color"])
-        return s
+    # def __str__(self):
+    #     s = ""
+    #     if isinstance(self.node, str):
+    #         s = f"{self.node}{self.position}i"  # ⇢⇠⤍➤⤞
+    #     else:
+    #         s = f"({self.node},{self.position})i"
+    #
+    #     #if "color" in self.attr:
+    #     #    s += "=" + str(self.attr["color"])
+    #
+    #     a = str(self.attr).replace(" ", "").replace("{","").replace("}","").replace(":","=")
+    #     s += (":" + a) if a else ""
+    #     return s
 
     @staticmethod
     def reverse_type():
@@ -110,16 +134,19 @@ class IngoingEndpoint(Endpoint):
 
 
 class OutgoingEndpoint(Endpoint):
-    def __str__(self):
-        s = ""
-        if isinstance(self.node, str):
-            s = f"{self.node}{self.position}o"  # ⇢⇠⤍➤⤞
-        else:
-            s = f"({self.node},{self.position})o"
-
-        if "color" in self.attr:
-            s += "=" + str(self.attr["color"])
-        return s
+    # def __str__(self):
+    #     s = ""
+    #     if isinstance(self.node, str):
+    #         s = f"{self.node}{self.position}o"  # ⇢⇠⤍➤⤞
+    #     else:
+    #         s = f"({self.node},{self.position})o"
+    #
+    #     # if "color" in self.attr:
+    #     #     s += "=" + str(self.attr["color"])
+    #     a = str(self.attr).replace(" ", "").replace("{","").replace("}","").replace(":","=")
+    #     s += (":" + a) if a else ""
+    #
+    #     return s
 
     @staticmethod
     def reverse_type():

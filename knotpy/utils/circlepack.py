@@ -1,10 +1,3 @@
-"""CirclePack.py
-Compute circle packings according to the Koebe-Thurston-Andreev theory,
-Following data numerical algorithm by C. R. Collins and K. Stephenson,
-"A Circle Packing Algorithm", Comp. Geom. Theory and Appl. 2003.
-
-AUTHORS: ...
-"""
 
 from math import pi, acos, sin, e
 
@@ -163,27 +156,3 @@ def testgrid(packing, k, z, r, q, g):
                 minrad = min(r for z, r in newpack.values())
                 yield minrad, i, j, center
 
-
-if __name__ == "__main__":
-
-    external= {"a":1,(4,1):1,"c":1}
-    internal={"d":["a",(4,1),"c"]}
-
-    ret = CirclePack(internal=internal, external=external)
-
-    print(ret)
-    import matplotlib.pyplot as plt
-    figure, axes = plt.subplots()
-    plt_circles = [plt.Circle((z.real, z.imag), r, alpha=0.2) for z, r in ret.values()]
-    axes.set_aspect(1)
-    for circ in plt_circles:
-        axes.add_artist(circ)
-    plt.title('Colored Circle')
-    axes.relim()
-    axes.autoscale_view()
-
-    plt.show()
-
-    print("pl")
-
-    print(ret)

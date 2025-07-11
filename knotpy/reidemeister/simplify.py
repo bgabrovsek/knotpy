@@ -8,16 +8,16 @@ from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister
 from knotpy.manipulation.symmetry import flip
 from knotpy._settings import settings
 
-#__all__ = ['simplify', 'simplify_greedy_decreasing', 'simplify_smart', 'simplify_non_increasing', 'simplify_non_increasing_greedy', 'fast_simplification_greedy']
-__all__ = ["simplify_greedy_decreasing", "simplify_smart", "simplify_non_increasing", "simplify_non_increasing_greedy"]
+#__all__ = ['simplify', 'simplify_decreasing', 'simplify_smart', 'simplify_non_increasing', 'simplify_non_increasing_greedy', 'fast_simplification_greedy']
+__all__ = ["simplify_decreasing", "simplify_smart", "simplify_non_increasing"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
 
 
-def simplify_greedy_decreasing(k: PlanarDiagram, inplace=False):
+def simplify_decreasing(k: PlanarDiagram, inplace=False):
     """
-    Simplify a planar diagram by applying a (non-random) sequence of crossing-reducing Reidemeister moves
+    Simplify a planar diagram by applying a (non-random) sequence of crossing-decreasing Reidemeister moves
     (R1, R2, R4, R5), until there are no more such moves left. The algorithm is greedy, it performs the
     first crossing-reducing move it finds and continues to do so until there are no more such moves left.
 
@@ -36,30 +36,90 @@ def simplify_greedy_decreasing(k: PlanarDiagram, inplace=False):
 
 
 
-def simplify_non_increasing(k:PlanarDiagram):
+def simplify_non_increasing(k:PlanarDiagram, greediness:int = 1):
     """
-    Simplifies a planar diagram by attempting all possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
-    moves, iteratively. The simplification process halts when no new diagrams are generated during the process.
-    We do not perform any crossing-increasing Reidemeiser moves.
+    Simplifies a planar diagram through Reidemeister R3 moves and crossing-decreasing
+    moves. The simplification process is influenced by the specified greediness level.
+
+    Levels of Greediness:
+        - Level 0: Iteratively applies all possible R3 moves, followed by crossing-
+          decreasing moves until no further simplification is achievable. This is the
+          slowest level.
+        - Level 1: Similar to Level 0, but at each iteration step, the process only
+          continues with diagrams having the lowest number of crossings.
+        - Level 2: Focuses on rapid simplification by checking for and applying R3
+          moves until a crossing-decreasing move becomes viable. Then takes this
+          decreased diagram and repeats the steps.
+          level.
+        - Level 3: Similar to level 2, except that it returns a diagram immediately
+          after it reduces it (does not rerun the loop to check additional R3 moves).
+
+    The method does not perform crossing-increasing Reidemeister moves.
+
     Args:
-        k (PlanarDiagram): The planar diagram to be simplified.
-        inplace (bool):
+        k (PlanarDiagram): The planar diagram to simplify.
+        greediness (int): Specifies the level of aggressiveness for simplification.
+            Default is 1.
 
     Returns:
-        PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
+        PlanarDiagram: The simplified planar diagram, or the original diagram if no
+        simplifications were applied.
     """
 
     if isinstance(k, (set, tuple, list)):
         return type(k)(simplify_non_increasing(_) for _ in k)
 
-    if "FLIP" in settings.allowed_moves:
+    if greediness <= 2 and "FLIP" in settings.allowed_moves:
         k = {k, flip(k, inplace=False)}
 
-    return min(crossing_non_increasing_space(k, assume_canonical=False))
+    elif greediness == 0:
+        return min(crossing_non_increasing_space(k, assume_canonical=False))
+
+    elif greediness == 1:
+        return min(crossing_non_increasing_space_greedy(k))
+
+    elif greediness == 2:
+        raise NotImplementedError("Not implemented yet.")
+
+    elif greediness == 3:
+
+        # TODO: also use R5 moves
+
+        k = k.copy()
+
+        # try to reduce the input diagram
+        number_of_nodes = len(k)
+        simplify_decreasing(k, inplace=True)
+        if len(k) < number_of_nodes:
+            return k
+
+        # if R3 moves are not allowed, we cannot do further simplifications
+        if "R3" not in settings.allowed_moves:
+            return k
+
+        ls = LeveledSet(freeze(canonical(k)))
+
+        while ls[-1]:
+            # Put diagrams after an R3 to the next level.
+            ls.new_level()
+
+            for k in ls[-2]:
+                for location in find_reidemeister_3_triangle(k):
+                    k_r3 = reidemeister_3(k, location, inplace=False)
+                    simplify_decreasing(k_r3, inplace=True)
+                    if len(k_r3) < len(k):
+                        return k_r3
+                    ls.add(freeze(canonical(k_r3)))
+
+        return unfreeze(ls[0].pop())
+
+    else:
+        raise ValueError(f"Invalid greediness level {greediness}.")
+
 
     #
     # # Put simplified diagrams in canonical form into level 0
-    # #ls = LeveledSet(canonical(simplify_greedy_decreasing(k, inplace=False)))
+    # #ls = LeveledSet(canonical(simplify_decreasing(k, inplace=False)))
     # ls = LeveledSet()
     #
     # while ls[-1]:
@@ -68,24 +128,24 @@ def simplify_non_increasing(k:PlanarDiagram):
     # return min(ls)
 
 
-def simplify_non_increasing_greedy(k:PlanarDiagram):
-    """
-    Simplifies a planar diagram by attempting possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
-    moves, iteratively. At each level only take the diagrams with the lowest number of crossings.
-    Args:
-        k (PlanarDiagram): The planar diagram to be simplified.
-
-    Returns:
-        PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
-    """
-
-    if isinstance(k, (set, tuple, list)):
-        return type(k)(simplify_non_increasing_greedy(_) for _ in k)
-
-    if "FLIP" in settings.allowed_moves:
-        k = {k, flip(k, inplace=False)}
-
-    return min(crossing_non_increasing_space_greedy(k))
+# def simplify_non_increasing_greedy(k:PlanarDiagram):
+#     """
+#     Simplifies a planar diagram by attempting possible Reidemeister Type-3 (R3) moves, followed by crossing-reducing
+#     moves, iteratively. At each level only take the diagrams with the lowest number of crossings.
+#     Args:
+#         k (PlanarDiagram): The planar diagram to be simplified.
+#
+#     Returns:
+#         PlanarDiagram: The simplified diagram if simplifications were successful, otherwise returns the input diagram.
+#     """
+#
+#     if isinstance(k, (set, tuple, list)):
+#         return type(k)(simplify_non_increasing_greedy(_) for _ in k)
+#
+#     if "FLIP" in settings.allowed_moves:
+#         k = {k, flip(k, inplace=False)}
+#
+#
 
 
 # def simplify_brute_force(k: PlanarDiagram, depth: int):
@@ -160,7 +220,7 @@ def simplify_smart(k: PlanarDiagram, depth=1):
     return min(ls)
     #
     # # level 0: original diagrams (reduced in canonical form)
-    # ls = LeveledSet(canonical(simplify_greedy_decreasing(k)))
+    # ls = LeveledSet(canonical(simplify_decreasing(k)))
     #
     # # level 1: add R3 moves to the diagrams and simplify
     # ls.new_level(batch_crossing_reducing_simplify(_reidemeister_3_space(ls[-1])))
@@ -174,41 +234,13 @@ def simplify_smart(k: PlanarDiagram, depth=1):
     #
     # return min(ls)
 
-
-
-
-def fast_simplification_greedy(k: PlanarDiagram):
-    """
-    Perform R3 until no more R3 moves are possible or crossings can be reduced.
-    Returns a simplified diagram as soon as there are possible simplifications to be made
-    """
-
-    # TODO: also use R5 moves
-
-    k = k.copy()
-
-    # try to reduce the input diagram
-    number_of_nodes = len(k)
-    simplify_greedy_decreasing(k, inplace=True)
-    if len(k) < number_of_nodes:
-        return k
-
-    # if R3 moves are not allowed, we cannot do further simplifications
-    if "R3" not in settings.allowed_moves:
-        return k
-
-    ls =LeveledSet(freeze(canonical(k)))
-
-    while ls[-1]:
-        # Put diagrams after an R3 to the next level.
-        ls.new_level()
-
-        for k in ls[-2]:
-            for location in find_reidemeister_3_triangle(k):
-                k_r3 = reidemeister_3(k, location, inplace=False)
-                simplify_greedy_decreasing(k_r3, inplace=True)
-                if len(k_r3) < len(k):
-                    return k_r3
-                ls.add(freeze(canonical(k_r3)))
-
-    return unfreeze(ls[0].pop())
+#
+#
+#
+# def fast_simplification_greedy(k: PlanarDiagram):
+#     """
+#     Perform R3 until no more R3 moves are possible or crossings can be reduced.
+#     Returns a simplified diagram as soon as there are possible simplifications to be made
+#     """
+#
+#

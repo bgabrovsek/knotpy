@@ -68,4 +68,13 @@ def test_jones():
 
 
 if __name__ == '__main__':
-    test_jones()
+    from time import time
+    t = time()
+    for i in range(100):
+        test_jones()
+    print(time() - t)
+
+    """
+    100: 2.8
+    200: 5.66 vs 7.69
+    """
