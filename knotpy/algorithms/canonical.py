@@ -126,7 +126,7 @@ def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
 #     return disjoint_union(*sorted([_canonical_unoriented(c) for c in disjoint_union_decomposition(k)]))
 
 
-def canonical(k: PlanarDiagram):
+def canonical(k: PlanarDiagram | set | list | tuple):
     """
     Compute the canonical form of an unoriented planar diagram.
 

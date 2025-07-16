@@ -1,4 +1,4 @@
-from knotpy import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 
 def clear_node_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
     """Clear node attributes of the planar diagram k, or the list of planar

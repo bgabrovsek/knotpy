@@ -16,7 +16,7 @@ def test_randomize_knot():
     j = jones_polynomial(k)
 
     for i in range(5):
-        k_ = randomize_diagram(k, crossing_increasing_moves=2)
+        k_ = randomize_diagram(k, max_crossings_increase=2)
         assert k != k_  # unlikely they are the same
         assert jones_polynomial(k_) == j
 
@@ -31,7 +31,7 @@ def test_randomize_theta():
     for theta in thetas:
         y = yamada_polynomial(theta)
         for i in range(5):
-            theta_ = randomize_diagram(theta, crossing_increasing_moves=1)
+            theta_ = randomize_diagram(theta, max_crossings_increase=1)
             assert sanity_check(theta_)
             y_ = yamada_polynomial(theta_)
             n_ = _naive_yamada_polynomial(theta_)

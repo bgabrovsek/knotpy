@@ -31,7 +31,7 @@ from knotpy.manipulation.insert import parallelize_arc
 from knotpy.classes.convert import vertices_to_crossings
 from knotpy.algorithms.topology import loops as get_loops
 from knotpy.algorithms.sanity import sanity_check
-from knotpy.drawing.draw_matplotlib import export_pdf
+
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.manipulation.insert import insert_loop
 from knotpy.algorithms.topology import number_of_link_components
@@ -174,5 +174,3 @@ if __name__ == "__main__":
     #graphs = generate_simple_graphs(4, degrees=[4])
 
     knots = generate_knot_diagrams(4, kinks=True)
-
-    export_pdf(knots, "knots.pdf", with_title=True)

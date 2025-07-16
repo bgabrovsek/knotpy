@@ -2,26 +2,30 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, Polygon
 from matplotlib.lines import Line2D
-#from matplotlib.collections import PatchCollection, LineCollection, PolyCollection
-from statistics import mean
-
-#from knotpy import IngoingEndpoint, disjoint_union, disjoint_union_decomposition
 
 from knotpy.classes.endpoint import IngoingEndpoint
 from knotpy.algorithms.disjoint_union import disjoint_union, disjoint_union_decomposition
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.drawing.layout_circle_packing import layout_circle_packing
-from knotpy.utils.geometry import CircularArc, Segment, middle, is_angle_between, bounding_box, translate
+from knotpy.utils.geometry import CircularArc, Segment, middle
 from knotpy.drawing.alignment import align_layouts
 from knotpy.algorithms.connected_sum import connected_sum
+
+"""
+TODO:
+- bridges
+- loops
+- nicer connected sums
+"""
+
 
 __all__ = ['draw']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-_DEFAULT_ARC_COLOR = "tab:blue"
-_DEFAULT_ARC_WIDTH = 4.0
-_DEFAULT_GAP_WIDTH = 0.1   # arc break marking the under-passing
+_DEFAULT_ARC_COLOR = "tab:blue"  # knot strand color
+_DEFAULT_ARC_WIDTH = 4.0  # knot strand width
+_DEFAULT_GAP_WIDTH = 0.1   # arc break gap the under-passing
 
 _DEFAULT_VERTEX_SIZE = 0.1
 _DEFAULT_VERTEX_COLOR = "black"
@@ -33,17 +37,19 @@ _ARROW_LENGTH = 0.15
 _ARROW_WIDTH = 0.15
 #_ARROW_FLOW = 0.5  # arrow slant so it appears more natural, 0 = tangent
 _DEFAULT_ARROW_COLOR = _DEFAULT_ARC_COLOR
-_DEFAULT_ARROW_POSITION = "middle"
-_DEFAULT_ARROW_STYLE = "open"
+_DEFAULT_ARROW_POSITION = "middle"  # options: "middle"
+_DEFAULT_ARROW_STYLE = "open"  # options: "open", "closed"
 
-_PLOT_CIRCLES = True
+_PLOT_CIRCLES = True  # mostly for debugging
 
-_Z_CIRCLES = 1
+# Drawing order (stacking order) of plot elements, lower z-order values are drawn first.
+_Z_CIRCLES = 0
 _Z_ARC = 1
 _Z_ENDPOINT = 1
 _Z_ARROW = 2
 _Z_VERTEX = 3
 _Z_TEXT = 4
+
 
 def draw_arcs(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, arcs_to_draw: None | list=None, ax=None):
     """
@@ -133,24 +139,6 @@ def draw_endpoints(k: PlanarDiagram | OrientedPlanarDiagram,
 
 
         if isinstance(g_arc, CircularArc):
-
-            # # do we need to make a gap?
-            # if ep.node in k.crossings and not ep.position % 2:
-            #     _arc =
-            #
-            #
-            #     gap_angle = _DEFAULT_GAP_WIDTH / element.radius  # circular arc length is s = theta * radius
-            #     theta1, theta2 = element.theta1, element.theta2
-            #
-            #     if _is_start(element, layout[ep.node]):
-            #         if not is_angle_between(theta1, theta1 + gap_angle, theta2):
-            #             continue
-            #         element = element(theta1 + gap_angle, theta2)  # shorten the arc, TODO: segment
-            #     else:
-            #         if not is_angle_between(theta1, theta2 - gap_angle, theta2):
-            #             continue
-            #         element = element(theta1, theta2 - gap_angle)  # shorten the arc, TODO: segment
-
             ax.add_patch(
                 Arc(xy=(g_arc.center.real, g_arc.center.imag),
                     width=2 * g_arc.radius,
@@ -176,8 +164,6 @@ def draw_vertices(
         k: PlanarDiagram | OrientedPlanarDiagram,
         layout:dict,
         vertices_to_draw:None | list=None,
-        labels=False,
-        label_offset=0.05,
         ax=None):
 
     if ax is None:
@@ -194,6 +180,7 @@ def draw_vertices(
             color=_DEFAULT_VERTEX_COLOR,
             zorder=_Z_VERTEX)
         )
+
 
 def draw_arrows(
         k: PlanarDiagram | OrientedPlanarDiagram,
@@ -238,6 +225,7 @@ def draw_arrows(
                     ax.add_patch(Polygon(points, closed=True, edgecolor='none', facecolor=_DEFAULT_ARROW_COLOR, linewidth=0))
                 else:
                     raise ValueError(f"Unsupported arrow style: {style}")
+
 
 def draw_node_labels(
         k: PlanarDiagram | OrientedPlanarDiagram,
@@ -349,22 +337,25 @@ def autoscale_with_padding(ax, pad_frac=0.05):
     ax.set_aspect('equal', adjustable='box')
 
 
-def draw_from_layout(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, ax):
+def draw_from_layout(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, ax, with_labels):
     draw_arcs(k, layout, ax=ax)
     draw_endpoints(k, layout, ax=ax)
     draw_arrows(k, layout, ax=ax)
     draw_vertices(k, layout, ax=ax)
 
-    draw_node_labels(k, layout, ax=ax)
-    draw_endpoint_labels(k, layout, ax=ax)
-    draw_arc_labels(k, layout, ax=ax)
+    if with_labels:
+        draw_node_labels(k, layout, ax=ax)
+        draw_endpoint_labels(k, layout, ax=ax)
+        draw_arc_labels(k, layout, ax=ax)
     autoscale_with_padding(ax)
     ax.set_axis_off()
 
 
-
-
 def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
+
+    # TODO: analyse keywords (title,...)
+
+    #print("drawing",k)
 
     # Split the knot into disjoint components (which will be aligned)
     components = disjoint_union_decomposition(k)
@@ -375,6 +366,7 @@ def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
     # Align the components.
     align_layouts(layout_circles_pairs)
 
+    with_labels = kwds.get("with_labels", False)
 
     # Join the layout to a common one.
     joint_layout, joint_circles = {}, {}
@@ -383,14 +375,17 @@ def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
         joint_circles.update(circles)
 
     # Plot the joint layout.
-    fig, ax = plt.subplots()
-    ax = plt.gca() if 'ax' not in kwds else kwds['ax']
+    if "ax" in kwds:
+        ax = kwds['ax']
+    else:
+        fig, ax = plt.subplots()
+        ax = plt.gca()
 
 
-    align_layouts(layout_circles_pairs)
+    align_layouts(layout_circles_pairs)  # TODO: do we need this?
     if _PLOT_CIRCLES:
         _plot_circles(k, joint_circles, ax=ax)
-    draw_from_layout(k, joint_layout, ax=ax)
+    draw_from_layout(k, joint_layout, ax=ax, with_labels=with_labels)
 
 
 def _plot_circles(k: PlanarDiagram | OrientedPlanarDiagram, circles:dict, ax=None):
@@ -413,47 +408,7 @@ def _plot_circles(k: PlanarDiagram | OrientedPlanarDiagram, circles:dict, ax=Non
 
 
 
-def _test_knot():
-    import knotpy as kp
-    k = kp.knot("5_2")
-    draw(k)
-    plt.show()
-
-def _test_knot_kink():
-    import knotpy as kp
-    k = kp.knot("5_2")
-    k_ = k.copy()
-
-    for face in k.faces:
-        if k.endpoint_from_pair(("a", 2)) in face:
-            for ep in face:
-                ep.attr["external"] = True
-    for face in k_.faces:
-        if k_.endpoint_from_pair(("a", 2)) in face:
-            for ep in face:
-                ep.attr["external"] = True
-
-    k = kp.reidemeister_1_add_kink(k, (k.endpoint_from_pair(("a",1)), 1))
-    k_ = kp.reidemeister_1_add_kink(k_, (k_.endpoint_from_pair(("b",2)), 1))
-    kk_ = disjoint_union(k, k_)
-    draw(kk_)
-    plt.show()
-
-def _test_connected_sum():
-
-    k1 = kp.knot("3_1")
-    k2 = kp.knot("4_1")
-    k = connected_sum(k1, k2)
-    draw(k)
-    plt.show()
-
 
 
 if __name__ == '__main__':
-    import knotpy as kp
-
-
-    #_test_knot()
-    _test_connected_sum()
-
-    exit()
+    pass

@@ -34,4 +34,3 @@ def test_equivalence_knots():
 
 if __name__ == '__main__':
     test_equivalence_knots()
-    # test_equivalence_theta_curves()

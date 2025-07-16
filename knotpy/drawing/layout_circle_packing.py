@@ -4,23 +4,29 @@
 from itertools import chain
 from collections import defaultdict
 import math
+from statistics import mean
 
+from knotpy.algorithms.topology import leafs
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.utils.circlepack import CirclePack
 from knotpy.algorithms.topology import loops, kinks, bridges
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
-from knotpy.algorithms.connected_sum import connected_sum
 from knotpy.drawing._support import _visible
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
-                                   tangent_line, middle, bisector, bisect, split,
+                                   tangent_line, middle, bisector, bisect, split, angle_between,
                                    perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean, orient_arc, arc_from_circle_and_points, arc_from_diamater)
-
 from knotpy.drawing.alignment import canonically_rotate_circles
+from knotpy.algorithms.sanity import sanity_check
 
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 __all__ = ['layout_circle_packing']
+
+external_node_radius = 1.0  # radius of external circles corresponding to nodes
+external_arc_radius = 0.5  # radius of external circles corresponding to arcs
+
+_debug_leafs = False
 
 """CirclePack.py
 Compute circle packings according to the Koebe-Thurston-Andreev theory,
@@ -120,46 +126,48 @@ def circle_packing(k: PlanarDiagram | OrientedPlanarDiagram):
             layout.
     """
 
+
+    _debug = False
+
+    # Arcs that are incident to leafs should not be included in the "bridge" detection, since we will handle leaf drawing separately.
+    #leaf_arcs = {k.arcs[(v, 0)]  for v in leafs(k)}
+
+    # Check if the diagram is drawable using circle packing.
     if kinks(k):
         raise ValueError("Circle packing layout failed: the knotted diagram contains kinks")
     if loops(k):
         raise ValueError("Circle packing layout failed: the knotted diagram contains loops")
-    if bridges(k):
+    if bridges(k): #- leaf_arcs:
         raise ValueError("Circle packing layout failed: the knotted diagram contains bridges")
     if number_of_disjoint_components(k) > 1:
         raise ValueError("Circle packing layout failed: the knotted diagram contains disjoint components")
 
-    _debug = False
-    external_node_radius = 1.0  # radius of external circles corresponding to nodes
-    external_arc_radius = 0.5  # radius of external circles corresponding to arcs
-
-    # get external endpoints if they exists
+    # Get external endpoints if they exist.
     external_endpoints = [ep for ep in k.endpoints if "outer" in ep.attr and ep.attr["outer"] == True]
     external_endpoints.extend([ep for ep in k.endpoints if "external" in ep.attr and ep.attr["external"] == True])
 
     faces = list(k.faces)
-
     if external_endpoints:
         external_face = [face for face in faces if set(face).issuperset(external_endpoints)]
-
         if len(external_face) != 1:
             raise ValueError("Circle packing layout failed: the knotted diagram contains multiple external faces/regions")
         external_face = external_face[0]
     else:
+        # if no external faces are given, choose the face with most arcs
         external_face = min(faces, key=lambda r: (-len(r), r))  # sort by longest, then by lexicographical order
-    print("External face:", external_face)
+
     arcs = list(k.arcs)
 
     # Create dictionaries that map all endpoints to faces, arcs,...
-
     ep_to_arc_dict = {ep: arc for arc in arcs for ep in arc}
     ep_to_face_dict = {ep: face for face in faces for ep in face}
 
     faces.remove(external_face)  # the circle packing does not need the external face
 
+
     # add external nodes and arcs to the set of external circles
-    external_circles = {ep.node: external_node_radius for ep in external_face} \
-                       | {ep_to_arc_dict[ep]: external_arc_radius for ep in external_face}  # nodes & arcs
+    external_circles = {ep.node: external_node_radius for ep in external_face} | \
+                       {ep_to_arc_dict[ep]: external_arc_radius for ep in external_face}  # nodes & arcs
 
     # face -> arc / node
     internal_circles = {face: list(chain(*((ep_to_arc_dict[ep], ep.node) for ep in face))) for face in faces}
@@ -209,6 +217,41 @@ def _layout_arcs(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, layout
         layout[arc] = g_arc
 
 
+def _find_color_pairs(endpoints: list):
+    """Group endpoints by colored pairs."""
+
+    # If we have only two colors, then they are a pair.
+    if len(endpoints) == 2:
+        return endpoints
+
+    # Find color groups
+    color_groups = defaultdict(list)
+    for ep in endpoints:
+        color_groups[ep.attr.get("color", None)].append(ep)  # use None if "color" is missing
+
+    return [tuple(group) for group in color_groups.values() if len(group) == 2]
+
+def _find_leaf_adjacent_pairs(endpoints: list):
+    """Group endpoints that are leaf adjacent pairs."""
+    # Find adjacent groups
+    color_groups = defaultdict(list)
+    for ep in endpoints:
+        color_groups[ep.attr.get("_leaf_adjacent", None)].append(ep)  # use None if "color" is missing
+
+    return [tuple(group) for group in color_groups.values() if len(group) == 2]
+
+def _find_big_angle_pairs(k, endpoints: list, circles: dict):
+    if len(endpoints) != 3:
+        return []
+    z = [circles[k.arcs[endpoints[i]]].center for i in range(3)]
+    angles = {abs(angle_between(z[i], circles[endpoints[i].node].center, z[(i + 1) % 3])): (endpoints[i], endpoints[(i + 1) % 3]) for i in range(3)}
+    #print("angles", [a * 180 / 3.141592 for a in angles])
+    angle_values = sorted(angles)
+    #print("angle_values", angle_values)
+    if angle_values[-1] > angle_values[-2] * 1.2:  # the angle is bigger ig it is 20% bigger
+        return [angles[angle_values[-1]], ]
+    return []
+
 
 
 def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, layout: dict):
@@ -228,7 +271,7 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
     for v in k.nodes:
         node_inst = k.nodes[v]
         arcs = k.arcs[v]
-        endpoints = k.endpoints[v]
+        endpoints = list(k.endpoints[v])
 
 
         if isinstance(node_inst, Crossing):
@@ -254,43 +297,45 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
             and the others by straight lines, or, do we connect all endpoint-arcs by straight lines. In case at least 
             one arc is smooth, then we need to change the position of the vertex."""
 
-            # get the two arcs that share some properties, so we connect it by an arc
-            colors = defaultdict(list)
-            [colors[ep.attr.get("color", None)].append(ep) for ep in endpoints]
-            same_pair = [val for key, val in colors.items() if key is not None and len(val) == 2] + (colors[None] if len(colors[None]) == 2 else []) + [endpoints if len(endpoints) == 2 else []]
+            # Compute if there are any two arcs that should be connected through a smooth arc (e.g. have some same property), store such a pair into same_pair.
+            # colors = defaultdict(list)
+            # for ep in endpoints:
+            #     colors[ep.attr.get("color", None)].append(ep)
+            #     colors[ep.attr.get("_leaf_adjacent", None)].append(ep)
+            # same_pair = [val for key, val in colors.items() if key is not None and len(val) == 2] + (colors[None] if len(colors[None]) == 2 else []) + [endpoints if len(endpoints) == 2 else []]
+            # same_pair = same_pair[0] if same_pair else []
+            same_pair = _find_color_pairs(endpoints) + _find_leaf_adjacent_pairs(endpoints) + _find_big_angle_pairs(k, endpoints, circles)
             same_pair = same_pair[0] if same_pair else []
+            #print("same_pair", same_pair)
 
             point = circles[v].center
+            if _debug_leafs: print("same pair", same_pair)
 
             if same_pair:
-                # connect this pair by an arc
-                ep1, ep2 = same_pair[0]
+                # connect arc in same_pair with a circular arc
+                ep1, ep2 = same_pair
                 index1, index2 = endpoints.index(ep1), endpoints.index(ep2)
                 arc1, arc2 = arcs[index1], arcs[index2]
 
-                same_arc = perpendicular_arc(circles[v], circles[arc1], circles[arc2])
-                point = middle(same_arc)  # move the vertex
+                same_g_arc = perpendicular_arc(circles[v], circles[arc1], circles[arc2])
+                point = middle(same_g_arc)  # move the vertex
 
-                # get arcs
-                layout[ep1], layout[ep2] = _sort_geometric_arcs(*bisect(same_arc), circles[arc1], circles[arc2])
-
+                # store "smooth" arcs
+                layout[ep1], layout[ep2] = _sort_geometric_arcs(*bisect(same_g_arc), circles[arc1], circles[arc2])
+                point = middle(same_g_arc)
 
             for ep, arc in zip(endpoints, arcs):
                 if ep in same_pair:
                     continue
-
                 boundary_b_point = circles[arc] * circles[v]  # intersection point on the circle boundary
-
-                garc = perpendicular_arc_through_point(circles[v], boundary_b_point[0], point)
-                layout[ep] = garc
-
+                layout[ep] = perpendicular_arc_through_point(circles[v], boundary_b_point[0], point)
 
 
             layout[v] = point  # possible new coordinate
 
-
         # set direction so the endpoint arcs point away from the node (crossing/vertex)
         for ep in endpoints:
+            #print("orienting", ep, layout[ep], "start", layout[v])
             layout[ep] = orient_arc(layout[ep], start_point=layout[v])
 
 
@@ -312,39 +357,47 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     k = k.copy()
 
-    # remove the kinks
-
+    # Remove the kinks.
     removed_kinks = []
     while _kinks := kinks(k):
         ep = next(iter(_kinks))
         c_inst = k.nodes[ep.node]
         removed_kinks.append((ep, c_inst))
-        #v = Vertex(degree=2, _kink=True)
         del k._nodes[ep.node]
         # TODO: if we need a bigger space for kinks, we can insert additional bivertices
         ep1 = c_inst[(ep.position + 1) % 4]
         ep2 = c_inst[(ep.position + 2) % 4]
         k.set_arc((ep1, ep2), _kink=ep.node)
 
-    # split connected sums
+    # Split connected sums.
     # TODO
 
-    # # remove leafs (knotoids)
-    # while _leafs := [v for v in k.vertices if k.degree(v) == 1]:
-    #     leaf = _leafs[0]
-    #     leaf_ep = leaf[0]
-    #     adj_ep = k.twin(leaf_ep)
+    # Remove leafs
+    for leaf in leafs(k):
 
+        if _debug_leafs: print(f"Remove leaf {leaf} from \n{k}")
 
+        adj_ep = k.nodes[leaf][0]
+        if type(k.nodes[adj_ep.node]) is Crossing:
+            k.convert_node(node_for_converting=adj_ep.node, node_type=Vertex)
+            k.nodes[adj_ep.node].attr["_leaf_crossing_ep"] = adj_ep  # save the original type
+        else:
+            k.nodes[adj_ep.node].attr["_leaf_vertex_ep"] = adj_ep  # save the original type
+        degree = k.degree(adj_ep.node)
+        if 3 <= degree <= 4:
+            # mark the arcs that should smoothly connect
+            ep_left = k.endpoint_from_pair((adj_ep.node, (adj_ep.position - 1) % degree))
+            ep_right = k.endpoint_from_pair((adj_ep.node, (adj_ep.position + 1) % degree))
+            ep_left.attr["_leaf_adjacent"] = leaf
+            ep_right.attr["_leaf_adjacent"] = leaf
 
+        k.remove_node(node_for_removing=leaf, remove_incident_endpoints=True)
+        sanity_check(k)
+        if _debug_leafs: print(f"Leaf {leaf} removed from \n{k}\n")
 
 
     return k
 
-def _mean(list_of_points):
-    """Return the mean of a list of complex numbers"""
-    # TODO: use stats.mean
-    return sum(list_of_points)/len(list_of_points)
 
 
 def _debug(*args):
@@ -376,7 +429,7 @@ def _insert_kink(k: PlanarDiagram | OrientedPlanarDiagram,
     Returns:
 
     """
-    print(f"*Adding kink {crossing} to endpoints {_ep_adj_arc.keys()}")
+    #print(f"*Adding kink {crossing} to endpoints {_ep_adj_arc.keys()}")
 
     c_inst = k.nodes[crossing]  # crossing instance
 
@@ -386,7 +439,7 @@ def _insert_kink(k: PlanarDiagram | OrientedPlanarDiagram,
     ep_a, ep_b = k.twin(adj_ep_a), k.twin(adj_ep_b)  # endpoints of the kink crossing
 
     # the endpoint now follow the ccw order: ep, ep_a, ep_b, twin_ep, all with node property 'crossing'.
-    print(f"ep {ep} twin {twin_ep} {ep_a} {ep_b}", "adjacent", adj_ep_a, adj_ep_b)
+    #print(f"ep {ep} twin {twin_ep} {ep_a} {ep_b}", "adjacent", adj_ep_a, adj_ep_b)
     ab_arc = perpendicular_arc(_circle, circles[adj_ep_a.node], circles[adj_ep_b.node])  # the full arc through the circle on which the kink should lie on
     ab_arc = orient_arc(ab_arc, start_point=circles[adj_ep_a.node].center)  # orient from a to b
     perpendicular = 1j * (ab_arc.B - ab_arc.A) / abs(ab_arc.B - ab_arc.A)
@@ -442,6 +495,11 @@ def _insert_kink(k: PlanarDiagram | OrientedPlanarDiagram,
 
     layout[k.arcs[ep]] = arc_arc
 
+def _face_with_endpoints(k, endpoints):
+    for face in k.faces:
+        if all(ep in face for ep in endpoints):
+            return face
+    return None
 
 def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_k : PlanarDiagram | OrientedPlanarDiagram, layout:dict, circles:dict):
     """
@@ -453,15 +511,10 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
         layout: A dictionary where keys are diagram arcs or endpoints and values are the corresponding geometric segments or positions.
         circles: A dictionary containing the mapping between arcs in the diagram and their corresponding circle packing representations.
     """
-    print("Post processing layout")
 
+    if _debug_leafs: print("ORIGINAL", k)
+    # Postprocess kinks
 
-    """
-    Add kinks that were removed in the layout due to the circle packing.
-    Elements form the preprocessed diagram start with '_',
-    elements from the original/post-processed diagram do not start with '_'.
-    """
-    # loop over the arcs of the preprocessed knot
     for _arc in preprocessed_k.arcs:
         _ep_a, _ep_b = _arc
         # Find an arc that was removed in the preprocessing. The arc '_arc' should contain a kink, so we must add it.
@@ -469,10 +522,8 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             crossing = _ep_a.attr["_kink"]  # the endpoint defining the kink and the node instance was saved as an attribute
             _arc_a = layout[_ep_a]
             _arc_b = layout[_ep_b]
-
             _insert_kink(k=k, preprocessed_k=preprocessed_k, layout=layout, circles=circles,
                          crossing=crossing, _circle=circles[_arc], _ep_adj_arc={_ep_a: _arc_a, _ep_b: _arc_b})
-
 
             continue
 
@@ -490,7 +541,7 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             assert arc2 == arc3
             _ep_a_garc, _ep_b_garc = layout[_ep_a], layout[_ep_b]  # the arcs of the pre-processed endpoints
 
-            return
+
 
             # We which side does the kink lie on?
             _a_face = [face for face in ppk.faces if _ep_a in face][0]
@@ -551,7 +602,78 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             kink_garc = - perpendicular_arc_through_point(_gcircle, p2, p3)
             layout[frozenset({k.twin(c_inst[index_3]), k.twin(c_inst[index_2])})] = kink_garc
 
+    if _debug_leafs: print("Leafs")
+    # Postprocess leafs
+    if _debug_leafs: print("circles", circles.keys())
+    for node in preprocessed_k.nodes:
+        if "_leaf_crossing_ep" in preprocessed_k.nodes[node].attr:
+            ep = preprocessed_k.nodes[node].attr["_leaf_crossing_ep"]
+            # fix layout positions (since the 4-valent crossing was convertex fo the 3-valent vertex)
+            new_layout, new_circles = {}, {}
+            if _debug_leafs: print("LEAF CROSSING NODE", node)
+            for old_ep, new_ep in zip(preprocessed_k.nodes[node][ep.position:], k.nodes[node][ep.position + 1:]):
+                old_arc, new_arc = preprocessed_k.arcs[old_ep], k.arcs[new_ep]
+                new_layout[k.twin(new_ep)] = layout[preprocessed_k.twin(old_ep)]
+                new_layout[new_arc] = layout[old_arc]
+                #new_circles[new_ep] = circles[old_ep]
+                new_circles[new_arc] = circles[old_arc]
 
+                if _debug_leafs: print("NEW EP", new_ep, "from", old_ep)
+                if _debug_leafs: print("NEW ARC", new_arc, "from", old_arc)
+            if _debug_leafs: print("NEW", new_layout)
+            if _debug_leafs: print("NEW CIRCLES", new_circles)
+            layout.update(new_layout)
+            circles.update(new_circles)
+
+            # add the leaf
+            leaf_arc = k.arcs[ep]
+            opposite_ep = k.endpoint_from_pair((node, (ep.position + 2) % 4))  # endpoint opposite to the leaf endpoint
+            if _debug_leafs: print("opposite ep" , opposite_ep)
+            opposite_g_arc = layout[opposite_ep]
+
+            point = opposite_g_arc.A  # position of the crossing
+            # compute the intersection of the leaf arc endpoint and the crossing circle
+            leaf_boundary_point = circles[node] * Circle(opposite_g_arc.center, opposite_g_arc.radius)
+            leaf_boundary_point = sorted(leaf_boundary_point, key=lambda _: -abs(opposite_g_arc.B - _))[0]  # intersection of the crossing circle and the leaf endpoint arc
+
+            leaf_g_arc = perpendicular_arc_through_point(circles[node], leaf_boundary_point, point)  # arc of the leaf endpoint
+            leaf_g_arc = orient_arc(leaf_g_arc, start_point=point)
+            leaf_ep = k.twin(ep)
+            leaf_vertex = leaf_ep.node
+
+            # get the face circle in which the leaf lies in
+            adj_ep = preprocessed_k.endpoint_from_pair((node, (ep.position)  % preprocessed_k.degree(node)))
+            face = [face for face in preprocessed_k.faces if adj_ep in face][0]
+            # enlenghten the endpoint for 1/3 of the face circle radius
+            leaf_length = circles[face].radius / 2 if face in circles else external_arc_radius / 2
+
+            leaf_ep_segment = Segment(leaf_boundary_point + (leaf_boundary_point - circles[node].center) / abs(leaf_boundary_point - circles[node].center) * leaf_length, leaf_boundary_point)
+
+            layout[leaf_vertex] = leaf_ep_segment.A
+            layout[ep] = leaf_g_arc
+            layout[leaf_ep] = leaf_ep_segment
+            layout[leaf_arc] = None
+            circles[leaf_vertex] = Circle(leaf_ep_segment.A, leaf_length)
+            circles[leaf_arc] = Circle(0.5 * (leaf_ep_segment.A + leaf_ep_segment.B), abs(leaf_ep_segment.A - leaf_ep_segment.B) / 2)
+
+
+
+            # parallel_arc = layout[k.arcs[(node, (ep.position + 1) % 4)]]
+            # opposite_endpoint_arc = layout[k.arcs[(node, (ep.position + 2) % 4)]]
+            # print("parallel arc", node, parallel_arc)
+            # center = middle(parallel_arc)
+            # opposite_point =  opposite_endpoint_arc.A
+            # leaf_arc = perpendicular_arc_through_point(circles[node], opposite_point, center)
+            # leaf_arc = orient_arc(leaf_arc, start_point=center)
+            # layout[k.nodes[node][ep.position]] = leaf_arc
+            # circles[k.nodes[node][ep.position]] = circles[node]
+
+
+        elif "_leaf_vertex_ep" in k.nodes[node].attr:
+            raise NotImplementedError("Leafs on vertices not yet implemented")
+
+        else:
+            pass
 def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circles: bool = False):
     """
     Computes the layout using circle packing for a given planar or oriented planar diagram. A layout is a dictionary,
@@ -569,21 +691,28 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circl
         and the computed circles.
     """
 
-    print(k)
+    if _debug_leafs: print(k)
     k_ = _preprocess_knot(k)
-    print(k_)
+    if _debug_leafs: print("preprocessed",k_)
 
     circles = circle_packing(k_)
     circles = canonically_rotate_circles(circles)
 
-    print("Circles packed")
-    layout = {node: None for node in k.nodes}
-    layout |= {ep: None for ep in k.endpoints}
-    layout |= {arc: None for arc in k.arcs}
-    layout |= {face: None for face in k.faces}
+    # print("Circles packed:")
+    # for _ in circles:
+    #     print(_, "->", circles[_])
+    layout = {node: None for node in k_.nodes}
+    layout |= {ep: None for ep in k_.endpoints}
+    layout |= {arc: None for arc in k_.arcs}
+    layout |= {face: None for face in k_.faces}
 
 
     _layout_arcs(k_, circles, layout)
+
+    # print("Arc layout")
+    # for _ in k_.arcs:
+    #     print(_, "->", layout[_])
+
     _layout_endpoints(k_, circles, layout)
 
     _post_process_layout(k, k_, layout, circles)

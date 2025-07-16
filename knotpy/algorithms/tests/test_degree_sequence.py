@@ -1,7 +1,5 @@
 from knotpy.algorithms.degree_sequence import degree_sequence, neighbour_sequence
 from knotpy.notation.native import from_knotpy_notation
-from knotpy.drawing.draw_matplotlib import draw, plt
-from knotpy import loops, kinks
 
 
 def test_deg_seq():

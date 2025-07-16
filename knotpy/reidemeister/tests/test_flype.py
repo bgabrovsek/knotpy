@@ -2,7 +2,7 @@ import knotpy as kp
 def test_flype():
     for k in kp.knots((4, 8)):
         h = kp.homflypt_polynomial(k)
-        for f in kp.find_flype(k):
+        for f in kp.find_flypes(k):
             fk = kp.flype(k, f)
             assert kp.sanity_check(fk)
             fh = kp.homflypt_polynomial(fk)
@@ -14,7 +14,7 @@ def test_flype_case():
 
 
 
-    for i, f in enumerate(kp.find_flype(k)):
+    for i, f in enumerate(kp.find_flypes(k)):
 
         print(f)
         fk = kp.flype(k, f)

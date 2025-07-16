@@ -1,24 +1,39 @@
 from random import choice
 from itertools import product
 import warnings
+from typing import Generator, Tuple, Set
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.cut_set import arc_cut_sets
-from knotpy.manipulation.rewire import swap_endpoints
 from knotpy.manipulation.symmetry import flip
 from knotpy._settings import settings
 
-def _path_within_crossings(k: PlanarDiagram, nodes, endpoint):
-    """Follow the strand of the endpoint until it reaches a node not in the given list of nodes."""
+def _path_within_crossings(k: PlanarDiagram, nodes: list | set, endpoint):
+    """Follows the strand of the endpoint until it reaches a node not in the given list of nodes.
 
-    # print("---")
-    # print(nodes)
-    # print(endpoint)
+    This function iteratively traces the path starting from the provided
+    endpoint, ensuring each step remains within the provided set of nodes.
+    The traversal terminates when a node outside the specified list is
+    encountered.
+
+    Args:
+        k (PlanarDiagram): The planar diagram.
+        nodes (list): A list of nodes representing where the path traversal can occur. Traversal halts when a node not in this list is reached.
+        endpoint (Endpoint): The starting endpoint for the traversal.
+
+    Returns:
+        list: The list of nodes visited during the traversal, in order,
+        starting from the endpoint node and including each subsequent step
+        until a node outside the provided list is encountered.
+
+    Raises:
+        ValueError: If the provided endpoint is not within the specified
+        list of nodes.
+    """
 
     if endpoint.node not in nodes:
         raise ValueError("Endpoint not in nodes")
-        #return []
 
     path = [endpoint]
     while True:
@@ -34,7 +49,7 @@ def _is_integer_tangle_cut(k: PlanarDiagram | OrientedPlanarDiagram, partition: 
     return _path_within_crossings(k, partition, endpoints[0]) == _path_within_crossings(k, partition, endpoints[1])
 
 
-def find_flype(k: PlanarDiagram | OrientedPlanarDiagram):
+def find_flypes(k: PlanarDiagram | OrientedPlanarDiagram) -> Generator[Tuple[Set, tuple], None, None]:
     """
     Find all flype positions. A flype is given by a list of four endpoints, where the endpoints form an arc-cut set.
     The first two endpoints are in the same crossing and the obtained tangle by cutting the arcs of the endpoints is
@@ -87,10 +102,10 @@ def choose_flype(k, random=False):
         return None
 
     if random:
-        locations = tuple(find_flype(k))
+        locations = tuple(find_flypes(k))
         return choice(locations) if locations else None
     else:
-        return next(find_flype(k), None)  # select 1st item
+        return next(find_flypes(k), None)  # select 1st item
 
 
 def flype(k:PlanarDiagram | OrientedPlanarDiagram, partition_endpoints_pair: tuple, inplace=False):
@@ -130,6 +145,7 @@ def flype(k:PlanarDiagram | OrientedPlanarDiagram, partition_endpoints_pair: tup
     k.set_arc((ep0, ep3))
 
     # flip the part of the diagram
+    #print("flipping partition", partition)
     k = flip(k, partition, inplace=True)
 
     return k

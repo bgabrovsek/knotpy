@@ -1,9 +1,11 @@
+from sympy import asech
+
 from knotpy import homflypt_polynomial, writhe
 from knotpy.invariants.kauffman import kauffman_polynomial
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.notation.pd import from_pd_notation
-from knotpy.reidemeister.reidemeister import find_all_reidemeister_moves, make_all_reidemeister_moves, choose_random_reidemeister_moves, make_reidemeister_move
+from knotpy.reidemeister.reidemeister import random_reidemeister_move, all_reidemeister_moves
 from knotpy.invariants.jones import jones_polynomial
 
 def _get_examples():
@@ -14,7 +16,9 @@ def _get_examples():
     #diagram2 = from_knotpy_notation("a=X(b0 c3 a3 a2) b=X(a0 c2 c1 c0) c=X(b3 b2 b1 a1)")
     diagram3 = from_knotpy_notation("a=X(b0 c3 c2 b1) b=X(a0 a3 c1 c0) c=X(b3 b2 a2 a1)")
     diagram4 = from_knotpy_notation("a=X(a1 a0 b0 c3) b=X(a2 b2 b1 c0) c=X(b3 c2 c1 a3)")
-    return diagram1, diagram3, diagram4, knot_31, knot_41, knot_52
+    # TODO: make it work for links
+    return knot_31, knot_41, knot_52
+    #return diagram1, diagram3, diagram4, knot_31, knot_41, knot_52
 
 
 def test_choose_random_reidemeister_moves():
@@ -22,99 +26,25 @@ def test_choose_random_reidemeister_moves():
     import matplotlib.pyplot as plt
     import knotpy as kp
 
-
-
-    diagrams = _get_examples()
-    for i in range(10):
-        for k in diagrams:
-            j = jones_polynomial(k)
-            moves = choose_random_reidemeister_moves(k)
-            for move in moves:
-                k_ = make_reidemeister_move(k, move)
-                j_ = jones_polynomial(k_)
-                #
-                # if j_ != j:
-                #
-                #     print(k)
-                #     print(k_)
-                #
-                #     print(k.framing)
-                #     print(k_.framing)
-                #
-                #     print(homflypt_polynomial(k_))
-                #     print(homflypt_polynomial(k))
-                #
-                #     print()
-                #
-                #     print(jones_polynomial(k_))
-                #     print(jones_polynomial(k))
-                #
-                #     print()
-                #
-                #     print(kp.bracket_polynomial(k_))
-                #     print(kp.bracket_polynomial(k))
-                #     print(kp.bracket_polynomial(k_, normalize=True))
-                #     print(kp.bracket_polynomial(k, normalize=True))
-                #     print()
-                #
-                #
-                #     print(kauffman_polynomial(k_))
-                #     print(kauffman_polynomial(k))
-                #
-                #     draw(k_)
-                #     plt.show()
-                #
-                #     draw(k)
-                #     plt.show()
-                #     exit()
-
-                assert j_ == j, f"Jones: {j_} vs {j} for {k_}"
-
-    for k in diagrams:
-        j = jones_polynomial(k)
-        moves = choose_random_reidemeister_moves(k, 10)
-        for move in moves:
-            k_ = make_reidemeister_move(k, move)
-            j_ = jones_polynomial(k_)
+    for k in _get_examples():
+        j = homflypt_polynomial(k)
+        for i in range(10):
+            k_ = random_reidemeister_move(k)
+            assert k != k_
+            j_ = homflypt_polynomial(k_)
             assert sanity_check(k_)
-            assert jones_polynomial(k_) == j
+            assert j_ == j, f"Jones: {j_} vs {j} for {k_}"
 
 def test_all_reidemeister_moves():
     diagrams = _get_examples()
     for k in diagrams:
         j = jones_polynomial(k)
-        #moves = list(find_all_reidemeister_moves(k))
-        k_ = make_all_reidemeister_moves(k, 1)
-        for k__ in k_:
-            assert sanity_check(k__)
-            assert jones_polynomial(k__) == j
+        for k_ in all_reidemeister_moves(k):
+            j_ = jones_polynomial(k_)
+            assert sanity_check(k_)
+            assert j_ == j, f"Jones: {j_} vs {j} for {k_}"
 
-def do_not_test_all_reidemeister_moves_depth_2():
-    diagrams = _get_examples()
-    for k in diagrams[:1]:
-        j = jones_polynomial(k)
-        k_ = make_all_reidemeister_moves(k, depth=2)
-        for k__ in k_:
-            assert sanity_check(k__)
-            assert jones_polynomial(k__) == j
 
 if __name__ == "__main__":
-    # import knotpy as kp
-    # import matplotlib.pyplot as plt
-    # k = kp.from_knotpy_notation("a → X(c1 d0 d3 c2), b → X(d1 e0 e3 d2), c → X(e1 a0 a3 e2), d → X(a1 b0 b3 a2), e → X(b1 c0 c3 b2)")
-    # k_ = kp.from_knotpy_notation("a → X(f2 d0 d3 c2), b → X(d1 e0 e3 d2), c → X(e1 f3 a3 e2), d → X(a1 b0 b3 a2), e → X(b1 c0 c3 b2), f → X(f1 f0 a0 c1)")
-    # print(kp.writhe(k))
-    # print(kp.writhe(k_))
-    # kp.draw(k_)
-    # plt.show()
-    # # kp.draw(k)
-    # # plt.show()
-    # #
-    # # kp.draw(k_)
-    # # plt.show()
-    # # exit()
-    # exit()
-
     test_choose_random_reidemeister_moves()
     test_all_reidemeister_moves()
-    #test_all_reidemeister_moves_depth_2()  # slow

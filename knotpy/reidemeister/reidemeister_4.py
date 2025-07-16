@@ -133,16 +133,16 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
         ci = _crossing_increase_reidemeister_4_slide(k, loc)
         if change == "decrease" or change == "reduce": return ci < 0
         if change == "constant": return ci == 0
-        if change == "increase": return ci > 0
+        if change == "preserve" or change == "preserve": return ci == 0
         if change == "nonincreasing": return ci <= 0
         if change == "nondecreasing": return ci >= 0
 
     change = change.lower().strip()
     if change.endswith("ing"):
         change = change[:-3] + "e"
-    if change not in ["any", "decrease", "reduce", "constant", "increase", "nonincrease", "nondecrease"]:
+    if change not in ["any", "decrease", "reduce", "preserve", "increase", "nonincrease", "nondecrease", "constant"]:
         raise ValueError(f"change parameter is '{change}', but it must be one of the following: "
-                         f"any, decrease, constant, increase, nonincrease, or nondecrease")
+                         f"any, decrease, preserve, increase, nonincrease, or nondecrease")
 
 
     for v in k.vertices:
@@ -237,11 +237,16 @@ def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
 
 def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
 
+    # TODO: there is a _temp parameter on
+
     if "R4" not in settings.allowed_moves:
         warnings.warn("An R4 move is being performed, although it is disabled in the global KnotPy settings.")
 
     if not inplace:
         k = k.copy()
+
+
+    #print("sliding", vertex_positions_pair)
 
     # assert sanity_check(k)
 

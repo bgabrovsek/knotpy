@@ -758,9 +758,8 @@ def orient_arc(g: CircularArc | Segment, start_point=None, end_point=None):
         arc = OrientedCircularArc(g.center, g.radius, g.theta1, g.theta2, reversed=False)
         arc.set_orientation(start_point, end_point)
         return arc
-
-    if type(g) is Segment:
-        segment = Segment(start_point, end_point)
+    elif type(g) is Segment:
+        segment = Segment(g.A, g.B)
         segment.set_orientation(start_point, end_point)
         return segment
 
@@ -950,6 +949,11 @@ def bounding_box(g):
         bb = [bounding_box(_) for _ in g]
         return complex(min(_.real for _, __ in bb), min(_.imag for _, __ in bb)), complex(max(__.real for _, __ in bb), max(__.imag for _, __ in bb))
 
+def angle_between(z1, z2, z3):
+    v1 = z1 - z2
+    v2 = z3 - z2
+    angle_rad = cmath.phase(v2 / v1)
+    return abs(angle_rad)  # in radians
 
 if __name__ == '__main__':
 

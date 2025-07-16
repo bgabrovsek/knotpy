@@ -417,6 +417,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         if (type(adjacent_endpoint) is OutgoingEndpoint or type(adjacent_endpoint) is IngoingEndpoint) and create_using is Endpoint:
             create_using = type(adjacent_endpoint)
 
+
         if not isinstance(create_using, type):
             raise TypeError("Creating endpoint with create_using instance not yet supported.")
 

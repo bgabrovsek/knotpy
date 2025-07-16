@@ -29,7 +29,7 @@ def is_connected_sum(k: PlanarDiagram | OrientedPlanarDiagram) -> bool:
     Returns:
         bool: True if the diagram is a connected sum; otherwise, False.
     """
-    return find_arc_cut_set(k, order=2, skip_isolating_cuts=True) is not None
+    return find_arc_cut_set(k, order=2, minimum_partition_nodes=2) is not None
 
 def _split_at_arcs(k: PlanarDiagram | OrientedPlanarDiagram, arcs: tuple):
     """Split a planar diagram at the given arcs."""
@@ -85,7 +85,7 @@ def connected_sum_decomposition(k: PlanarDiagram) -> list:
 
 def is_connected_sum_third_order(g: PlanarDiagram) -> bool:
     """Return True if g is a 3rd order connected sum diagram and False otherwise."""
-    return find_arc_cut_set(g, order=3, skip_isolating_cuts=True) is not None
+    return find_arc_cut_set(g, order=3, minimum_partition_nodes=2) is not None
 
 
 def connected_sum(a: PlanarDiagram | OrientedPlanarDiagram, b:PlanarDiagram | OrientedPlanarDiagram, arcs:None | list | tuple = None) -> PlanarDiagram | OrientedPlanarDiagram:

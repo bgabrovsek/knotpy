@@ -7,9 +7,12 @@ def test_simplify_thetas():
 
     theta = kp.PlanarDiagram("+t3_1")
 
-    for i in range(10):
+    for i in range(25):
         # make the diagram more complicated
-        theta_mod = kp.randomize_diagram(theta, crossing_increasing_moves=1)
+        #print(kp.canonical(theta))
+        theta_mod = kp.randomize_diagram(theta, number_of_moves=1)
+
+        # print(theta_mod)
 
         # the Yamadas should be the same
         assert kp.yamada_polynomial(theta) == kp.yamada_polynomial(theta_mod)
@@ -19,6 +22,11 @@ def test_simplify_thetas():
         theta_simplified = kp.simplify_smart(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
 
         # the canonical forms should be the same
+        kp.export_pdf([theta, theta_mod, theta_simplified], f"test_simplify_thetas {i}.pdf", with_labels=True)
+
+        # print(kp.canonical(theta_simplified))
+
+        # print()
         assert kp.canonical(theta) == kp.canonical(theta_simplified)
 
 
@@ -96,12 +104,39 @@ def test_reduce_groups_bonded():
         print(reduced)
         print("**")
 
+def test_theta_r4():
+    pass
+    # from knotpy.reidemeister.reidemeister import r4_generator
+    #
+    #
+    # theta = kp.PlanarDiagram("+t3_1")
+    # theta.name = None
+    # print(theta)
+    # print("")
+    #
+    # h = kp.from_knotpy_notation("a → V(h1 i1 e0), b → V(h3 h2 e3), c → X(i3 e2 e1 i0), e → X(a2 c2 c1 b2), h → X(i2 a0 b1 b0), i → X(c3 a1 h0 c0)")
+    # for m in kp.crossing_non_increasing_space(h, greediness=1, assume_canonical=False):
+    #     print(m)
+    #
+    # exit()
+    # print(theta)
+    # print()
+    # for t in r4_generator(theta):
+    #
+    #     print(t)
+    #     print(tt :=kp.canonical(kp.simplify_smart(t, depth=1)))
+    #     print(theta == tt, theta < tt)
+    #     print()
+
 if __name__ == '__main__':
 
-
-    #test_wanda()
-    test_reduce_thetas()
-    test_reduce_groups_bonded()
-
-    test_reduce_thetas()
+    # a = kp.from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
+    # b = kp.from_knotpy_notation("a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 e2 e1 a2), e → X(b1 d2 d1 b2)")
+    #
+    # kp.export_pdf([a,b],"ab.pdf")
+    test_theta_r4()
+    #
     test_simplify_thetas()
+    test_reduce_thetas()
+    test_wanda()
+    test_reduce_groups_bonded()

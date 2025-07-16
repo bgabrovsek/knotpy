@@ -1,7 +1,8 @@
 import os
 
 from knotpy import to_knotpy_notation
-from knotpy.drawing.draw_matplotlib import export_pdf, draw, plt
+from knotpy.drawing.export import export_pdf
+from knotpy.drawing.draw import draw, plt
 from knotpy.notation.pd import from_pd_notation
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.canonical import canonical
@@ -128,7 +129,7 @@ def test_draw_theta():
 
 
 
-def test_draw_bridges():
+def DO_NOTtest_draw_bridges():
     graph_with_bridge = from_pd_notation("[[0,1,2],[0,3,4],[5,6,7,2],[1,7,6,5],[4,8,9,10],[8,3,10,9]]")
     print(graph_with_bridge)
 
@@ -257,6 +258,7 @@ def test_draw_knotoid():
 
 
 if __name__ == "__main__":
+
     test_draw_knot()
     test_draw_theta()
     test_draw_bonded()

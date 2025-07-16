@@ -5,10 +5,12 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import OutgoingEndpoint
-from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
+from knotpy.reidemeister.reidemeister import all_reidemeister_moves
 from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
 
 _W = symbols("W")
+
+# TODO: if we have an unoriented link diagram, compute all possibilities
 
 def mock_alexander_polynomial(k: PlanarDiagram):
     k = k if k.is_oriented() else orient(k)
@@ -69,7 +71,7 @@ if __name__ == '__main__':
         print(mock_alexander_polynomial(o))
 
 
-    for k_r in make_all_reidemeister_moves(k, [reidemeister_1_add_kink], depth=2):
+    for k_r in all_reidemeister_moves(k, depth=2):
         #print(k_r)
         for o in kp.all_orientations(k_r):
             # print(o)

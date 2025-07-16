@@ -4,6 +4,7 @@ The "A"-type smoothing is also referred to as "L_0" smoothing and
 the "B"-type smoothing is also referred to as "L_infinity" smoothing,
 see [L.H. Kauffman, "State models and the Jones polynomial" Topology , 26 (1987) pp. 395–407]
 """
+from knotpy.classes.endpoint import IngoingEndpoint, OutgoingEndpoint
 from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.algorithms.topology import kinks
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
@@ -215,9 +216,13 @@ def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inp
             # add unknot
             vertex = unique_new_node_name(k)
             k.add_vertex(vertex, degree=2)
-            # here I am not sure about the attributes, but we defined 0 to be the outer endpoint and 1 to be the innder endpoint of the unknot
-            k.set_endpoint((vertex, 0), (vertex, 1), **attr[(ep.position + 0) % 4])
-            k.set_endpoint((vertex, 1), (vertex, 0), **attr[(ep.position + 3) % 4])
+            type1 = create_using=type(node_inst[(ep.position + 0) % 4])  # this is just a guess
+            type0 = type1.reverse_type()
+
+            #type0 = IngoingEndpoint if type(type1) is OutgoingEndpoint else OutgoingEndpoint
+            # here I am not sure about the attributes, but we defined 0 to be the outer endpoint and 1 to be the inner endpoint of the unknot
+            k.set_endpoint((vertex, 0), (vertex, 1), create_using=type1,**attr[(ep.position + 0) % 4])
+            k.set_endpoint((vertex, 1), (vertex, 0), create_using=type0, **attr[(ep.position + 3) % 4])
 
             k.set_endpoint(node_inst[(ep.position + 1) % 4], node_inst[(ep.position + 2) % 4],
                            **attr[(ep.position + 2) % 4])  # just turns out to be so
@@ -236,32 +241,38 @@ def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inp
         #ep0, ep1 = kinks_
         # add_unknot(k, number_of_unknots=1 if (ep0.position % 2) ^ (method == "A") else 2)
 
+        ep = kinks_.pop()
+        type1 = type(node_inst[(ep.position + 0) % 4])  # this is just a guess
+        type0 = type1.reverse_type() #IngoingEndpoint if type(type1) is OutgoingEndpoint else OutgoingEndpoint
 
         if node_inst[0].position == 1:
+
+
             if method == "A":
+
                 k.add_vertex(u := unique_new_node_name(k), degree=2)
                 k.add_vertex(v := unique_new_node_name(k), degree=2)
                 # not sure about attr
-                k.set_endpoint((u, 0), (u, 1), **attr0)
-                k.set_endpoint((u, 1), (u, 0), **attr1)
-                k.set_endpoint((v, 0), (v, 1), **attr2)
-                k.set_endpoint((v, 1), (v, 0), **attr3)
+                k.set_endpoint((u, 0), (u, 1), create_using=type1, **attr0)
+                k.set_endpoint((u, 1), (u, 0), create_using=type0, **attr1)
+                k.set_endpoint((v, 0), (v, 1), create_using=type1, **attr2)
+                k.set_endpoint((v, 1), (v, 0), create_using=type0, **attr3)
             else:
                 k.add_vertex(u := unique_new_node_name(k), degree=2)
-                k.set_endpoint((u, 0), (u, 1), **(attr0 | attr2))
-                k.set_endpoint((u, 1), (u, 0), **(attr1 | attr3))
+                k.set_endpoint((u, 0), (u, 1), create_using=type1, **(attr0 | attr2))
+                k.set_endpoint((u, 1), (u, 0), create_using=type0, **(attr1 | attr3))
         else:
             if method == "A":
                 k.add_vertex(u := unique_new_node_name(k), degree=2)
-                k.set_endpoint((u, 0), (u, 1), **(attr1 | attr3))
-                k.set_endpoint((u, 1), (u, 0), **(attr0 | attr2))
+                k.set_endpoint((u, 0), (u, 1), create_using=type1, **(attr1 | attr3))
+                k.set_endpoint((u, 1), (u, 0), create_using=type0, **(attr0 | attr2))
             else:
                 k.add_vertex(u := unique_new_node_name(k), degree=2)
                 k.add_vertex(v := unique_new_node_name(k), degree=2)
-                k.set_endpoint((u, 0), (u, 1), **attr3)
-                k.set_endpoint((u, 1), (u, 0), **attr0)
-                k.set_endpoint((v, 0), (v, 1), **attr1)
-                k.set_endpoint((v, 1), (v, 0), **attr2)
+                k.set_endpoint((u, 0), (u, 1), create_using=type1, **attr3)
+                k.set_endpoint((u, 1), (u, 0), create_using=type0, **attr0)
+                k.set_endpoint((v, 0), (v, 1), create_using=type1, **attr1)
+                k.set_endpoint((v, 1), (v, 0), create_using=type0, **attr2)
 
 
     return k

@@ -76,8 +76,8 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
             crossing = next(iter(k.crossings))
             kA = smoothen_crossing(k, crossing_for_smoothing=crossing, method="A") # smoothing_type_A(k, crossing)
             kB = smoothen_crossing(k, crossing_for_smoothing=crossing, method="B") # smoothing_type_A(k, crossing)
-            stack.append((coeff * A, kA))
-            stack.append((coeff * (A**-1), kB))
+            stack.append((coeff * _A, kA))
+            stack.append((coeff * (_A**-1), kB))
         else:
             number_of_unknots = remove_unknots(k)
             k_canonical = canonical(k)

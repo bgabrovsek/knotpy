@@ -3,7 +3,6 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import OutgoingEndpoint, IngoingEndpoint
-from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
 from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
 
 _T = symbols("t")
@@ -35,25 +34,7 @@ def affine_index_polynomial(k: PlanarDiagram):
 
 
 
-if __name__ == '__main__':
-    import knotpy as kp
 
-    k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
-    #k = kp.from_pd_notation("X[3,2,4,1],X[2,5,3,4],V[1],V[5]")
-
-    print(k)
-
-    for o in kp.all_orientations(k):
-        print(o)
-        print(affine_index_polynomial(o))
-
-    print("---")
-    for k_r in make_all_reidemeister_moves(k, [reidemeister_1_add_kink], depth=1):
-        #print(k_r)
-        for o in kp.all_orientations(k_r):
-            #print(o)
-            # print(kp.to_pd_notation(o))
-            print(affine_index_polynomial(o))
 
 
 

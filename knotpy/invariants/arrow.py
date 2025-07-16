@@ -8,7 +8,6 @@ from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import OutgoingEndpoint
 from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.invariants.writhe import writhe
-from knotpy.reidemeister.reidemeister import make_all_reidemeister_moves
 
 __all__ = ['arrow_polynomial']
 __version__ = '0.1'
@@ -161,50 +160,4 @@ def arrow_polynomial(k: PlanarDiagram | OrientedPlanarDiagram, normalize=True):
 
     return expand(polynomial)
 
-if __name__ == '__main__':
-    import knotpy as kp
-    import matplotlib.pyplot as plt
-    import sympy
-    #
-    # k = kp.from_pd_notation("X[0,1,2,3],X[1,4,0,2],V[3],V[5],X[4,6,6,5] ")
-    # print(k)
-    # o = kp.all_orientations(k)[0]
-    # print(o)
-    # print(arrow_polynomial(o))
-    # #exit()
-    #
-    # # A**(-4) + L1/A**6 - L1/A**10
-    # print("-------")
-
-    k = kp.from_pd_notation("X[3,2,4,1],X[2,5,3,4],V[1],V[5]")
-    print(k)
-    print(ppp:=arrow_polynomial(k))
-    print("---")
-    # ooo = kp.all_orientations(k)
-    # o = ooo[0]
-
-    # TODO: make oriented Reidemeister moves
-
-    for o in kp.all_orientations(k):
-        print(o)
-        print(arrow_polynomial(o))
-
-    print("----")
-
-    for k_r in make_all_reidemeister_moves(k,  depth=2):
-        #print(k_r)
-        for o in kp.all_orientations(k_r):
-            # print(o)
-            # print(kp.to_pd_notation(o))
-            print(p:=arrow_polynomial(o))
-
-            if p != ppp:
-                exit()
-            # print("")
-            # print("")
-    # ooo = kp.all_orientations(k)
-    # for o in ooo:
-    #     print("  ", o)
-    #     poly = affine_index_polynomial(o)
-    #     print(poly)
 

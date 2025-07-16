@@ -52,7 +52,7 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth=1):
     else:
         # TODO: can we assume canonical, check crossing_non_intersecting_space?
         leveled_sets = {
-            k: LeveledSet(crossing_non_increasing_space(canonical(k), assume_canonical=True)) for k
+            k: LeveledSet(crossing_non_increasing_space(canonical(k), greediness=0, assume_canonical=True)) for k
             in DSU.elements}
 
     # print("0")
@@ -79,7 +79,7 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth=1):
 
                 ls.new_level(detour_space(ls[-1], assume_canonical=True))  # increase number of crossings in a "smart" way
 
-                ls.new_level(crossing_non_increasing_space(ls[-1], assume_canonical=True ))
+                ls.new_level(crossing_non_increasing_space(ls[-1], greediness=1, assume_canonical=True ))
 
 
         join_if_equivalent_diagrams()
@@ -105,26 +105,27 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth=1):
 
 if __name__ == "__main__":
 
+    pass
     # DSU test
-    dsu = DisjointSetUnion("abcdefg")
-    dsu["a"] = "b"
-    dsu["c"] = "d"
-    dsu["e"] = "f"
-    dsu["b"] = "c"
-    print(dsu)
-    print("Groups:", [group for group in dsu])
-    print("Classes:", [classes for classes in dsu.classes()])
-    print("Representatives:", [rep for rep in dsu.representatives()])
-    print("Elements:", [e for e in dsu.elements])
-    print("Dictionary:", dsu.to_dict())
-
-    # leveled set
-    ls1 = LeveledSet(["a", "b"])
-    ls1.new_level(["c", "d"])
-    ls1.new_level(["e", "f"])
-    ls2 = LeveledSet(["g", "h"])
-    ls2.new_level(["i", "j"])
-    ls2.new_level(["k", "c"])
-    print(ls1)
-    print(ls2)
-    print("Intersection:", ls1.intersection(ls2))
+    # dsu = DisjointSetUnion("abcdefg")
+    # dsu["a"] = "b"
+    # dsu["c"] = "d"
+    # dsu["e"] = "f"
+    # dsu["b"] = "c"
+    # print(dsu)
+    # print("Groups:", [group for group in dsu])
+    # print("Classes:", [classes for classes in dsu.classes()])
+    # print("Representatives:", [rep for rep in dsu.representatives()])
+    # print("Elements:", [e for e in dsu.elements])
+    # print("Dictionary:", dsu.to_dict())
+    #
+    # # leveled set
+    # ls1 = LeveledSet(["a", "b"])
+    # ls1.new_level(["c", "d"])
+    # ls1.new_level(["e", "f"])
+    # ls2 = LeveledSet(["g", "h"])
+    # ls2.new_level(["i", "j"])
+    # ls2.new_level(["k", "c"])
+    # print(ls1)
+    # print(ls2)
+    # print("Intersection:", ls1.intersection(ls2))
