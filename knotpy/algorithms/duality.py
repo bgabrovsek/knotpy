@@ -1,18 +1,12 @@
-"""" Creates a dual graph of a planar diagram
+"""" Create a dual graph of a planar diagram
 """
 
 __all__ = ['dual_planar_diagram']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-import warnings
-from string import ascii_letters
-from copy import deepcopy
-from itertools import combinations, permutations
+from itertools import combinations
 
-import knotpy as kp
-from knotpy.algorithms.naming import unique_new_node_name
-from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Vertex
 
@@ -75,7 +69,4 @@ def arc_face_graph(k:PlanarDiagram):
     return arcs_near_arcs
 
 if __name__ == "__main__":
-    from knotpy.notation.pd import from_pd_notation
-    k = from_pd_notation("X[1,5,2,4],X[3,9,4,8],X[5,1,6,10],X[7,3,8,2],X[9,7,10,6]]")  # 5_2 knot
-    print(k)
-    dual = dual_planar_diagram(k)
+    pass

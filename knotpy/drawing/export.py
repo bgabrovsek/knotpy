@@ -177,8 +177,11 @@ def export_pdf_groups(groups, filename, draw_circles=False, with_labels=False, w
             #      with_title=with_title,
             #      ax=ax)
 
-        plt.tight_layout(pad=0)
-        pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
+        #plt.tight_layout(pad=0)
+        plt.tight_layout(pad=0.1)
+        #pdf.savefig(bbox_inches="tight", pad_inches=0)  # saves the current figure into a pdf page
+        pdf.savefig(bbox_inches="tight", pad_inches=0.05, dpi=plt.gcf().dpi)  # saves the current figure into a pdf page
+
         plt.close()
 
     # if author is not None:

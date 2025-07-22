@@ -1,17 +1,17 @@
 """
-Here are implementations of Skein operations.
+Implementations of Skein operations.
 The "A"-type smoothing is also referred to as "L_0" smoothing and
 the "B"-type smoothing is also referred to as "L_infinity" smoothing,
 see [L.H. Kauffman, "State models and the Jones polynomial" Topology , 26 (1987) pp. 395–407]
 """
-from knotpy.classes.endpoint import IngoingEndpoint, OutgoingEndpoint
-from knotpy.algorithms.disjoint_union import add_unknot
+__all__ = ['smoothen_crossing', 'crossing_to_vertex']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
+
 from knotpy.algorithms.topology import kinks
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
-from knotpy.manipulation.remove import remove_bivalent_vertices
-from knotpy.manipulation.symmetry import mirror
-from knotpy.manipulation.subdivide import subdivide_arcs_around_node
 from knotpy.algorithms.naming import unique_new_node_name
 
 

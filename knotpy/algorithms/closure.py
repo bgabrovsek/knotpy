@@ -1,14 +1,15 @@
-# Closure of a knotoid
+"""
+Closure of an open knot (knotoid).
+"""
 
 __all__ = ["closure"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
 from knotpy.algorithms.paths import bfs_shortest_path
-from knotpy.manipulation.remove import remove_bivalent_vertices, remove_bivalent_vertex
+from knotpy.manipulation.remove import remove_bivalent_vertex
 from knotpy.algorithms.naming import unique_new_node_name
 
 
@@ -157,34 +158,6 @@ def closure(k: PlanarDiagram, over=False, under=False):
 
     if _DEBUG: print("start endpoint", A_ep, "end endpoint", B_ep)
 
-    previous_endpoint = (A_ep.node, A_ep.position + 1)
-
-    # loop through all neighbouring faces and get the common arc that we must pass
-    # previous_open_endpoint = (A, 1)
-    # for f, g in zip(path, path[1:]):
-    #     arc = _face_intersection_arc(k, f, g)  # find the arcs we must pass
-    #     ep_f, ep_g = arc
-    #
-    #     crossing = unique_new_node_name(k)
-    #     # insert the crossing and attach endpoints
-    #     k.add_crossing(crossing_for_adding=crossing)
-    #     # TODO: orientation
-    #     # TODO: attributes
-    #     if underpass_closure:
-    #         k.set_arc((previous_open_endpoint, (crossing, 0)))
-    #         k.set_arc((ep_f, (crossing, 3)))
-    #         k.set_arc((ep_g, (crossing, 1)))
-    #         previous_open_endpoint = (crossing, 2)
-    #     else:
-    #         k.set_arc((previous_open_endpoint, (crossing, 1)))
-    #         k.set_arc((ep_f, (crossing, 0)))
-    #         k.set_arc((ep_g, (crossing, 2)))
-    #         previous_open_endpoint = (crossing, 3)
-
-
-    # attach the final endpoints from the last node
-    #     k.set_arc((previous_open_endpoint, (B, 1)))
-
     arcs = [_face_intersection_arc(k, f, g) for f, g in zip(path, path[1:])]
     if over and under:
         closed_k = _over_and_under_closure(k, A, B, arcs)
@@ -196,14 +169,6 @@ def closure(k: PlanarDiagram, over=False, under=False):
     return closed_k
 
 if __name__ == "__main__":
-
-   import knotpy as kp
-
-   k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 d2 e0 b2) d=X(f0 e1 c1 b3) e=X(c2 d1 g3 f1) f=X(d0 e3 g2 h0) g=X(h3 h1 f2 e2) h=X(f3 g1 i0 g0) i=V(h2)")
-   print(k)
-   c = closure(k)
-   print(c)
-   print(kp.sanity_check(c))
-
+    pass
 
 

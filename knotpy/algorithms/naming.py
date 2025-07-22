@@ -1,4 +1,14 @@
+"""
+Unique node name for a diagram.
+"""
+
+__all__ = ['unique_new_node_name', 'multiple_unique_new_node_names']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
+
 import string
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 
 _reverse_alphabet = {char: index for index, char in enumerate(string.ascii_letters)}
 _base = len(string.ascii_letters)
@@ -36,7 +46,7 @@ def _is_alpha(s: str) -> bool:
     return s.isalpha() and s.isascii()
 
 
-def unique_new_node_name(k):
+def unique_new_node_name(k: PlanarDiagram | OrientedPlanarDiagram):
     """Returns a natural next available node names for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
     next available letter, otherwise returns the next available integer, or default if the knot is empty."""
 
@@ -51,7 +61,7 @@ def unique_new_node_name(k):
     max_number = max(_alpha_to_number(node) for node in k.nodes if _is_alpha(node))
     return number_to_alpha(max_number + 1)
 
-def multiple_unique_new_node_names(k, count):
+def multiple_unique_new_node_names(k: PlanarDiagram | OrientedPlanarDiagram, count):
     """Returns a natural next available node names for the graph/knot K. If all nodes are letters a-zA-Y, it returns the
     next available letter, otherwise returns the next available integer, or default if the knot is empty."""
 

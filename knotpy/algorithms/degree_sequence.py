@@ -1,3 +1,11 @@
+"""
+Degree sequence of a knotted graph diagram.
+"""
+
+__all__ = ['degree_sequence', 'neighbour_sequence']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.set_utils import LeveledSet
 
@@ -32,8 +40,11 @@ def neighbour_sequence(k: PlanarDiagram, node) -> tuple:
 
     seq = LeveledSet([node])
 
-    while seq[-1]:
+    while not seq.is_level_empty(-1):
         seq.new_level()
-        seq.extend([ep.node for node in seq[-2] for ep in k.nodes[node]])
+        seq.extend([ep.node for node in seq.levels[-2] for ep in k.nodes[node]])
 
     return tuple(len(l) for l in seq.levels[:-1])
+
+if __name__ == "__main__":
+    pass

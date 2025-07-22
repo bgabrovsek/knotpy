@@ -1,6 +1,16 @@
+"""
+Check if the diagram makes sense (is planar,...)
+"""
+__all__ = ['sanity_check']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 from collections import Counter
 
-def sanity_check(k):
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+
+
+def sanity_check(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     Perform a series of sanity checks on a given knot object `k` to validate its structure and properties.
 
@@ -129,23 +139,4 @@ def sanity_check(k):
     return True
 
 if __name__ == "__main__":
-    from knotpy import PlanarDiagram
-
-    graph_tree = PlanarDiagram()
-    graph_tree.set_arcs_from("a0b0,a1c0,a2d0")
-    sanity_check(graph_tree)
-
-    # graph_nice = PlanarDiagram()
-    # graph_nice.set_arcs_from("a0b0,a1c2,a2d1,b1c0,c1d0")
-    # print(graph_nice)
-    # sanity_check(graph_nice)
-
-    # graph_funky = PlanarDiagram()
-    # graph_funky.set_arcs_from("a0b0,b1b3,b2c0,c1d0,c2e0,d1d2,d3e1,e2e3,e4e5")
-    # sanity_check(graph_funky)
-
-
-    graph_non_planar = PlanarDiagram()
-    graph_non_planar.set_arcs_from("a0b0,a1b1,a2b2")
-    print(*graph_non_planar.faces)
-    sanity_check(graph_non_planar)
+    pass

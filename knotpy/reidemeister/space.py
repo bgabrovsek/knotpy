@@ -4,16 +4,16 @@ move types.
 For example, _reidemeister_3_space returns the set of all unique knots that are the result of all possible R3 moves
 performed any number of times.
 """
-
+from collections.abc import Iterable
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.canonical import canonical
 from knotpy.manipulation.attributes import clear_node_attributes
 from knotpy.utils.set_utils import LeveledSet
 from knotpy._settings import settings
 
-from knotpy.reidemeister.reidemeister import (all_reidemeister_preserving_moves_generator,
-                                              all_reidemeister_decreasing_moves_generator,
-                                              detour_generator, all_reidemeister_moves_generator)
+from knotpy.reidemeister.reidemeister import (reidemeister_preserving_moves_generator,
+                                              reidemeister_decreasing_moves_generator,
+                                              detour_generator, reidemeister_moves_generator)
 from knotpy.reidemeister.reidemeister_1 import choose_reidemeister_1_remove_kink, reidemeister_1_remove_kink
 from knotpy.reidemeister.reidemeister_2 import choose_reidemeister_2_unpoke, reidemeister_2_unpoke
 from knotpy.reidemeister.reidemeister_4 import choose_reidemeister_4_slide, reidemeister_4_slide
@@ -24,11 +24,11 @@ __author__ = 'Boštjan Gabrovšek'
 
 # TODO: freezing
 
-def _set(k: PlanarDiagram | OrientedPlanarDiagram | set | tuple | list, to_canonical) -> set:
+def _set(k: PlanarDiagram | OrientedPlanarDiagram | set | tuple | list | Iterable, to_canonical) -> set:
     """ Put the diagram(s) into a set."""
     if isinstance(k, set):
         return {canonical(_) for _ in k} if to_canonical else k
-    if isinstance(k, tuple | list):
+    if isinstance(k, tuple | list | Iterable):
         return {canonical(_) for _ in k} if to_canonical else set(k)
     if isinstance(k, PlanarDiagram | OrientedPlanarDiagram):
         return {canonical(k)} if to_canonical else {k}
@@ -112,9 +112,9 @@ def crossing_decreasing_space(diagrams: PlanarDiagram | set | list, assume_canon
     """
 
     ls = LeveledSet(_set(diagrams, to_canonical=not assume_canonical))  # put input diagrams in level 0
-    while ls[-1]:
+    while not ls.is_level_empty(-1):
         ls.new_level()  # put reduced diagrams to the next level
-        ls.extend(canonical(set(all_reidemeister_decreasing_moves_generator(ls[-2]))))
+        ls.extend(canonical(set(reidemeister_decreasing_moves_generator(ls.iter_level(-2)))))
     return set(ls)
 
 # OK
@@ -138,14 +138,28 @@ def crossing_preserving_space(diagrams, assume_canonical=False, depth=None) -> s
 
     # Put input diagrams in level 0.
     ls = LeveledSet(_set(diagrams, to_canonical=not assume_canonical))
+    #print("(1.1)")
 
-    while ls[-1]:
+    while not ls.is_level_empty(-1):
+        #print("(1.2)")
         if depth is not None and len(ls.levels) >= depth:
             break
+        #print("(1.3)")
 
         # Put new diagrams to the next level.
         ls.new_level()
-        ls.extend(canonical(set(all_reidemeister_preserving_moves_generator(ls[-2]))))
+        #print("(1.4)")
+
+
+        x = set(ls.levels[-2])
+        s = set(reidemeister_preserving_moves_generator(x))
+
+        #print("(1.4.1)")
+
+        ls.extend(canonical(s))
+        #print("(1.5)")
+
+    #print("(1.6)")
 
     results = set(ls)
     # remove _r3 attributes, since they can be changed on next levels when different R3 moves are performed
@@ -204,18 +218,19 @@ def crossing_non_increasing_space(diagrams, greediness, assume_canonical: bool) 
     if greediness == 0:
         ls = LeveledSet(crossing_preserving_space(diagrams, assume_canonical=assume_canonical))  # TODO: if R3 not allowed, does preserving contain the input diagram?
         while True:
-            ls.new_level(crossing_decreasing_space(ls[-1], assume_canonical=True))
-            if not ls[-1]:
+
+            ls.new_level(crossing_decreasing_space(ls.iter_level(-1), assume_canonical=True))
+            if ls.is_level_empty(-1):
                 break
-            ls.new_level(crossing_preserving_space(ls[-1], assume_canonical=True))  # TODO: if R3 not allowed, do we get ls[-1]?
-            if not ls[-1]:
+            ls.new_level(crossing_preserving_space(ls.iter_level(-1), assume_canonical=True))  # TODO: if R3 not allowed, do we get ls[-1]?
+            if ls.is_level_empty(-1):
                 break
         return set(ls)
 
     elif greediness == 1:
         ls = LeveledSet(_filter_minimal_diagrams(diagrams))
-        while ls[-1]:
-            diagrams = crossing_preserving_space(ls[-1], assume_canonical=True, depth=1) if "R3" in settings.allowed_moves else ls[-1]
+        while not ls.is_level_empty(-1):
+            diagrams = crossing_preserving_space(ls.iter_level(-1))
             diagrams = _simplify_greedy_decreasing(diagrams, to_canonical=True, inplace=True)
             diagrams = _filter_minimal_diagrams(diagrams)
             ls.new_level(diagrams)
@@ -233,6 +248,6 @@ def all_reidemeister_moves_space(diagrams, depth=1, assume_canonical=False) -> s
     ls = LeveledSet(diagrams)
 
     for _depth in range(depth):
-        ls.new_level([canonical(k) for k in all_reidemeister_moves_generator(ls[-1])])
+        ls.new_level([canonical(k) for k in reidemeister_moves_generator(ls.iter_level(-1))])
 
     return set(ls)

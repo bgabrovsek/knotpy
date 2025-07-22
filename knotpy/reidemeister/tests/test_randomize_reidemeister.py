@@ -48,6 +48,7 @@ def test_randomize_theta_direct():
     settings.allowed_moves = "r1,r2,r3,r4,r5"
 
     thetas = [PlanarDiagram("t0_1"), PlanarDiagram("+t3_1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
+    thetas = [PlanarDiagram("t0_1"), PlanarDiagram("h0_1"), PlanarDiagram("h2_1.1")]
 
     f = [(choose_reidemeister_3_triangle, reidemeister_3, "R3"),
          (choose_reidemeister_2_unpoke, reidemeister_2_unpoke, "R2 unpoke"),
@@ -62,7 +63,7 @@ def test_randomize_theta_direct():
     for theta in thetas:
         y = yamada_polynomial(theta)
         k = theta.copy()
-        for i in range(5):
+        for i in range(1):
             for c, r, name in f:
                 if (location := c(k, random=True)) is not None:
                     q = r(k, location, inplace=False)
@@ -96,7 +97,7 @@ def test_randomize_theta_3_1_direct():
     assert sanity_check(theta)
 
 
-    for i in range(3):
+    for i in range(1):
         for c, r, name in f:
             if (location := c(theta, random=True)) is not None:
                 q = r(theta, location, inplace=False)

@@ -24,7 +24,7 @@ def vertices_to_crossings(g:PlanarDiagram, vertices=None, all_crossing_signs=Fal
         raise ValueError("Cannot convert a vertex to a crossing if it not of degree 4")
 
     # convert a single vertex to a list
-    if not isinstance(vertices, (list, tuple, dict, set)):
+    if not isinstance(vertices, list | tuple | dict | set):
         vertices = [vertices]
 
     for v in g.vertices:

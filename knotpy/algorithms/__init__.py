@@ -1,3 +1,4 @@
+from .alternating import *
 from .canonical import *
 from .closure import *
 from .components_link import *

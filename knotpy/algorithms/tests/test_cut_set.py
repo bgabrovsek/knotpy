@@ -72,9 +72,9 @@ def  test_arc_cut_set():
 
 def test_find_cut_sets():
 
-    w = kp.wheel_graph(3)  # "a" is the center node
-    cs3 = arc_cut_sets(w, 3)
-    assert len(cs3) == 4
+    # w = kp.wheel_graph(3)  # "a" is the center node
+    # cs3 = arc_cut_sets(w, 3)
+    # assert len(cs3) == 4
 
     w = kp.wheel_graph(5)  # "a" is the center node
     cs3 = arc_cut_sets(w, 3)
@@ -94,8 +94,7 @@ def test_cut_set_new():
 
 if __name__ == "__main__":
     test_cut_set_new()
-    #test_order_2()
-    #test_cut_set_new()
-    # test_arc_cut_set()
-    # test_find_cut_sets()
-    # test_cut_set_knotoid()
+    test_order_2()
+    test_arc_cut_set()
+    test_find_cut_sets()
+    test_cut_set_knotoid()

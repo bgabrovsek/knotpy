@@ -91,7 +91,7 @@ def diagram_from_name(name):
 def _range_from_value(value: int | tuple[int, int] | list[int, int]  | None, default_min, default_max):
     if isinstance(value, int):
         return value, value
-    elif isinstance(value, (tuple, list)):
+    elif isinstance(value, tuple | list):
         return value
     elif value is None:
         return default_min, default_max

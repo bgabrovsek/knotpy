@@ -18,6 +18,7 @@ from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendic
                                    perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean, orient_arc, arc_from_circle_and_points, arc_from_diamater)
 from knotpy.drawing.alignment import canonically_rotate_circles
 from knotpy.algorithms.sanity import sanity_check
+from knotpy.drawing._support import drawable, _add_support_arcs
 
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -216,6 +217,10 @@ def _layout_arcs(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, layout
         g_arc = perpendicular_arc(circles[arc], circles[ep1.node], circles[ep2.node])
         layout[arc] = g_arc
 
+def _find_non_support_pairs(endpoints: list):
+    """Group endpoints that are not support"""
+    non_support_endpoints = tuple([ep for ep in endpoints if _visible(ep)])
+    return [non_support_endpoints] if len(non_support_endpoints) == 2 else []
 
 def _find_color_pairs(endpoints: list):
     """Group endpoints by colored pairs."""
@@ -304,8 +309,10 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
             #     colors[ep.attr.get("_leaf_adjacent", None)].append(ep)
             # same_pair = [val for key, val in colors.items() if key is not None and len(val) == 2] + (colors[None] if len(colors[None]) == 2 else []) + [endpoints if len(endpoints) == 2 else []]
             # same_pair = same_pair[0] if same_pair else []
-            same_pair = _find_color_pairs(endpoints) + _find_leaf_adjacent_pairs(endpoints) + _find_big_angle_pairs(k, endpoints, circles)
+            same_pair = _find_non_support_pairs(endpoints) + _find_color_pairs(endpoints) + _find_leaf_adjacent_pairs(endpoints) + _find_big_angle_pairs(k, endpoints, circles)
+            same_pair = [pair for pair in same_pair if all(_visible(ep) for ep in same_pair)]
             same_pair = same_pair[0] if same_pair else []
+
             #print("same_pair", same_pair)
 
             point = circles[v].center
@@ -327,6 +334,9 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
             for ep, arc in zip(endpoints, arcs):
                 if ep in same_pair:
                     continue
+                if not _visible(ep):
+                    layout[ep] = None
+                    continue
                 boundary_b_point = circles[arc] * circles[v]  # intersection point on the circle boundary
                 layout[ep] = perpendicular_arc_through_point(circles[v], boundary_b_point[0], point)
 
@@ -336,10 +346,8 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
         # set direction so the endpoint arcs point away from the node (crossing/vertex)
         for ep in endpoints:
             #print("orienting", ep, layout[ep], "start", layout[v])
-            layout[ep] = orient_arc(layout[ep], start_point=layout[v])
-
-
-
+            if layout[ep] is not None:
+                layout[ep] = orient_arc(layout[ep], start_point=layout[v])
 
 
 def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
@@ -356,6 +364,8 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
         removed.
     """
     k = k.copy()
+
+
 
     # Remove the kinks.
     removed_kinks = []
@@ -392,7 +402,7 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
             ep_right.attr["_leaf_adjacent"] = leaf
 
         k.remove_node(node_for_removing=leaf, remove_incident_endpoints=True)
-        sanity_check(k)
+
         if _debug_leafs: print(f"Leaf {leaf} removed from \n{k}\n")
 
 
@@ -674,6 +684,8 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
 
         else:
             pass
+
+
 def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circles: bool = False):
     """
     Computes the layout using circle packing for a given planar or oriented planar diagram. A layout is a dictionary,
@@ -691,31 +703,29 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circl
         and the computed circles.
     """
 
-    if _debug_leafs: print(k)
-    k_ = _preprocess_knot(k)
-    if _debug_leafs: print("preprocessed",k_)
+    original_k = k
+    preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs
 
-    circles = circle_packing(k_)
+    assert sanity_check(original_k)
+    assert sanity_check(preprocessed_k)
+
+    circles = circle_packing(preprocessed_k)
     circles = canonically_rotate_circles(circles)
 
-    # print("Circles packed:")
-    # for _ in circles:
-    #     print(_, "->", circles[_])
-    layout = {node: None for node in k_.nodes}
-    layout |= {ep: None for ep in k_.endpoints}
-    layout |= {arc: None for arc in k_.arcs}
-    layout |= {face: None for face in k_.faces}
+    layout = {node: None for node in preprocessed_k.nodes}
+    layout |= {ep: None for ep in preprocessed_k.endpoints}
+    layout |= {arc: None for arc in preprocessed_k.arcs}
+    layout |= {face: None for face in preprocessed_k.faces}
 
+    _layout_arcs(preprocessed_k, circles, layout)
+    _layout_endpoints(preprocessed_k, circles, layout)
 
-    _layout_arcs(k_, circles, layout)
+    _post_process_layout(original_k, preprocessed_k, layout, circles)
 
-    # print("Arc layout")
-    # for _ in k_.arcs:
-    #     print(_, "->", layout[_])
-
-    _layout_endpoints(k_, circles, layout)
-
-    _post_process_layout(k, k_, layout, circles)
+    # remove non-visible support vertices
+    for v in k.vertices:
+        if not _visible(k.nodes[v]):
+            del layout[v]
 
     return (layout, circles) if return_circles else layout
 

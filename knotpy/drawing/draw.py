@@ -9,6 +9,7 @@ from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.drawing.layout_circle_packing import layout_circle_packing
 from knotpy.utils.geometry import CircularArc, Segment, middle
 from knotpy.drawing.alignment import align_layouts
+from knotpy.drawing._support import _add_support_arcs
 from knotpy.algorithms.connected_sum import connected_sum
 
 """
@@ -16,6 +17,12 @@ TODO:
 - bridges
 - loops
 - nicer connected sums
+- with support labels are wrong
+- two adjacent leafs (a=V(b0) b=X(a0 c3 c0 d0) c=X(b2 e3 f0 b1) d=V(b3) e=X(f3 g3 h0 c1) f=X(c2 h3 g0 e0) g=X(f2 h2 h1 e1) h=X(e2 g2 g1 f1))
+
+this case:
+    # s = kp.from_knotpy_notation("a → X(b3 b2 c3 c2), b → X(d3 e0 a1 a0), c → X(e3 d0 a3 a2), d → X(c1 f3 g0 b0), e → X(b1 g3 h0 c0), f → X(i0 j0 k0 d1), g → X(d2 k3 k2 e1), h → X(e2 l0 l3 j2), i → X(f0 i2 i1 j1), j → X(f1 i3 h3 l2), k → X(f2 l1 g2 g1), l → X(h1 k1 j3 h2)")
+
 """
 
 
@@ -169,11 +176,16 @@ def draw_vertices(
     if ax is None:
         ax = plt.gca()
 
+    # if vertices to be drawn are not given, draw them all.
     if vertices_to_draw is None:
         vertices_to_draw = list(k.vertices)
 
+    # remove non-visible vertices
+    vertices_to_draw = [v for v in vertices_to_draw if v in layout]
+
     for v in vertices_to_draw:
-        xy =layout[v]
+        xy = layout[v]
+
         ax.add_patch(plt.Circle(
             xy=(xy.real, xy.imag),
             radius=_DEFAULT_VERTEX_SIZE / 2,
@@ -242,6 +254,9 @@ def draw_node_labels(
 
     if nodes_to_draw is None:
         nodes_to_draw = list(k.nodes)
+
+    # remove non-visible vertices
+    nodes_to_draw = [v for v in nodes_to_draw if v in layout]
 
     for v in nodes_to_draw:
         xy = layout[v]
@@ -353,12 +368,15 @@ def draw_from_layout(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, ax, 
 
 def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
 
+    #print(k)
     # TODO: analyse keywords (title,...)
 
-    #print("drawing",k)
+    # add bridge and loop support arcs
+    supported_k = _add_support_arcs(k)
 
     # Split the knot into disjoint components (which will be aligned)
-    components = disjoint_union_decomposition(k)
+    components = disjoint_union_decomposition(supported_k)
+
 
     # Compute the layout for each component separately.
     layout_circles_pairs = [layout_circle_packing(_, return_circles=True) for _ in components]
@@ -367,6 +385,7 @@ def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
     align_layouts(layout_circles_pairs)
 
     with_labels = kwds.get("with_labels", False)
+    show = kwds.get("show", False)
 
     # Join the layout to a common one.
     joint_layout, joint_circles = {}, {}
@@ -384,8 +403,11 @@ def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
 
     align_layouts(layout_circles_pairs)  # TODO: do we need this?
     if _PLOT_CIRCLES:
-        _plot_circles(k, joint_circles, ax=ax)
-    draw_from_layout(k, joint_layout, ax=ax, with_labels=with_labels)
+        _plot_circles(supported_k, joint_circles, ax=ax)
+    draw_from_layout(supported_k, joint_layout, ax=ax, with_labels=with_labels)
+
+    if show:
+        plt.show()
 
 
 def _plot_circles(k: PlanarDiagram | OrientedPlanarDiagram, circles:dict, ax=None):

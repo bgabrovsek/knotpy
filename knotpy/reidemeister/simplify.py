@@ -4,7 +4,7 @@ from knotpy.classes.freezing import freeze, unfreeze
 from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.reidemeister.space import _simplify_greedy_decreasing, crossing_non_increasing_space, crossing_non_increasing_space, detour_space
-from knotpy.reidemeister.reidemeister import all_reidemeister_preserving_moves_generator
+from knotpy.reidemeister.reidemeister import reidemeister_preserving_moves_generator, detour_generator, reidemeister_decreasing_moves_generator
 from knotpy.reidemeister.reidemeister_3 import reidemeister_3, find_reidemeister_3_triangle
 from knotpy.manipulation.symmetry import flip
 from knotpy._settings import settings
@@ -69,12 +69,10 @@ def simplify_non_increasing(k:PlanarDiagram, greediness:int = 1):
     if isinstance(k, (set, tuple, list)):
         return type(k)(simplify_non_increasing(_) for _ in k)
 
-    if greediness <= 2 and "FLIP" in settings.allowed_moves:
-        k = {k, flip(k, inplace=False)}
-
-    elif greediness == 0 or greediness == 1:
+    if greediness == 0 or greediness == 1:
         if "FLIP" in settings.allowed_moves:
             k = {k, flip(k, inplace=False)}
+
         return min(crossing_non_increasing_space(k, greediness=greediness, assume_canonical=False))
 
     elif greediness == 2:
@@ -91,22 +89,129 @@ def simplify_non_increasing(k:PlanarDiagram, greediness:int = 1):
 
         # Second, make crossing preserving moves until there are crossings to remove
         ls = LeveledSet(canonical(k))
-        while ls[-1]:
+        while not ls.is_level_empty(-1):
             ls.new_level()
-            for _ in all_reidemeister_preserving_moves_generator(ls[-2]):
+            for _ in reidemeister_preserving_moves_generator(ls.iter_level(-2)):
                 __ = simplify_decreasing(_, inplace=True)
                 if len(__) < number_of_nodes:
                     return __
                 else:
                     ls.add(canonical(__))
 
-        return ls[0].pop()
+        return ls.levels[0].pop()
 
     else:
         raise ValueError(f"Invalid greediness level {greediness}.")
 
 
-def simplify_smart(k: PlanarDiagram, depth=1):
+
+
+
+
+
+def simplify_smart(k: PlanarDiagram, depth=1, greediness=1):
+    """ Make "smart" Reidemeister moves to simplify a diagram. "Smart" moves refer to this process at each step:
+
+    - perform all non-increasing moves (R3, decreasing R1 and R2,...) any number of times, until the set of obtained
+    diagrams stabalizes (no new diagrams are generated with R3, R1, R2, ... moves),
+    - perform all crossing-increasing moves once (increasing R1, R2, and possibly R5), in such a way that at the next
+    step a new R3 move can be performed.
+
+    :param k: Input diagram.
+    :param depth: How many times crossing increasing moves should be performed.
+    :return: The minimal diagram after the above process is applied.
+    """
+
+    from time import time
+
+    t = time()
+
+    # If multiple diagrams are given, perform steps on each diagram.
+    if isinstance(k, (set, list, tuple)):
+        return [simplify_smart(_, depth) for _ in k]
+
+    if not k:
+        return []
+
+    #k = {canonical(k),}
+    k = {canonical(k), canonical(simplify_decreasing(k, inplace=True))}
+
+
+    # If we allow flipping the diagram, flip it.
+    if "FLIP" in settings.allowed_moves:
+        k |= {canonical(flip(_, inplace=False)) for _ in k}
+
+    if any(_.number_of_crossings == 0 for _ in k):
+        return min(k)
+
+
+    # Level 0: perform all R3 and crossing reducing R2, R1, R4, and R5 moves.
+    # TODO: if we take greediness=0, then it takes much longer
+
+    ls = LeveledSet(crossing_non_increasing_space(k, greediness=0, assume_canonical=True))
+
+    # If there are no crossings to reduce, we are done.
+    if any(_.number_of_crossings == 0 for _ in ls):
+        return min(ls)
+
+
+    """
+    For all next levels, increase the number of crossings by 1 or 2 (via R1 and R2 moves),
+    followed by all possible R3 moves and crossing-reducing R1 and R2 moves.
+    """
+    start = len(ls.levels)
+    for depth_index in range(depth):
+
+        # increase crossings
+        #ls.new_level(detour_space(ls.levels[-1], assume_canonical=True))
+        ls.new_level()
+        for lvl in ls.levels[start-1:-1]:
+            for k in lvl:
+                for _ in detour_generator(k):
+                    ls.add(canonical(_))
+
+        start = len(ls.levels)
+
+        # explore the new space and reduce the diagrams
+        #ls.new_level(crossing_non_increasing_space(ls[-1], greediness=0, assume_canonical=True))
+        from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space
+        ls.new_level()
+        ls.extend(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))  # TODO: if R3 not allowed, does preserving contain the input diagram?
+        while True:
+
+            #ls.new_level(crossing_decreasing_space(ls[-1], assume_canonical=True))
+
+            # TODO after adding the bottom three line, it works much faster (16x), but I do not know why
+            if greediness == 0:
+                ls.new_level(crossing_decreasing_space(ls.iter_level(-1), assume_canonical=True))
+            elif greediness == 1:
+                while not ls.is_level_empty(-1):
+                    ls.new_level()  # put reduced diagrams to the next level
+                    ls.extend(canonical(set(reidemeister_decreasing_moves_generator(ls.iter_level(-2)))))
+            else:
+                raise ValueError(f"Invalid greediness level {greediness}.")
+
+
+            #for k in ls[-2]:
+            #    ls.extend(crossing_decreasing_space(k, assume_canonical=True))
+
+            #if not ls[-1]:
+            #    break
+            ls.new_level(crossing_preserving_space(ls.iter_level(-1), assume_canonical=True))  # TODO: if R3 not allowed, do we get ls[-1]?
+            if ls.is_level_empty(-1):
+                break
+
+        # If there are no crossings to reduce, we are done.
+        if any(_.number_of_crossings == 0 for _ in ls):
+            #print("levels!:", [len(c) for c in ls.levels])
+            return min(ls)
+
+    #print("levels :", [len(c) for c in ls.levels])
+    return min(ls)
+
+
+
+def _old_simplify_smart(k: PlanarDiagram, depth=1):
     """ Make "smart" Reidemeister moves to simplify a diagram. "Smart" moves refer to this process at each step:
 
     - perform all non-increasing moves (R3, decreasing R1 and R2,...) any number of times, until the set of obtained
@@ -152,8 +257,10 @@ def simplify_smart(k: PlanarDiagram, depth=1):
 
         # If there are no crossings to reduce, we are done.
         if any(_.number_of_crossings == 0 for _ in ls):
+            #print("levels!:", [len(c) for c in ls.levels])
             return min(ls)
 
+    #print("levels :", [len(c) for c in ls.levels])
     return min(ls)
 
 

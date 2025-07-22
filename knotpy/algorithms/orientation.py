@@ -1,16 +1,16 @@
-"""Algorithms with orientation."""
+"""
+Algorithms that deal with orientation.
+"""
+
+__all__ = ["orient", "unorient", "all_orientations"]
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+
 import itertools as it
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.algorithms.topology import edges
-
-
-__all__ = ["orient", "unorient", "all_orientations"]
-
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
-
 
 def orient_edges(k: PlanarDiagram, edges: list):
     """Orient the diagram so that edges are positively ordered, i.e. the orientations follows the endpoints
@@ -77,20 +77,4 @@ def unorient(k:OrientedPlanarDiagram | PlanarDiagram) -> PlanarDiagram:
 
 
 if __name__ == "__main__":
-
-    from knotpy.catalog.example import trefoil_knot
-    k = trefoil_knot()
-    print(k)
-
-    ok = all_orientations(k)
-    for o in ok:
-        print("   ", o)
-        uo = unoriented(o)
-        print("   ", u)
-
-    # k_oriented = oriented(k)
-    # print(k_oriented)
-    #
-    # print()
-    # for m in all_orientations(k):
-    #     print(m)
+    pass

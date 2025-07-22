@@ -1,3 +1,11 @@
+"""
+Join diagrams by bridge or crossing.
+"""
+
+__all__ = ['bridge_join', 'crossing_join']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import IngoingEndpoint, OutgoingEndpoint, Endpoint
 from knotpy.classes.node import Vertex, Crossing

@@ -1,4 +1,5 @@
 import knotpy as kp
+from knotpy import canonical
 from knotpy.algorithms.sanity import sanity_check
 
 
@@ -7,7 +8,7 @@ def test_simplify_thetas():
 
     theta = kp.PlanarDiagram("+t3_1")
 
-    for i in range(25):
+    for i in range(5):
         # make the diagram more complicated
         #print(kp.canonical(theta))
         theta_mod = kp.randomize_diagram(theta, number_of_moves=1)
@@ -22,11 +23,17 @@ def test_simplify_thetas():
         theta_simplified = kp.simplify_smart(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
 
         # the canonical forms should be the same
-        kp.export_pdf([theta, theta_mod, theta_simplified], f"test_simplify_thetas {i}.pdf", with_labels=True)
+        #kp.export_pdf([theta, theta_mod, theta_simplified], f"test_simplify_thetas {i}.pdf", with_labels=True)
 
         # print(kp.canonical(theta_simplified))
 
         # print()
+        # print("##1")
+        # print(canonical(theta))
+        # print("##2")
+        # print(canonical(theta_simplified))
+        # kp.export_pdf([theta, theta_simplified], f"test_simplify_theta.pdf", with_labels=True)
+
         assert kp.canonical(theta) == kp.canonical(theta_simplified)
 
 
@@ -52,9 +59,9 @@ def test_reduce_thetas():
     reduced = kp.reduce_equivalent_diagrams(list_of_thetas, depth=1)  # probably depth 0 is enough (no increasing moves)
 
     for key in reduced:
-        print("The following diagrams are equivalent to", key)
+        # print("The following diagrams are equivalent to", key)
         for value in reduced[key]:
-            print("   ", value)
+            # print("   ", value)
             # the yamada polynomials for each group is the same
             assert kp.yamada_polynomial(value) == kp.yamada_polynomial(key)
 
@@ -72,19 +79,19 @@ def test_wanda():
 
     for t, G in groups.items():
         list_of_bonded = [kp.from_pd_notation(pd) for pd in G]
-        print(list_of_bonded)
+        # print(list_of_bonded)
         for k in list_of_bonded:
             assert sanity_check(k)
-        reduced = kp.reduce_equivalent_diagrams(list_of_bonded, depth=2)
+        # reduced = kp.reduce_equivalent_diagrams(list_of_bonded, depth=2)
 
-        for key, value in reduced.items():
-            print(key)
-            print("    ", value)
+        # for key, value in reduced.items():
+            # print(key)
+            # print("    ", value)
             # for v in value:
             #     print("   ", v)
         # print(t, len(G), len(reduced), [len(v) for k, v in reduced.items()])
         # print(reduced)
-        print("**")
+        # print("**")
 
 
 def test_reduce_groups_bonded():
@@ -100,9 +107,9 @@ def test_reduce_groups_bonded():
     for t, G in groups.items():
         list_of_bonded = [kp.from_pd_notation(pd) for pd in G]
         reduced = kp.reduce_equivalent_diagrams(list_of_bonded, depth=1)
-        print(t, len(G), len(reduced), [len(v) for k, v in reduced.items()])
-        print(reduced)
-        print("**")
+        #print(t, len(G), len(reduced), [len(v) for k, v in reduced.items()])
+        #print(reduced)
+        #print("**")
 
 def test_theta_r4():
     pass
@@ -130,6 +137,13 @@ def test_theta_r4():
 
 if __name__ == '__main__':
 
+    from time import time
+
+    t = time()
+
+    test_simplify_thetas()
+
+
     # a = kp.from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
     # b = kp.from_knotpy_notation("a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 e2 e1 a2), e → X(b1 d2 d1 b2)")
     #
@@ -140,3 +154,5 @@ if __name__ == '__main__':
     test_reduce_thetas()
     test_wanda()
     test_reduce_groups_bonded()
+
+    print(time()-t)

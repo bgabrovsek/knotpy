@@ -10,7 +10,12 @@ def test_equivalence_knots():
 
     diagrams = [trefoil, randomize_diagram(trefoil), randomize_diagram(trefoil), randomize_diagram(trefoil),
                 figure8, randomize_diagram(figure8), randomize_diagram(figure8), randomize_diagram(figure8)]
+
+    print("INPUT:", diagrams)
+
     result = reduce_equivalent_diagrams(diagrams)
+
+    print("OUTPUT:", result)
 
     assert len(result) == 2
     assert trefoil in result

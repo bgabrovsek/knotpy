@@ -1,7 +1,8 @@
-from random import choice
-from itertools import product
 import warnings
 from typing import Generator, Tuple, Set
+from random import choice
+from itertools import product
+from collections import Counter
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
@@ -35,12 +36,16 @@ def _path_within_crossings(k: PlanarDiagram, nodes: list | set, endpoint):
     if endpoint.node not in nodes:
         raise ValueError("Endpoint not in nodes")
 
+    #print(f"path from endpoints {endpoint} within nodes {nodes}")
+
     path = [endpoint]
     while True:
         jump = k.twin((path[-1].node, (path[-1].position + 2) % 4))
         if jump.node not in nodes:
             break
         path.append(jump)
+        if not type(k.nodes[jump.node]) is Crossing:
+            break
     return [ep.node for ep in path]
 
 
@@ -72,6 +77,9 @@ def find_flypes(k: PlanarDiagram | OrientedPlanarDiagram) -> Generator[Tuple[Set
 
     for arcs, partition_, ccw_endpoints_ in arc_cut_sets(k, order=4, minimum_partition_nodes=2, return_partition=True, return_ccw_ordered_endpoints=True):
 
+        # if three endpoints are connected to one crossing, this is not a valid flype
+        if max(Counter(ep.node for eps in ccw_endpoints_ for ep in eps).values()) > 2:
+            continue
 
         # loop through both possibilities
         for index, rotation in product(range(2), range(4)):
@@ -98,6 +106,7 @@ def find_flypes(k: PlanarDiagram | OrientedPlanarDiagram) -> Generator[Tuple[Set
 def choose_flype(k, random=False):
     """ Return one flype."""
 
+
     if "FLYPE" not in settings.allowed_moves:
         return None
 
@@ -112,6 +121,10 @@ def flype(k:PlanarDiagram | OrientedPlanarDiagram, partition_endpoints_pair: tup
 
     if "FLYPE" not in settings.allowed_moves:
         warnings.warn("A flype move is being performed, although it is disabled in the global KnotPy settings.")
+
+
+
+    #print("Flype", partition_endpoints_pair, "on", k)
 
     partition, endpoints_quadruple = partition_endpoints_pair
 
@@ -147,6 +160,7 @@ def flype(k:PlanarDiagram | OrientedPlanarDiagram, partition_endpoints_pair: tup
     # flip the part of the diagram
     #print("flipping partition", partition)
     k = flip(k, partition, inplace=True)
+
 
     return k
 

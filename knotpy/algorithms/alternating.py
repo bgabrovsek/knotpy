@@ -1,9 +1,15 @@
 """
-Alternating
+Algorithm for detecting if a diagram is alternating.
 """
+
+__all__ = ['is_alternating']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node.crossing import Crossing
 from knotpy.algorithms.topology import edges
+
 
 def _parity_diff(lst, cyclic=False):
     """Return difference of consecutive elements (mod 2) of a list."""
@@ -11,6 +17,7 @@ def _parity_diff(lst, cyclic=False):
         return [(b - a) % 2 for a, b in zip(lst, lst[1:] + lst[:1])]
     else:
         return [(b - a) % 2 for a, b in zip(lst, lst[1:])]
+
 
 def is_alternating(k: PlanarDiagram):
 
@@ -32,31 +39,9 @@ def alternating_crossings(k: PlanarDiagram):
             not k.nodes[c][1].position % 2 and not k.nodes[c][3].position % 2 and k.nodes[c][1].node != c and k.nodes[c][3].node != c
             ]
 
+
 def is_face_alternating(face):
     return all(ep.position % 2 == face[0].position % 2 for ep in face)
 
 if __name__ == "__main__":
-    # print(p := _parity_diff([1, 1,0,0,3,5,4,8,1]))
-    # print(_parity_diff(p))
-    #
-    # print(p := _parity_diff([1,1,1,1,1,1]))
-    # print(_parity_diff(p))
-    # print(p := _parity_diff([4,4,4,4,4,4,4,1]))
-    # print(_parity_diff(p))
-
-
-
-    import knotpy as kp
-    k = kp.knot("7_3")
-    print(k)
-    print(is_alternating(k))
-    print()
-
-    k = kp.knot("8_19")
-    print(k)
-    print(is_alternating(k))
-    print()
-
-    k = kp.theta("-t5_7")
-    print(k)
-    print(is_alternating(k))
+    pass

@@ -25,6 +25,7 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.invariants.cache import Cache
 from knotpy._settings import settings
+from knotpy.algorithms.topology import is_knot
 
 _USE_JONES_CACHE = False
 
@@ -32,6 +33,19 @@ _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
 _A = symbols("A")
 _kauffman_term = -_A ** 2 - _A ** (-2)
+
+
+def lowest_exponent(laurent_polynomial, variable):
+    exponents = [term.as_coeff_exponent(variable)[1] for term in laurent_polynomial.as_ordered_terms()]  # Extract all exponents of A
+    return int(min(exponents))
+
+
+"""
+TODO: simplification does not work for certain cases:
+    a = kp.from_knotpy_notation("a → V(b0), b → X(a0 c0 d3 c1), c → X(b1 b3 e0 d2), d → X(f3 g0 c3 b2), e → V(c2), f → X(g3 h0 i3 d0), g → X(d1 i2 h1 f0), h → X(f1 g2 j3 j2), i → X(j1 j0 g1 f2), j → X(i1 i0 h3 h2)")
+    b = kp.from_knotpy_notation("a → V(b0), b → X(a0 c0 d3 c1), c → X(b1 b3 e0 d2), d → X(h3 g0 c3 b2), e → V(c2), f → X(i1 g2 g1 h2), g → X(d1 f2 f1 i0), h → X(j1 j0 f3 d0), i → X(g3 f0 j3 j2), j → X(h1 h0 i3 i2)")
+
+"""
 
 
 def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
@@ -54,6 +68,10 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
     if k.is_oriented():
         raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
+
+
+    _is_knot = is_knot(k)
+    original_framing = k.framing if k.is_framed() else 0
     original_knot = k
     expression = module()
     stack = deque()
@@ -69,8 +87,12 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
         coeff, k = stack.pop()
 
         #print("> ",coeff, k)
+        ##kk = k.copy()
         simplify_decreasing(k, inplace=True)
         #print("s ", coeff, k)
+        # print(kk)
+        # print(k)
+        # print()
 
         if k.crossings:
             crossing = next(iter(k.crossings))
@@ -80,17 +102,24 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
             stack.append((coeff * (_A**-1), kB))
         else:
             number_of_unknots = remove_unknots(k)
+            framing = k.framing
             k_canonical = canonical(k)
-            framing = k_canonical.framing
             k_canonical.framing = 0
             expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- _A ** 3) ** (-framing)), k_canonical)
 
-    original_framing = original_knot.framing if original_knot.is_framed() else 0
-
     if normalize:
-        wr = writhe(original_knot)
-        expression *= (- _A ** (-3)) ** (wr + original_framing)
+
+        if _is_knot:
+            expression *= (- _A ** (-3)) ** (writhe(original_knot) + original_framing)
+            #print("is knot")
+        else:
+            # writhe is sometimes not uniquely defined (e.g. with knotoids)
+
+            adjusted_writhe = min(lowest_exponent(expand(r), _A) // 3 for r, s in expression.to_tuple())
+            #print(expression, adjusted_writhe)
+            expression *= (- _A ** (-3)) ** adjusted_writhe
     else:
+        #print("not normalized")
         expression *= (- _A ** (-3)) ** original_framing
 
     settings.load(settings_dump)
@@ -150,7 +179,7 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
     if normalize:
         polynomial *= (- _A ** (-3)) ** (writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
-        polynomial *= (- _A ** (-3)) ** (original_framing)
+        polynomial *= (- _A ** (-3)) ** original_framing
 
     settings.load(settings_dump)
 
@@ -168,10 +197,10 @@ if __name__ == '__main__':
 
     knots = [a, b, k]
     for k in knots:
-        print(k)
+        #print(k)
         poly = kp.bracket_polynomial(k, normalize=True)
         poly_nn = kp.bracket_polynomial(k, normalize=False)
-        print(poly)
+        #print(poly)
         for _ in kp.random_reidemeister_moves(k, count=12):
             poly_ = kp.bracket_polynomial(_, normalize=True)
             poly_nn_ = kp.bracket_polynomial(_, normalize=False)

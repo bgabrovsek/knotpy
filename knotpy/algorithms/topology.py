@@ -1,7 +1,19 @@
+__all__ = [
+    "is_unlink", "is_unknot", "number_of_unknots", "is_knot", "is_link",
+    "is_planar_graph", "is_empty_diagram",
+    "is_knotoid", "is_linkoid",
+    "is_leaf", "leafs",
+    "is_loop", "loops",
+    "is_kink", "kinks", "kink_region_iterator",
+    "bridges", "is_bridge",
+    "edges", "overstrands",
+]
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
 from collections import defaultdict
 
-from knotpy import DisjointSetUnion
-from knotpy.algorithms.components_link import link_components_endpoints
+from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.cut_set import _is_arc_cut_set
 from knotpy.algorithms.paths import path_from_endpoint
@@ -208,7 +220,7 @@ def kinks(k: PlanarDiagram, crossing=None) -> set:
         crossing: If provided, only kinks attached to the specified crossing will be considered.
 
     Returns:
-        set: A set of kinks.
+        set: A set of kinks (endpoints defining the face of the kink)
     """
 
     if crossing is None:

@@ -1,71 +1,23 @@
+"""
+Putting a diagram into its canonical form.
+"""
+
+__all__ = ['canonical', 'canonical_generator']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
+from collections.abc import Iterable
 from queue import Queue
 import string
-import multiprocessing
 
 from knotpy.algorithms.degree_sequence import neighbour_sequence
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes.endpoint import Endpoint
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.manipulation.permute import permute_node
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
 from knotpy.utils.func_utils import min_elements_by
 
-__all__ = ['canonical']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
-
-_CHECK_SANITY = True
-
 _ascii_letters = string.ascii_lowercase + string.ascii_uppercase
-
-
-# def canonical(k: PlanarDiagram):
-#     """
-#     Compute the canonical form of a planar diagram.
-#
-#     The function takes a `PlanarDiagram` instance and finds its canonical form by iterating
-#     through its nodes in a counterclockwise (CCW) fashion and applying breadth-first search
-#     (BFS) to determine the minimal enumeration.
-#
-#     Args:
-#         k: A `PlanarDiagram` instance representing the planar diagram, knot, or link diagram.
-#
-#     Raises:
-#         TypeError: If `k` is not an instance of `PlanarDiagram`.
-#         NotImplementedError: If `k` is an oriented diagram.
-#
-#     Returns:
-#         PlanarDiagram: The canonical form of the given planar diagram.
-#     """
-#
-#     # TODO: speed up by sorting endpoint, not nodes
-#
-#     if isinstance(k, PlanarDiagram):
-#         return _compute_canonical(k)
-#         # if k.is_oriented():
-#         #     raise NotImplementedError("Canonical form of oriented diagrams not supported")
-#         # else:
-#         #     return _canonical_unoriented(k)
-#     else:
-#         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
-
-
-
-#
-# def _minimal_degree_nodes(k: PlanarDiagram):
-#     """Return all the nodes that have the minimal degree of the diagram."""
-#     minimal_degree = min(k.degree(node) for node in k.nodes)
-#     return [node for node in k.nodes if k.degree(node) == minimal_degree]
-#
-#
-# def _min_value_keys(d:dict):
-#     """Return keys that have minimal values."""
-#     min_value = min(d.values())
-#     return [key for key in d if d[key] == min_value]
-
-
-
-
 
 def _under_endpoints_of_node(k: PlanarDiagram, node):
     """Return a tuple of endpoints that are under-endpoints in case of crossings and all endpoints in case of vertices."""
@@ -118,15 +70,13 @@ def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
     return node_relabel, node_first_position
 
 
-# def _disjoint_sum_canonical_unoriented(k: PlanarDiagram):
-#     """
-#     Puts a knot that is a disjoint sum into canonical form. Assumes (does not check) that the knot is a disjoint sum.
-#     TODO: not tested
-#     """
-#     return disjoint_union(*sorted([_canonical_unoriented(c) for c in disjoint_union_decomposition(k)]))
+def canonical_generator(diagrams: Iterable):
+    if not isinstance(diagrams, Iterable):
+        raise TypeError("Input must be an iterable.")
+    for _ in diagrams:
+        yield canonical(_)
 
-
-def canonical(k: PlanarDiagram | set | list | tuple):
+def canonical(k: PlanarDiagram | set | list | tuple | Iterable) -> PlanarDiagram | set | list | tuple:
     """
     Compute the canonical form of an unoriented planar diagram.
 
@@ -154,11 +104,18 @@ def canonical(k: PlanarDiagram | set | list | tuple):
 
     from knotpy.algorithms.naming import number_to_alpha
 
+    # input is set/list/tuple
     if isinstance(k, (set, list, tuple)):
         return type(k)(canonical(_) for _ in k)
 
+    if isinstance(k, Iterable):
+        return [canonical(_) for _ in k]
+
+    # input is unsupported
     if not isinstance(k, PlanarDiagram):
         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
+
+    # input is a planar diagram
 
     # TODO: In case of degree 2 vertices, the canonical form might not be unique.
 
@@ -207,21 +164,6 @@ def canonical(k: PlanarDiagram | set | list | tuple):
             for node, node_inst in k._nodes.items()
         }
 
-        # new_graph._nodes = {
-        #     node_relabel[node]:
-        #         Crossing(
-        #                     [type(ep)(node_relabel[ep.node], ep.position)
-        #                         for ep in node_inst._inc]
-        #         )
-        #         if isinstance(node_inst, Crossing) else
-        #         Vertex(
-        #                     [Endpoint(node_relabel[node_inst._inc[position].node], node_inst._inc[position].position)
-        #                         for position in range(len(node_inst))],
-        #                     degree=len(node_inst)
-        #         )
-        #     for node, node_inst in k._nodes.items()
-        # }
-
         _canonically_permute_nodes_with_given_first_positions(new_graph, node_first_position)
 
         # Update minimal diagram if this one is lexicographically smaller
@@ -266,9 +208,6 @@ def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node
     :param k: planar diagram
     :return: None
     """
-    # if k.is_oriented():
-    #     raise NotImplementedError()
-
     for node in k.nodes:
         first_pos = node_first_position[node]
 
@@ -285,39 +224,6 @@ def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node
         #print(node, permutation)
         permute_node(k, node, permutation)
 
-        #
-        #
-        # for node in sorted(k.nodes):  # probably sorted not needed, on second though, probably is needed
-        #
-        #     degree = k.degree(node)
-        #     neighbours = [ep.node for ep in k.nodes[node]]
-        #
-        #     if isinstance(k.nodes[node], Crossing):
-        #         index = 0 if neighbours < (neighbours[2:] + neighbours[:2]) else 2
-        #     else:
-        #         cyclic_permutations = [neighbours[i:] + neighbours[:i] for i in range(degree)]
-        #         index = cyclic_permutations.index(min(cyclic_permutations))
-        #
-        #     permute_node(k, node, {i: (i - index) % degree for i in range(degree)})
-        #
-        # """
-        # p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,3,1]),
-        # and if node has endpoints [a, b, c, d] (ccw) then the new endpoints will be [a, d, b, c].
-        # """
-
 
 if __name__ == "__main__":
-    # degree = 4
-    # neighbours = ["b", "a", "a", "c"]
-    # cyclic_permutations = [neighbours[i:] + neighbours[:i] for i in range(degree)]
-    # index = cyclic_permutations.index(min(cyclic_permutations))
-    # print(neighbours, min(cyclic_permutations), index, {i: (i - index) % degree for i in range(degree)})
-    #
-    # exit()
-    from knotpy import from_plantri_notation
-    print("...")
-    k = from_plantri_notation("edcb,cdea,dba,ebca,bda")
-    print(k)
-    c = canonical(k)
-    print(c)
     pass

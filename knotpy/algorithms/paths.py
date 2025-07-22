@@ -1,5 +1,4 @@
 __all__ = ["path_from_endpoint", "bfs_shortest_path"]
-
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
@@ -99,4 +98,5 @@ def bfs_shortest_path(graph: PlanarDiagram, start, goal):
 
     return None  # Return None if no path exists between start and goal
 
-
+if __name__ == "__main__":
+    pass

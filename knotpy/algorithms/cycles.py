@@ -1,3 +1,12 @@
+"""
+Cycles
+"""
+
+__all__ = ['cycles']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
+
+
 from knotpy.classes.planardiagram import PlanarDiagram
 
 def cycles(g:PlanarDiagram, n:int):

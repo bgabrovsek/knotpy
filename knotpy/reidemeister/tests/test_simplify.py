@@ -6,7 +6,7 @@ from knotpy.reidemeister.simplify import simplify_non_increasing, simplify_decre
 from knotpy.algorithms.topology import is_unknot
 from time import time
 
-_DISPLAY_TIME = False
+_DISPLAY_TIME = True
 
 def _get_hard_knot_examples():
 
@@ -89,12 +89,16 @@ def test_simplify_hard_unknots_nonincreasing():
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
+    print("nasty")
     j = jones_polynomial(nasty_unknot)
     t = time()
+
     s = simplify_non_increasing(nasty_unknot)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
+
+    print("reducible")
 
     j = jones_polynomial(reducible_unknot)
     t = time()
@@ -103,6 +107,9 @@ def test_simplify_hard_unknots_nonincreasing():
     assert is_unknot(s)
     assert jones_polynomial(s) == j
 
+    print("culprit")
+
+
     j = jones_polynomial(culprit_unknot)
     t = time()
     s = simplify_non_increasing(culprit_unknot)
@@ -110,12 +117,17 @@ def test_simplify_hard_unknots_nonincreasing():
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
 
+    print("culprit after")
+
     j = jones_polynomial(culprit_after_increase)
     t = time()
     s = simplify_non_increasing(culprit_after_increase, greediness=0)
     if _DISPLAY_TIME: print("Time:", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
+
+    print("goeritz_unknot")
+
 
     j = jones_polynomial(goeritz_unknot)
     t = time()
@@ -172,14 +184,20 @@ def test_simplify_hard_unknots_nonincreasing_greedy():
     assert not is_unknot(s)
     assert jones_polynomial(s) == j
 
+
+
+
+
+
 def test_simplify_hard_unknots_smart():
 
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones_polynomial(simple_unknot)
     t = time()
+    print("..")
     s = simplify_smart(simple_unknot)
-    if _DISPLAY_TIME: print("Time:", time() - t)
+    if _DISPLAY_TIME: print("Time (simple unknot):", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
     # solves in 0.06s
@@ -187,7 +205,7 @@ def test_simplify_hard_unknots_smart():
     j = jones_polynomial(reducible_unknot)
     t = time()
     s = simplify_smart(reducible_unknot)
-    if _DISPLAY_TIME: print("Time:", time() - t)
+    if _DISPLAY_TIME: print("Time (reducible unknot):", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
     # solves in 0.06s
@@ -195,38 +213,94 @@ def test_simplify_hard_unknots_smart():
     j = jones_polynomial(nasty_unknot)
     t = time()
     s = simplify_smart(nasty_unknot)
-    if _DISPLAY_TIME: print("Time:", time() - t)
+    if _DISPLAY_TIME: print("Time (nasty unknot):", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
     # solves in 0.006s
 
     j = jones_polynomial(culprit_unknot)
     t = time()
-    s = simplify_smart(culprit_unknot,  depth=1)
-    if _DISPLAY_TIME: print("Time:", time() - t)
+    s = simplify_smart(culprit_unknot, depth=1)
+    #from knotpy.reidemeister.simplify import _old_simplify_smart
+    #s = OLD_simplify_smart(culprit_unknot,  depth=1)
+    if _DISPLAY_TIME: print("Time (culprit knot):", time() - t)
     assert is_unknot(s)
     assert jones_polynomial(s) == j
     # solves in 12.4s
 
 #wanda_ex = from_pd_notation("[[0,12,9],[5,4,13],[0,1,10],[9,11,8],[10,13,11,12],[5,1,6,2],[2,6,3,7],[4,7,3,8]]")
-
-
+#
+#
+#
+# def NOTtest_simplify_hard_unknots_smart_string():
+#
+#     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
+#
+#     j = jones_polynomial(simple_unknot)
+#     t = time()
+#     s = simplify_smart(simple_unknot, memory_efficient=True)
+#     if _DISPLAY_TIME: print("Time:", time() - t)
+#     assert is_unknot(s)
+#     assert jones_polynomial(s) == j
+#     # solves in 0.06s
+#
+#     j = jones_polynomial(reducible_unknot)
+#     t = time()
+#     s = simplify_smart(reducible_unknot, memory_efficient=True)
+#     if _DISPLAY_TIME: print("Time (R):", time() - t)
+#     assert is_unknot(s)
+#     assert jones_polynomial(s) == j
+#     # solves in 0.06s
+#
+#     j = jones_polynomial(nasty_unknot)
+#     t = time()
+#     s = simplify_smart(nasty_unknot, memory_efficient=True)
+#     if _DISPLAY_TIME: print("Time:", time() - t)
+#     assert is_unknot(s)
+#     assert jones_polynomial(s) == j
+#     # solves in 0.006s
+#
+#     j = jones_polynomial(culprit_unknot)
+#     t = time()
+#     s = simplify_smart(culprit_unknot, depth=1, memory_efficient=True)
+#     #from knotpy.reidemeister.simplify import _old_simplify_smart
+#     #s = OLD_simplify_smart(culprit_unknot,  depth=1)
+#     if _DISPLAY_TIME: print("Culprit Time:", time() - t)
+#     assert is_unknot(s)
+#     assert jones_polynomial(s) == j
+#     # solves in 12.4s
 
 if __name__ == '__main__':
-    # takes 13.3 seconds to solve all knots (culprit and Goeritz)
+
     t = time()
 
-    # test greedy
-    t1 = time()
-    test_simplify_hard_unknots_nonincreasing()
-    t2 = time()
-    test_simplify_hard_unknots_nonincreasing_greedy()
-    t3 = time()
-    print("Nonincreasing:", t2 - t1, "Greedy:", t3 - t2)
-
-
-
-    test_simplify_hard_unknots_reducing()
+    #test greedy
+    # t1 = time()
+    # print("non-increasing")
+    # test_simplify_hard_unknots_nonincreasing()
+    # t2 = time()
+    # print("greedy")
+    # test_simplify_hard_unknots_nonincreasing_greedy()
+    # t3 = time()
+    # print("Nonincreasing:", t2 - t1, "Greedy:", t3 - t2)
+    #
+    #
+    # print("test hard")
+    # test_simplify_hard_unknots_reducing()
+    # print("test hard smart")
     test_simplify_hard_unknots_smart()
+    #
+    # from test_simplify_reduce_thetas import test_simplify_thetas
+    #
+    # print()
+    # tt = time()
+    # test_simplify_thetas()
+    # print("Theta time:", time()-tt)
+    #
+    # print("Full Time:", time() - t)
+    # t = time()
 
-    print("Time:", time() - t)
+    # test_simplify_hard_unknots_smart_string()
+
+
+    print("Full Time:", time() - t)

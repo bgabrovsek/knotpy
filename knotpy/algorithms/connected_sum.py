@@ -3,12 +3,11 @@ Two knots (or links or planar diagrams) can be summed by placing them side by si
 and joining them by straight bars so that orientation is preserved in the sum.
 The knot sum is also known as composition (Adams 1994) or connected sum (Rolfsen 1976, p. 40).
 """
-
-# TODO: write tests
-
 __all__ = ['is_connected_sum', 'is_connected_sum_third_order', "connected_sum_decomposition", "connected_sum"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
+
+# TODO: write tests
 
 from collections import deque
 
@@ -122,15 +121,6 @@ def connected_sum(a: PlanarDiagram | OrientedPlanarDiagram, b:PlanarDiagram | Or
     return ab
 
 
-
-
-
 if __name__ == "__main__":
-
-
     pass
-    # import knotpy as kp
-    # k = kp.from_pd_notation("X[0,1,2,3],X[1,0,3,4],X[5,2,6,7],X[4,5,7,6]")
-    # print(k)
-    # print(cut_sets(k, order=2, max_cut_sets=1))
 

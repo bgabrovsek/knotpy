@@ -22,7 +22,6 @@ from knotpy.reidemeister.simplify import simplify_decreasing, simplify_non_incre
 from knotpy.manipulation.symmetry import mirror
 from knotpy.algorithms.skein import smoothen_crossing
 from knotpy._settings import settings
-from knotpy.algorithms import sanity_check
 from knotpy.algorithms.topology import loops, is_unlink
 from knotpy.manipulation.remove import remove_unknots
 from knotpy.algorithms.alternating import alternating_crossings, is_face_alternating
@@ -84,14 +83,13 @@ def _choose_crossing_for_switching(k: OrientedPlanarDiagram):
         if non_alt_faces:
             # Try to simplify the diagram so that we have a good crossing to make a skein move on.
             ls = LeveledSet(freeze(canonical(k)))
-            while ls[-1]:
+            while not ls.is_level_empty(-1):
                 # Put diagrams after removing kinks and unpokes to the next level.
                 ls.new_level()
-                for k_ in ls[-2]:
+                for k_ in ls.iter_level(-2):
                     for location in find_reidemeister_3_triangle(k_):
 
                         k_r3 = reidemeister_3(k_, location, inplace=False)
-                        sanity_check(k_r3)
                         num_nodes = len(k_r3)
                         k_r3_ = simplify_non_increasing(k, greediness=3) #fast_simplification_greedy(k)
                         if len(k_r3_) < num_nodes or any(len(f) == 2 for f in k_r3_.faces):

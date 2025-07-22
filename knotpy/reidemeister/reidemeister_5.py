@@ -2,7 +2,6 @@ from random import choice
 import warnings
 
 from knotpy.notation.pd import from_pd_notation
-from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint

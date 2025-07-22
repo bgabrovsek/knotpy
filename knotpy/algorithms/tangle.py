@@ -1,3 +1,6 @@
+__all__ = ['tangle_decompositions', 'is_integer_tangle', "compose_tangles"]
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek'
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.cut_set import arc_cut_sets, cut_decomposition

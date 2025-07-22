@@ -85,10 +85,4 @@ def link_components(k: PlanarDiagram) -> set:
 
 
 if __name__ == "__main__":
-
-    from knotpy.notation.native import from_knotpy_notation
-    k = from_knotpy_notation("('SpatialGraph', {'name': 't0_1(0)'}, [('Vertex', 'a', (('Endpoint', 'b', 0, {'color': 1}), ('Endpoint', 'b', 1, {})), {}), ('Vertex', 'b', (('Endpoint', 'a', 0, {'color': 1}), ('Endpoint', 'a', 1, {'attr': {}})), {}), ('Vertex', 'c', (('Endpoint', 'd', 0, {}),), {}), ('Vertex', 'd', (('Endpoint', 'c', 0, {}),), {})])")
-    print(k)
-
-    print(number_of_link_components(k))
-    print(link_components_endpoints(k))
+    pass

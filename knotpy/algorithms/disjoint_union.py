@@ -12,7 +12,6 @@ __all__ = ['number_of_disjoint_components', 'disjoint_union_decomposition',
 __version__ = '0.2'
 __author__ = 'Boštjan Gabrovšek'
 
-from string import ascii_letters
 from itertools import permutations
 
 from knotpy.algorithms.naming import unique_new_node_name, generate_node_names
@@ -184,20 +183,5 @@ def disjoint_union(*knots: PlanarDiagram | OrientedPlanarDiagram, return_relabel
 
 
 
-
-
 if __name__ == "__main__":
-    # g = kp.from_plantri_notation("bcde,aedc,abd,acbe,adb")
-    # print(g)
-    #
-    #
-    # gu = g.copy()
-    # add_unknot_in_place(gu)
-    # print(gu)
-    #
-    # print("Number dc", number_of_disjoint_components(gu))
-    # print("DC nodes",disjoint_components_nodes(gu))
-    # #print("Disjoint components", disjoint_components(gu))
-    # print("link_components", link_components_endpoints(gu))
-
     pass

@@ -14,7 +14,7 @@ We need arc cut sets for these operations:
 - tangle decomposition & flyping
 """
 
-__all__ = ["arc_cut_sets", "cut_nodes", "find_arc_cut_set"]
+__all__ = ["arc_cut_sets", "cut_nodes", "find_arc_cut_set", "cut_decomposition"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
@@ -23,7 +23,6 @@ from itertools import combinations
 import warnings
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.classes.node import Vertex, Crossing
 from knotpy.algorithms.naming import multiple_unique_new_node_names
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.algorithms.disjoint_union import disjoint_union_decomposition
@@ -92,9 +91,17 @@ def _arc_cut_set_iterator(k: PlanarDiagram | OrientedPlanarDiagram, order: int, 
         if not is_cut_set_good:
             continue
 
+        # Check that no smaller subset of arcs is a cut-set
+        if any(_is_arc_cut_set(k, sub_arcs, minimum_partition_nodes=minimum_partition_nodes, return_partition=False) for sub_arcs in combinations(arcs, order - 1)):
+            continue
+
+
         if return_partition and len(partition) != 2:
             warnings.warn("Arc cut-set yielded more than two partitions, which is not yet supported.")
             continue
+
+        #print("Arc-cut-set", k, "arcs", arcs)
+        #print("arc-cut-set", arcs)
 
         # Return the ccw order of the cuts, i.e. a list of endpoints from the 0the partition and the 1st partition, respectively.
         if return_ccw_ordered_endpoints:

@@ -32,3 +32,11 @@ def total_ordering_from_compare(cls):
 
     return cls
 
+# def ensure_iterable_diagrams(func):
+#     @wraps(func)
+#     def wrapper(diagrams, *args, **kwargs):
+#         if isinstance(diagrams, PlanarDiagram):
+#             diagrams = [diagrams]
+#         return func(diagrams, *args, **kwargs)
+#     return wrapper
+

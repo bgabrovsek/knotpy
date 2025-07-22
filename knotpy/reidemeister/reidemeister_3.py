@@ -101,6 +101,8 @@ def reidemeister_3(k, face, inplace=False):
     if "R3" not in settings.allowed_moves:
         warnings.warn("An R3 move is being performed, although it is disabled in the global KnotPy settings.")
 
+
+
     if not inplace:
         k = k.copy()
 
@@ -163,5 +165,8 @@ def reidemeister_3(k, face, inplace=False):
     # backtrack Reidemeister moves
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R3 "
+
+
+
 
     return k

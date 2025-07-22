@@ -185,7 +185,7 @@ class module():
         return self.to_tuple() != other.to_tuple()
 
     def __repr__(self):
-        return (" + ".join(str(r)+str(s) for r, s in self.terms)).replace(" + -", " -")
+        return (" + ".join(str(r)+" ["+str(s)+"]" for r, s in self.terms)).replace(" + -", " -")
 
 """
 m = module(2, "c") + module(15, "a") - module(3, "x")
