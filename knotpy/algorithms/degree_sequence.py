@@ -42,9 +42,11 @@ def neighbour_sequence(k: PlanarDiagram, node) -> tuple:
 
     while not seq.is_level_empty(-1):
         seq.new_level()
-        seq.extend([ep.node for node in seq.levels[-2] for ep in k.nodes[node]])
+        seq.extend([ep.node for node in seq.iter_level(-2) for ep in k.nodes[node]])
 
-    return tuple(len(l) for l in seq.levels[:-1])
+    #return tuple(len(l) for l in seq.iter_level(slice(None, -1)))
+    #return tuple(len(list(seq.iter_level(i))) for i in range(seq.number_of_levels()))[:-1]
+    return seq.level_sizes()[:-1]
 
 if __name__ == "__main__":
     pass

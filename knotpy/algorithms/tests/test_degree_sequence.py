@@ -9,6 +9,7 @@ def test_deg_seq():
 
     assert degree_sequence(k) == (4, )* 8
 
+
     assert neighbour_sequence(k, "a") == (1, 3, 4)
     assert neighbour_sequence(k, "h") == (1, 2, 3, 2)
 

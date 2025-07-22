@@ -1,4 +1,4 @@
-
+from knotpy.notation.em import  to_condensed_em_notation, from_condensed_em_notation
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
@@ -95,13 +95,13 @@ def simplify_non_increasing(k:PlanarDiagram, greediness:int = 1):
                 else:
                     ls.add(canonical(__))
 
-        return ls.levels[0].pop()
+        return next(ls.iter_level(0))
 
     else:
         raise ValueError(f"Invalid greediness level {greediness}.")
 
 
-def simplify_smart(k: PlanarDiagram, depth=1, greediness=1):
+def simplify_smart(k: PlanarDiagram, depth=1, greediness=1, memory_efficient=False):
     """ Make "smart" Reidemeister moves to simplify a diagram. "Smart" moves refer to this process at each step:
 
     - perform all non-increasing moves (R3, decreasing R1 and R2,...) any number of times, until the set of obtained
@@ -111,6 +111,7 @@ def simplify_smart(k: PlanarDiagram, depth=1, greediness=1):
 
     :param k: Input diagram.
     :param depth: How many times crossing increasing moves should be performed.
+    :param memory_efficient: less memory, but slower if True, defaults to False
     :return: The minimal diagram after the above process is applied.
     """
 
@@ -133,7 +134,14 @@ def simplify_smart(k: PlanarDiagram, depth=1, greediness=1):
 
     # Level 0: perform all R3 and crossing reducing R2, R1, R4, and R5 moves.
     # TODO: if we take greediness=0, then it takes much longer
-    ls = LeveledSet(crossing_non_increasing_space(k, greediness=0, assume_canonical=True))
+
+    if memory_efficient:
+        ls = LeveledSet(items=crossing_non_increasing_space(k, greediness=0, assume_canonical=True),
+                        to_string=to_condensed_em_notation,
+                        from_string=from_condensed_em_notation
+                        )
+    else:
+        ls = LeveledSet(crossing_non_increasing_space(k, greediness=0, assume_canonical=True))
 
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in ls):
@@ -144,18 +152,18 @@ def simplify_smart(k: PlanarDiagram, depth=1, greediness=1):
     For all next levels, increase the number of crossings by 1 or 2 (via R1 and R2 moves),
     followed by all possible R3 moves and crossing-reducing R1 and R2 moves.
     """
-    start = len(ls.levels)
+    start = ls.number_of_levels()
     for depth_index in range(depth):
 
         # increase crossings
         #ls.new_level(detour_space(ls.levels[-1], assume_canonical=True))
         ls.new_level()
-        for lvl in ls.levels[start-1:-1]:
+        for lvl in (ls.iter_level(start-2), ls.iter_level(start-1)): #ls.levels[start-1:-1]:
             for k in lvl:
                 for _ in detour_generator(k):
                     ls.add(canonical(_))
 
-        start = len(ls.levels)
+        start = ls.number_of_levels()
 
         # explore the new space and reduce the diagrams
         #ls.new_level(crossing_non_increasing_space(ls[-1], greediness=0, assume_canonical=True))

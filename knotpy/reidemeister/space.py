@@ -138,28 +138,14 @@ def crossing_preserving_space(diagrams, assume_canonical=False, depth=None) -> s
 
     # Put input diagrams in level 0.
     ls = LeveledSet(_set(diagrams, to_canonical=not assume_canonical))
-    #print("(1.1)")
 
     while not ls.is_level_empty(-1):
-        #print("(1.2)")
-        if depth is not None and len(ls.levels) >= depth:
+        if depth is not None and ls.number_of_levels() >= depth:
             break
-        #print("(1.3)")
 
         # Put new diagrams to the next level.
         ls.new_level()
-        #print("(1.4)")
-
-
-        x = set(ls.levels[-2])
-        s = set(reidemeister_preserving_moves_generator(x))
-
-        #print("(1.4.1)")
-
-        ls.extend(canonical(s))
-        #print("(1.5)")
-
-    #print("(1.6)")
+        ls.extend(canonical(reidemeister_preserving_moves_generator(ls.iter_level(-2))))
 
     results = set(ls)
     # remove _r3 attributes, since they can be changed on next levels when different R3 moves are performed
@@ -211,6 +197,9 @@ def crossing_non_increasing_space(diagrams, greediness, assume_canonical: bool) 
 
     Returns:
         set: A set of diagrams in the non-increasing Reidemeister space.
+
+        # TODO: it seems like greedines has no influence, pls check
+
     """
 
     diagrams = _set(diagrams, to_canonical=not assume_canonical)

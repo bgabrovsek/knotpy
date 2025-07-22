@@ -232,75 +232,66 @@ def test_simplify_hard_unknots_smart():
 #
 #
 #
-# def NOTtest_simplify_hard_unknots_smart_string():
-#
-#     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
-#
-#     j = jones_polynomial(simple_unknot)
-#     t = time()
-#     s = simplify_smart(simple_unknot, memory_efficient=True)
-#     if _DISPLAY_TIME: print("Time:", time() - t)
-#     assert is_unknot(s)
-#     assert jones_polynomial(s) == j
-#     # solves in 0.06s
-#
-#     j = jones_polynomial(reducible_unknot)
-#     t = time()
-#     s = simplify_smart(reducible_unknot, memory_efficient=True)
-#     if _DISPLAY_TIME: print("Time (R):", time() - t)
-#     assert is_unknot(s)
-#     assert jones_polynomial(s) == j
-#     # solves in 0.06s
-#
-#     j = jones_polynomial(nasty_unknot)
-#     t = time()
-#     s = simplify_smart(nasty_unknot, memory_efficient=True)
-#     if _DISPLAY_TIME: print("Time:", time() - t)
-#     assert is_unknot(s)
-#     assert jones_polynomial(s) == j
-#     # solves in 0.006s
-#
-#     j = jones_polynomial(culprit_unknot)
-#     t = time()
-#     s = simplify_smart(culprit_unknot, depth=1, memory_efficient=True)
-#     #from knotpy.reidemeister.simplify import _old_simplify_smart
-#     #s = OLD_simplify_smart(culprit_unknot,  depth=1)
-#     if _DISPLAY_TIME: print("Culprit Time:", time() - t)
-#     assert is_unknot(s)
-#     assert jones_polynomial(s) == j
-#     # solves in 12.4s
+
+
+def test_simplify_hard_unknots_smart_string():
+
+    simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
+
+    j = jones_polynomial(simple_unknot)
+    t = time()
+    print("..")
+    s = simplify_smart(simple_unknot, memory_efficient=True)
+    if _DISPLAY_TIME: print("Time (simple unknot):", time() - t)
+    assert is_unknot(s)
+    assert jones_polynomial(s) == j
+    # solves in 0.06s
+
+    j = jones_polynomial(reducible_unknot)
+    t = time()
+    s = simplify_smart(reducible_unknot, memory_efficient=True)
+    if _DISPLAY_TIME: print("Time (reducible unknot):", time() - t)
+    assert is_unknot(s)
+    assert jones_polynomial(s) == j
+    # solves in 0.06s
+
+    j = jones_polynomial(nasty_unknot)
+    t = time()
+    s = simplify_smart(nasty_unknot, memory_efficient=True)
+    if _DISPLAY_TIME: print("Time (nasty unknot):", time() - t)
+    assert is_unknot(s)
+    assert jones_polynomial(s) == j
+    # solves in 0.006s
+
+    j = jones_polynomial(culprit_unknot)
+    t = time()
+    s = simplify_smart(culprit_unknot, depth=1, memory_efficient=True)
+    #from knotpy.reidemeister.simplify import _old_simplify_smart
+    #s = OLD_simplify_smart(culprit_unknot,  depth=1)
+    if _DISPLAY_TIME: print("Time (culprit knot):", time() - t)
+    assert is_unknot(s)
+    assert jones_polynomial(s) == j
 
 if __name__ == '__main__':
 
     t = time()
 
-    #test greedy
-    # t1 = time()
-    # print("non-increasing")
-    # test_simplify_hard_unknots_nonincreasing()
-    # t2 = time()
-    # print("greedy")
-    # test_simplify_hard_unknots_nonincreasing_greedy()
-    # t3 = time()
-    # print("Nonincreasing:", t2 - t1, "Greedy:", t3 - t2)
-    #
-    #
-    # print("test hard")
-    # test_simplify_hard_unknots_reducing()
-    # print("test hard smart")
-    test_simplify_hard_unknots_smart()
-    #
-    # from test_simplify_reduce_thetas import test_simplify_thetas
-    #
-    # print()
-    # tt = time()
-    # test_simplify_thetas()
-    # print("Theta time:", time()-tt)
-    #
-    # print("Full Time:", time() - t)
-    # t = time()
+    t1 = time()
+    print("non-increasing")
+    test_simplify_hard_unknots_nonincreasing()
+    t2 = time()
+    print("greedy")
+    test_simplify_hard_unknots_nonincreasing_greedy()
+    t3 = time()
+    print("Nonincreasing:", t2 - t1, "Greedy:", t3 - t2)
 
-    # test_simplify_hard_unknots_smart_string()
+
+    print("test hard")
+    test_simplify_hard_unknots_reducing()
+    print("test hard smart")
+    test_simplify_hard_unknots_smart()
+
+    test_simplify_hard_unknots_smart_string()
 
 
     print("Full Time:", time() - t)
