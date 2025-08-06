@@ -1,11 +1,15 @@
-from sympy import symbols, Symbol
+__all__ = ['affine_index_polynomial']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import OutgoingEndpoint, IngoingEndpoint
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
+from knotpy.invariants._symbols import _t
 
-_T = symbols("t")
+
 
 def affine_index_polynomial(k: PlanarDiagram):
     """
@@ -29,7 +33,7 @@ def affine_index_polynomial(k: PlanarDiagram):
         label += 1 if type(ccw_ep) is IngoingEndpoint else -1
 
     #print(weights)
-    polynomial = sum(k.nodes[crossing].sign() * (_T ** weights[crossing] - 1) for crossing in k.crossings)
+    polynomial = sum(k.nodes[crossing].sign() * (_t ** weights[crossing] - 1) for crossing in k.crossings)
     return polynomial
 
 

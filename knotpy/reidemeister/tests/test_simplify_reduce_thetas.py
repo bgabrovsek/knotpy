@@ -6,7 +6,7 @@ from knotpy.algorithms.sanity import sanity_check
 def test_simplify_thetas():
     # Take a minimal diagram, make random Reidemeister moves and simplify it to the original
 
-    theta = kp.PlanarDiagram("+t3_1")
+    theta = kp.PlanarDiagram("t3_1")
 
     for i in range(5):
         # make the diagram more complicated
@@ -16,7 +16,7 @@ def test_simplify_thetas():
         # print(theta_mod)
 
         # the Yamadas should be the same
-        assert kp.yamada_polynomial(theta) == kp.yamada_polynomial(theta_mod)
+        assert kp.yamada(theta) == kp.yamada(theta_mod)
 
         # simplify the modified theta curve
 
@@ -39,8 +39,8 @@ def test_simplify_thetas():
 
 def test_reduce_thetas():
 
-    theta1 = kp.PlanarDiagram("+t3_1")
-    theta2 = kp.PlanarDiagram("t4_1.1")
+    theta1 = kp.PlanarDiagram("t3_1")
+    theta2 = kp.PlanarDiagram("t4_1")
 
     # 4 different diagrams of two theta curves
     list_of_thetas = [
@@ -63,7 +63,7 @@ def test_reduce_thetas():
         for value in reduced[key]:
             # print("   ", value)
             # the yamada polynomials for each group is the same
-            assert kp.yamada_polynomial(value) == kp.yamada_polynomial(key)
+            assert kp.yamada(value) == kp.yamada(key)
 
     # we expect the list to reduce to two different thetas
     assert len(reduced) == 2

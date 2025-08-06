@@ -25,7 +25,9 @@ __version__ = "1.0"
 __author__ = "Boštjan Gabrovšek"
 
 import re
-from ast import literal_eval
+#from ast import literal_eval
+
+literal_eval = eval
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing, Node

@@ -1,0 +1,5 @@
+native notation,affine
+a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'=1],0
+a=V(b0) b=V(a0) ['name'=2],0
+a=V(b3) b=X(c3 d0 c0 a0) c=X(b2 e0 e3 b0) d=X(b1 f0 f3 g0) e=X(c1 f2 f1 c2) f=X(d1 e2 e1 d2) g=V(d3) ['name'=3],-2*t + 4 - 2/t
+a=V(b0) b=X(a0 c0 c3 d0) c=X(b1 e0 d1 b2) d=X(b3 c2 f3 e1) e=X(c1 d3 f1 f0) f=X(e3 e2 g0 d2) g=V(f2) ['name'=4],-t + 2 - 1/t

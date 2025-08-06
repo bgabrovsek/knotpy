@@ -70,13 +70,13 @@
 #         if "R5" in settings.allowed_moves: increasing_moves_allowed.append("R5twist")
 #
 #         #print(increasing_moves_allowed)
-#         from knotpy import yamada_polynomial
-#         #print("MRRM 0", k, "  ", yamada_polynomial(k), increasing_moves_allowed)
+#         from knotpy import yamada
+#         #print("MRRM 0", k, "  ", yamada(k), increasing_moves_allowed)
 #
 #         k = make_random_reidemeister_move(k, increasing_moves_allowed, inplace=False)
 #         #make_random_reidemeister_move(k, increasing_moves_allowed, inplace=True)
 #
-#         #print("MRRM 1", k, "  ", yamada_polynomial(k))
+#         #print("MRRM 1", k, "  ", yamada(k))
 #         #sanity_check(k)
 #
 #

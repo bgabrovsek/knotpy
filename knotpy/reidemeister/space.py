@@ -7,9 +7,8 @@ performed any number of times.
 from collections.abc import Iterable
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.canonical import canonical
-from knotpy.manipulation.attributes import clear_node_attributes
+from knotpy.algorithms.attributes import clear_node_attributes
 from knotpy.utils.set_utils import LeveledSet
-from knotpy._settings import settings
 
 from knotpy.reidemeister.reidemeister import (reidemeister_preserving_moves_generator,
                                               reidemeister_decreasing_moves_generator,
@@ -61,9 +60,20 @@ def _simplify_greedy_decreasing(k: PlanarDiagram | OrientedPlanarDiagram | set |
     """
 
     # If a list is given, simplify each element separately.
-    if isinstance(k, (set, tuple, list)):
-        return type(k)(_simplify_greedy_decreasing(_, to_canonical=to_canonical, inplace=inplace) for _ in k)
+    # print("Checking type of k:", type(k))
+    # print("K is:", k)
+    # for some reason isinstance (set, list, tuple) raised Illegal instruction (core dumped)
+    if isinstance(k, set):
+        return {_simplify_greedy_decreasing(_, to_canonical=to_canonical, inplace=inplace) for _ in k}
 
+    elif isinstance(k, list):
+        return [_simplify_greedy_decreasing(_, to_canonical=to_canonical, inplace=inplace) for _ in k]
+
+    elif isinstance(k, tuple):
+        return tuple(_simplify_greedy_decreasing(_, to_canonical=to_canonical, inplace=inplace) for _ in k)
+
+
+    #print("c")
     if not inplace:
         k = k.copy()
 
@@ -113,6 +123,7 @@ def crossing_decreasing_space(diagrams: PlanarDiagram | set | list, assume_canon
 
     ls = LeveledSet(_set(diagrams, to_canonical=not assume_canonical))  # put input diagrams in level 0
     while not ls.is_level_empty(-1):
+        print("cds", ls.level_sizes())
         ls.new_level()  # put reduced diagrams to the next level
         ls.extend(canonical(set(reidemeister_decreasing_moves_generator(ls.iter_level(-2)))))
     return set(ls)

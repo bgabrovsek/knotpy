@@ -1,7 +1,7 @@
 from knotpy import simplify_decreasing
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.reidemeister.reidemeister_5 import reidemeister_5_twist, reidemeister_5_untwist, find_reidemeister_5_twists, find_reidemeister_5_untwists
-from knotpy.invariants.yamada import yamada_polynomial
+from knotpy.invariants.yamada import yamada
 from knotpy.algorithms import sanity_check
 
 
@@ -101,12 +101,12 @@ def test_reidemeister_5():
         #print(code)
         k = from_knotpy_notation(code)
         assert sanity_check(k)
-        y = yamada_polynomial(k)
+        y = yamada(k)
         for location in find_reidemeister_5_twists(k):
             #print(k, location)
             k_2 = reidemeister_5_twist(k, location, inplace=False)
             assert sanity_check(k_2)
-            y_2 = yamada_polynomial(k_2)
+            y_2 = yamada(k_2)
             # for location_2 in find_reidemeister_5_untwists(k_2):
             #     print(".  ", k_2, location_2)
 
@@ -118,10 +118,10 @@ def test_framing_5():
     t = from_knotpy_notation("a=V(b0 b2 b1) b=V(a0 a2 a1)")
     k = from_knotpy_notation("a=V(b0 c3 c2) b=V(a0 c1 c0) c=X(b2 b1 a2 a1)")
     q=    simplify_decreasing(k, inplace=False)
-    assert yamada_polynomial(q) == yamada_polynomial(t)
+    assert yamada(q) == yamada(t)
     # print(q)
-    # print(yamada_polynomial(k))
-    # print(yamada_polynomial(t))
+    # print(yamada(k))
+    # print(yamada(t))
 
 def test_simple_5():
     k = from_knotpy_notation("a → V(a1 a0 c2), b → V(c3 c1 c0), c → X(b2 b1 a2 b0)")

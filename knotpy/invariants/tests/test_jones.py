@@ -1,12 +1,12 @@
 from sympy import Integer, sympify, expand, simplify, symbols, Rational
 
-from knotpy import jones_polynomial
+from knotpy import jones
 from knotpy.algorithms.canonical import canonical
 
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
-from knotpy.catalog.graphs import theta_curve, handcuff_link
-from knotpy.invariants.yamada import yamada_polynomial
+
+from knotpy.invariants.yamada import yamada
 
 def test_jones():
     """ Test the Jones polynomial with examples from KnotInfo (https://knotinfo.math.indiana.edu/)
@@ -54,7 +54,7 @@ def test_jones():
 
     for name, (pd, expected_jones) in known_values.items():
         k = from_pd_notation(pd)
-        jones = jones_polynomial(k)
+        jones_ = jones(k)
         expected_jones = sympify(expected_jones)
 
         # if name[0] == "L":
@@ -64,7 +64,7 @@ def test_jones():
         # print(jones)
         # print(expected_jones)
         # print("*")
-        assert jones == expected_jones, f"Jones polynomial for {name} is {jones} instead of {expected_jones}"
+        assert jones_ == expected_jones, f"Jones polynomial for {name} is {jones_} instead of {expected_jones}"
 
 
 if __name__ == '__main__':

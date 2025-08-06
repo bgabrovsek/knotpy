@@ -12,8 +12,8 @@ import string
 
 from knotpy.algorithms.degree_sequence import neighbour_sequence
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.classes.node import Crossing, Vertex
-from knotpy.manipulation.permute import permute_node
+from knotpy.classes.node import Crossing
+from knotpy.algorithms.permute import permute_node
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
 from knotpy.utils.func_utils import min_elements_by
 

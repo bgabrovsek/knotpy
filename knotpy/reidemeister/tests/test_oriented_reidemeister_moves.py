@@ -42,9 +42,8 @@ def test_r3():
     from knotpy import mirror
 
 
-    for knot in kp.knot_invariants((4, 5)):
+    for knot in kp.knots((4,5)):#kp.knot_invariants((4, 5)):
 
-        knot = knot[0]
 
         k = kp.orient(kp.PlanarDiagram(knot))
         assert kp.sanity_check(k)

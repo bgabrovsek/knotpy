@@ -76,18 +76,18 @@ def test_yamada_polynomial():
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
 
-    p = kp.yamada_polynomial(kp.closure(k, True, True))
+    p = kp.yamada(kp.closure(k, True, True))
 
     for i,k_ in enumerate(kp.all_reidemeister_moves(k, depth=1)):
         if i%15:
             continue
 
-        p_ = kp.yamada_polynomial(kp.closure(k_, True, True))
+        p_ = kp.yamada(kp.closure(k_, True, True))
         #export_pdf([k, k_], "knotoids_moves.pdf")
         assert p == p_, f"{k} \n{p}\n{p_}"
 
     # for o in kp.all_orientations(k):
-    #     p_ = kp.yamada_polynomial(kp.closure(k, True, True))
+    #     p_ = kp.yamada(kp.closure(k, True, True))
     #     assert p == p_, f"{k} \n{p}\n{p_} (orientation)"
 
 if __name__ == '__main__':

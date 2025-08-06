@@ -1,14 +1,19 @@
+__all__ = ['mock_alexander_polynomial']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+
+
+
 from collections import deque
-from sympy import expand, Integer, symbols, Symbol
+from sympy import expand, Integer, symbols
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import OutgoingEndpoint
 from knotpy.reidemeister.reidemeister import all_reidemeister_moves
-from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink
 
-_W = symbols("W")
+from knotpy.invariants._symbols import _w
 
 # TODO: if we have an unoriented link diagram, compute all possibilities
 
@@ -33,13 +38,13 @@ def mock_alexander_polynomial(k: PlanarDiagram):
                     b_positive = k.nodes[ep.node].sign() > 0  # is the sign positive?
 
                     if b_outgoing and not b_over and b_positive:
-                        new_weight = _W
+                        new_weight = _w
                     elif not b_outgoing and b_over and not b_positive:
-                        new_weight = -_W
+                        new_weight = -_w
                     elif b_outgoing and b_over and not b_positive:
-                        new_weight = _W**(-1)
+                        new_weight = _w ** (-1)
                     elif not b_outgoing and not b_over and b_positive:
-                        new_weight = -_W**(-1)
+                        new_weight = -_w ** (-1)
                     else:
                         new_weight = Integer(1)
 

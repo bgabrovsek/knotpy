@@ -17,6 +17,7 @@ n-Colorability (mod n coloring)
 
 
 from .bracket import *
+from .conway import *
 from .jones import *
 from .unplugging import*
 from .affine_index import *
@@ -25,3 +26,7 @@ from .mock_alexander import *
 from .yamada import *
 from .homflypt import *
 from .writhe import *
+from .kauffman import *
+from .alexander import *
+from .classifier import *
+from ._symbols import symbol_locals

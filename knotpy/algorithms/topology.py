@@ -371,7 +371,7 @@ def overstrands(k: PlanarDiagram | OrientedPlanarDiagram):
     dsu = DisjointSetUnion(k.endpoints)
     for c in k.crossings:
         eps = k.endpoints[c]
-        print(c, eps)
+        #print(c, eps)
         dsu[eps[1]] = k.endpoint_from_pair(eps[3])
     for ep1, ep2 in k.arcs:
         dsu[ep1] = k.endpoint_from_pair(ep2)

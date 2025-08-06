@@ -4,9 +4,9 @@ import warnings
 from knotpy.notation.pd import from_pd_notation
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
-from knotpy.manipulation.remove import remove_bivalent_vertex
-from knotpy.notation.native import to_knotpy_notation, from_knotpy_notation
+from knotpy.algorithms.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
+from knotpy.algorithms.remove import remove_bivalent_vertex
+from knotpy.notation.native import from_knotpy_notation
 from fractions import Fraction
 from knotpy._settings import settings
 

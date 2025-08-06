@@ -2,8 +2,8 @@ from sympy import Integer, sympify, expand
 from itertools import islice
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
-from knotpy.catalog.graphs import theta_curve, handcuff_link
-from knotpy.invariants.yamada import yamada_polynomial, _naive_yamada_polynomial
+from knotpy.tables.theta import theta, handcuff
+from knotpy.invariants.yamada import yamada, _naive_yamada_polynomial
 from knotpy._settings import settings
 
 def test_yamada_examples_from_paper():
@@ -11,9 +11,9 @@ def test_yamada_examples_from_paper():
     [Yamada, Shǔji. "An invariant of spatial graphs." Journal of Graph Theory 13.5 (1989): 537-551.]
     """
 
-    fig6a = handcuff_link()
+    fig6a = handcuff("H0_1")
     #fig6b = from_pd_notation("V(0,6,2);V(0,1,5);V(1,2,3,4);V(6,5,4,3)")
-    fig7a = theta_curve()
+    fig7a = theta("T0_1")
     fig7b = from_pd_notation('V(4,12,5);V(8,7,0);X(0,11,1,12);X(5,1,6,2);X(10,6,11,7);X(9,3,8,4);X(2,10,3,9)')
 
     expected_yamada_6a = Integer(0)
@@ -21,10 +21,10 @@ def test_yamada_examples_from_paper():
     expected_yamada_7a = sympify("-A**2 -A -2 -A**(-1) - A**(-2)")
     expected_yamada_7b = sympify("A**9 - A**8 - 2*A**7 + A**6 - A**5 + 2*A**3 + A**2 + 2*A + 1/A - A**(-3) + A**(-4) + A**(-5) - 1/A**6 + A**(-7) + A**(-8)")
 
-    yamada_6a = yamada_polynomial(fig6a, normalize=False)
-    #yamada_6b = yamada_polynomial(fig6b, normalize=False)
-    yamada_7a = yamada_polynomial(fig7a, normalize=False)
-    yamada_7b = yamada_polynomial(fig7b, normalize=False)
+    yamada_6a = yamada(fig6a, normalize=False)
+    #yamada_6b = yamada(fig6b, normalize=False)
+    yamada_7a = yamada(fig7a, normalize=False)
+    yamada_7b = yamada(fig7b, normalize=False)
 
     assert yamada_6a == expected_yamada_6a, f"{yamada_6a} != {expected_yamada_6a} (expected)"
     #assert yamada_6b == expected_yamada_6b # This one does not work, error in Yamada's paper?
@@ -175,11 +175,11 @@ def test_yamada_moriuchi():
     #     "a=V(b0 c0 d3) b=V(a0 e3 f0) c=X(a1 f3 g0 d0) d=X(c3 h3 e0 a2) e=X(d2 h2 i3 b1) f=X(b2 i2 i1 c1) g=X(c2 i0 h1 h0) h=X(g3 g2 e1 d1) i=X(g1 f2 f1 e2) ['name'='h7_36']": "A**19 + A**18 - A**17 + A**16 - 2*A**14 - A**12 - A**10 + A**8 - A**7 + A**6 + A**5 + A**2 - 1",
      }
 
-    for diagram, yamada in yamadas.items():
+    for diagram, yamada_ in yamadas.items():
         k = from_knotpy_notation(diagram)
-        y_expected = sympify(yamada)
-        y = yamada_polynomial(k)
-        assert y == y_expected, f"For knot {diagram}, \nexpected: {yamada}\ncomputed: {y}"
+        y_expected = sympify(yamada_)
+        y = yamada(k)
+        assert y == y_expected, f"For knot {diagram}, \nexpected: {yamada_}\ncomputed: {y}"
 
 
 
@@ -204,24 +204,24 @@ def test_yamada_reidemeister():
 
     t31 = from_knotpy_notation("a=V(b0 c0 d3) b=V(a0 d2 e3) d=X(c3 e0 b1 a2) c=X(a1 e2 e1 d0) e=X(d1 c2 c1 b2)")
 
-    y = yamada_polynomial(t31)
+    y = yamada(t31)
     settings.allowed_moves = "r1,r2,r3,r4,r5"
 
     for k in islice(all_reidemeister_moves_space(t31, depth=1), 0, None, 4):
-        y_ = yamada_polynomial(k)
+        y_ = yamada(k)
         assert y_ == y, f"For knot {k}, expected Yamada \n{y}, got \n{y_}"
 
 
 def test_thetas_recursive():
     # errros: a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 f0 f3 a2), e → X(b1 g0 g3 b2), f → X(d1 g2 g1 d2), g → X(e1 f2 f1 e2)
-    from knotpy.catalog.knot_tables import thetas
+    from knotpy.tables.theta import thetas
     import knotpy as kp
     all_thetas = list(thetas())
     for t in all_thetas[::5]:
         if len(t) >= 6+2:
             continue
         yr = _naive_yamada_polynomial(t)
-        yo = yamada_polynomial(t)
+        yo = yamada(t)
         if yr != yo:
             raise ValueError("Invalid Yamada")
 

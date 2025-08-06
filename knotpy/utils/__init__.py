@@ -8,7 +8,7 @@ from .string_utils import *
 from .dict_utils import *
 from .geometry import *
 from .set_utils import *
-from .algebra import *
+from .laurent import *
 from .disjoint_union_set import *
 from .chunked import *
 from .progressbar import *

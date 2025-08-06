@@ -1,9 +1,7 @@
-from itertools import product
-
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node.crossing import Crossing
 from knotpy.utils.set_utils import powerset
-from knotpy.manipulation.symmetry import mirror
+from knotpy.algorithms.symmetry import mirror
 
 __all__ = ["vertices_to_crossings"]
 __version__ = '0.1'

@@ -2,33 +2,6 @@ import sys
 import time
 from collections import deque
 
-_global_progress_bar = None
-_PROGRESS_BAR_LENGTH = 83  # without brackets
-_unicode_blocks = "\u00B7\u258F\u258E\u258D\u258C\u258B\u258A\u2589\u2588"
-
-_bar_colors = ["\033[0;34m", "\033[0;32m", "\033[1;33m", "\033[1;35m", "\033[0;36m"]  # blue, green, yellow, red, purple
-_dot_colors = ["\033[0;34m", "\033[0;32m", "\033[1;33m", "\033[1;35m", "\033[0;36m"]  # blue, green, yellow, red, purple
-
-_smoothing=0.5
-_window=50
-
-"""
-Possible lengths of single bar, so that 3 bars are integers:
-5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, 77, 83, 89, 95, 101, 107, 113, 119, 125, 131, 137, 143, 149, 155, 161, 
-167, 173, 179
-"""
-
-"""
-U+2588	█	Full block
-U+2589	▉	Left seven eighths block
-U+258A	▊	Left three quarters block
-U+258B	▋	Left five eighths block
-U+258C	▌	Left half block
-U+258D	▍	Left three eighths block
-U+258E	▎	Left one quarter block
-U+258F	▏	Left one eighth block
-"""
-
 def _human_time(t):
     if t == float("inf"):
         return "∞"
@@ -38,21 +11,19 @@ def _human_time(t):
     hours = (t // 3600) % 24
     days = (t // 86400)
 
-
-    if t < 2 * 60:  # less than 2 minutes
+    if t < 2 * 60:
         return f"{minutes * 60 + seconds}s"
-    if t < 5 * 60:  # less than 5 minutes
+    if t < 5 * 60:
         return f"{minutes}m {seconds}s"
-    if t < 2 * 60 * 60:  # 2 hours
-        return f"{hours * 60 +  minutes}m"
-    if t < 5 * 50 * 50:  # 5 hours
+    if t < 2 * 60 * 60:
+        return f"{hours * 60 + minutes}m"
+    if t < 5 * 50 * 50:
         return f"{hours}h {minutes}m"
-    if t < 2 * 60 * 60 * 24:  # less than 2 days
+    if t < 2 * 60 * 60 * 24:
         return f"{hours}h"
     if t < 5 * 60 * 60 * 24:
         return f"{days} days {hours}h"
-    else:
-        return f"{days} days"
+    return f"{days} days"
 
 class bar:
     _blocks = [
@@ -65,20 +36,28 @@ class bar:
     GRAY = "\033[0;37m"
     RESET = "\033[0m"
 
-    def __init__(self, iterable, total=None, comment=None, width=80, ):
+    def __init__(self, iterable, total=None, comment=None, width=80, alpha=0.2, update_interval=0.5):
         self.iterable = iterable
         self.total = total if total is not None else len(iterable)
         self.comment = comment
         self.width = width
-        self.smoothing = _smoothing  # retained for compatibility
+        self.alpha = alpha
+        self.update_interval = update_interval
         self.index = 0
         self.start_time = time.time()
-        self._history = deque(maxlen=_window if _window < self.total // 10 else (self.total // 10 if self.total // 10 > 2 else 2))
-        self._history.append((0, self.start_time))
+        self.smoothed_speed = None
         self.last_bar_size = 0
+        self.last_update_time = self.start_time
+
+        window_len = 50 if 50 < self.total // 10 else max(2, self.total // 10)
+        self._history = deque(maxlen=window_len)
+        self._history.append((0, self.start_time))
+
+    def set_comment(self, text):
+        self.comment = str(text)
 
     def _progress_bar(self, percent):
-        blocks = self.width - 45  # adjust based on text space
+        blocks = self.width - 45
         full = int(percent * blocks)
         frac = percent * blocks - full
         bar = "█" * full
@@ -95,17 +74,12 @@ class bar:
         return f"|{self.BLUE}{bar}{self.RESET}|"
 
     def _format_time(self, seconds):
-        if seconds < 1:
-            return "<1s"
-        return _human_time(seconds)
-        # mins, secs = divmod(int(seconds), 60)
-        # return f"{mins}m{secs}s" if mins else f"{secs}s"
+        return "<1s" if seconds < 1 else _human_time(seconds)
 
     def _update_stats(self):
         now = time.time()
         self._history.append((self.index, now))
         if len(self._history) < 2:
-            self.avg_it_per_sec = None
             return
 
         idx0, t0 = self._history[0]
@@ -113,7 +87,34 @@ class bar:
         delta_i = idx1 - idx0
         delta_t = t1 - t0
 
-        self.avg_it_per_sec = delta_i / delta_t if delta_t > 0 else None
+        raw_speed = delta_i / delta_t if delta_t > 0 else None
+        if raw_speed is not None:
+            if self.smoothed_speed is None:
+                self.smoothed_speed = raw_speed
+            else:
+                self.smoothed_speed = (
+                    self.alpha * raw_speed + (1 - self.alpha) * self.smoothed_speed
+                )
+
+    def _print_progress(self):
+        percent = self.index / self.total
+        speed = self.smoothed_speed if self.smoothed_speed else 0.00001
+        eta = (self.total - self.index) / speed if speed > 0 else float('inf')
+        it_speed = f"{speed:.1f} it/s"
+
+        bar_str = self._progress_bar(percent)
+        pct_str = f"{percent * 100:5.1f}%"
+        eta_str = f"{self.BLUE}{self._format_time(eta)}{self.RESET}"
+        speed_str = f"{self.CYAN}{it_speed}{self.RESET}"
+        count_str = f"{self.GRAY}{self.index}/{self.total}{self.RESET}"
+        comment_str = f" ({self.comment})" if self.comment else ""
+
+        output = f"\r{bar_str} {pct_str} eta {eta_str} {speed_str}{comment_str} {count_str}"
+        output += " " * (self.last_bar_size - len(output))
+        self.last_bar_size = len(output)
+
+        sys.stdout.write(output)
+        sys.stdout.flush()
 
     def __iter__(self):
         for item in self.iterable:
@@ -121,25 +122,11 @@ class bar:
             self.index += 1
             self._update_stats()
 
-            percent = self.index / self.total
-            eta = (self.total - self.index) / self.avg_it_per_sec if self.avg_it_per_sec else float('inf')
-            it_speed = f"{self.avg_it_per_sec:.0f} it/s"
-
-            bar_str = self._progress_bar(percent)
-            pct_str = f"{percent * 100:5.1f}%"
-            eta_str = f"{self.BLUE}{self._format_time(eta)}{self.RESET}"
-            speed_str = f"{self.CYAN}{it_speed}{self.RESET}"
-            count_str = f"{self.GRAY}{self.index}/{self.total}{self.RESET}"
-
-            comment_str = f" ({self.comment})" if self.comment else ""
-
-            output = f"\r{bar_str} {pct_str} eta {eta_str} {speed_str}{comment_str} {count_str}"
-            output += " " * (self.last_bar_size - len(output))  # remove text on the right
-            self.last_bar_size = len(output)
-            sys.stdout.write(f"\r{bar_str} {pct_str} eta {eta_str} {speed_str}{comment_str} {count_str}")
-            sys.stdout.flush()
+            now = time.time()
+            if now - self.last_update_time >= self.update_interval or self.index == self.total:
+                self._print_progress()
+                self.last_update_time = now
         sys.stdout.write("\n")
-
 
 # #
 #

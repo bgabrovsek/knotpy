@@ -7,7 +7,7 @@ def helper_test_connected_sum_on_knots(a, b, arcs=None, test_jones=True):
     ab = kp.connected_sum(a, b, arcs)
     assert kp.sanity_check(ab)
     if test_jones:
-        assert expand(jab := kp.jones_polynomial(ab)) == expand((ja := kp.jones_polynomial(a)) * (jb := kp.jones_polynomial(b)))
+        assert expand(jab := kp.jones(ab)) == expand((ja := kp.jones(a)) * (jb := kp.jones(b)))
 
 
 
@@ -17,8 +17,8 @@ def helper_test_connected_sum_on_knots(a, b, arcs=None, test_jones=True):
     assert kp.sanity_check(ab1)
     assert kp.sanity_check(ab2)
     if test_jones:
-        j1 = kp.jones_polynomial(ab1)
-        j2 = kp.jones_polynomial(ab2)
+        j1 = kp.jones(ab1)
+        j2 = kp.jones(ab2)
         assert j1 == ja or j1 == jb
         assert j2 == ja or j2 == jb
         assert j1 != j2
@@ -40,17 +40,17 @@ def test_disjoint_sum():
 
     assert kp.sanity_check(ab)
 
-    ja = kp.jones_polynomial(a)
-    jb = kp.jones_polynomial(b)
-    jab = kp.jones_polynomial(ab)
+    ja = kp.jones(a)
+    jb = kp.jones(b)
+    jab = kp.jones(ab)
 
     components = kp.disjoint_union_decomposition(ab)
     assert len(components) == 2
 
     ab1, ab2 = components
 
-    j1 = kp.jones_polynomial(ab1)
-    j2 = kp.jones_polynomial(ab2)
+    j1 = kp.jones(ab1)
+    j2 = kp.jones(ab2)
 
     assert kp.sanity_check(ab1)
     assert kp.sanity_check(ab2)

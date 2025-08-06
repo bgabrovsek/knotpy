@@ -561,13 +561,13 @@ def randomize_diagram(k, number_of_moves=5, max_crossings_increase=2):
 #         if "R5" in settings.allowed_moves: increasing_moves_allowed.append("R5twist")
 #
 #         #print(increasing_moves_allowed)
-#         from knotpy import yamada_polynomial
-#         #print("MRRM 0", k, "  ", yamada_polynomial(k), increasing_moves_allowed)
+#         from knotpy import yamada
+#         #print("MRRM 0", k, "  ", yamada(k), increasing_moves_allowed)
 #
 #         k = make_random_reidemeister_move(k, increasing_moves_allowed, inplace=False)
 #         #make_random_reidemeister_move(k, increasing_moves_allowed, inplace=True)
 #
-#         #print("MRRM 1", k, "  ", yamada_polynomial(k))
+#         #print("MRRM 1", k, "  ", yamada(k))
 #         #sanity_check(k)
 #
 #
@@ -603,7 +603,7 @@ def randomize_diagram(k, number_of_moves=5, max_crossings_increase=2):
 #
 # if __name__ == "__main__":
 #     from knotpy.notation.native import from_knotpy_notation
-#     from knotpy.invariants import yamada_polynomial
+#     from knotpy.invariants import yamada
 #
 #     """
 #     MRRM 0 Diagram named +t3_1 a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 c2 c1 f0), d → X(f3 e0 b1 a2), e → X(d1 f2 f1 b2), f → X(c3 e2 e1 d0) (_sequence=R1)    A**11 + A**10 + A**9 - A**8 - 2*A**7 - 4*A**6 - 3*A**5 - 2*A**4 + A**2 + A + 1 ['R1kink', 'R2poke', 'R4increase', 'R5twist']
@@ -612,5 +612,5 @@ def randomize_diagram(k, number_of_moves=5, max_crossings_increase=2):
 #     """
 #     k1 = from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 c2 c1 f0), d → X(f3 e0 b1 a2), e → X(d1 f2 f1 b2), f → X(c3 e2 e1 d0)")
 #     k2 = from_knotpy_notation("a → V(j2 c0 j3), b → V(j0 f3 i0), c → X(a1 c2 c1 f0), e → X(i1 f2 f1 i2), f → X(c3 e2 e1 b1), i → X(b2 e0 e3 j1), j → X(b0 i3 a0 a2)")
-#     print(yamada_polynomial(k1))
-#     print(yamada_polynomial(k2))
+#     print(yamada(k1))
+#     print(yamada(k2))

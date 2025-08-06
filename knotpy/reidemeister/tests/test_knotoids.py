@@ -131,7 +131,7 @@ def NOTtest_knotoids():
             kp.affine_index_polynomial(k),
             kp.arrow_polynomial(k),
             kp.mock_alexander_polynomial(k),
-            kp.yamada_polynomial(kp.closure(k, True, True))
+            kp.yamada(kp.closure(k, True, True))
         ]
 
         moves = kp.choose_random_reidemeister_moves(k)
@@ -142,7 +142,7 @@ def NOTtest_knotoids():
                 kp.affine_index_polynomial(k_),
                 kp.arrow_polynomial(k_),
                 kp.mock_alexander_polynomial(k_),
-                kp.yamada_polynomial(kp.closure(k, True, True))
+                kp.yamada(kp.closure(k, True, True))
             ]
 
             if i_ != i:

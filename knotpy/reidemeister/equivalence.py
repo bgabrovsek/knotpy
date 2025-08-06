@@ -4,7 +4,7 @@ from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.algorithms.canonical import canonical
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.reidemeister.space import detour_space, crossing_non_increasing_space
-from knotpy.manipulation.symmetry import flip
+from knotpy.algorithms.symmetry import flip
 from knotpy._settings import settings
 
 def reduce_equivalent_diagrams(diagrams: set | list, depth=1):

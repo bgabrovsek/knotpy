@@ -14,8 +14,8 @@ from knotpy.notation import *
 from knotpy import classes
 from knotpy.classes import *
 
-from knotpy import catalog
-from knotpy.catalog import *
+from knotpy import tables
+from knotpy.tables import *
 
 from knotpy import algorithms
 from knotpy.algorithms import *
@@ -31,9 +31,6 @@ from knotpy.algorithms.sanity import *
 
 from knotpy import reidemeister
 from .reidemeister import *
-
-from knotpy import manipulation
-from .manipulation import *
 
 from knotpy.utils import statistics
 

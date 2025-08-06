@@ -6,10 +6,10 @@ __all__ = ["closure"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
 from knotpy.algorithms.paths import bfs_shortest_path
-from knotpy.manipulation.remove import remove_bivalent_vertex
+from knotpy.algorithms.remove import remove_bivalent_vertex
 from knotpy.algorithms.naming import unique_new_node_name
 
 

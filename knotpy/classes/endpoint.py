@@ -65,10 +65,10 @@ class Endpoint:
         if type(other) is Endpoint and (type(self) is IngoingEndpoint or type(self) is OutgoingEndpoint):
             raise TypeError("Cannot compare oriented endpoints with unoriented endpoints")
 
-        if type(self) is IngoingEndpoint and type(self) is OutgoingEndpoint:
+        if type(self) is IngoingEndpoint and type(other) is OutgoingEndpoint:
             return 1
 
-        if type(self) is OutgoingEndpoint and type(self) is IngoingEndpoint:
+        if type(self) is OutgoingEndpoint and type(other) is IngoingEndpoint:
             return -1
 
         if self.node != other.node:

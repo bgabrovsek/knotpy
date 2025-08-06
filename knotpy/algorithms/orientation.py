@@ -38,7 +38,7 @@ def orient_edges(k: PlanarDiagram, edges: list):
     return new_k
 
 
-def all_orientations(k: PlanarDiagram) -> list:
+def all_orientations(k: PlanarDiagram, up_to_reversal=False) -> list[OrientedPlanarDiagram]:
     """
     Return all possible orientations of a given unoriented PlanarDiagram. If the diagram is invertible, both orientations are still returned.
 
@@ -49,8 +49,12 @@ def all_orientations(k: PlanarDiagram) -> list:
         list: A list of oriented planar diagrams.
     """
 
-    all_edges = list(edges(k))
-    orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
+    all_edges = sorted(edges(k))
+    if up_to_reversal:
+        orient = [(True,) + rest for rest in it.product((True, False), repeat=len(all_edges) - 1)]  # not needed to be a list
+    else:
+        orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
+
     return [
         orient_edges(k=k, edges=edge_orientations)
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(all_edges, o)] for o in orient)

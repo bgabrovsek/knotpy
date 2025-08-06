@@ -1,12 +1,12 @@
 import warnings
 
 #from knotpy.algorithms.sanity import sanity_check
-from knotpy.manipulation.insert import insert_endpoint, parallelize_arc
+from knotpy.algorithms.insert import insert_endpoint
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import bridges, leafs, kinks, loops
 from knotpy.algorithms.cut_set import cut_nodes
-from knotpy.manipulation.insert import insert_arc
-from knotpy.manipulation.subdivide import subdivide_endpoint
+from knotpy.algorithms.insert import insert_arc
+from knotpy.algorithms.subdivide import subdivide_endpoint
 from knotpy.notation.native import to_knotpy_notation
 
 _DEBUG_SUPPORT = False

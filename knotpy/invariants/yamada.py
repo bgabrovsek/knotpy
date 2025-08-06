@@ -9,11 +9,11 @@ Optimizations:
 * caching of the Yamada polynomials for knotted graphs.
 """
 
-__all__ = ['yamada_polynomial']
+__all__ = ['yamada']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
-from sympy import expand, Integer, symbols, Expr
+from sympy import expand, Integer, Expr
 from collections import deque
 
 from knotpy import canonical
@@ -22,19 +22,21 @@ from knotpy.algorithms.orientation import unorient
 from knotpy.algorithms.skein import smoothen_crossing, crossing_to_vertex
 from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.algorithms.topology import bridges, loops
-from knotpy.manipulation.remove import remove_arc, remove_bivalent_vertices
-from knotpy.manipulation.contract import contract_arc
+from knotpy.algorithms.remove import remove_arc, remove_bivalent_vertices
+from knotpy.algorithms.contract import contract_arc
 from knotpy.utils.cache import Cache
 from knotpy._settings import settings
 from knotpy.classes.freezing import freeze
+
+from knotpy.invariants._symbols import _A, _YAMADA_SIGMA
+
+
 # Yamada settings
 _YAMADA_KNOTTED_CACHE = True
 _YAMADA_GRAPH_CACHE = True
 _YAMADA_SIMPLIFY = True  # simplify the diagrams during computation
 
-_A = symbols("A")
-# Precompute powers of A + 1 + 1/A.
-_sigma = _A + 1 + _A ** (-1)
+
 _sigma_power = [Integer(1)]  # this will dynamically expend to consist of [σ^0, σ^1, σ^2, σ^3, ...]
 
 """
@@ -49,16 +51,16 @@ The 'max_key_length' argument limits the number of vertices a graph should have 
 _yamada_knotted_cache = Cache(max_cache_size=1000, max_key_length=5)  # stores pre-computed yamada polynomials for the knotted graphs
 
 
-def yamada_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
+def yamada(k: PlanarDiagram, normalize=True) -> Expr:
     """Return the value of the Yamada polynomial of a given planar diagram."""
-    global _sigma, _sigma_power
+    global _sigma_power
 
     # adjust global settings needed for the correct computation of the Yamada polynomial
     settings_dump = settings.dump()
     settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
 
     # Extend the sigma lookup table to the number of arcs, just to be safe.
-    _sigma_power.extend([expand(_sigma**_) for _ in range(len(_sigma_power), len(k.arcs) + 1)])  # should we extend to the number of faces - 1?
+    _sigma_power.extend([expand(_YAMADA_SIGMA**_) for _ in range(len(_sigma_power), len(k.arcs) + 1)])  # should we extend to the number of faces - 1?
 
     # Initialize the input diagram.
     if k.is_oriented():

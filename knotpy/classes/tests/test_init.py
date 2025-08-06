@@ -1,7 +1,9 @@
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.catalog.knot_tables import knot
+from knotpy.tables.knot import knot
+
 def test_knot_name():
     k = PlanarDiagram("3_1")
+    print(k)
     assert k.name == "3_1"
     assert len(k) == 3
 

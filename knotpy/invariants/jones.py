@@ -7,26 +7,28 @@ It is characterized by the following three rules:
 See Louis H. Kauffman, State models and the Jones polynomial. Topology 26 (1987), no. 3, 395--407.
 """
 
-__all__ = ['jones_polynomial']
+__all__ = ['jones']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 from sympy import Expr, expand, symbols, Symbol, Rational
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.invariants.bracket import bracket_polynomial
+from knotpy.invariants.bracket import bracket
+from knotpy.invariants._symbols import _A, _t
 
-_A, _T = symbols("A t")
 
-
-def jones_polynomial(k: PlanarDiagram | OrientedPlanarDiagram):
+def jones(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     Compute the jones polynomial from the (Kauffman) bracket polynomial
     :param k:
     :return:
     """
-    polynomial = bracket_polynomial(k, normalize=True)
-    return expand(polynomial.subs({_A: _T ** Rational(-1, 4)}))
+    polynomial = bracket(k, normalize=True)
+
+    # alternative: l = i * t^(−1),  m = i * (t^(−1/2) − t^(1/2))
+
+    return expand(polynomial.subs({_A: _t ** Rational(-1, 4)}))
 
 
 if __name__ == '__main__':
@@ -40,9 +42,9 @@ if __name__ == '__main__':
     print(b)
     print(k)
 
-    jones_a = jones_polynomial(a)
-    jones_b = jones_polynomial(b)
-    jones_k = jones_polynomial(k)
+    jones_a = jones(a)
+    jones_b = jones(b)
+    jones_k = jones(k)
 
     print(jones_a)
     print(jones_b)

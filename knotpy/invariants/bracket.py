@@ -7,11 +7,11 @@ It is characterized by the following three rules:
 See Louis H. Kauffman, State models and the Jones polynomial. Topology 26 (1987), no. 3, 395--407.
 """
 
-__all__ = ['bracket_polynomial', "kauffman_bracket_skein_module"]
+__all__ = ['bracket', "kauffman_bracket_skein_module"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
-from sympy import Expr, expand, Integer, symbols, Symbol
+from sympy import Expr, expand, Integer
 from collections import deque
 
 from knotpy.algorithms.skein import smoothen_crossing
@@ -19,7 +19,7 @@ from knotpy.invariants.writhe import writhe
 from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import is_empty_diagram
-from knotpy.manipulation.remove import remove_unknots
+from knotpy.algorithms.remove import remove_unknots
 from knotpy.utils.module import module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_decreasing
@@ -27,12 +27,13 @@ from knotpy.invariants.cache import Cache
 from knotpy._settings import settings
 from knotpy.algorithms.topology import is_knot
 
+from knotpy.invariants._symbols import _A, _KAUFFMAN_TERM
+
 _USE_JONES_CACHE = False
 
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
 
-_A = symbols("A")
-_kauffman_term = -_A ** 2 - _A ** (-2)
+
 
 
 def lowest_exponent(laurent_polynomial, variable):
@@ -105,7 +106,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
             framing = k.framing
             k_canonical = canonical(k)
             k_canonical.framing = 0
-            expression += (coeff * (_kauffman_term ** number_of_unknots) * ((- _A ** 3) ** (-framing)), k_canonical)
+            expression += (coeff * (_KAUFFMAN_TERM ** number_of_unknots) * ((- _A ** 3) ** (-framing)), k_canonical)
 
     if normalize:
 
@@ -126,7 +127,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
     return [(expand(r), s) for r, s in expression.to_tuple()]
 
 
-def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
+def bracket(k: PlanarDiagram, normalize=True) -> Expr:
     """Return the (Kauffman) Bracket polynomial defined via the skein relations <L_X> = A <L_0> + 1/A <L_inf>,
     <L ⊔ U> = (-A^2 - A^-2) <L> and <unknot> = 1.
        :param k: Planar diagram
@@ -144,8 +145,10 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
     settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
 
     original_knot = k
+
     if k.is_oriented():
-        raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
+        k = unorient(k)
+        #raise NotImplementedError("The Kauffman bracket skein module is not implemented for oriented knots")
 
     polynomial = Integer(0)  # current bracket polynomial
     stack = deque()
@@ -172,11 +175,12 @@ def bracket_polynomial(k: PlanarDiagram, normalize=True) -> Expr:
             if not is_empty_diagram(k):
                 raise ValueError("Obtained non-empty diagram when removing crossings from knot.")
 
-            polynomial += coeff * (_kauffman_term ** (number_of_unknots-1)) * ((- _A ** 3) ** (-k.framing))
+            polynomial += coeff * (_KAUFFMAN_TERM ** (number_of_unknots-1)) * ((- _A ** 3) ** (-k.framing))
 
     original_framing = original_knot.framing if original_knot.is_framed() else 0
 
     if normalize:
+        #print("writhe", writhe(original_knot))
         polynomial *= (- _A ** (-3)) ** (writhe(original_knot) + original_framing)  # ignore framing if normalized
     else:
         polynomial *= (- _A ** (-3)) ** original_framing
@@ -198,12 +202,12 @@ if __name__ == '__main__':
     knots = [a, b, k]
     for k in knots:
         #print(k)
-        poly = kp.bracket_polynomial(k, normalize=True)
-        poly_nn = kp.bracket_polynomial(k, normalize=False)
+        poly = kp.bracket(k, normalize=True)
+        poly_nn = kp.bracket(k, normalize=False)
         #print(poly)
         for _ in kp.random_reidemeister_moves(k, count=12):
-            poly_ = kp.bracket_polynomial(_, normalize=True)
-            poly_nn_ = kp.bracket_polynomial(_, normalize=False)
+            poly_ = kp.bracket(_, normalize=True)
+            poly_nn_ = kp.bracket(_, normalize=False)
             if poly_ != poly:
                 print("Not the same:", poly)
             if poly_nn_ != poly_nn:
@@ -214,16 +218,16 @@ if __name__ == '__main__':
 
     m = kp.from_pd_notation("X[4, 5, 6, 3], X[4, 3, 7, 8], X[6, 5, 8, 7]")
     print(m)
-    print(kp.bracket_polynomial(m))
+    print(kp.bracket(m))
 
     m = kp.from_pd_notation("X[4, 5, 6, 3], X[3, 7, 8, 4], X[6, 5, 8, 7]")
     print(m)
-    print(kp.bracket_polynomial(m))
+    print(kp.bracket(m))
 
 
     m = kp.from_pd_notation("X[3, 4, 5, 6], X[7, 8, 9, 3], X[4, 9, 8, 10], X[5, 10, 7, 6]")
     print(m)
-    print(kp.bracket_polynomial(m))
+    print(kp.bracket(m))
 
 
     exit()
@@ -249,9 +253,9 @@ if __name__ == '__main__':
     print(b)
     print(k)
 
-    bracket_a = bracket_polynomial(a)
-    bracket_b = bracket_polynomial(b)
-    bracket_k = bracket_polynomial(k)
+    bracket_a = bracket(a)
+    bracket_b = bracket(b)
+    bracket_k = bracket(k)
 
     print(bracket_a)
     print(bracket_b)

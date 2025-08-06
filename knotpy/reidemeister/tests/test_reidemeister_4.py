@@ -1,7 +1,7 @@
 from knotpy import sanity_check
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidemeister_4_slide
-from knotpy.invariants.yamada import yamada_polynomial
+from knotpy.invariants.yamada import yamada
 def test_reidemeister_4():
 
     theta_codes = [
@@ -97,15 +97,15 @@ def test_reidemeister_4():
     for code in theta_codes[::10]:
         print(code)
         k = from_knotpy_notation(code)
-        y = yamada_polynomial(k)
+        y = yamada(k)
         for location in list(find_reidemeister_4_slide(k))[::2]:
             # compute every 10th option
             k_2 = reidemeister_4_slide(k, location, inplace=False)
-            y_2 = yamada_polynomial(k_2)
+            y_2 = yamada(k_2)
 
             for location_2 in list(find_reidemeister_4_slide(k_2))[::1]:
                 k_3 = reidemeister_4_slide(k_2, location_2, inplace=False)
-                y_3 = yamada_polynomial(k_3)
+                y_3 = yamada(k_3)
                 if not (y == y_2 == y_3):
                     print(k)
                     print(k_2)
@@ -125,8 +125,8 @@ def test_case_4():
     *** after  Diagram a → V(h3 c0 d3), b → V(h1 i1 c2), c → X(a1 h2 b2 d0), d → X(c3 i0 i3 a2), h → X(i2 b0 c1 a0), i → X(d1 b1 h0 d2) (_sequence=R4)
     """
     # k2 = reidemeister_4_slide(k, ('b', [2]), inplace=False)
-    # y = yamada_polynomial(k)
-    # y2 = yamada_polynomial(k2)
+    # y = yamada(k)
+    # y2 = yamada(k2)
     # print(y)
     # print(y2)
     #
@@ -138,9 +138,9 @@ def test_case_4():
         k_ =  reidemeister_4_slide(k, loc, inplace=False)
         #print(index, "*** location", loc)
         #print(index, "*** after ", k_)
-        assert yamada_polynomial(k_) == yamada_polynomial(k)
-            #print(index, "***", yamada_polynomial(k))
-            #print(index, "***", yamada_polynomial(k_))
+        assert yamada(k_) == yamada(k)
+            #print(index, "***", yamada(k))
+            #print(index, "***", yamada(k_))
 
     print(sanity_check(k))
     print(sanity_check(q))
@@ -151,13 +151,13 @@ def test_all_strands_over():
     k_ = reidemeister_4_slide(k, ('a', [0, 1, 2]), inplace=False)
 
     assert sanity_check(k_)
-    assert yamada_polynomial(k_) == yamada_polynomial(k)
+    assert yamada(k_) == yamada(k)
 
     k = from_knotpy_notation("a → V(b0 c3 b1), b → X(a0 a2 d0 e0), c → X(f3 g0 g3 a1), d → X(b2 h0 i0 e1), e → V(b3 d3 i3), f → X(i2 h2 g1 c0), g → X(c1 f2 h1 c2), h → X(d1 g2 f1 i1), i → X(d2 h3 f0 e2)")
     k_ = reidemeister_4_slide(k, ('e', [0, 1, 2]), inplace=False)
 
     assert sanity_check(k_)
-    assert yamada_polynomial(k_) == yamada_polynomial(k)
+    assert yamada(k_) == yamada(k)
 
 
 if __name__ == "__main__":

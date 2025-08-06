@@ -35,11 +35,19 @@ class LeveledSet:
 
         self.new_level(items if items else [])
 
+    def temp(self):
+        x = {type(_) for __ in self._levels for _ in __}
+        y = {type(_) for _ in self._global_set}
+        print(x, y)
+
     def number_of_levels(self):
         return len(self._levels)
 
     def level_sizes(self):
         return tuple(len(_) for _ in self._levels)
+
+    def number_of_items(self):
+        return len(self._global_set)
 
     def new_level(self, items=None):
         """Creates a new level if the last one has items, and optionally adds to it."""

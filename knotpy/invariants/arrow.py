@@ -1,3 +1,8 @@
+__all__ = ['arrow_polynomial']
+__version__ = '0.1'
+__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+
+
 from sympy import expand, Integer, symbols, Symbol
 from itertools import product
 
@@ -9,11 +14,7 @@ from knotpy.classes.endpoint import OutgoingEndpoint
 from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.invariants.writhe import writhe
 
-__all__ = ['arrow_polynomial']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
-
-_A = symbols("A")
+from knotpy.invariants._symbols import _A
 
 def disoriented_smoothing(k: OrientedPlanarDiagram, crossing):
     """

@@ -20,7 +20,7 @@ abcABC = string.ascii_lowercase + string.ascii_uppercase  # this is already in f
 #     return pattern.sub(lambda m: rep[re.escape(m.group(0))], s)
 
 
-def multi_replace(text, *replacements):
+def multi_replace(text: str, *replacements) -> str:
     """Replace substrings with other strings, until there are no substrings left.
     :param text: input string
     :param replacements: list of tuples or dicts

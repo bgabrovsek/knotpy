@@ -5,7 +5,7 @@ Using descriptors for verifying the input.
 
 import re
 
-_DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLYPE"]
+_DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5"]
 _EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP", "FLYPE"]
 
 _DEFAULT_TRACE_MOVES = True  # let the Reidemeister moves be traced
@@ -70,6 +70,9 @@ class Settings:
     #r1_increase_simplification = SettingProxyBool(_DEFAULT_R1_INCREASE_SIMPLIFICATION)
     flype_crossings_only = SettingProxyBool(_DEFAULT_FLYPE_CROSSINGS_ONLY)
 
+    def add_allowed_move(self, move):
+        self.allowed_moves.extend(_clean_allowed_moves(move))
+
     def dump(self) -> dict:
         # return settings in form of a dictionary
         return {
@@ -118,7 +121,14 @@ if __name__ == "__main__":
     print(settings.dump())
     settings.load(data)
     print(settings.dump())
-
+    print()
+    print(settings.allowed_moves)
+    settings.add_allowed_move("flype")
+    print(settings.allowed_moves)
+    settings.load(data)
+    print(settings.allowed_moves)
+    settings.allowed_moves = "r1,r2"
+    print(settings.allowed_moves)
     # print(settings.allowed_moves)
     # settings.allowed_moves = "R1,R2"
     # print(settings.allowed_moves)

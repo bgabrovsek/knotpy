@@ -106,7 +106,14 @@ def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
         return None
 
     if random:
-        return choice(tuple(find_reidemeister_2_poke(k)))
+        choices = tuple(find_reidemeister_2_poke(k))
+
+
+        if not choices:
+            print("aa", k)
+            raise ValueError("Can't find Reidemeister 2 poke")
+
+        return choice(choices) if choices else None
     else:
         return next(find_reidemeister_2_poke(k), None)  # select 1st item
 

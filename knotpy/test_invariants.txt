@@ -1,0 +1,9 @@
+native notation,value
+a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 e0 f3 b2) d=X(g0 g2 e1 b3) e=X(c1 d2 f1 f0) f=X(e3 e2 g1 c2) g=X(d0 f2 d1 h0) h=V(g3) ['name'='0'],-t**2 + t + 1/t - 1/t**2
+a=V(b0) b=X(a0 c0 d3 d2) c=X(b1 e3 f3 d0) d=X(c3 f2 b3 b2) e=X(f1 f0 g0 c1) f=X(e1 e0 d1 c2) g=V(e2) ['name'='1'],0
+a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'='2'],0
+a=V(b0) b=V(a0) ['name'='3'],0
+a=V(b3) b=X(c3 d0 c0 a0) c=X(b2 e0 e3 b0) d=X(b1 f0 f3 g0) e=X(c1 f2 f1 c2) f=X(d1 e2 e1 d2) g=V(d3) ['name'='4'],-2*t + 4 - 2/t
+a=V(b0) b=X(a0 c0 c3 d0) c=X(b1 e0 d1 b2) d=X(b3 c2 f3 e1) e=X(c1 d3 f1 f0) f=X(e3 e2 g0 d2) g=V(f2) ['name'='5'],-t + 2 - 1/t
+a=V(b3) b=X(c3 d0 c0 a0) c=X(b2 e0 d1 b0) d=X(b1 c2 e3 f0) e=X(c1 f2 f1 d2) f=X(d3 e2 e1 g0) g=V(f3) ['name'='6'],0
+a=V(b3) b=X(c0 d0 d3 a0) c=X(b0 e0 f3 g0) d=X(b1 h0 h3 b2) e=X(c1 h2 f1 f0) f=X(e3 e2 h1 c2) g=V(c3) h=X(d1 f2 e1 d2) ['name'='7'],-t + 2 - 1/t

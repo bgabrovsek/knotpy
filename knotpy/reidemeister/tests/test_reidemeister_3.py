@@ -4,8 +4,8 @@ from knotpy.reidemeister.reidemeister_3 import find_reidemeister_3_triangle, rei
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.canonical import canonical
-from knotpy.invariants.yamada import yamada_polynomial
-from knotpy.invariants.jones import jones_polynomial
+from knotpy.invariants.yamada import yamada
+from knotpy.invariants.jones import jones
 from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
@@ -34,11 +34,11 @@ def test_r3_find_moves():
 def test_make_reidemeister_3_move():
 
     for diagram in _get_examples():
-        j = jones_polynomial(diagram)
+        j = jones(diagram)
         for loc in find_reidemeister_3_triangle(diagram):
             k_ = reidemeister_3(diagram, loc, inplace=False)
             assert sanity_check(k_)
-            assert jones_polynomial(k_) == j
+            assert jones(k_) == j
 
 
     #
@@ -51,9 +51,9 @@ def test_make_reidemeister_3_move():
     #         if k.name[0] == 'l':
     #             assert sanity_check(k_)
     #         elif is_knot(k_):
-    #             assert jones_polynomial(k_) == polynomial
+    #             assert jones(k_) == polynomial
     #         else:
-    #             assert yamada_polynomial(k_) == polynomial
+    #             assert yamada(k_) == polynomial
 
 
 if __name__ == '__main__':

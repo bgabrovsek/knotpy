@@ -4,9 +4,9 @@ import warnings
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.classes.node import Crossing, Vertex
 from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.manipulation.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
+from knotpy.algorithms.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
 from knotpy.utils.dict_utils import common_dict
-from knotpy.manipulation.remove import remove_bivalent_vertex
+from knotpy.algorithms.remove import remove_bivalent_vertex
 from knotpy._settings import settings
 
 def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
@@ -353,12 +353,12 @@ MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e
     """
 
 
-    from knotpy import from_knotpy_notation, yamada_polynomial
+    from knotpy import from_knotpy_notation, yamada
     t1 = "a → V(b0 c0 d3), b → V(a0 e0 f3), c → X(a1 f0 e3 d0), d → X(c3 e2 e1 a2), e → X(b1 d2 d1 c2), f → X(c1 f2 f1 b2)"
     t1 = from_knotpy_notation(t1)
-    print(t1, sanity_check(t1), yamada_polynomial(t1))
+    print(t1, sanity_check(t1), yamada(t1))
     t2 = reidemeister_4_slide(t1, ('a', [1]), inplace=False)
-    print(t2, sanity_check(t2), yamada_polynomial(t2))
+    print(t2, sanity_check(t2), yamada(t2))
     print("       a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e1 i2), e → X(b1 d2 d1 a1), f → X(j3 f2 f1 b2), i → X(a2 d0 d3 j1), j → X(a0 i3 b0 f0)")
     exit()
     #R4 ('b', [1])"
@@ -379,10 +379,10 @@ MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e
     k1 = reidemeister_4_slide(h1, r4)
     print(k1, sanity_check(k1))
 
-    print(yamada_polynomial(h1))
-    print(yamada_polynomial(k1))
+    print(yamada(h1))
+    print(yamada(k1))
 
-    from knotpy.catalog.knot_tables import thetas
+    from knotpy.tables.theta import thetas
 
     for t in thetas():
         locations = list(find_reidemeister_4_slide(t))
@@ -393,8 +393,8 @@ MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e
             if not s:
                 print(t, "->", tt)
 
-            y1 = yamada_polynomial(t)
-            y2 = yamada_polynomial(tt)
+            y1 = yamada(t)
+            y2 = yamada(tt)
 
             if y1 != y2:
                 print(t, "->", tt, "(yamada)")

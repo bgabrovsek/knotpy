@@ -1,12 +1,12 @@
 from sympy import asech
 
-from knotpy import homflypt_polynomial, writhe
-from knotpy.invariants.kauffman import kauffman_polynomial
+from knotpy import homflypt, writhe
+from knotpy.invariants.kauffman import kauffman
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.notation.pd import from_pd_notation
 from knotpy.reidemeister.reidemeister import random_reidemeister_move, all_reidemeister_moves
-from knotpy.invariants.jones import jones_polynomial
+from knotpy.invariants.jones import jones
 
 def _get_examples():
     knot_31 = from_pd_notation("[[1,5,2,4],[3,1,4,6],[5,3,6,2]]")
@@ -27,20 +27,20 @@ def test_choose_random_reidemeister_moves():
     import knotpy as kp
 
     for k in _get_examples():
-        j = homflypt_polynomial(k)
+        j = homflypt(k)
         for i in range(10):
             k_ = random_reidemeister_move(k)
             assert k != k_
-            j_ = homflypt_polynomial(k_)
+            j_ = homflypt(k_)
             assert sanity_check(k_)
             assert j_ == j, f"Jones: {j_} vs {j} for {k_}"
 
 def test_all_reidemeister_moves():
     diagrams = _get_examples()
     for k in diagrams:
-        j = jones_polynomial(k)
+        j = jones(k)
         for k_ in all_reidemeister_moves(k):
-            j_ = jones_polynomial(k_)
+            j_ = jones(k_)
             assert sanity_check(k_)
             assert j_ == j, f"Jones: {j_} vs {j} for {k_}"
 

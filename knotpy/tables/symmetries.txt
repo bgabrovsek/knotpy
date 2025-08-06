@@ -1,0 +1,72 @@
+
+Oriented
+chiral K, K*, -K, -K*
+fully amphicheiral K = K* = -K = -K*
+negative amphicheiral K = -K*, K* = -K
+positive amphicheiral K = K*, -K = -K*
+reversible K = -K. *K = -*K
+
+
+Non-oriented
+chiral K, K*
+fully amphicheiral, K = K*
+negative amphicheiral, K = K*
+positive amphicheiral, K = K*
+reversible K, K*
+
+
+1 chiral, noninvertible
+1, 3 + amphichiral, noninvertible
+1, 4 - amphichiral, noninvertible
+1, 2, chiral, invertible
+1,2,3,4 + and - amphichiral, invertible
+
+1. preserves R^3, preserves K
+2. preserves R^3, reverses K
+3. reverses R^3, preserces K,
+4. reverses R^4, reverses K
+
+
+INVARIANTS:
+
+HOMFLYPT
+P(A#B) = P(A) * P(B)
+mirror:
+P(A*)(l, m) = P(A)(l**-1, m)
+x <-> y, y <-> x
+
+orientation reversal: no change
+
+
+ALEXANDER:
+mirror: no change
+reversal: no change
+
+MULTIVARIATE ALEXANDER:
+component reversal: t_i -> t_i^-1
+
+
+ALEXANDER_CONWAY:
+mirror: z -> z^-1 since symmetric, no change
+reversal: no change
+
+
+JONES:
+mirror: t -> t^-1
+reversal: the same (for knots) - links?!?
+reversal some components: may change (writhe)
+
+
+TWO-VARIABLE-KAUFFMAN:
+mirror: a -> a^-1
+reversal: semi no change: powers of a: F(-K)(a,z) = a^(4 * lambda) * F(K)(a,z), where lambda is the linking sum number (for knot lambda = 0, so no change)
+for links it changes by the linking number somehow, see https://mathworld.wolfram.com/KauffmanPolynomialF.html#:~:text=polynomial%20%20because%20changing%20the,of%20component%20Image%3A%20k%2C%20then
+
+
+Normalized Bracket Polynomial:
+mirror: A -> A^-1
+reversal: same
+reversal some components: may change (writhe?)
+
+
+

@@ -7,7 +7,7 @@ from collections import Counter
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.cut_set import arc_cut_sets
-from knotpy.manipulation.symmetry import flip
+from knotpy.algorithms.symmetry import flip
 from knotpy._settings import settings
 
 def _path_within_crossings(k: PlanarDiagram, nodes: list | set, endpoint):

@@ -87,7 +87,7 @@ class Node(ABC):
         if (s_deg := len(self._inc)) != (o_deg := len(other._inc)):
             return -1 if s_deg < o_deg else 1
 
-        # compare node type
+        # compare node type "Crossing"/"Vertex"
         if type(self).__name__ != type(other).__name__:
             return (type(self).__name__ > type(other).__name__) * 2 - 1
 

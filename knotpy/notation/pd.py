@@ -21,7 +21,7 @@ from collections import defaultdict
 
 from knotpy.algorithms.topology import edges
 import knotpy.algorithms.topology
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
 #from knotpy.algorithms.node_operations import add_node_to
 from knotpy.classes.node import Vertex, Crossing
@@ -72,15 +72,24 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
     if oriented:
         raise NotImplementedError()  # TODO: implement oriented diagram
 
-
     text = text.strip()
     text = multi_replace(text, ")]","([", {"] ": "]", ", ": ","}, ";,", ("],", "];"))
+    text = text.upper()
+    text = ' '.join(text.split()) # remove double spaces
+    text = text.replace("PD ", "PD")
+
+    if text.startswith("PD[") and text.endswith("]"):
+        text = text[3:-1]
+
+
 
     # extract nested list (KnotInfo)
     if text[:2] in ("[[", "[(", "([", "((") and text[-2:] in ("]]", "])", ")]", "))"):
         text = text[1:-1]
 
-    k = PlanarDiagram()
+    oriented = False #("I " in text or " I]") and ("O " in text or "O]" in text)
+
+    k = OrientedPlanarDiagram() if oriented else PlanarDiagram()
     arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
 
 
@@ -89,6 +98,7 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
         if (i0 := subtext.find("[")) == -1 or \
            (i1 := subtext.find("]")) == -1:
             raise ValueError(f"Invalid PD node notation {subtext}.")
+
         node_arcs = eval(subtext[i0:i1+1])  # list of arcs
         node_abbr = subtext[:i0] if 1 <= i0 <= 2 else "X" if len(node_arcs) == 4 else "V"  # str, e.g. "X"
         node_name = abcABC[node] if node_type is str else node  # abc or 123
@@ -99,6 +109,7 @@ def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
                        degree=len(node_arcs))
         except KeyError:
             raise ValueError(f"Invalid PD notation {text}, node {node} ({subtext}): unknown node abbreviation {node_abbr} in the PD code.")
+
 
         for pos, arc in enumerate(node_arcs):
             arc_dict[arc].append((node_name, pos))

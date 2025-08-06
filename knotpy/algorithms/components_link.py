@@ -3,7 +3,7 @@ Link components represent distinct closed loops in a link diagram.
 For example, a trefoil knot has one component, while the Hopf link has two.
 """
 
-__all__ = ['number_of_link_components', "link_components"]
+__all__ = ['number_of_link_components', "link_components_endpoints"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -70,18 +70,18 @@ def link_components_endpoints(k: PlanarDiagram):
     return list(dsu)
 
 
-def link_components(k: PlanarDiagram) -> set:
-    """
-    Determine the distinct link components in a planar diagram.
-
-    Link components are individual, closed, connected parts of a link structure,
-    such as in knot theory. This function identifies which parts of the diagram
-    belong to the same connected component.
-
-    :param k: An input planar diagram representing a link.
-    :return: A set representing the link components.
-    """
-    raise NotImplementedError()
+# def link_components(k: PlanarDiagram) -> set:
+#     """
+#     Determine the distinct link components in a planar diagram.
+#
+#     Link components are individual, closed, connected parts of a link structure,
+#     such as in knot theory. This function identifies which parts of the diagram
+#     belong to the same connected component.
+#
+#     :param k: An input planar diagram representing a link.
+#     :return: A set representing the link components.
+#     """
+#     raise NotImplementedError()
 
 
 if __name__ == "__main__":

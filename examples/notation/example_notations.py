@@ -7,7 +7,7 @@ Test various knot/graph notations.
 """
 
 import knotpy as kp
-from knotpy.catalog.example import example_spatial_graph
+from knotpy.tables.example import example_spatial_graph
 
 
 print("PD notation\n")

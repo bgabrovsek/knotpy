@@ -1,7 +1,7 @@
 from sympy import sympify
 
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
-from knotpy.invariants.jones import jones_polynomial
+from knotpy.invariants.jones import jones
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space, crossing_non_increasing_space, detour_space
 
@@ -16,40 +16,40 @@ def _get_examples():
 
 def test_r3_space():
     for diagram in _get_examples():
-        j = jones_polynomial(diagram)
+        j = jones(diagram)
         r3s = crossing_preserving_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
-            jd = jones_polynomial(d)
+            jd = jones(d)
             assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 
 def test_crossing_reducing_space():
     for diagram in _get_examples():
-        j = jones_polynomial(diagram)
+        j = jones(diagram)
         r3s = crossing_decreasing_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
-            jd = jones_polynomial(d)
+            jd = jones(d)
             assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 def test_non_increasing_space():
     for g in [0,1]:
         for diagram in _get_examples():
-            j = jones_polynomial(diagram)
+            j = jones(diagram)
             r3s = crossing_non_increasing_space(diagram, greediness=g, assume_canonical=False)
             for d in r3s:
                 assert sanity_check(d)
-                jd = jones_polynomial(d)
+                jd = jones(d)
                 assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 def test_detour_space():
     for diagram in _get_examples():
-        j = jones_polynomial(diagram)
+        j = jones(diagram)
         r3s = detour_space(diagram, assume_canonical=False)
         for d in r3s:
             assert sanity_check(d)
-            jd = jones_polynomial(d)
+            jd = jones(d)
             assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 

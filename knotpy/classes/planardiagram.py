@@ -230,6 +230,8 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         if self_nodes_sorted != other_nodes_sorted:
             return -1 if self_nodes_sorted < other_nodes_sorted else 1
 
+
+        # maybe just compare endpoints?
         for node in self_nodes_sorted:
             if cmp := self._nodes[node]._compare(other._nodes[node], compare_attributes=compare_attributes):
                 return cmp
@@ -242,7 +244,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
 
 
         # TODO: exclude "_" keys in nodes and endpoints also
-        exclude_keys = ({"name", "framing"} |
+        exclude_keys = ({"name", "framing", "frozen"} |
                         {a for a in self.attr if isinstance(a, str) and a[0] == "_"} |
                         {a for a in other.attr if isinstance(a, str) and a[0] == "_"})
 
@@ -485,6 +487,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         :return: Endpoint instance
         """
 
+
         if isinstance(endpoint_pair, Endpoint):
             return endpoint_pair
 
@@ -618,6 +621,7 @@ class PlanarDiagram(_CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram):
         self.remove_endpoints_from(chain(*arcs_for_removing))
 
     def __hash__(self):
+        # TODO: do not hash if object is not frozen
         """Unsafe hashing"""
         # TODO: sort by hash if keys are not comparable
         # TODO: if knot has attibute "framed = False", then hash excludes the framedness
@@ -722,36 +726,36 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     :param create_using: type or instance
     :return: planar diagram with data
     """
-    from knotpy.catalog.knot_tables import diagram_from_name
+    from knotpy.tables.name import diagram_from_name
 
+    # if a string is given, try to understand what type the input is (knot name, PD notation,...)
     if isinstance(incoming_data, str):
         try:
-            # TODO: convert to create_using (e.g. oriented)
-            k = diagram_from_name(incoming_data)
-            return planar_diagram_from_data(k, create_using=create_using)  # copy k into create_using
+            incoming_data = diagram_from_name(incoming_data)  # new incoming data is not the diagram
         except ValueError:
-            # knot not found
             pass
 
-    # initiate the diagram with create_using
+    # if a type is given, create a new instance
     if isinstance(create_using, type):
-        k = create_using()
-    elif isinstance(create_using, PlanarDiagram):
-        k = create_using
-    else:
-        raise TypeError("create_using is not a valid KnotPy planar diagram type or instance")
+        create_using = create_using()
+    elif create_using is None:
+        create_using = PlanarDiagram()
 
-    k.clear()
+    if not isinstance(create_using, PlanarDiagram):
+        raise TypeError("create_using is not a valid planar diagram type or instance")
 
+    # fill create_using with data from incoming_data
+    create_using.clear()
     if isinstance(incoming_data, PlanarDiagram):
-        # copy data from incoming_data instance
+        # TODO: if incoming data is a knot name, e.g. '3_1', the knot data is copied two times (first by diagram_from_name then by this function)
 
-        k.attr.update(incoming_data.attr)
+        # copy attributes
+        create_using.attr.update(incoming_data.attr)
 
         # copy nodes
         for node in incoming_data.nodes:
             node_instance = incoming_data.nodes[node]
-            k.add_node(node_for_adding=node, create_using=type(node_instance),
+            create_using.add_node(node_for_adding=node, create_using=type(node_instance),
                        degree=len(node_instance), **node_instance.attr)
 
         # copy endpoints
@@ -760,10 +764,10 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
             adj_ep_type = type(adj_ep)
 
             # create unoriented endpoint if diagram is unoriented
-            if type(k) is PlanarDiagram and adj_ep_type is not Endpoint:
+            if type(create_using) is PlanarDiagram and adj_ep_type is not Endpoint:
                 adj_ep_type = Endpoint
 
-            k.set_endpoint(endpoint_for_setting=ep, adjacent_endpoint=(adj_ep.node, adj_ep.position),
+            create_using.set_endpoint(endpoint_for_setting=ep, adjacent_endpoint=(adj_ep.node, adj_ep.position),
                            create_using=adj_ep_type, **adj_ep.attr)
 
     elif incoming_data is None:
@@ -773,7 +777,7 @@ def planar_diagram_from_data(incoming_data, create_using) -> PlanarDiagram:
     else:
         raise NotImplementedError("constructing planar diagrams from non-planar diagrams not implemented")
 
-    return k
+    return create_using
 
 if __name__ == "__main__":
 

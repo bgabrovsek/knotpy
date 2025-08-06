@@ -2,7 +2,7 @@ from collections import defaultdict
 import warnings
 
 __all__ = ['compare_dicts', 'invert_dict', 'invert_multi_dict', "invert_nested_dict", "LazyEvalDict", "LazyLoadDict",
-           "LazyLoadEvalDict","identitydict","ClassifierDict","common_dict", "JointDict"]
+           "LazyLoadEvalDict","identitydict","ClassifierDict","common_dict"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
@@ -406,59 +406,59 @@ def common_dict(*dicts):
         return {}
     common_keys = set.intersection(*(set(d) for d in dicts))
     return {key: dicts[0][key] for key in common_keys if all(d[key] == dicts[0][key] for d in dicts[1:])}
-
-class JointDict:
-    def __init__(self, dict_map: dict[int, dict], key_map=None):
-        """
-        Initialize with a mapping from prefix (int) to dictionary.
-        Keys in each dictionary must start with that prefix and an underscore.
-        Example: {1: {'1_a': ...}, 2: {'2_b': ...}}
-         Args:
-            dict_map (dict): Mapping from keys (e.g. IDs, types) to sub-dictionaries.
-            key_map (callable): Function that takes a joint key and returns (subdict_key, key_in_subdict)
-        """
-        self._dict_map = dict_map
-        self.key_map = key_map
-
-    def __getitem__(self, key):
-        subkey = self.key_map(key)
-        if subkey not in self._dict_map:
-            raise KeyError(f"No dictionary for subkey {subkey}")
-        return self._dict_map[subkey][key]
-
-    def __contains__(self, key):
-        subkey = self.key_map(key)
-        return key in self._dict_map[subkey]
-
-    def keys(self, from_subkeys=None):
-        if from_subkeys is None:
-            for inner_dict in self._dict_map.values():
-                yield from inner_dict
-        else:
-            for subkey in sorted(from_subkeys):
-                yield from self._dict_map[subkey]
-
-    def items(self, from_subkeys=None):
-        if from_subkeys is None:
-            for inner_dict in self._dict_map.values():
-                yield from inner_dict.items()
-        else:
-            for subkey in sorted(from_subkeys):
-                yield from self._dict_map[subkey].items()
-
-    def values(self, from_subkeys=None):
-        if from_subkeys is None:
-            for inner_dict in self._dict_map.values():
-                yield from inner_dict.values()
-        else:
-            for subkey in sorted(from_subkeys):
-                yield from self._dict_map[subkey].values()
-
-    def __iter__(self):
-        return self.keys()
-
-    def __len__(self):
-        return sum(len(inner_dict) for inner_dict in self._dict_map.values())
+#
+# class JointDict:
+#     def __init__(self, dict_map: dict[int, dict], key_map=None):
+#         """
+#         Initialize with a mapping from prefix (int) to dictionary.
+#         Keys in each dictionary must start with that prefix and an underscore.
+#         Example: {1: {'1_a': ...}, 2: {'2_b': ...}}
+#          Args:
+#             dict_map (dict): Mapping from keys (e.g. IDs, types) to sub-dictionaries.
+#             key_map (callable): Function that takes a joint key and returns (subdict_key, key_in_subdict)
+#         """
+#         self._dict_map = dict_map
+#         self.key_map = key_map
+#
+#     def __getitem__(self, key):
+#         subkey = self.key_map(key)
+#         if subkey not in self._dict_map:
+#             raise KeyError(f"No dictionary for subkey {subkey}")
+#         return self._dict_map[subkey][key]
+#
+#     def __contains__(self, key):
+#         subkey = self.key_map(key)
+#         return key in self._dict_map[subkey]
+#
+#     def keys(self, from_subkeys=None):
+#         if from_subkeys is None:
+#             for inner_dict in self._dict_map.values():
+#                 yield from inner_dict
+#         else:
+#             for subkey in sorted(from_subkeys):
+#                 yield from self._dict_map[subkey]
+#
+#     def items(self, from_subkeys=None):
+#         if from_subkeys is None:
+#             for inner_dict in self._dict_map.values():
+#                 yield from inner_dict.items()
+#         else:
+#             for subkey in sorted(from_subkeys):
+#                 yield from self._dict_map[subkey].items()
+#
+#     def values(self, from_subkeys=None):
+#         if from_subkeys is None:
+#             for inner_dict in self._dict_map.values():
+#                 yield from inner_dict.values()
+#         else:
+#             for subkey in sorted(from_subkeys):
+#                 yield from self._dict_map[subkey].values()
+#
+#     def __iter__(self):
+#         return self.keys()
+#
+#     def __len__(self):
+#         return sum(len(inner_dict) for inner_dict in self._dict_map.values())
 
 
 if __name__ == "__main__":

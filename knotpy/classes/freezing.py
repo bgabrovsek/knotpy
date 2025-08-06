@@ -5,8 +5,15 @@ def frozen(*args, **kwargs):
     raise RuntimeError("Frozen diagrams cannot be modified")
 
 
-def freeze(k: PlanarDiagram | OrientedPlanarDiagram):
+
+def freeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace=True):
     """Freeze the given planar diagram inplace so that it cannot be modified anymore."""
+    if not inplace:
+        k = k.copy()
+
+    if k.is_frozen():
+        return k
+
     k.frozen = True
 
     k.add_node = frozen
@@ -42,9 +49,16 @@ def freeze(k: PlanarDiagram | OrientedPlanarDiagram):
 
 
 
-def unfreeze(k: PlanarDiagram | OrientedPlanarDiagram):
+def unfreeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace=True):
     """Unfreeze the given planar diagram inplace so that it can again be modified. This is for example useful when
     we pop a diagram from a set and the set gets destroyed immediately (e.g. in a return call)."""
+
+    if not inplace:
+        k = k.copy()
+
+    if not k.is_frozen():
+        return k
+
     k.frozen = False
 
     k.add_node = type(k).add_node.__get__(k)

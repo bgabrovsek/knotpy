@@ -4,8 +4,8 @@ from knotpy.reidemeister.reidemeister_1 import reidemeister_1_add_kink, reidemei
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.canonical import canonical
-from knotpy.invariants.yamada import yamada_polynomial
-from knotpy.invariants.jones import jones_polynomial
+from knotpy.invariants.yamada import yamada
+from knotpy.invariants.jones import jones
 from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
@@ -52,9 +52,9 @@ def test_make_reidemeister_1_move():
             if k.name[0] == 'l':
                 assert sanity_check(k_)
             elif is_knot(k_):
-                assert jones_polynomial(k_) == polynomial
+                assert jones(k_) == polynomial
             else:
-                assert yamada_polynomial(k_) == polynomial
+                assert yamada(k_) == polynomial
 
 def test_make_undo_reidemeister_1_move():
     diagrams = _get_examples()

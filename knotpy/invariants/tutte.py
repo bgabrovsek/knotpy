@@ -1,4 +1,4 @@
-__all__ = ['tutte_polynomial']
+__all__ = ['tutte']
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
@@ -8,12 +8,12 @@ from collections import deque
 from knotpy import from_pd_notation, bridges, is_loop, loops, is_bridge, OrientedPlanarDiagram
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import is_planar_graph
-from knotpy.catalog.graphs import wheel_graph
-from knotpy.manipulation.contract import contract_arc
-from knotpy.manipulation.remove import remove_arc
+from knotpy.tables.graphs import wheel_graph
+from knotpy.algorithms.contract import contract_arc
+from knotpy.algorithms.remove import remove_arc
 from knotpy.algorithms.orientation import unorient
 
-_X, _Y = symbols("x y")
+
 
 def deletion_contraction(k: PlanarDiagram, contract_bridges=True):
     if "_deletions" not in k.attr:
@@ -45,7 +45,7 @@ def deletion_contraction(k: PlanarDiagram, contract_bridges=True):
             resolved.append(k)
     return resolved
 
-def tutte_polynomial(k: PlanarDiagram | OrientedPlanarDiagram, variables="xy"):
+def tutte(k: PlanarDiagram | OrientedPlanarDiagram, variables="xy"):
     """
     Compute the Tutte polynomial of a planar graph represented as a PlanarDiagram.
 
@@ -83,11 +83,11 @@ def tutte_polynomial(k: PlanarDiagram | OrientedPlanarDiagram, variables="xy"):
     Compute the Tutte polynomial for a wheel graph with 4 nodes:
 
     ```python
-    from knotpy.catalog.graphs import wheel_graph
-    from tutte import tutte_polynomial
+    from knotpy.tables.graphs import wheel_graph
+    from tutte import tutte
 
     w = wheel_graph(4)
-    polynomial = tutte_polynomial(w)
+    polynomial = tutte(w)
     print(polynomial)
     ```
     """
@@ -139,14 +139,14 @@ if __name__ == "__main__":
 
 
     g = wheel_graph(7)  # works!!!!
-    print(tutte_polynomial(g))
+    print(tutte(g))
 
     # g = PlanarDiagram()
     # g.set_arcs_from("a0a3,a1b0,a2b1")
     # # print(g)
     # # g_ = contract_arc(g, arc_for_contracting=(("b",0),("a",1)))
     # # print(g_)
-    # print(tutte_polynomial(g))
+    # print(tutte(g))
     #
     #
 
@@ -175,4 +175,4 @@ if __name__ == "__main__":
     for i in range(1):
         w = wheel_graph(4)
 
-        print(tutte_polynomial(w))
+        print(tutte(w))

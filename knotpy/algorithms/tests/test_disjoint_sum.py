@@ -1,7 +1,7 @@
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, add_unknot, is_disjoint_union, disjoint_union
 from knotpy.algorithms.canonical import canonical
-from knotpy.manipulation.remove import remove_unknots
+from knotpy.algorithms.remove import remove_unknots
 from knotpy.algorithms.topology import number_of_unknots
 def test_unknots():
     pd_K_8_13 = "X[1,9,2,8],X[3,14,4,15],X[5,12,6,13],X[7,11,8,10],X[9,3,10,2],X[11,16,12,1],X[13,4,14,5],X[15,6,16,7]"
