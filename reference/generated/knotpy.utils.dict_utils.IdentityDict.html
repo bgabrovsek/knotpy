@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>identitydict &#8212; KnotPy  documentation</title>
+    <title>IdentityDict &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.dict_utils.identitydict';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.dict_utils.IdentityDict';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="disjoint_union_set" href="knotpy.utils.disjoint_union_set.html" />
-    <link rel="prev" title="LazyLoadEvalDict" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html" />
+    <link rel="next" title="LazyDict" href="knotpy.utils.dict_utils.LazyDict.html" />
+    <link rel="prev" title="ClassifierDict" href="knotpy.utils.dict_utils.ClassifierDict.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -896,10 +896,8 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_multi_dict.html">invert_multi_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_nested_dict.html">invert_nested_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html">ClassifierDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyEvalDict.html">LazyEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html">LazyLoadDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html">LazyLoadEvalDict</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">identitydict</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">IdentityDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyDict.html">LazyDict</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -950,6 +948,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.str2poly.html">str2poly</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
 </ul>
@@ -1076,7 +1075,7 @@
     
     <li class="breadcrumb-item"><a href="knotpy.utils.dict_utils.html" class="nav-link">dict_utils</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">identitydict</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">IdentityDict</span></li>
   </ul>
 </nav>
 </div>
@@ -1094,53 +1093,53 @@
                 <article class="bd-article">
                   
   <section id="identitydict">
-<h1>identitydict<a class="headerlink" href="#identitydict" title="Link to this heading">#</a></h1>
+<h1>IdentityDict<a class="headerlink" href="#identitydict" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identitydict</span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IdentityDict</span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">defaultdict</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.__init__" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.__init__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.__init__" title="knotpy.utils.dict_utils.identitydict.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.__init__" title="knotpy.utils.dict_utils.IdentityDict.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.clear" title="knotpy.utils.dict_utils.identitydict.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.clear" title="knotpy.utils.dict_utils.IdentityDict.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.copy" title="knotpy.utils.dict_utils.identitydict.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.copy" title="knotpy.utils.dict_utils.IdentityDict.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.fromkeys" title="knotpy.utils.dict_utils.identitydict.fromkeys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code></a>(iterable[, value])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.fromkeys" title="knotpy.utils.dict_utils.IdentityDict.fromkeys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code></a>(iterable[, value])</p></td>
 <td><p>Create a new dictionary with keys from iterable and values set to value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.get" title="knotpy.utils.dict_utils.identitydict.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(key[, default])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.get" title="knotpy.utils.dict_utils.IdentityDict.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(key[, default])</p></td>
 <td><p>Return the value for key if key is in the dictionary, else default.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.items" title="knotpy.utils.dict_utils.identitydict.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.items" title="knotpy.utils.dict_utils.IdentityDict.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.keys" title="knotpy.utils.dict_utils.identitydict.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.keys" title="knotpy.utils.dict_utils.IdentityDict.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.pop" title="knotpy.utils.dict_utils.identitydict.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.pop" title="knotpy.utils.dict_utils.IdentityDict.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
 <td><p>If the key is not found, return the default if given; otherwise, raise a KeyError.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.popitem" title="knotpy.utils.dict_utils.identitydict.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.popitem" title="knotpy.utils.dict_utils.IdentityDict.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Remove and return a (key, value) pair as a 2-tuple.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.setdefault" title="knotpy.utils.dict_utils.identitydict.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(key[, default])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.setdefault" title="knotpy.utils.dict_utils.IdentityDict.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(key[, default])</p></td>
 <td><p>Insert key with a value of default if key is not in the dictionary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.update" title="knotpy.utils.dict_utils.identitydict.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.update" title="knotpy.utils.dict_utils.IdentityDict.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
 <td><p>If E is present and has a .keys() method, then does:  for k in E.keys(): D[k] = E[k] If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v In either case, this is followed by: for k in F:  D[k] = F[k]</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.values" title="knotpy.utils.dict_utils.identitydict.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.values" title="knotpy.utils.dict_utils.IdentityDict.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1149,83 +1148,83 @@
 <p class="rubric">Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.identitydict.default_factory" title="knotpy.utils.dict_utils.identitydict.default_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_factory</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.IdentityDict.default_factory" title="knotpy.utils.dict_utils.IdentityDict.default_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_factory</span></code></a></p></td>
 <td><p>Factory for default value called by __missing__().</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Remove</span> <span class="pre">all</span> <span class="pre">items</span> <span class="pre">from</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.clear" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Remove</span> <span class="pre">all</span> <span class="pre">items</span> <span class="pre">from</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.clear" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">shallow</span> <span class="pre">copy</span> <span class="pre">of</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.copy" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">shallow</span> <span class="pre">copy</span> <span class="pre">of</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.copy" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.default_factory">
-<span class="sig-name descname"><span class="pre">default_factory</span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.default_factory" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.default_factory">
+<span class="sig-name descname"><span class="pre">default_factory</span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.default_factory" title="Link to this definition">#</a></dt>
 <dd><p>Factory for default value called by __missing__().</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.fromkeys">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.fromkeys" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.fromkeys">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.fromkeys" title="Link to this definition">#</a></dt>
 <dd><p>Create a new dictionary with keys from iterable and values set to value.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.get" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.get" title="Link to this definition">#</a></dt>
 <dd><p>Return the value for key if key is in the dictionary, else default.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.items" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.items" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.keys" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.keys" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">v,</span> <span class="pre">remove</span> <span class="pre">specified</span> <span class="pre">key</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">the</span> <span class="pre">corresponding</span> <span class="pre">value.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.pop" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">v,</span> <span class="pre">remove</span> <span class="pre">specified</span> <span class="pre">key</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">the</span> <span class="pre">corresponding</span> <span class="pre">value.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.pop" title="Link to this definition">#</a></dt>
 <dd><p>If the key is not found, return the default if given; otherwise,
 raise a KeyError.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.popitem">
-<span class="sig-name descname"><span class="pre">popitem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.popitem" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.popitem">
+<span class="sig-name descname"><span class="pre">popitem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.popitem" title="Link to this definition">#</a></dt>
 <dd><p>Remove and return a (key, value) pair as a 2-tuple.</p>
 <p>Pairs are returned in LIFO (last-in, first-out) order.
 Raises KeyError if the dict is empty.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.setdefault">
-<span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.setdefault" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.setdefault">
+<span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.setdefault" title="Link to this definition">#</a></dt>
 <dd><p>Insert key with a value of default if key is not in the dictionary.</p>
 <p>Return the value for key if key is in the dictionary, else default.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**F</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Update</span> <span class="pre">D</span> <span class="pre">from</span> <span class="pre">mapping/iterable</span> <span class="pre">E</span> <span class="pre">and</span> <span class="pre">F.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.update" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**F</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Update</span> <span class="pre">D</span> <span class="pre">from</span> <span class="pre">mapping/iterable</span> <span class="pre">E</span> <span class="pre">and</span> <span class="pre">F.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.update" title="Link to this definition">#</a></dt>
 <dd><p>If E is present and has a .keys() method, then does:  for k in E.keys(): D[k] = E[k]
 If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
 In either case, this is followed by: for k in F:  D[k] = F[k]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.identitydict.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.identitydict.values" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.IdentityDict.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.IdentityDict.values" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1255,20 +1254,20 @@ In either case, this is followed by: for k in F:  D[k] = F[k]</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict"><code class="docutils literal notranslate"><span class="pre">identitydict</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.__init__"><code class="docutils literal notranslate"><span class="pre">identitydict.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.clear"><code class="docutils literal notranslate"><span class="pre">identitydict.clear()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.copy"><code class="docutils literal notranslate"><span class="pre">identitydict.copy()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.default_factory"><code class="docutils literal notranslate"><span class="pre">identitydict.default_factory</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.fromkeys"><code class="docutils literal notranslate"><span class="pre">identitydict.fromkeys()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.get"><code class="docutils literal notranslate"><span class="pre">identitydict.get()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.items"><code class="docutils literal notranslate"><span class="pre">identitydict.items()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.keys"><code class="docutils literal notranslate"><span class="pre">identitydict.keys()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.pop"><code class="docutils literal notranslate"><span class="pre">identitydict.pop()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.popitem"><code class="docutils literal notranslate"><span class="pre">identitydict.popitem()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.setdefault"><code class="docutils literal notranslate"><span class="pre">identitydict.setdefault()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.update"><code class="docutils literal notranslate"><span class="pre">identitydict.update()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.identitydict.values"><code class="docutils literal notranslate"><span class="pre">identitydict.values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict"><code class="docutils literal notranslate"><span class="pre">IdentityDict</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.__init__"><code class="docutils literal notranslate"><span class="pre">IdentityDict.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.clear"><code class="docutils literal notranslate"><span class="pre">IdentityDict.clear()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.copy"><code class="docutils literal notranslate"><span class="pre">IdentityDict.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.default_factory"><code class="docutils literal notranslate"><span class="pre">IdentityDict.default_factory</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.fromkeys"><code class="docutils literal notranslate"><span class="pre">IdentityDict.fromkeys()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.get"><code class="docutils literal notranslate"><span class="pre">IdentityDict.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.items"><code class="docutils literal notranslate"><span class="pre">IdentityDict.items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.keys"><code class="docutils literal notranslate"><span class="pre">IdentityDict.keys()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.pop"><code class="docutils literal notranslate"><span class="pre">IdentityDict.pop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.popitem"><code class="docutils literal notranslate"><span class="pre">IdentityDict.popitem()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.setdefault"><code class="docutils literal notranslate"><span class="pre">IdentityDict.setdefault()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.update"><code class="docutils literal notranslate"><span class="pre">IdentityDict.update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.IdentityDict.values"><code class="docutils literal notranslate"><span class="pre">IdentityDict.values()</span></code></a></li>
 </ul>
 </li>
 </ul>

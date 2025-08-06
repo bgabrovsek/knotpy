@@ -896,10 +896,8 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_multi_dict.html">invert_multi_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_nested_dict.html">invert_nested_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html">ClassifierDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyEvalDict.html">LazyEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html">LazyLoadDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html">LazyLoadEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.identitydict.html">identitydict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.IdentityDict.html">IdentityDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyDict.html">LazyDict</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -950,6 +948,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.str2poly.html">str2poly</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
 </ul>
@@ -1097,7 +1096,7 @@
 <h1>canonicalize_under_variable_permutation<a class="headerlink" href="#canonicalize-under-variable-permutation" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.utils.laurent.canonicalize_under_variable_permutation">
-<span class="sig-name descname"><span class="pre">canonicalize_under_variable_permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.canonicalize_under_variable_permutation" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">canonicalize_under_variable_permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_sign_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.canonicalize_under_variable_permutation" title="Link to this definition">#</a></dt>
 <dd><p>Canonicalize a polynomial expression up to permutation of variables.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>expr: A SymPy expression

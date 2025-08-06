@@ -892,10 +892,8 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_multi_dict.html">invert_multi_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_nested_dict.html">invert_nested_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html">ClassifierDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyEvalDict.html">LazyEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html">LazyLoadDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html">LazyLoadEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.identitydict.html">identitydict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.IdentityDict.html">IdentityDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyDict.html">LazyDict</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -946,6 +944,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.str2poly.html">str2poly</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
 </ul>
@@ -1118,17 +1117,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html#knotpy.utils.dict_utils.ClassifierDict" title="knotpy.utils.dict_utils.ClassifierDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassifierDict</span></code></a>(functions)</p></td>
 <td><p>A dictionary-like object that partitions items based on values returned by a collection of functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.LazyEvalDict.html#knotpy.utils.dict_utils.LazyEvalDict" title="knotpy.utils.dict_utils.LazyEvalDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LazyEvalDict</span></code></a>(eval_function, *args, **kwargs)</p></td>
-<td><p>A dictionary that evaluates values lazily upon access.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html#knotpy.utils.dict_utils.LazyLoadDict" title="knotpy.utils.dict_utils.LazyLoadDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LazyLoadDict</span></code></a>(load_function, *args, **kwargs)</p></td>
-<td><p>LazyLoadDict is a custom dictionary class that defers data loading until it is first accessed, optimizing resource usage by delaying expensive initialization operations.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html#knotpy.utils.dict_utils.LazyLoadEvalDict" title="knotpy.utils.dict_utils.LazyLoadEvalDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LazyLoadEvalDict</span></code></a>(load_function, ...)</p></td>
-<td><p>LazyLoadDict is a custom dictionary class that defers data loading until it is first accessed, optimizing resource usage by delaying expensive initialization operations.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.identitydict.html#knotpy.utils.dict_utils.identitydict" title="knotpy.utils.dict_utils.identitydict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identitydict</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.IdentityDict.html#knotpy.utils.dict_utils.IdentityDict" title="knotpy.utils.dict_utils.IdentityDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IdentityDict</span></code></a></p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.dict_utils.LazyDict.html#knotpy.utils.dict_utils.LazyDict" title="knotpy.utils.dict_utils.LazyDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LazyDict</span></code></a>(load_function[, eval_function])</p></td>
+<td><p>A dictionary that supports lazy loading and lazy value evaluation.</p></td>
 </tr>
 </tbody>
 </table>

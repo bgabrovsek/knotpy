@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>LazyEvalDict &#8212; KnotPy  documentation</title>
+    <title>LazyDict &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.dict_utils.LazyEvalDict';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.dict_utils.LazyDict';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="LazyLoadDict" href="knotpy.utils.dict_utils.LazyLoadDict.html" />
-    <link rel="prev" title="ClassifierDict" href="knotpy.utils.dict_utils.ClassifierDict.html" />
+    <link rel="next" title="disjoint_union_set" href="knotpy.utils.disjoint_union_set.html" />
+    <link rel="prev" title="IdentityDict" href="knotpy.utils.dict_utils.IdentityDict.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -896,10 +896,8 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_multi_dict.html">invert_multi_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.invert_nested_dict.html">invert_nested_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.ClassifierDict.html">ClassifierDict</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">LazyEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadDict.html">LazyLoadDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.LazyLoadEvalDict.html">LazyLoadEvalDict</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.identitydict.html">identitydict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.dict_utils.IdentityDict.html">IdentityDict</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">LazyDict</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -950,6 +948,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.str2poly.html">str2poly</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
 </ul>
@@ -1076,7 +1075,7 @@
     
     <li class="breadcrumb-item"><a href="knotpy.utils.dict_utils.html" class="nav-link">dict_utils</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">LazyEvalDict</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">LazyDict</span></li>
   </ul>
 </nav>
 </div>
@@ -1093,160 +1092,163 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="lazyevaldict">
-<h1>LazyEvalDict<a class="headerlink" href="#lazyevaldict" title="Link to this heading">#</a></h1>
+  <section id="lazydict">
+<h1>LazyDict<a class="headerlink" href="#lazydict" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LazyEvalDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_function</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LazyDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
-<p>A dictionary that evaluates values lazily upon access.</p>
-<p>This class extends the standard Python dictionary to support lazy evaluation
-of its values. A user-defined function is applied to the value associated
-with a key the first time that key is accessed. Subsequent accesses return
-the already-evaluated value without invoking the evaluation function again.
-This approach is beneficial in scenarios where the value computation is
-expensive, and the result is needed only on demand.</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>_eval_function: Callable function used to lazily evaluate values.
-_evaluated_keys: Set of keys whose values have already been evaluated.</p>
+<p>A dictionary that supports lazy loading and lazy value evaluation.</p>
+<p>LazyDict defers loading of data until the dictionary is first accessed.
+Additionally, values can be lazily evaluated on first access using a
+provided evaluation function.</p>
+<p>This class is useful when loading or computing the data is expensive
+and you want to postpone that cost until the data is actually needed.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>load_function (Callable or None): A function that returns the data to load.</dt><dd><p>It should return a dictionary or a list of (key, value) pairs.
+If None, the dictionary is assumed to be already initialized.</p>
+</dd>
+<dt>eval_function (Callable or None): A function to evaluate values on access.</dt><dd><p>It takes a raw value and returns the evaluated version. If None,
+values are returned as-is.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>TypeError: If <cite>eval_function</cite> is not None or callable.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;1 + 1&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;2 * 2&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">LazyDict</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+<span class="go">2</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_function</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.__init__" title="Link to this definition">#</a></dt>
-<dd><p>Initializes an instance of a class that performs actions based on a provided evaluation function.
-Ensures the evaluation function is callable and prepares an internal state to track evaluated keys.</p>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>eval_function<span class="classifier">Callable</span></dt><dd><p>A callable used to perform evaluations. Must be passed and checked for
-its callable nature.</p>
-</dd>
-<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args</dt><dd><p>Positional arguments passed to the base class initializer.</p>
-</dd>
-<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt><dd><p>Keyword arguments passed to the base class initializer.</p>
-</dd>
-</dl>
-</section>
-<section id="raises">
-<h2>Raises<a class="headerlink" href="#raises" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>TypeError</dt><dd><p>If <cite>eval_function</cite> is not callable.</p>
-</dd>
-</dl>
-</section>
-</dd></dl>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.__init__" title="knotpy.utils.dict_utils.LazyEvalDict.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(eval_function, *args, **kwargs)</p></td>
-<td><p>Initializes an instance of a class that performs actions based on a provided evaluation function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.clear" title="knotpy.utils.dict_utils.LazyEvalDict.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.__init__" title="knotpy.utils.dict_utils.LazyDict.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(load_function[, eval_function])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.copy" title="knotpy.utils.dict_utils.LazyEvalDict.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.clear" title="knotpy.utils.dict_utils.LazyDict.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.fromkeys" title="knotpy.utils.dict_utils.LazyEvalDict.fromkeys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code></a>(iterable[, value])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.copy" title="knotpy.utils.dict_utils.LazyDict.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.fromkeys" title="knotpy.utils.dict_utils.LazyDict.fromkeys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code></a>(iterable[, value])</p></td>
 <td><p>Create a new dictionary with keys from iterable and values set to value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.get" title="knotpy.utils.dict_utils.LazyEvalDict.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(key[, default])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.get" title="knotpy.utils.dict_utils.LazyDict.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(key[, default])</p></td>
 <td><p>Return the value for key if key is in the dictionary, else default.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.items" title="knotpy.utils.dict_utils.LazyEvalDict.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
-<td><p>Return all key-value pairs, forcing evaluation of any unevaluated entries.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.keys" title="knotpy.utils.dict_utils.LazyEvalDict.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.items" title="knotpy.utils.dict_utils.LazyDict.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.pop" title="knotpy.utils.dict_utils.LazyEvalDict.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.keys" title="knotpy.utils.dict_utils.LazyDict.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.pop" title="knotpy.utils.dict_utils.LazyDict.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
 <td><p>If the key is not found, return the default if given; otherwise, raise a KeyError.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.popitem" title="knotpy.utils.dict_utils.LazyEvalDict.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.popitem" title="knotpy.utils.dict_utils.LazyDict.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Remove and return a (key, value) pair as a 2-tuple.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.setdefault" title="knotpy.utils.dict_utils.LazyEvalDict.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(key[, default])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.reload" title="knotpy.utils.dict_utils.LazyDict.reload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reload</span></code></a>()</p></td>
+<td><p>Reload the dictionary by clearing existing values and re-running the load function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.setdefault" title="knotpy.utils.dict_utils.LazyDict.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(key[, default])</p></td>
 <td><p>Insert key with a value of default if key is not in the dictionary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.update" title="knotpy.utils.dict_utils.LazyEvalDict.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.update" title="knotpy.utils.dict_utils.LazyDict.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
 <td><p>If E is present and has a .keys() method, then does:  for k in E.keys(): D[k] = E[k] If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v In either case, this is followed by: for k in F:  D[k] = F[k]</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyEvalDict.values" title="knotpy.utils.dict_utils.LazyEvalDict.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
-<td><p>Return all values, forcing evaluation of any unevaluated entries.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.dict_utils.LazyDict.values" title="knotpy.utils.dict_utils.LazyDict.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Remove</span> <span class="pre">all</span> <span class="pre">items</span> <span class="pre">from</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.clear" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Remove</span> <span class="pre">all</span> <span class="pre">items</span> <span class="pre">from</span> <span class="pre">D.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.clear" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">shallow</span> <span class="pre">copy</span> <span class="pre">of</span> <span class="pre">D</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.copy" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">shallow</span> <span class="pre">copy</span> <span class="pre">of</span> <span class="pre">D</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.copy" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.fromkeys">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.fromkeys" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.fromkeys">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.fromkeys" title="Link to this definition">#</a></dt>
 <dd><p>Create a new dictionary with keys from iterable and values set to value.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.get" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.get" title="Link to this definition">#</a></dt>
 <dd><p>Return the value for key if key is in the dictionary, else default.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.items" title="Link to this definition">#</a></dt>
-<dd><p>Return all key-value pairs, forcing evaluation of any unevaluated entries.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.keys" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.items" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">v,</span> <span class="pre">remove</span> <span class="pre">specified</span> <span class="pre">key</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">the</span> <span class="pre">corresponding</span> <span class="pre">value.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.pop" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.keys" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">v,</span> <span class="pre">remove</span> <span class="pre">specified</span> <span class="pre">key</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">the</span> <span class="pre">corresponding</span> <span class="pre">value.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.pop" title="Link to this definition">#</a></dt>
 <dd><p>If the key is not found, return the default if given; otherwise,
 raise a KeyError.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.popitem">
-<span class="sig-name descname"><span class="pre">popitem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.popitem" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.popitem">
+<span class="sig-name descname"><span class="pre">popitem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.popitem" title="Link to this definition">#</a></dt>
 <dd><p>Remove and return a (key, value) pair as a 2-tuple.</p>
 <p>Pairs are returned in LIFO (last-in, first-out) order.
 Raises KeyError if the dict is empty.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.setdefault">
-<span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.setdefault" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.reload">
+<span class="sig-name descname"><span class="pre">reload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.reload" title="Link to this definition">#</a></dt>
+<dd><p>Reload the dictionary by clearing existing values and re-running the load function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.setdefault">
+<span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.setdefault" title="Link to this definition">#</a></dt>
 <dd><p>Insert key with a value of default if key is not in the dictionary.</p>
 <p>Return the value for key if key is in the dictionary, else default.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**F</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Update</span> <span class="pre">D</span> <span class="pre">from</span> <span class="pre">mapping/iterable</span> <span class="pre">E</span> <span class="pre">and</span> <span class="pre">F.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.update" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**F</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Update</span> <span class="pre">D</span> <span class="pre">from</span> <span class="pre">mapping/iterable</span> <span class="pre">E</span> <span class="pre">and</span> <span class="pre">F.</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.update" title="Link to this definition">#</a></dt>
 <dd><p>If E is present and has a .keys() method, then does:  for k in E.keys(): D[k] = E[k]
 If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
 In either case, this is followed by: for k in F:  D[k] = F[k]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyEvalDict.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyEvalDict.values" title="Link to this definition">#</a></dt>
-<dd><p>Return all values, forcing evaluation of any unevaluated entries.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="knotpy.utils.dict_utils.LazyDict.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="headerlink" href="#knotpy.utils.dict_utils.LazyDict.values" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1275,19 +1277,20 @@ In either case, this is followed by: for k in F:  D[k] = F[k]</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.__init__"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.clear"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.clear()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.copy"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.copy()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.fromkeys"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.fromkeys()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.get"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.get()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.items"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.items()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.keys"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.keys()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.pop"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.pop()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.popitem"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.popitem()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.setdefault"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.setdefault()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.update"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.update()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyEvalDict.values"><code class="docutils literal notranslate"><span class="pre">LazyEvalDict.values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict"><code class="docutils literal notranslate"><span class="pre">LazyDict</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.__init__"><code class="docutils literal notranslate"><span class="pre">LazyDict.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.clear"><code class="docutils literal notranslate"><span class="pre">LazyDict.clear()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.copy"><code class="docutils literal notranslate"><span class="pre">LazyDict.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.fromkeys"><code class="docutils literal notranslate"><span class="pre">LazyDict.fromkeys()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.get"><code class="docutils literal notranslate"><span class="pre">LazyDict.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.items"><code class="docutils literal notranslate"><span class="pre">LazyDict.items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.keys"><code class="docutils literal notranslate"><span class="pre">LazyDict.keys()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.pop"><code class="docutils literal notranslate"><span class="pre">LazyDict.pop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.popitem"><code class="docutils literal notranslate"><span class="pre">LazyDict.popitem()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.reload"><code class="docutils literal notranslate"><span class="pre">LazyDict.reload()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.setdefault"><code class="docutils literal notranslate"><span class="pre">LazyDict.setdefault()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.update"><code class="docutils literal notranslate"><span class="pre">LazyDict.update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.dict_utils.LazyDict.values"><code class="docutils literal notranslate"><span class="pre">LazyDict.values()</span></code></a></li>
 </ul>
 </li>
 </ul>
