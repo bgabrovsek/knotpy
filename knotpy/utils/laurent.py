@@ -174,11 +174,11 @@ def normalize_positive_exponents(expr, variables=None):
 
     expr = expand(expr / factor)
 
-    # Normalize sign: make leading coefficient positive
-    lead = expr.as_ordered_terms()[0]
-    coeff = lead.as_coeff_Mul()[0]
-    if coeff.could_extract_minus_sign():
-        expr *= -1
+    # # Normalize sign: make leading coefficient positive
+    # lead = expr.as_ordered_terms()[0]
+    # coeff = lead.as_coeff_Mul()[0]
+    # if coeff.could_extract_minus_sign():
+    #     expr *= -1
 
     return simplify(expr)
 
@@ -214,7 +214,7 @@ def normalize_symmetric(expr, variable):
     return sympy.simplify(expr_sym)
 
 
-def canonicalize_under_variable_permutation(expr, variables=None):
+def canonicalize_under_variable_permutation(expr, variables=None, allow_sign_change=False):
     """
     Canonicalize a polynomial expression up to permutation of variables.
 
@@ -227,6 +227,7 @@ def canonicalize_under_variable_permutation(expr, variables=None):
     """
     if variables is None:
         variables = extract_variables(expr)
+    variables = sorted(variables, key=str)
     expr = expand(expr)
     if not variables:
         return expr
@@ -252,9 +253,17 @@ def canonicalize_under_variable_permutation(expr, variables=None):
         # Canonical representation: sorted monomial exponent+coefficient pairs
         monomial_repr = tuple(sorted(poly.as_dict().items()))
 
-        if best_repr is None or monomial_repr < best_repr:
+        if best_repr is None or monomial_repr > best_repr:
             best_repr = monomial_repr
             best_expr = expr_perm
 
+        if allow_sign_change:
+            # Canonical representation: sorted monomial exponent+coefficient pairs
+            expr_perm = expand(-expr_perm)
+            poly = Poly(expr_perm, *variables)
+            monomial_repr = tuple(sorted(poly.as_dict().items()))
+            if monomial_repr > best_repr:
+                best_repr = monomial_repr
+                best_expr = expr_perm
+        #print("bestest", best_expr)
     return best_expr
-

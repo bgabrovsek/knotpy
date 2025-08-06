@@ -48,14 +48,17 @@ def alexander_multivariable(k: PlanarDiagram | OrientedPlanarDiagram):
     # print("P", poly_gcd)
     poly_gcd = normalize_positive_exponents(poly_gcd, variables)
     # print("P", poly_gcd)
-    poly_gcd = canonicalize_under_variable_permutation(poly_gcd, variables)
+    poly_gcd = canonicalize_under_variable_permutation(poly_gcd, variables, allow_sign_change=True)
     # print("P", poly_gcd)
 
     # Return normalized form (up to units: sign and monomials)
     return expand(poly_gcd)
 
-
 def multivariable_alexander(k: PlanarDiagram | OrientedPlanarDiagram):
+    """
+    Compute the Alexander polynomial from the abelianized Alexander matrix.
+    Returns the gcd of all (n-1)x(n-1) minors (up to units).
+    """
     return alexander_multivariable(k)
 
 

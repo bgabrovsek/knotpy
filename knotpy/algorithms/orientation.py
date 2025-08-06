@@ -49,17 +49,29 @@ def all_orientations(k: PlanarDiagram, up_to_reversal=False) -> list[OrientedPla
         list: A list of oriented planar diagrams.
     """
 
+    if k.is_oriented():
+        k = unorient(k)
+
+    base_name = str(k.name).strip().strip('+-') if k.name is not None else None
+
     all_edges = sorted(edges(k))
     if up_to_reversal:
         orient = [(True,) + rest for rest in it.product((True, False), repeat=len(all_edges) - 1)]  # not needed to be a list
     else:
         orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
 
-    return [
+    result = [
         orient_edges(k=k, edges=edge_orientations)
         for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(all_edges, o)] for o in orient)
     ]
 
+    # add signs to the end of the string
+    if k.name is not None:
+        for k, o in zip(result, orient):
+            if k.name:
+                k.name = str(k.name) + "".join(["+" if _ else "-" for _ in o])
+
+    return result
 
 def orient(k: PlanarDiagram):
     """

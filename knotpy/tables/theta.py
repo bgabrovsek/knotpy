@@ -11,7 +11,7 @@ __author__ = 'Boštjan Gabrovšek'
 from pathlib import Path
 from functools import partial
 
-from knotpy.utils.dict_utils import LazyLoadEvalDict
+from knotpy.utils.dict_utils import LazyDict
 from knotpy.tables.invariant_reader import load_invariant_table
 from knotpy.classes.freezing import freeze
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
@@ -21,6 +21,7 @@ from knotpy.tables.name import clean_name, parse_name
 from knotpy.classes.freezing import unfreeze
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.symmetry import mirror as mirror_diagram
+from knotpy.tables.invariant_reader import _eval_diagram_dict, _eval_yamada_dict
 
 _DATA_DIR = Path(__file__).parent / "data"
 _THETA_CURVE_TABLE_CROSSINGS = [0, 3, 4, 5]
@@ -33,14 +34,14 @@ def _evaluate_diagram(unevaluated_value: str) -> PlanarDiagram | OrientedPlanarD
 def _load_theta_curve_table():
     global _theta_curve_table, _theta_curve_yamada_table
     """Loads the knot table from the data directory."""
-    _theta_curve_table = LazyLoadEvalDict(
+    _theta_curve_table = LazyDict(
         load_function=partial(load_invariant_table, filename=_DATA_DIR / f"theta_curves.csv.gz", evaluate=False),
-        eval_function=lambda _: _evaluate_dictionary(_)
+        eval_function=_eval_diagram_dict
     )
 
-    _theta_curve_yamada_table = LazyLoadEvalDict(
+    _theta_curve_yamada_table = LazyDict(
         load_function=partial(load_invariant_table, filename=_DATA_DIR / f"theta_curves_yamada.csv.gz", evaluate=False),
-        eval_function=lambda _: _evaluate_dictionary(_)
+        eval_function=_eval_yamada_dict
     )
 
 

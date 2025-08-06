@@ -12,7 +12,7 @@ are connected through a tiny bond
 
 from abc import ABC, abstractmethod
 
-from knotpy.utils.dict_utils import compare_dicts, identitydict
+from knotpy.utils.dict_utils import compare_dicts, IdentityDict
 from knotpy.utils.decorators import total_ordering_from_compare
 
 """

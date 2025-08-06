@@ -1,4 +1,4 @@
-from knotpy import LazyLoadEvalDict
+from knotpy import LazyDict
 from knotpy.tables.invariant_writer import InvariantTableWriter, save_invariant_table
 from knotpy.tables.invariant_reader import load_invariant_table, _evaluate_dictionary
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
@@ -80,11 +80,11 @@ def helper_load_diagram_table():
 
 def helper_lazy_load_diagram_table():
 
-    lazy1 = LazyLoadEvalDict(load_function=partial(load_invariant_table, filename="test_knot_table.csv", lazy=True),
-                             eval_function=_evaluate_dictionary)
+    lazy1 = LazyDict(load_function=partial(load_invariant_table, filename="test_knot_table.csv", lazy=True),
+                     eval_function=_evaluate_dictionary)
 
-    lazy2 = LazyLoadEvalDict(load_function=partial(load_invariant_table, filename="test_knot_table2.csv", lazy=True),
-                             eval_function=_evaluate_dictionary)
+    lazy2 = LazyDict(load_function=partial(load_invariant_table, filename="test_knot_table2.csv", lazy=True),
+                     eval_function=_evaluate_dictionary)
 
 
     print("Table 1")

@@ -1,13 +1,15 @@
+import knotpy as kp
 
-from knotpy.tables.example import trefoil_knot
+
+# TODO: assert
 
 if __name__ == '__main__':
-    k = trefoil_knot()
+    k = kp.knot("3_1")
     print(k)
 
     # access crossing information by node name
-    print("crossing", k.nodes["a"])
-    print("crossing", k["a"])
+    # print("crossing", k.nodes["a"])
+    # print("crossing", k["a"])
 
     # get opposite endpoint (twin) of an endpoint (by Endpoint instance or pair)
     ep_instance = k.nodes["a"][0]
@@ -27,8 +29,8 @@ if __name__ == '__main__':
     print("Identity of", ep_instance, "is", k.endpoint_from_pair(ep_instance))  # also works as an identity for an endpoint
 
     # jump over crossing
-    print("Jump of", ep_pair, "is", k.jump_over_node(ep_pair))
-    print("Jump of", ep_instance, "is", k.jump_over_node(ep_pair))  # also works as an identity for an endpoint
+    # print("Jump of", ep_pair, "is", k.jump_over_node(ep_pair))
+    # print("Jump of", ep_instance, "is", k.jump_over_node(ep_pair))  # also works as an identity for an endpoint
 
     #
     # k.adjacent()

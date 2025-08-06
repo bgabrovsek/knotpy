@@ -1,4 +1,4 @@
-from knotpy.utils.dict_utils import LazyLoadEvalDict, LazyEvalDict, LazyLoadDict
+from knotpy.utils.dict_utils import LazyDict#, #LazyEvalDict, LazyLoadDict
 
 _loaded = False
 _evaluated = []
@@ -18,7 +18,7 @@ def test_lazy_load():
     global _loaded
 
     _loaded = False
-    d = LazyLoadDict(_data_loader)
+    d = LazyDict(_data_loader)
     assert not _loaded
     value = d["a"]
     assert _loaded
@@ -26,7 +26,7 @@ def test_lazy_load():
 
 
     _loaded = False
-    d = LazyLoadDict(_data_loader)
+    d = LazyDict(_data_loader)
     assert not _loaded
     value = "a" in d
     assert _loaded
@@ -36,7 +36,7 @@ def test_lazy_eval():
     global _evaluated
     _evaluated = []
 
-    d = LazyEvalDict(_eval, _data_loader())
+    d = LazyDict(_data_loader, _eval)
     assert _evaluated == []
     v = d["a"]
     assert _evaluated == ["100-99"]
@@ -53,7 +53,7 @@ def test_lazy_load_eval():
     global _loaded, _evaluated
     _evaluated = []
     _loaded = False
-    d = LazyLoadEvalDict(_data_loader, _eval)
+    d = LazyDict(_data_loader, _eval)
     assert not _loaded
     assert _evaluated == []
     v = d["a"]

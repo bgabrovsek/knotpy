@@ -54,7 +54,7 @@ def normalize_minors(minors_list, variables):
     No simplification is performed, only expansion.
     """
     factor = get_monomial_to_clear_negatives(minors_list, variables)
-    normalized = [expand(factor * expr) for expr in minors_list]
+    normalized = {expand(factor * expr) for expr in minors_list}
     return normalized, factor
 
 # def get_common_denominator_factor(expressions, variables):
@@ -94,19 +94,19 @@ def minors(matrix):
     if m < n - 1:
         raise ValueError("Cannot compute matrix minors (too few columns)")
 
-    result = []
+    result = set()
 
     row_combos = list(combinations(range(n), n - 1))
     col_combos = list(combinations(range(m), n - 1))
 
     # Use local variable to avoid attribute lookup in loop
     extract = matrix.extract
-    append = result.append
+    add = result.add
 
     for row_idx in row_combos:
         for col_idx in col_combos:
             submatrix = extract(row_idx, col_idx)
-            append(submatrix.det(method='berkowitz'))  # faster symbolic method
+            add(expand(submatrix.det(method='berkowitz')))  # faster symbolic method
 
     return result
 

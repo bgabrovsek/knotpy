@@ -10,8 +10,10 @@ __author__ = 'Boštjan Gabrovšek'
 
 from pathlib import Path
 from functools import partial
+from sympy import sympify
 
-from knotpy.utils.dict_utils import LazyLoadEvalDict
+from knotpy.notation.native import from_knotpy_notation
+from knotpy.utils.dict_utils import LazyDict
 from knotpy.tables.invariant_reader import load_invariant_table
 from knotpy.classes.freezing import freeze
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
@@ -21,6 +23,8 @@ from knotpy.tables.name import clean_name, parse_name
 from knotpy.classes.freezing import unfreeze
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.symmetry import mirror as mirror_diagram
+from knotpy.tables.invariant_reader import _eval_diagram_symmetry_dict, _eval_homflypt_dict, _eval_kauffman_dict
+
 
 _DATA_DIR = Path(__file__).parent / "data"
 _KNOT_TABLE_CROSSINGS = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -28,25 +32,27 @@ _knot_table = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 _knot_homflypt_table = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 _knot_kauffman_table = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 
-def _evaluate_diagram(unevaluated_value: str) -> PlanarDiagram | OrientedPlanarDiagram:
-    return freeze(from_knotpy_notation(unevaluated_value))  # freeze the diagram
+# def _evaluate_diagram(unevaluated_value: str) -> PlanarDiagram | OrientedPlanarDiagram:
+#     return freeze(from_knotpy_notation(unevaluated_value))  # freeze the diagram
+
+
 
 def _load_knot_table():
     """Loads the knot table from the data directory."""
     for n in _KNOT_TABLE_CROSSINGS:
-        _knot_table[n] = LazyLoadEvalDict(
+        _knot_table[n] = LazyDict(
             load_function=partial(load_invariant_table, filename=_DATA_DIR / f"knots_{n}.csv.gz", evaluate=False),
-            eval_function=lambda _: _evaluate_dictionary(_)
+            eval_function=_eval_diagram_symmetry_dict
         )
 
-        _knot_homflypt_table[n] = LazyLoadEvalDict(
+        _knot_homflypt_table[n] = LazyDict(
             load_function=partial(load_invariant_table, filename=_DATA_DIR / f"knots_homflypt_{n}.csv.gz", evaluate=False),
-            eval_function=lambda _: _evaluate_dictionary(_)
+            eval_function=_eval_homflypt_dict
         )
 
-        _knot_kauffman_table[n] = LazyLoadEvalDict(
+        _knot_kauffman_table[n] = LazyDict(
             load_function=partial(load_invariant_table, filename=_DATA_DIR / f"knots_kauffman_{n}.csv.gz", evaluate=False),
-            eval_function=lambda _: _evaluate_dictionary(_)
+            eval_function=_eval_kauffman_dict
         )
 
 
