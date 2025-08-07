@@ -1,6 +1,6 @@
 from sympy import symbols, simplify, gcd, fraction
 
-from knotpy.invariants.fundamental_group import gcd_of_minors
+
 def test1():
     # Define variables
     t1, t2 = symbols('t1 t2')
@@ -118,13 +118,13 @@ def check_expressions():
         print(xx, yy)
         assert xx == yy, "Mismatch in expressions"
 
-    # tst minors
-    e1 = gcd_of_minors(expressions1, variables=[t1, t2])
-    # tst minors
-    e2 = gcd_of_minors(expressions2, variables=[t1, t2])
-
-    print("expression 1:", e1)
-    print("expression 1:", e2)
+    # # tst minors
+    # e1 = gcd_of_minors(expressions1, variables=[t1, t2])
+    # # tst minors
+    # e2 = gcd_of_minors(expressions2, variables=[t1, t2])
+    #
+    # print("expression 1:", e1)
+    # print("expression 1:", e2)
 
 if __name__ == "__main__":
     test1()

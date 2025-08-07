@@ -5,4 +5,5 @@ from .invariant_reader import *
 from .graphs import *
 from .generate import *
 from .knot import *
+from .link import *
 from .theta import *

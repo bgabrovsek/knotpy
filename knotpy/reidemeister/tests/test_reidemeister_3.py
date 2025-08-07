@@ -6,6 +6,7 @@ from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.canonical import canonical
 from knotpy.invariants.yamada import yamada
 from knotpy.invariants.jones import jones
+from knotpy.invariants.bracket import bracket
 from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
@@ -33,12 +34,24 @@ def test_r3_find_moves():
 
 def test_make_reidemeister_3_move():
 
+    # -1/sqrt(t) - 1/t**(5/2) == -1/t**2 - 1/t**4
+
     for diagram in _get_examples():
         j = jones(diagram)
+        b = bracket(diagram, normalize=True)
         for loc in find_reidemeister_3_triangle(diagram):
             k_ = reidemeister_3(diagram, loc, inplace=False)
             assert sanity_check(k_)
-            assert jones(k_) == j
+
+            # b_ = bracket(k_, normalize=True)
+            # assert b_ == b,
+            # print(k_)
+            #
+            # print(jones(k_))
+            # print(j)
+            # print()
+            j_ = jones(k_)
+            assert j_ == j, "Bracket is not equal. Expected {}, got {}. Diagram: {} and {}".format(j, j_, diagram, k_)
 
 
     #
@@ -57,6 +70,5 @@ def test_make_reidemeister_3_move():
 
 
 if __name__ == '__main__':
-
-    test_r3_find_moves()
-    test_make_reidemeister_3_move()
+    for x in range(100):
+        test_make_reidemeister_3_move()

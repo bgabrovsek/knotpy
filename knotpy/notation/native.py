@@ -43,7 +43,8 @@ def _node_to_str(node:Node):
     """
     Convert a node to a string representation.
     """
-    return " ".join(f"{ep.node}{ep.position}" for ep in node)
+    ept = {Endpoint: "", OutgoingEndpoint: "o", IngoingEndpoint: "i"}
+    return " ".join(f"{ep.node}{ep.position}{ept[type(ep)]}" for ep in node)
 
 
 def to_knotpy_notation(k):
@@ -53,6 +54,8 @@ def to_knotpy_notation(k):
     Example:
 
     """
+
+    ept = {Endpoint: "", OutgoingEndpoint: "o", IngoingEndpoint: "i"}
     _node_abbr = {Crossing: "X", Vertex: "V"}
     compact_notation = all(isinstance(node, str) and len(node) == 1 for node in k.nodes)  # what notation to use?
 
@@ -63,11 +66,10 @@ def to_knotpy_notation(k):
         for node in sorted(k.nodes):
             nodes_str += str(node) + "=" + _node_abbr[type(k.nodes[node])] + "(" + _node_to_str(k.nodes[node]) + ")" + " "
         nodes_str = nodes_str[:-1]
-
         # encode attributes
         diagram_attr_str = _attr_to_str(k.attr)
         node_attr_str = " ".join(f"{node}:{{{_attr_to_str(k.nodes[node].attr)}}}" for node in sorted(k.nodes) if k.nodes[node].attr)
-        endpoint_attr_str = " ".join(f"{ep.node}{ep.position}:{{{_attr_to_str(ep.attr)}}}" for ep in sorted(k.endpoints) if ep.attr)
+        endpoint_attr_str = " ".join(f"{ep.node}{ep.position}{ept[type(ep)]}:{{{_attr_to_str(ep.attr)}}}" for ep in sorted(k.endpoints) if ep.attr)
 
         # do not provide all attributes if they do not exist
         parts = [diagram_attr_str, node_attr_str, endpoint_attr_str]

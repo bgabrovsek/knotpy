@@ -1,5 +1,5 @@
 __all__ = ['affine_index_polynomial']
-__version__ = '0.1'
+__version__ = '1.0'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 

@@ -1,30 +1,24 @@
 import re
-import sympy
-from sympy import Poly, expand, symbols
 from itertools import permutations
-import sympy
-from sympy import expand, simplify, Poly
-from sympy import expand, simplify, S, symbols
-from collections import defaultdict
+from sympy import expand, simplify, S, symbols, Expr, Poly, Symbol
 
-def poly2str(poly):
-    """Convert polynomial into a filename-type string"""
-    s = str(poly)
-    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
-        s = s.replace(x, y)
-    return s
-
-def str2poly(s):
-    """Convert a filename--type string into a polynomial"""
-    for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
-        s = s.replace(y, x)
-    return sympy.sympify(s)
+# def poly2str(poly):
+#     """Convert polynomial into a filename-type string"""
+#     s = str(poly)
+#     for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
+#         s = s.replace(x, y)
+#     return s
+#
+# def str2poly(s):
+#     """Convert a filename--type string into a polynomial"""
+#     for x, y in ["/d", "*x", "+p", "-m", " _", "(o", ")z"]:
+#         s = s.replace(y, x)
+#     return sympify(s)
 
 def reciprocal(expr, var):
     if isinstance(var, str):
-        var = sympy.symbols(var)
-    return sympy.expand(expr.subs(var, var**(-1)))
-
+        var = symbols(var)
+    return expand(expr.subs(var, var**(-1)))
 
 
 def extract_variables(expr, prefix=None):
@@ -56,26 +50,27 @@ def extract_variables(expr, prefix=None):
     sorted_syms = sorted(extracted, key=lambda tup: (tup[0], tup[1]))
     return [sym for _, _, sym in sorted_syms]
 
+
 def laurent_polynomial_to_tuples(expr, var):
     """
     Converts a SymPy Laurent polynomial expression into a list of tuples representation.
 
     Args:
-        expr (sympy.core.expr.Expr): The SymPy Laurent polynomial expression to convert.
-        var (sympy.core.symbol.Symbol): The variable in the Laurent polynomial.
+        expr (core.expr.Expr): The SymPy Laurent polynomial expression to convert.
+        var (core.symbol.Symbol): The variable in the Laurent polynomial.
 
     Returns:
         list of tuples: Each tuple represents a term in the polynomial as (coefficient, exponent).
     """
 
     if isinstance(var, str):
-        var = sympy.symbols(var)
+        var = symbols(var)
 
-    if not isinstance(var, sympy.Symbol):
+    if not isinstance(var, Symbol):
         raise ValueError("The variable must be a SymPy Symbol")
 
     # Expand the expression to ensure all terms are separated
-    expr = sympy.expand(expr)
+    expr = expand(expr)
 
     # Get the terms of the polynomial
     terms = expr.as_ordered_terms()
@@ -89,75 +84,61 @@ def laurent_polynomial_to_tuples(expr, var):
 
     return sorted(poly_tuples, key=lambda t: (t[1],t[0]))
 
-#
-#
-# def normalize_positive_exponents(expr, variables=None):
-#     """
-#     Multiply expr by a monomial so that all exponents of each variable are ≥ 0,
-#     and multiply by -1 if the leading coefficient is negative.
-#     Works for Laurent polynomials (allows negative exponents).
-#     """
-#
-#     if variables is None:
-#         variables = extract_variables(expr)
-#
-#     expr = sympy.expand(expr)
-#     terms = expr.as_ordered_terms()
-#
-#     # Initialize minimum exponents
-#     min_exp = defaultdict(int)
-#     for var in variables:
-#         min_exp[var] = 0
-#
-#     # Determine minimal exponent for each variable across all terms
-#     for term in terms:
-#         powers = term.as_powers_dict()
-#         for var in variables:
-#             e = powers.get(var, 0)
-#             min_exp[var] = min(min_exp[var], e)
-#
-#     # Build monomial multiplier to shift all exponents to ≥ 0
-#     multiplier = 1
-#     for var in variables:
-#         if min_exp[var] < 0:
-#             multiplier *= var**(-min_exp[var])
-#
-#     # Apply shift
-#     shifted_expr = sympy.expand(expr * multiplier)
-#
-#     # Check leading coefficient
-#     leading_term = shifted_expr.as_ordered_terms()[0]
-#     if leading_term.could_extract_minus_sign():
-#         shifted_expr *= -1
-#
-#     return sympy.simplify(shifted_expr)
 
-
-def normalize_positive_exponents(expr, variables=None):
+def normalize_polynomial(poly: Poly) -> Poly:
     """
-    Normalize a (Laurent) polynomial by:
-    - Dividing out the minimal powers of each variable (making all exponents ≥ 0).
-    - Multiplying by -1 if the leading term has negative coefficient.
-
-    This gives a canonical representative up to multiplication by monomials and ±1.
+    Normalize a multivariate polynomial by dividing out the minimal exponent of each variable,
+    so that the result has the minimal possible support (lowest exponents starting at 0).
 
     Args:
-        expr: A SymPy expression (e.g., Laurent polynomial).
-        variables: Optional list of variables to consider. If None, auto-detects.
+        poly (Poly): A SymPy Poly object with positive exponents.
 
     Returns:
-        A normalized SymPy expression.
+        Poly: The normalized Poly object.
+    """
+    gens = poly.gens
+    monoms = poly.monoms()
+
+    if not monoms:
+        return poly  # Zero polynomial
+
+    # Find minimum exponent for each variable across all monomials
+    min_exps = [min(m[i] for m in monoms) for i in range(len(gens))]
+
+    # Build the monomial factor to divide out
+    shift_monomial = {gen: exp for gen, exp in zip(gens, min_exps)}
+    factor = S.One
+    for g, e in shift_monomial.items():
+        if e:
+            factor *= g ** e
+
+    return Poly(poly.as_expr() / factor, *gens)
+
+def normalize_laurent_polynomial(expr: Expr, variables=None, normalize_sign: bool = True) -> Expr:
+    """
+    Normalize a (Laurent) polynomial by:
+    - Making all exponents of the specified variables non-negative.
+    - Optionally flipping the sign so that the leading term has a positive coefficient.
+
+    This produces a canonical form up to multiplication by monomials and ±1.
+
+    Args:
+        expr (Expr): The SymPy expression to normalize.
+        variables (Optional[Iterable]): Variables to consider.
+            If None, all free symbols in `expr` are used.
+        normalize_sign (bool): If True, ensures the leading term has a positive coefficient.
+
+    Returns:
+        Expr: The normalized polynomial.
     """
     expr = expand(expr)
 
-    # Auto-detect variables if not provided
     if variables is None:
         variables = list(expr.free_symbols)
 
     if not variables:
-        return simplify(expr)
+        return expr
 
-    # Convert to terms and extract exponents
     terms = expr.as_ordered_terms()
     min_exp = {v: S.Infinity for v in variables}
 
@@ -166,28 +147,27 @@ def normalize_positive_exponents(expr, variables=None):
             _, exp = term.as_coeff_exponent(v)
             min_exp[v] = min(min_exp[v], exp)
 
-    # Build monomial to divide out
     factor = S.One
     for v in variables:
-        if min_exp[v] != 0 and min_exp[v] != S.Infinity:
-            factor *= v**min_exp[v]
+        exp = min_exp[v]
+        if exp != 0 and exp != S.Infinity:
+            factor *= v ** exp
 
     expr = expand(expr / factor)
 
-    # # Normalize sign: make leading coefficient positive
-    # lead = expr.as_ordered_terms()[0]
-    # coeff = lead.as_coeff_Mul()[0]
-    # if coeff.could_extract_minus_sign():
-    #     expr *= -1
+    if normalize_sign:
+        lead_coeff = expr.as_ordered_terms()[0].as_coeff_Mul()[0]
+        if lead_coeff.could_extract_minus_sign():
+            expr = -expr
 
-    return simplify(expr)
+    return expr
 
 def normalize_symmetric(expr, variable):
     """
     Normalize a Laurent polynomial by shifting exponents so it's centered
     and symmetric under variable ↔ 1/variable. Also ensures leading coefficient is positive.
     """
-    expr = sympy.expand(expr)
+    expr = expand(expr)
     terms = expr.as_ordered_terms()
 
     # Step 1: Get all exponents of the variable
@@ -201,17 +181,17 @@ def normalize_symmetric(expr, variable):
 
     # Step 3: Compute shift to center polynomial
     shift = -(max_exp + min_exp) // 2
-    expr_shifted = sympy.expand(variable**shift * expr)
+    expr_shifted = expand(variable**shift * expr)
 
     # Step 4: Symmetrize: (f(t) + f(t^-1)) / 2
-    expr_sym = sympy.expand((expr_shifted + expr_shifted.subs(variable, 1 / variable)) / 2)
+    expr_sym = expand((expr_shifted + expr_shifted.subs(variable, 1 / variable)) / 2)
 
     # Step 5: Ensure leading coefficient is positive
     leading_term = expr_sym.as_ordered_terms()[0]
     if leading_term.could_extract_minus_sign():
         expr_sym = -expr_sym
 
-    return sympy.simplify(expr_sym)
+    return simplify(expr_sym)
 
 
 def canonicalize_under_variable_permutation(expr, variables=None, allow_sign_change=False):

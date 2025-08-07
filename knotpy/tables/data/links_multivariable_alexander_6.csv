@@ -1,0 +1,19 @@
+name,multivariable alexander
+L6a1++,2*t1*t2 - t1 - t2 + 2
+L6a1+-,t1*t2 - 2*t1 - 2*t2 + 1
+L6a2++,t1**2*t2 + t1*t2**2 - t1*t2 + t1 + t2
+L6a2+-,t1**2*t2 + t1*t2**2 - t1*t2 + t1 + t2
+L6a3++,t1**2 + t1*t2 + t2**2
+L6a3+-,t1**2*t2**2 + t1*t2 + 1
+L6a4+++,-t1*t2*t3 + t1*t2 + t1*t3 - t1 + t2*t3 - t2 - t3 + 1
+L6a4++-,-t1*t2*t3 + t1*t2 + t1*t3 - t1 + t2*t3 - t2 - t3 + 1
+L6a4+-+,-t1*t2*t3 + t1*t2 + t1*t3 - t1 + t2*t3 - t2 - t3 + 1
+L6a4+--,-t1*t2*t3 + t1*t2 + t1*t3 - t1 + t2*t3 - t2 - t3 + 1
+L6a5+++,-t1*t2*t3 + t1*t3 - t1 + t2*t3 - t2 + 1
+L6a5++-,-t1*t2 - t1*t3 + t1 - t2*t3 + t2 + t3
+L6a5+-+,-t1*t2*t3 + t1*t3 - t1 + t2*t3 - t2 + 1
+L6a5+--,-t1*t2*t3 + t1*t3 - t1 + t2*t3 - t2 + 1
+L6n1+++,-t1 + t2*t3
+L6n1++-,-t1*t2*t3 + 1
+L6n1+-+,-t1 + t2*t3
+L6n1+--,-t1 + t2*t3
