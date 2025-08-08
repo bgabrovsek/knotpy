@@ -1,8 +1,11 @@
-python >=3.10
-sympy >=1.8
-pytest >=6.2
-matplotlib >=3.5
-numpy >=1.21
-scipy >=1.7
-tqdm >=4.62
-scikit-learn >=1.0
+# Runtime dependencies are declared in pyproject.toml.
+# This file is for local dev / docs builds only (optional).
+sphinx>=7.3
+sphinx-gallery>=0.15
+pydata-sphinx-theme>=0.15
+pytest>=8.0
+ruff>=0.5
+black>=24.3
+mypy>=1.10
+# Visualization extra (optional):
+matplotlib>=3.8.3

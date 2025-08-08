@@ -5,32 +5,49 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "knotpy"
 version = "0.0.1"
+description = "KnotPy: a Python library for knot theory (knots, links, knotoids, spatial graphs)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Boštjan Gabrovšek" }
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Mathematics"
+]
 dependencies = [
-    "sympy>=1.12",
-    "matplotlib>=3.8.3",
+  "sympy>=1.12",
 ]
 
 [project.optional-dependencies]
-documentation = [
-    "sphinx>=7.2.6",
-    "pydata-sphinx-theme>=0.14.2",
-    "sphinx-gallery>=0.15.0",
-    "pillow>=10.2.0",
+viz = [
+  "matplotlib>=3.8.3",
 ]
-test = [
-    "pytest>=8.1.1",
+docs = [
+  "sphinx>=7.3",
+  "sphinx-gallery>=0.15",
+  "pydata-sphinx-theme>=0.15",
 ]
 dev = [
-    "sphinx>=7.2.6",
-    "pydata-sphinx-theme>=0.14.2",
-    "sphinx-gallery>=0.15.0",
-    "pillow>=10.2.0",
-    "pytest>=8.1.1",
+  "pytest>=8.0",
+  "ruff>=0.5",
+  "black>=24.3",
+  "mypy>=1.10"
 ]
 
-[tool.setuptools.packages.find]
-include = ["knotpy*"]
+[tool.setuptools]
+include-package-data = true
 
-[[project.authors]]
-name = 'Boštjan Gabrovšek'
-email = 'bostjan.gabrovsek@pef.uni-lj.si'
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+

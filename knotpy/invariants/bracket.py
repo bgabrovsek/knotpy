@@ -20,7 +20,7 @@ from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import is_empty_diagram
 from knotpy.algorithms.remove import remove_unknots
-from knotpy.utils.module import module
+from knotpy.utils.module import Module
 from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.invariants.cache import Cache
@@ -74,7 +74,7 @@ def kauffman_bracket_skein_module(k: PlanarDiagram, normalize=True):
     _is_knot = is_knot(k)
     original_framing = k.framing if k.is_framed() else 0
     original_knot = k
-    expression = module()
+    expression = Module()
     stack = deque()
 
     k = unorient(k) if k.is_oriented() else k.copy()
@@ -178,6 +178,10 @@ def bracket(k: PlanarDiagram, normalize=True) -> Expr:
             polynomial += coeff * (_KAUFFMAN_TERM ** (number_of_unknots-1)) * ((- _A ** 3) ** (-k.framing))
 
     original_framing = original_knot.framing if original_knot.is_framed() else 0
+
+    print("poly", polynomial)
+    print(original_knot)
+    print(writhe(original_knot), original_framing)
 
     if normalize:
         #print("writhe", writhe(original_knot))

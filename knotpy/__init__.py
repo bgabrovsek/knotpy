@@ -32,7 +32,6 @@ from knotpy.algorithms.sanity import *
 from knotpy import reidemeister
 from .reidemeister import *
 
-from knotpy.utils import statistics
 
 from knotpy.algorithms.sanity import sanity_check
 

@@ -1,340 +1,332 @@
+"""
+Utility functions and classes for manipulating dictionaries in KnotPy.
+
+Includes comparison utilities, inversion helpers (flat, multi, nested), and
+lazy/identity/classifier dict variants.
+"""
+
+from __future__ import annotations
+
 from collections import defaultdict
-import warnings
+from typing import Any, Callable, Iterable, Hashable, TypeVar, Generic
 
-__all__ = ['compare_dicts', 'invert_dict', 'invert_multi_dict', "invert_nested_dict", "LazyDict", "IdentityDict", "ClassifierDict", "common_dict"]
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__all__ = [
+    "compare_dicts",
+    "invert_dict",
+    "invert_multi_dict",
+    "invert_dict_of_sets",
+    "invert_nested_dict",
+    "LazyDict",
+    "IdentityDict",
+    "ClassifierDict",
+    "common_dict",
+]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-def compare_dicts(dict1: dict, dict2: dict, exclude_keys=None, include_only_keys=None):
+K = TypeVar("K")
+V = TypeVar("V")
+T = TypeVar("T")
+
+
+def compare_dicts(
+    dict1: dict[str, Any],
+    dict2: dict[str, Any],
+    exclude_keys: Iterable[str] | None = None,
+    include_only_keys: Iterable[str] | None = None,
+) -> int:
+    """Recursively compare two dictionaries with optional key filters.
+
+    Comparison order:
+      1) Effective key sets (after include/exclude),
+      2) Values under those keys (recursing into nested dicts),
+      3) Sets are compared via sorted order, other values via native ordering.
+
+    Args:
+        dict1: First dictionary to compare.
+        dict2: Second dictionary to compare.
+        exclude_keys: Keys to ignore at the **top level**.
+        include_only_keys: If provided, only these **top-level** keys are considered.
+
+    Returns:
+        1 if ``dict1 > dict2``, -1 if ``dict1 < dict2``, 0 if equal.
+
+    Raises:
+        TypeError: If corresponding values have mismatched types and cannot be compared.
     """
-    Compare dictionaries by comparing values of sorted keys. If values are again dictionaries, the comparison is
-    recursive.
-    :param dict1: first dictionary to be compared
-    :param dict2: second dictionary to be compared
-    :param exclude_keys: a set of keys to exclude from comparison
-    :param include_only_keys: only compare this set of keys
-    :return: 1 if dict1 > dict2, -1 if dict1 < dict2, 0 if dict1 == dict2.
-
-    TODO: simplify
-    """
-
-    exclude_keys = exclude_keys or set()
-    exclude_keys = exclude_keys if isinstance(exclude_keys, set) else set(exclude_keys)  # convert to set
+    ex = set(exclude_keys or ())
 
     if include_only_keys is None:
-        include_only_keys = (set(dict1) | set(dict2)) - exclude_keys
+        inc = (set(dict1) | set(dict2)) - ex
     else:
-        include_only_keys = include_only_keys if isinstance(include_only_keys, set) else set(include_only_keys)
+        inc = set(include_only_keys) - ex
 
-    if include_only_keys & exclude_keys:
-        warnings.warn(f"Included keys {include_only_keys} and excluded keys {exclude_keys} are not disjoint in comparison function")
-
-    include_only_keys -= exclude_keys
-
-    keys1 = sorted(set(dict1) & include_only_keys)
-    keys2 = sorted(set(dict2) & include_only_keys)
-
+    keys1 = sorted(set(dict1) & inc)
+    keys2 = sorted(set(dict2) & inc)
     if keys1 != keys2:
         return (keys1 > keys2) * 2 - 1
 
     for key in keys1:
-        value1 = dict1[key]
-        value2 = dict2[key]
+        v1 = dict1[key]
+        v2 = dict2[key]
 
-        if type(value1) is not type(value2):
-            raise TypeError(f"Cannot compare types {type(value1)} and {type(value2)}")
+        if type(v1) is not type(v2):
+            raise TypeError(f"Cannot compare mismatched types for key '{key}': {type(v1)} vs {type(v2)}")
 
-        # compare dictionaries
-        if isinstance(value1, dict) and isinstance(value2, dict):
-            cmp = compare_dicts(value1, value2, exclude_keys=exclude_keys, include_only_keys=include_only_keys)
+        if isinstance(v1, dict):
+            # Note: include_only_keys applies only at the top level
+            cmp = compare_dicts(v1, v2, exclude_keys=None, include_only_keys=None)
             if cmp:
                 return cmp
-        # compare sets
-        elif isinstance(value1, set) and isinstance(value2, set):
-            if (v1s := sorted(value1)) != (v2s := sorted(value2)):
-                return (v1s > v2s) * 2 - 1
+        elif isinstance(v1, set):
+            s1, s2 = sorted(v1), sorted(v2)
+            if s1 != s2:
+                return (s1 > s2) * 2 - 1
         else:
-            if value1 != value2:
-                return (value1 > value2) * 2 - 1
+            if v1 != v2:
+                return (v1 > v2) * 2 - 1
 
     return 0
 
-def invert_dict_of_sets(d):
-    inverse = {}
+
+def invert_dict_of_sets(d: dict[K, set[V]]) -> dict[V, set[K]]:
+    """Invert a dictionary of sets.
+
+    Args:
+        d: Mapping where values are sets.
+
+    Returns:
+        Inverse mapping value -> set of original keys.
+    """
+    inverse: dict[V, set[K]] = {}
     for key, value_set in d.items():
         for item in value_set:
             inverse.setdefault(item, set()).add(key)
     return inverse
 
-def invert_multi_dict(d):
-    """ exchanges keys & vals, but stores keys in a set """
-    inverse = dict()  # defaultdict is slower (tested)
+
+def invert_multi_dict(d: dict[K, V]) -> dict[V, set[K]]:
+    """Invert a dictionary, grouping keys by shared values.
+
+    Args:
+        d: Input mapping (values need not be unique).
+
+    Returns:
+        Mapping from value to set of keys that mapped to it.
+    """
+    inverse: dict[V, set[K]] = {}
     for key, value in d.items():
-        if value in inverse:
-            inverse[value].add(key)
-        else:
-            inverse[value] = {key, }
+        inverse.setdefault(value, set()).add(key)
     return inverse
 
-def invert_dict(d):
-    """Exchange keys & vals, assume there are no duplicate vals."""
-    #TODO: use items() tuple
-    inverse = dict()
+
+def invert_dict(d: dict[K, V]) -> dict[V, K]:
+    """Invert a dictionary with unique values.
+
+    Args:
+        d: Input mapping with unique values.
+
+    Returns:
+        Inverse mapping from value to key.
+
+    Raises:
+        ValueError: If a duplicate value is encountered.
+    """
+    inverse: dict[V, K] = {}
     for key, value in d.items():
         if value in inverse:
-            raise ValueError("Cannot make inverse dictionary of {d}.")
+            raise ValueError(f"Cannot invert dictionary with duplicate value {value!r}.")
         inverse[value] = key
     return inverse
 
 
-def invert_nested_dict(d: dict):
-    """split the dictionary into several dictionaries, such that each dictionary has the same values
-    :param d:
-    :return:
+def invert_nested_dict(d: dict[K, dict[str, Any]]) -> dict[tuple[Any, ...], set[K]]:
+    """Group keys by their nested dictionary value signatures.
+
+    Args:
+        d: Mapping whose values are nested dicts.
+
+    Returns:
+        Mapping from tuples of inner values (ordered by inner key name) to sets of outer keys.
     """
-    inner_keys = sorted(set(key for inner in d.values() for key in inner))
-    result = dict()  #defaultdict(set)
-    for k, k_val in d.items():
-        value = tuple(k_val[key] if key in k_val else None for key in inner_keys)
-        if value in result:
-            result[value].add(k)
-        else:
-            result[value] = {k, }
+    inner_keys = sorted({ik for inner in d.values() for ik in inner})
+    result: dict[tuple[Any, ...], set[K]] = {}
+    for k, inner_dict in d.items():
+        value = tuple(inner_dict.get(ik) for ik in inner_keys)
+        result.setdefault(value, set()).add(k)
     return result
 
-class IdentityDict(defaultdict):
-    def __missing__(self, key):
+
+class IdentityDict(defaultdict[K, K]):
+    """A ``defaultdict`` that returns the key itself as the default.
+
+    Example:
+        >>> d = IdentityDict()
+        >>> d["x"]
+        'x'
+    """
+
+    def __init__(self) -> None:
+        super().__init__(None)  # type: ignore[arg-type]
+
+    def __missing__(self, key: K) -> K:  # type: ignore[override]
         return key
 
 
-
-class LazyDict(dict):
-    """A dictionary that supports lazy loading and lazy value evaluation.
-
-    LazyDict defers loading of data until the dictionary is first accessed.
-    Additionally, values can be lazily evaluated on first access using a
-    provided evaluation function.
-
-    This class is useful when loading or computing the data is expensive
-    and you want to postpone that cost until the data is actually needed.
+class LazyDict(dict[K, V], Generic[K, V]):
+    """Dictionary that supports lazy loading and optional lazy value evaluation.
 
     Args:
-        load_function (Callable or None): A function that returns the data to load.
-            It should return a dictionary or a list of (key, value) pairs.
-            If None, the dictionary is assumed to be already initialized.
-        eval_function (Callable or None): A function to evaluate values on access.
-            It takes a raw value and returns the evaluated version. If None,
-            values are returned as-is.
-
-    Raises:
-        TypeError: If `eval_function` is not None or callable.
+        load_function: Callable returning either a dict or an iterable of ``(key, value)`` pairs.
+        eval_function: Optional callable applied to values on first access (per key).
 
     Example:
-        >>> def load():
-        ...     return {"a": "1 + 1", "b": "2 * 2"}
-        >>> def evaluate(expr):
-        ...     return eval(expr)
+        >>> def load(): return {"a": "2 + 2"}
+        >>> def evaluate(expr): return eval(expr)
         >>> d = LazyDict(load, evaluate)
         >>> d["a"]
-        2
+        4
     """
 
-    def __init__(self, load_function, eval_function=None, *args, **kwargs):
+    def __init__(
+        self,
+        load_function: Callable[[], dict[K, V] | Iterable[tuple[K, V]]],
+        eval_function: Callable[[V], V] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self._data_loaded = False
         self._load_function = load_function
+        self._eval_function = eval_function
+        self._data_loaded = False
+        self._evaluated_keys: set[K] = set()
 
         if eval_function is not None and not callable(eval_function):
             raise TypeError("eval_function must be callable or None")
 
-        self._eval_function = eval_function
-        self._evaluated_keys = set()
-
-    def _ensure_loaded(self):
+    def _ensure_loaded(self) -> None:
         if not self._data_loaded:
-            self.update(self._load_function())
+            loaded = self._load_function()
+            if isinstance(loaded, dict):
+                self.update(loaded)
+            else:
+                for k, v in loaded:
+                    super().__setitem__(k, v)
             self._data_loaded = True
 
-    def _maybe_evaluate(self, key):
-        if self._eval_function is not None and key not in self._evaluated_keys:
+    def _maybe_evaluate(self, key: K) -> None:
+        if self._eval_function and key not in self._evaluated_keys:
             raw_value = super().__getitem__(key)
             evaluated = self._eval_function(raw_value)
             super().__setitem__(key, evaluated)
             self._evaluated_keys.add(key)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: K) -> V:  # type: ignore[override]
         self._ensure_loaded()
         self._maybe_evaluate(key)
         return super().__getitem__(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V) -> None:  # type: ignore[override]
         self._ensure_loaded()
         super().__setitem__(key, value)
 
-    def __contains__(self, key):
+    def __contains__(self, key: object) -> bool:  # type: ignore[override]
         self._ensure_loaded()
         return super().__contains__(key)
 
-    def __iter__(self):
+    def __iter__(self):  # type: ignore[override]
         self._ensure_loaded()
         return super().__iter__()
 
-    def get(self, key, default=None):
-        self._ensure_loaded()
-        if key in self:
-            return self[key]
-        return default
-
-    def keys(self):
-        self._ensure_loaded()
-        return super().keys()
-
-    def values(self):
-        self._ensure_loaded()
-        if self._eval_function is not None:
-            for key in self:
-                _ = self[key]
-        return super().values()
-
-    def items(self):
-        self._ensure_loaded()
-        if self._eval_function is not None:
-            for key in self:
-                _ = self[key]
-        return super().items()
-
-    def __len__(self):
+    def __len__(self) -> int:  # type: ignore[override]
         self._ensure_loaded()
         return super().__len__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:  # type: ignore[override]
         self._ensure_loaded()
-        if self._eval_function is not None:
-            for key in self:
+        if self._eval_function:
+            # Trigger evaluation for a stable, fully-resolved repr
+            for key in list(self.keys()):
                 _ = self[key]
         return f"LazyDict({dict(self)!r})"
 
-    def reload(self):
-        """Reload the dictionary by clearing existing values and re-running the load function."""
+    def keys(self):  # type: ignore[override]
+        self._ensure_loaded()
+        return super().keys()
+
+    def values(self):  # type: ignore[override]
+        self._ensure_loaded()
+        if self._eval_function:
+            for key in list(self.keys()):
+                _ = self[key]
+        return super().values()
+
+    def items(self):  # type: ignore[override]
+        self._ensure_loaded()
+        if self._eval_function:
+            for key in list(self.keys()):
+                _ = self[key]
+        return super().items()
+
+    def get(self, key: K, default: V | None = None) -> V | None:  # type: ignore[override]
+        self._ensure_loaded()
+        if super().__contains__(key):
+            return self[key]
+        return default
+
+    def reload(self) -> None:
+        """Reload the dictionary using the original load function.
+
+        Clears existing values and evaluation state, then loads fresh data.
+        """
         self.clear()
         self._evaluated_keys.clear()
         self._data_loaded = False
         self._ensure_loaded()
 
 
-class ClassifierDict(dict):
-    """
-    A dictionary-like object that partitions items based on values returned by
-    a collection of functions. The keys are tuples of computed values, and the
-    values are lists of items sharing those values.
+class ClassifierDict(dict[tuple[Any, ...], list[T]], Generic[T]):
+    """Dictionary that groups items by a tuple of classifier function outputs.
+
+    Args:
+        functions: Mapping ``label -> function(item)`` used to compute the grouping key.
     """
 
-    def __init__(self, functions: dict):
-        """
-        Initialize the partitioner with a set of value-producing functions.
-
-        Args:
-            functions (dict): A dictionary mapping labels to functions.
-                              Each function should take an item and return a value.
-        """
+    def __init__(self, functions: dict[str, Callable[[T], Any]]) -> None:
         super().__init__()
         self.functions = functions
 
-    def append(self, item):
-        """
-        Compute the key for an item using the provided functions and store
-        the item in the corresponding group.
+    def append(self, item: T) -> None:
+        """Group the given item under a key defined by its classification values.
 
         Args:
-            item: The object to be grouped.
+            item: The item to group.
         """
-        # Build a key from the tuple of values returned by the functions
         key = tuple(func(item) for func in self.functions.values())
-
-        # Append the item to the corresponding list in the dictionary
         if key not in self:
             self[key] = []
         self[key].append(item)
 
 
-def common_dict(*dicts):
-    """
-    Return a dictionary containing key-value pairs that are common across all input dictionaries.
+def common_dict(*dicts: dict[str, Any]) -> dict[str, Any]:
+    """Find key/value pairs shared across all provided dictionaries.
 
-    A key-value pair is included in the result if:
-    - The key exists in every dictionary.
-    - All dictionaries have the same value associated with that key.
-
-    Parameters:
-        *dicts: Any number of dictionaries to compare.
+    Args:
+        *dicts: One or more dictionaries.
 
     Returns:
-        dict: A dictionary of key-value pairs shared by all input dictionaries with equal values.
-              Returns an empty dictionary if no common key-value pairs exist or if no dictionaries are given.
+        Dictionary of pairs present and equal in all inputs.
 
     Example:
-        >>> common_dict({'a': 1, 'b': 2}, {'a': 1, 'b': 3}, {'a': 1})
+        >>> common_dict({'a': 1}, {'a': 1, 'b': 2}, {'a': 1})
         {'a': 1}
     """
     if not dicts:
         return {}
     common_keys = set.intersection(*(set(d) for d in dicts))
-    return {key: dicts[0][key] for key in common_keys if all(d[key] == dicts[0][key] for d in dicts[1:])}
-#
-# class JointDict:
-#     def __init__(self, dict_map: dict[int, dict], key_map=None):
-#         """
-#         Initialize with a mapping from prefix (int) to dictionary.
-#         Keys in each dictionary must start with that prefix and an underscore.
-#         Example: {1: {'1_a': ...}, 2: {'2_b': ...}}
-#          Args:
-#             dict_map (dict): Mapping from keys (e.g. IDs, types) to sub-dictionaries.
-#             key_map (callable): Function that takes a joint key and returns (subdict_key, key_in_subdict)
-#         """
-#         self._dict_map = dict_map
-#         self.key_map = key_map
-#
-#     def __getitem__(self, key):
-#         subkey = self.key_map(key)
-#         if subkey not in self._dict_map:
-#             raise KeyError(f"No dictionary for subkey {subkey}")
-#         return self._dict_map[subkey][key]
-#
-#     def __contains__(self, key):
-#         subkey = self.key_map(key)
-#         return key in self._dict_map[subkey]
-#
-#     def keys(self, from_subkeys=None):
-#         if from_subkeys is None:
-#             for inner_dict in self._dict_map.values():
-#                 yield from inner_dict
-#         else:
-#             for subkey in sorted(from_subkeys):
-#                 yield from self._dict_map[subkey]
-#
-#     def items(self, from_subkeys=None):
-#         if from_subkeys is None:
-#             for inner_dict in self._dict_map.values():
-#                 yield from inner_dict.items()
-#         else:
-#             for subkey in sorted(from_subkeys):
-#                 yield from self._dict_map[subkey].items()
-#
-#     def values(self, from_subkeys=None):
-#         if from_subkeys is None:
-#             for inner_dict in self._dict_map.values():
-#                 yield from inner_dict.values()
-#         else:
-#             for subkey in sorted(from_subkeys):
-#                 yield from self._dict_map[subkey].values()
-#
-#     def __iter__(self):
-#         return self.keys()
-#
-#     def __len__(self):
-#         return sum(len(inner_dict) for inner_dict in self._dict_map.values())
+    base = dicts[0]
+    return {k: base[k] for k in common_keys if all(d.get(k) == base[k] for d in dicts[1:])}
 
 
 if __name__ == "__main__":
-
     pass

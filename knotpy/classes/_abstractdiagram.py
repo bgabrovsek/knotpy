@@ -1,129 +1,224 @@
+from __future__ import annotations
+
 from abc import ABC, ABCMeta, abstractmethod
+from collections.abc import Hashable, Iterable
 from functools import cached_property
 
+from knotpy.classes.node import Crossing, Node, Vertex, VirtualCrossing
 from knotpy.classes.views import FilteredNodeView
-from knotpy.classes.node import *
+
+__all__ = [
+    "_NodeDiagram",
+    "_CrossingDiagram",
+    "_VirtualCrossingDiagram",
+    "_VertexDiagram",
+]
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 
 class _NodeDiagram(ABC):
-    """
-    Abstract base class for node-based planar diagrams. Nodes can be vertices, crossings, or virtual crossings.
+    """Abstract base for node-based planar diagrams.
 
-    This class defines the interface for handling nodes in planar diagrams.
-    Subclasses must implement methods for adding nodes individually or in bulk.
+    Nodes can be vertices, classical crossings, or virtual crossings. Subclasses
+    must implement methods for adding nodes (individually or in bulk).
 
-    :ivar _nodes: A dictionary storing the nodes of the diagram.
-    :type _nodes: dict
+    Attributes:
+        _nodes (dict[Hashable, Node]): Mapping from node identifiers to node instances.
     """
-    _nodes: dict
+
+    _nodes: dict[Hashable, Node]
 
     @abstractmethod
-    def add_node(self, node_for_adding, create_using: type, degree=None, **attr):
-        pass
+    def add_node(
+        self,
+        node_for_adding: Hashable,
+        create_using: type,
+        degree: int | None = None,
+        **attr: object,
+    ) -> None:
+        """Add (or update) a single node.
+
+        Args:
+            node_for_adding: Node identifier (hashable).
+            create_using: Concrete node class to construct (e.g., ``Vertex`` or ``Crossing``).
+            degree: Optional degree for the new node (e.g., 4 for crossings).
+            **attr: Additional node attributes.
+        """
 
     @abstractmethod
-    def add_nodes_from(self, nodes_for_adding, create_using=None, **attr):
-        pass
+    def add_nodes_from(
+        self,
+        nodes_for_adding: Iterable[Hashable] | dict[Hashable, Node],
+        create_using: type | None = None,
+        **attr: object,
+    ) -> None:
+        """Add (or update) a collection of nodes.
 
-    def is_frozen(self):
-        """Returns True if the given diagram is frozen, False otherwise."""
+        Args:
+            nodes_for_adding: Iterable of node identifiers or a mapping of identifiers to node instances.
+            create_using: Concrete node class to use for construction when identifiers are provided.
+            **attr: Additional attributes applied to created/updated nodes.
+        """
+
+    def is_frozen(self) -> bool:
+        """Return whether the diagram is frozen.
+
+        Returns:
+            bool: ``True`` if frozen; otherwise ``False``.
+        """
         try:
-            return self.frozen
+            return bool(getattr(self, "frozen"))
         except AttributeError:
             return False
 
 
 class _CrossingDiagram(_NodeDiagram, metaclass=ABCMeta):
-    """
-    Abstract base class for diagrams containing crossings.
+    """Abstract base for diagrams that contain classical crossings.
 
-    This class extends `_NodeDiagram` to handle crossings in a planar diagram.
-    Crossings are represented as nodes with degree 4, where even positions (0, 2) are "under endpoints" and odd positions
-    (1, 3) are "over endpoints"
+    Crossings are nodes of degree 4; even endpoints (0, 2) are "under", odd endpoints (1, 3) are "over".
 
-    :ivar crossings: A view of all crossings in the diagram.
-    :type crossings: FilteredNodeView
+    Attributes:
+        crossings (FilteredNodeView): View of all classical crossings.
     """
 
     @cached_property
-    def crossings(self):
-        """
-        Return a view of all crossings in the diagram.
+    def crossings(self) -> FilteredNodeView:
+        """Return a view of all classical crossings.
 
-        :return: A filtered node view containing only crossings.
-        :rtype: FilteredNodeView
+        Returns:
+            FilteredNodeView: Filtered node view containing only classical crossings.
         """
         return FilteredNodeView(self._nodes, node_type=Crossing)
 
-    def add_crossing(self, crossing_for_adding, **attr):
+    def add_crossing(self, crossing_for_adding: Hashable, **attr: object) -> None:
+        """Add or update a classical crossing.
+
+        Args:
+            crossing_for_adding: Crossing identifier (hashable).
+            **attr: Additional attributes (e.g., color, weight).
         """
-        Add or update a crossing in the diagram.
+        self.add_node(
+            node_for_adding=crossing_for_adding,
+            create_using=Crossing,
+            degree=4,
+            **attr,
+        )
 
-        :param crossing_for_adding: The crossing to add or update.
-        :type crossing_for_adding: Hashable
-        :param attr: Additional attributes for the crossing (color, weight, ...)
-        """
+    def add_crossings_from(
+        self, crossings_for_adding: Iterable[Hashable], **attr: object
+    ) -> None:
+        """Add or update multiple classical crossings.
 
-        self.add_node(node_for_adding=crossing_for_adding, create_using=Crossing, degree=4, **attr)
-
-    def add_crossings_from(self, crossings_for_adding, **attr):
-        """
-        Add multiple crossings to the diagram.
-
-        :param crossings_for_adding: An iterable of crossings to add.
-        :type crossings_for_adding: Iterable of hashable instances
-        :param attr: Additional attributes for the crossings.
+        Args:
+            crossings_for_adding: Iterable of crossing identifiers.
+            **attr: Additional attributes applied to each crossing.
         """
         for node in crossings_for_adding:
-            self.add_crossing(crossings_for_adding=node, **attr)
+            # FIX: use the correct parameter name for the single-add method
+            self.add_crossing(crossing_for_adding=node, **attr)
 
-    def sign(self, crossing):
+    def sign(self, crossing: Hashable) -> int:
+        """Return the sign of a crossing.
+
+        Args:
+            crossing: Crossing identifier.
+
+        Returns:
+            int: Crossing sign (usually ``+1`` or ``-1``).
+        """
         return self._nodes[crossing].sign()
 
 
 class _VirtualCrossingDiagram(_NodeDiagram, metaclass=ABCMeta):
-    """
-    Abstract base class for diagrams containing virtual crossings.
+    """Abstract base for diagrams that contain virtual crossings.
 
-    This class extends `_NodeDiagram` to handle virtual crossings in a planar diagram.
-    Virtual crossings are represented as nodes with degree 4.
+    Virtual crossings are modeled as nodes of degree 4.
 
-    :ivar virtual_crossings: A view of all virtual crossings in the diagram.
-    :type virtual_crossings: FilteredNodeView
+    Attributes:
+        virtual_crossings (FilteredNodeView): View of all virtual crossings.
     """
 
     @cached_property
-    def virtual_crossings(self):
-        """
-        Return a view of all virtual crossings in the diagram.
+    def virtual_crossings(self) -> FilteredNodeView:
+        """Return a view of all virtual crossings.
 
-        :return: A filtered node view containing only virtual crossings.
-        :rtype: FilteredNodeView
+        Returns:
+            FilteredNodeView: Filtered node view containing only virtual crossings.
         """
         return FilteredNodeView(self._nodes, node_type=VirtualCrossing)
 
-    def add_virtual_crossing(self, crossing_for_adding, **attr):
-        """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
-        self.add_node(node_for_adding=crossing_for_adding, create_using=VirtualCrossing, degree=4, **attr)
+    def add_virtual_crossing(
+        self, crossing_for_adding: Hashable, **attr: object
+    ) -> None:
+        """Add or update a virtual crossing.
 
-    def add_virtual_crossings_from(self, crossings_for_adding, **attr):
-        """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
+        Args:
+            crossing_for_adding: Crossing identifier (hashable).
+            **attr: Additional attributes.
+        """
+        self.add_node(
+            node_for_adding=crossing_for_adding,
+            create_using=VirtualCrossing,
+            degree=4,
+            **attr,
+        )
+
+    def add_virtual_crossings_from(
+        self, crossings_for_adding: Iterable[Hashable], **attr: object
+    ) -> None:
+        """Add or update multiple virtual crossings.
+
+        Args:
+            crossings_for_adding: Iterable of crossing identifiers.
+            **attr: Additional attributes applied to each virtual crossing.
+        """
         for node in crossings_for_adding:
-            self.add_virtual_crossing(crossings_for_adding=node, **attr)
+            # FIX: use the correct parameter name for the single-add method
+            self.add_virtual_crossing(crossing_for_adding=node, **attr)
 
 
 class _VertexDiagram(_NodeDiagram, metaclass=ABCMeta):
+    """Abstract base for diagrams that contain vertices."""
 
     @cached_property
-    def vertices(self):
-        """Node object holding the adjacencies of each crossing."""
+    def vertices(self) -> FilteredNodeView:
+        """Return a view of all vertices.
+
+        Returns:
+            FilteredNodeView: Filtered node view containing only vertices.
+        """
         return FilteredNodeView(self._nodes, node_type=Vertex)
 
-    def add_vertex(self, vertex_for_adding, degree=None, **attr):
-        """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
-        self.add_node(node_for_adding=vertex_for_adding, create_using=Vertex, degree=degree, **attr)
+    def add_vertex(
+        self, vertex_for_adding: Hashable, degree: int | None = None, **attr: object
+    ) -> None:
+        """Add or update a vertex.
 
-    def add_vertices_from(self, vertices_for_adding, **attr):
-        """Add or update a crossing and update the crossing attributes. A crossing can be any hashable object."""
+        Args:
+            vertex_for_adding: Vertex identifier (hashable).
+            degree: Vertex degree (``None`` if not constrained).
+            **attr: Additional attributes.
+        """
+        self.add_node(
+            node_for_adding=vertex_for_adding,
+            create_using=Vertex,
+            degree=degree,
+            **attr,
+        )
+
+    def add_vertices_from(
+        self, vertices_for_adding: Iterable[Hashable], **attr: object
+    ) -> None:
+        """Add or update multiple vertices.
+
+        Args:
+            vertices_for_adding: Iterable of vertex identifiers.
+            **attr: Additional attributes applied to each vertex.
+        """
         for node in vertices_for_adding:
             self.add_vertex(vertex_for_adding=node, **attr)
+
+
+if __name__ == "__main__":
+    pass

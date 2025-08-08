@@ -29,4 +29,4 @@ from .writhe import *
 from .kauffman import *
 from .alexander import *
 from .classifier import *
-from ._symbols import symbol_locals
+from ._symbols import SYMBOL_LOCALS

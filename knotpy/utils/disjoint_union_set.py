@@ -1,164 +1,220 @@
 """
-The Union-Find structure, also known as the Disjoint Set Union (DSU) structure, is an efficient data structure used to
-manage a partition of a set into disjoint (non-overlapping) subsets. It’s particularly useful in scenarios where we need
-to frequently determine whether two elements are in the same subset, and to unite two subsets into a single subset.
+Disjoint Set Union (Union–Find).
+
+Efficiently maintains a partition of a set into disjoint subsets with near-constant-time
+`find` (with path compression) and `union` (by rank).
 """
 
+__all__ = ["DisjointSetUnion"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
+
+from typing import Hashable, Iterable, Iterator, Optional
+
+
 class DisjointSetUnion:
+    """Union–Find / Disjoint Set Union (DSU).
+
+    Manages a partition of elements into disjoint sets and supports:
+    adding elements, finding a set representative, uniting two sets,
+    iterating over components, and exporting components.
+
+    Args:
+        iterable: Optional iterable of elements to initialize as singleton sets.
+
+    Example:
+        >>> dsu = DisjointSetUnion([1, 2, 3])
+        >>> dsu.union(1, 2)
+        >>> dsu.find(1) == dsu.find(2)
+        True
+        >>> sorted(sorted(g) for g in dsu)
+        [[1, 2], [3]]
     """
-    A Disjoint Set Union (DSU), also known as a Union-Find data structure,
-    manages a partition of a set into disjoint (non-overlapping) subsets.
-    It supports finding the set representative, and union operation to merge sets.
 
-    :param iterable: An optional iterable of hashable elements to initialize the DSU.
-    :type iterable: Iterable
-    """
-
-    def __init__(self, iterable=None):
-        """
-        Initializes the DSU. If elements are provided, each element is initialized in its own set.
-
-        :param iterable: An optional iterable of hashable elements to initialize the DSU.
-        :type iterable: Iterable
-        """
-        self.parent = {}
-        self.rank = {}
+    def __init__(self, iterable: Optional[Iterable[Hashable]] = None) -> None:
+        self.parent: dict[Hashable, Hashable] = {}
+        self.rank: dict[Hashable, int] = {}
         if iterable:
             for item in iterable:
                 self.add(item)
 
-    def add(self, item):
-        """Add an item to the DSU if not already present, initializing its set."""
+    def add(self, item: Hashable) -> None:
+        """Add a new item as a singleton set (no-op if it already exists).
+
+        Args:
+            item: Element to add.
+        """
         if item not in self.parent:
             self.parent[item] = item
             self.rank[item] = 0
 
-    def find(self, item):
-        """
-        Finds the representative of the set containing 'item'.
+    def find(self, item: Hashable) -> Optional[Hashable]:
+        """Return the representative (root) of the set containing ``item``.
 
-        :param item: The item to find.
-        :type item: Hashable
-        :return: The representative of the set containing 'item'.
-        :rtype: Hashable
+        Performs path compression for near-constant amortized time.
+
+        Args:
+            item: Element to locate.
+
+        Returns:
+            The set representative, or ``None`` if the item is unknown.
+
+        Example:
+            >>> dsu = DisjointSetUnion([1, 2])
+            >>> dsu.find(1) in {1, 2}
+            True
         """
         if item not in self.parent:
             return None
+        # Path compression
         if self.parent[item] != item:
-            self.parent[item] = self.find(self.parent[item])  # Path compression
+            self.parent[item] = self.find(self.parent[item])  # type: ignore[arg-type]
         return self.parent[item]
 
-    def union(self, item1, item2):
-        """
-        Performs the union of the sets that contain set1 and set2.
+    def union(self, item1: Hashable, item2: Hashable) -> None:
+        """Merge the sets containing ``item1`` and ``item2`` (if both exist).
 
-        :param item1: An element of the first set.
-        :param item2: An element of the second set.
-        :type item1: Hashable
-        :type item2: Hashable
+        Uses union-by-rank heuristic. If either item is unknown, nothing happens.
+
+        Args:
+            item1: First element.
+            item2: Second element.
+
+        Example:
+            >>> dsu = DisjointSetUnion([1, 2, 3])
+            >>> dsu.union(1, 2)
+            >>> dsu.find(1) == dsu.find(2)
+            True
         """
         root1 = self.find(item1)
         root2 = self.find(item2)
+        if root1 is None or root2 is None or root1 == root2:
+            return
 
-        if root1 is not None and root2 is not None and root1 != root2:
-            if self.rank[root1] > self.rank[root2]:
-                self.parent[root2] = root1
-            elif self.rank[root1] < self.rank[root2]:
-                self.parent[root1] = root2
-            else:
-                self.parent[root2] = root1
-                self.rank[root1] += 1
+        r1, r2 = self.rank[root1], self.rank[root2]
+        if r1 > r2:
+            self.parent[root2] = root1
+        elif r1 < r2:
+            self.parent[root1] = root2
+        else:
+            self.parent[root2] = root1
+            self.rank[root1] += 1
 
-    def __iadd__(self, item):
-        """Add an item to the DSU if not already present, initializing its set."""
+    def __iadd__(self, item: Hashable):
+        """Shorthand for ``dsu.add(item)``."""
         self.add(item)
         return self
 
-    def __setitem__(self, item1, item2):
-        """Performs the union of the sets that contain set1 and set2. Add item1 or item2 as new items if they do not
-         exist """
+    def __setitem__(self, item1: Hashable, item2: Hashable) -> None:
+        """Shorthand for “add both, then union”: ``dsu[item1] = item2``.
+
+        Args:
+            item1: First element.
+            item2: Second element.
+        """
         self.add(item1)
         self.add(item2)
         self.union(item1, item2)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[set[Hashable]]:
+        """Iterate over the current disjoint sets (as Python sets).
+
+        Yields:
+            Each component as a ``set`` of elements.
+
+        Notes:
+            This runs in O(n α(n)) due to path-compressed finds and a single grouping pass.
+
+        Example:
+            >>> dsu = DisjointSetUnion([1, 2, 3, 4])
+            >>> dsu.union(1, 2); dsu.union(3, 4)
+            >>> sorted(sorted(g) for g in dsu)
+            [[1, 2], [3, 4]]
         """
-        Iterator over the unique sets. Each yielded item is a set of elements
-        belonging to the same connected component.
-        """
-        seen = set()
-        for item in self.parent:
-            root = self.find(item)
-            if root not in seen:
-                seen.add(root)
-                yield self.set(root)
+        # Build components in one pass (avoids O(n^2) repeated scans)
+        comps: dict[Hashable, set[Hashable]] = {}
+        for x in self.parent:
+            r = self.find(x)
+            if r is not None:
+                comps.setdefault(r, set()).add(x)
+        return iter(comps.values())
 
     @property
-    def elements(self):
-        for element in self.parent:
-            yield element
+    def elements(self) -> Iterator[Hashable]:
+        """Iterate over all elements ever added.
 
-    def set(self, item):
+        Returns:
+            An iterator over elements.
         """
-        Returns the set of items connected to 'item'.
+        return iter(self.parent)
 
-        :param item: Any member of the set.
-        :type item: Hashable
-        :return: A set containing all items in the connected component of 'item'.
-        :rtype: set
+    def to_set(self, item: Hashable) -> set[Hashable]:
+        """Return the component containing ``item``.
+
+        Args:
+            item: An element present in the DSU.
+
+        Returns:
+            The set of items in the same component (empty set if item unknown).
+
+        Example:
+            >>> dsu = DisjointSetUnion([1, 2, 3])
+            >>> dsu.union(1, 2)
+            >>> dsu.to_set(1) == {1, 2}
+            True
         """
-        representative = self.find(item)
-        return {x for x in self.parent if self.find(x) == representative}
+        root = self.find(item)
+        if root is None:
+            return set()
+        return {x for x in self.parent if self.find(x) == root}
 
+    def representatives(self) -> Iterator[Hashable]:
+        """Yield one representative per component (uses ``min`` for stability).
 
-    def representatives(self):
-        """ Iterate over the representatives of each set."""
-        for s in self:
-            yield min(s)
+        Warning:
+            Elements in a component must be mutually comparable for ``min`` to work.
 
-    def classes(self):
+        Yields:
+            A representative element per component.
+        """
+        for component in self:
+            yield min(component)
+
+    def classes(self) -> list[set[Hashable]]:
+        """Return a list of all disjoint sets (components)."""
         return list(self)
 
     def __len__(self) -> int:
-        """
-        Returns the number of disjoint sets in the union-find structure.
+        """Return the number of components."""
+        # Use a single pass + path compression
+        reps = set()
+        for x in self.parent:
+            r = self.find(x)
+            if r is not None:
+                reps.add(r)
+        return len(reps)
 
-        Returns:
-            int: The number of disjoint sets.
-        """
-        return len(set(self.find(x) for x in self.parent))
-
-    def __repr__(self):
-        """
-        Provides a detailed string representation of the DSU, showing the parent and rank tables.
-        """
+    def __repr__(self) -> str:
         return f"DisjointSetUnion({self.parent}, {self.rank})"
 
-    def __str__(self):
-        """
-        Provides a string representation of the DSU in terms of its unique sets.
-        """
-        return f"{list(self)}"
+    def __str__(self) -> str:
+        return str(self.classes())
 
-    def to_dict(self):
+    def to_dict(self) -> dict[Hashable, set[Hashable]]:
+        """Return a mapping {rep: others} for each component.
+
+        The representative is chosen as ``min(component)`` (see caveat in
+        :meth:`representatives`).
+
+        Returns:
+            A dictionary mapping each representative to the other members in the set.
         """
-        Convert the DSU to a dictionary mapping each representative to its elements (that are not the representative).
-        """
-        return {
-            min(g): g - {min(g), } for g in self
-        }
-       # return {r: {item for item in self.parent if self.parent[item] == r and item != r} for r in self.representatives()}
+        result: dict[Hashable, set[Hashable]] = {}
+        for comp in self:
+            rep = min(comp)
+            result[rep] = set(comp) - {rep}
+        return result
+
 
 if __name__ == "__main__":
-    # DSU test
-    dsu = DisjointSetUnion("abcdefg")
-    dsu["a"] = "b"
-    dsu["c"] = "d"
-    dsu["e"] = "f"
-    dsu["b"] = "c"
-    print(dsu)
-    print("Groups:", [group for group in dsu])
-    print("Classes:", [classes for classes in dsu.classes()])
-    print("Representatives:", [rep for rep in dsu.representatives()])
-    print("Elements:", [e for e in dsu.elements])
-    print("Dictionary:", dsu.to_dict())
+    pass

@@ -1,5 +1,6 @@
 from sympy import sympify
 
+from knotpy import homflypt, homflypt_xyz
 from knotpy.reidemeister.reidemeister_3 import find_reidemeister_3_triangle, reidemeister_3
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
@@ -10,6 +11,13 @@ from knotpy.invariants.bracket import bracket
 from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
+
+
+"""
+AssertionError: Bracket is not equal. Expected -1/sqrt(t) - 1/t**(5/2), got -1/t**2 - 1/t**4. Diagram: Diagram a → X(b0 c3 a3 a2), b → X(a0 c2 c1 c0), c → X(b3 b2 b1 a1) and Diagram a → X(a1 a0 b2 c1) _r3=True, b → X(c3 c2 a2 c0) _r3=True, c → X(b3 a3 b1 b0) _r3=True (_sequence=R3 )
+E               assert -1/t**2 - 1/t**4 == -1/sqrt(t) - 1/t**(5/2)
+
+"""
 
 def _get_examples():
     diagram1 = from_knotpy_notation("a=X(c0 b0 b3 e0) b=X(a1 c3 f0 a2) c=X(a0 e3 d3 b1) d=X(e2 g0 f1 c2) e=X(a3 g1 d0 c1) f=X(b2 d2 g3 g2) g=X(d1 e1 f3 f2)")
@@ -54,21 +62,54 @@ def test_make_reidemeister_3_move():
             assert j_ == j, "Bracket is not equal. Expected {}, got {}. Diagram: {} and {}".format(j, j_, diagram, k_)
 
 
-    #
-    # diagrams = _get_examples()
-    # for k, polynomial in diagrams.items():
-    #     r1_locations = list(find_reidemeister_2_poke(k))
-    #
-    #     for loc in r1_locations:
-    #         k_ = reidemeister_2_poke(k, loc, inplace=False)
-    #         if k.name[0] == 'l':
-    #             assert sanity_check(k_)
-    #         elif is_knot(k_):
-    #             assert jones(k_) == polynomial
-    #         else:
-    #             assert yamada(k_) == polynomial
+def test_strange_case():
+    import knotpy as kp
 
+
+    w = kp.knot("3_1")
+
+
+    a = "a → X(b0 c3 a3 a2), b → X(a0 c2 c1 c0), c → X(b3 b2 b1 a1)"
+    #    a → X(b0 c3 a3 a2), b → X(a0 c2 c1 c0), c → X(b3 b2 b1 a1)
+    b = "a → X(a1 a0 b2 c1), b → X(c3 c2 a2 c0), c → X(b3 a3 b1 b0)"
+
+
+
+
+    a = kp.from_knotpy_notation(a)
+    b = kp.from_knotpy_notation(b)
+
+    o = kp.all_orientations(b)
+    for _ in o:
+        print(kp.writhe(_))
+
+    #
+    # print(canonical(a))
+    # print(canonical(b))
+
+
+    ha = bracket(a)
+    hb = bracket(b)
+    print(ha)
+    print(hb)
+    print(ha==hb)
+
+    ja = jones(a)
+    jb = jones(b)
+    print(ja)
+    print(jb)
+    print(ja==jb)
+
+    """
+    AssertionError: Bracket is not equal. Expected -1/sqrt(t) - 1/t**(5/2), got -1/t**2 - 1/t**4. Diagram: Diagram a → X(b0 c3 a3 a2), b → X(a0 c2 c1 c0), c → X(b3 b2 b1 a1) and Diagram a → X(a1 a0 b2 c1) _r3=True, b → X(c3 c2 a2 c0) _r3=True, c → X(b3 a3 b1 b0) _r3=True (_sequence=R3 )
+E               assert -1/t**2 - 1/t**4 == -1/sqrt(t) - 1/t**(5/2)
+
+    Returns:
+
+    """
 
 if __name__ == '__main__':
+    test_strange_case()
+    exit()
     for x in range(100):
         test_make_reidemeister_3_move()

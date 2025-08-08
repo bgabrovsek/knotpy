@@ -14,8 +14,9 @@ def tangle_decompositions(k: PlanarDiagram | OrientedPlanarDiagram, minimal_comp
     nodes in every component.
     """
 
-    if k.nodes("tangle_endpoints"):
+    if any("tangle_endpoints" in node.attr for node in k.nodes.values()):
         raise ValueError("The diagram already has tangle endpoints")
+    #TODO: make ways to
 
     if number_of_disjoint_components(k) != 1:
         raise ValueError("Cannot compute tangle decomposition of a diagram with more than one disjoint component")
@@ -33,7 +34,10 @@ def compose_tangles(tangle1 : PlanarDiagram | OrientedPlanarDiagram, tangle2: Pl
     k = disjoint_union(tangle1, tangle2)
 
     for i in range(4):
-        leafs = k.nodes(tangle_endpoint=i)
+        leafs = [
+            node for node in k.nodes
+            if k.nodes[node].attr.get("tangle_endpoint") == i
+        ]
         if len(leafs) != 2:
             raise ValueError("Cannot compose tangles: endpoint labels are missing or incorrect")
         endpoints = [k.twin(k.endpoints[leafs[0]][0]), k.twin(k.endpoints[leafs[1]][0])]

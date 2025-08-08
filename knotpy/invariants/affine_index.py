@@ -3,7 +3,7 @@ __version__ = '1.0'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.orientation import orient
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import OutgoingEndpoint, IngoingEndpoint
@@ -11,7 +11,7 @@ from knotpy.invariants._symbols import _t
 
 
 
-def affine_index_polynomial(k: PlanarDiagram):
+def affine_index_polynomial(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     The affine index polynomial of a knotoid.
     """

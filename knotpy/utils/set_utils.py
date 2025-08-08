@@ -1,321 +1,207 @@
-from collections.abc import Iterable
+"""
+Utilities for working with sets and layered (leveled) collections.
+
+- ``powerset``: iterate over all subsets of an iterable.
+- ``LeveledSet``: maintain items grouped by discovery "levels", with optional
+  compact internal storage via (to_string/from_string) conversions.
+
+This module is lightweight and has no heavy imports.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Iterable, Iterator
 from itertools import chain, combinations
+from typing import Generic, TypeVar
+
+__all__ = ["powerset", "LeveledSet"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
+
+T = TypeVar("T")   # external/public item type (what users pass in / get out)
+I = TypeVar("I")   # internal storage type (often str when using to_string)
 
 
+def powerset(iterable: Iterable[T]) -> Iterator[tuple[T, ...]]:
+    """Iterate over all subsets (the power set) of an iterable.
 
+    Subsets are yielded as tuples in increasing size order.
 
-def powerset(iterable):
-    """Return the powerset of an iterable, e.g., for [1,2,3], obtain () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    Args:
+        iterable: Any iterable of items.
+
+    Yields:
+        Tuples representing each subset, starting with the empty tuple.
+
+    Example:
+        >>> list(powerset([1, 2, 3]))
+        [(), (1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+    """
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+    return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
 
+class LeveledSet(Generic[T, I]):
+    """A leveled set structure with optional compact internal representation.
 
-class LeveledSet:
+    Items can be stored internally as strings (or any type ``I``) to reduce memory
+    usage or enable hashing on otherwise unhashable public types. You can provide
+    a pair of conversion functions:
+
+    - ``to_string(item: T) -> I`` stores items internally (often as ``str``).
+    - ``from_string(stored: I) -> T`` reconstructs external/public items.
+
+    If either function is omitted (``None``), items are stored directly.
+
+    Levels:
+        The structure maintains a list of *levels*. New items are added into the
+        *current* level (the last one). Calling :meth:`new_level` creates a new
+        level **only if** the last level is non-empty (so you don't accumulate
+        trailing empties). All seen items are tracked in a global set to avoid
+        duplicates across levels.
+
+    Notes:
+        - All set operations (union, intersection, difference) act on the *global*
+          content, not per-level content.
+        - Iteration yields public/external items (``T``), applying conversion back
+          if needed.
+
+    Args:
+        items: Optional initial items to insert at level 0.
+        to_string: Function to convert an external item ``T`` to internal ``I``.
+        from_string: Function to convert an internal item ``I`` back to ``T``.
     """
-    A leveled set structure that optionally uses string representations for memory efficiency.
 
-    - If `to_string` and `from_string` are provided, items are stored as strings internally.
-    - If they are None, items are stored and accessed as-is.
-    """
+    def __init__(
+        self,
+        items: Iterable[T] | None = None,
+        to_string: Callable[[T], I] | None = None,
+        from_string: Callable[[I], T] | None = None,
+    ) -> None:
+        self._use_conversion = to_string is not None and from_string is not None
+        self._to_string = to_string  # type: ignore[assignment]
+        self._from_string = from_string  # type: ignore[assignment]
+        self._levels: list[set[I | T]] = []
+        self._global_set: set[I | T] = set()
+        self.new_level(items if items is not None else [])
 
-    def __init__(self, items=None, to_string=None, from_string=None):
-        """
-        Initializes the LeveledSet.
+    # ---- Introspection -----------------------------------------------------
 
-        :param items: Optional initial items to insert at level 0.
-        :param to_string: Function to convert an object to a string (or None for identity).
-        :param from_string: Function to convert a string back to object (or None for identity).
-        """
-        self.uses_conversion = to_string is not None and from_string is not None
-        self.to_string = to_string
-        self.from_string = from_string
-        self._levels = []
-        self._global_set = set()
-
-        self.new_level(items if items else [])
-
-    def temp(self):
-        x = {type(_) for __ in self._levels for _ in __}
-        y = {type(_) for _ in self._global_set}
-        print(x, y)
-
-    def number_of_levels(self):
+    def number_of_levels(self) -> int:
+        """Return the number of levels currently stored."""
         return len(self._levels)
 
-    def level_sizes(self):
-        return tuple(len(_) for _ in self._levels)
+    def level_sizes(self) -> tuple[int, ...]:
+        """Return a tuple with the size of each level."""
+        return tuple(len(level) for level in self._levels)
 
-    def number_of_items(self):
+    def number_of_items(self) -> int:
+        """Return the total number of unique items across all levels."""
         return len(self._global_set)
 
-    def new_level(self, items=None):
-        """Creates a new level if the last one has items, and optionally adds to it."""
+    def is_level_empty(self, level: int) -> bool:
+        """Return whether a given level is empty.
 
+        Args:
+            level: Level index (supports negative indexing like Python lists).
+
+        Raises:
+            IndexError: If level is out of range.
+        """
+        if not -len(self._levels) <= level < len(self._levels):
+            raise IndexError(f"Level {level} out of range.")
+        return len(self._levels[level]) == 0
+
+    # ---- Level management --------------------------------------------------
+
+    def new_level(self, items: Iterable[T] | T | None = None) -> None:
+        """Create a new current level (only if last level is non-empty), then add optional items.
+
+        Args:
+            items: Optional single item or iterable of items to add to the new current level.
+        """
         if not self._levels or self._levels[-1]:
-
             self._levels.append(set())
 
         if items is not None:
-            if isinstance(items, Iterable):
-                self.extend(items)
+            if isinstance(items, Iterable) and not isinstance(items, (str, bytes)):
+                self.extend(items)  # type: ignore[arg-type]
             else:
-                self.add(items)
+                self.add(items)  # type: ignore[arg-type]
 
-    def remove_empty_levels(self):
-        """Removes empty levels from the end."""
+    def remove_empty_levels(self) -> None:
+        """Remove trailing empty levels."""
         while self._levels and not self._levels[-1]:
             self._levels.pop()
 
-    def _convert_in(self, item):
-        return self.to_string(item) if self.uses_conversion else item
+    # ---- Conversion helpers ------------------------------------------------
 
-    def _convert_out(self, item):
-        return self.from_string(item) if self.uses_conversion else item
+    def _in(self, item: T | I) -> T | I:
+        return self._to_string(item) if self._use_conversion else item  # type: ignore[misc]
 
-    def is_level_empty(self, level):
-        return len(self._levels[level]) == 0
+    def _out(self, item: T | I) -> T:
+        return self._from_string(item) if self._use_conversion else item  # type: ignore[return-value]
 
+    # ---- Content manipulation ----------------------------------------------
 
-    def iter_level(self, level):
-        """
-        Generator that yields items from a specific level, applying conversion if needed.
+    def add(self, item: T) -> None:
+        """Add a single item to the current level if not seen before."""
+        stored = self._in(item)
+        if stored not in self._global_set:
+            self._levels[-1].add(stored)
+            self._global_set.add(stored)
 
-        :param level: Integer index of the level (can be negative).
-        """
-        # if isinstance(level, slice):
-        #     # Use islice to safely handle slice over list of levels
-        #     levels = self._levels[level]  # slice gives a list of sets
-        #     return (
-        #     (
-        #         self._convert_out(s)
-        #         for s in level_set
-        #     )
-        #         for level_set in levels
-        #
-        #     )
-
-        if isinstance(level, int):
-            if -len(self._levels) <= level < len(self._levels):
-                items = self._levels[level]  # we must capture the level’s contents immediately
-                return (self._convert_out(s) for s in items)  # do not use yield!
-
-            else:
-                raise ValueError(f"Level {level} out of range")
-        else:
-            raise TypeError(f"Level must be an integer or slice, got {type(level)}")
-
-    def add(self, item):
-        """Adds a single item to the current level if not already present."""
-        from knotpy.classes.planardiagram import PlanarDiagram
-        # if not isinstance(item, PlanarDiagram):
-        #     raise TypeError(f"LeveledSet only supports PlanarDiagram objects, added {item}")
-        item_conv = self._convert_in(item)
-        if item_conv not in self._global_set:
-            self._levels[-1].add(item_conv)
-            self._global_set.add(item_conv)
-
-    def extend(self, items: Iterable):
-        """Adds multiple items to the current level."""
-        # #print(type(items))
-        # def peek_generator(gen):
-        #     if isinstance(gen, set | list | tuple):
-        #         return next(iter(gen)), gen
-        #     first = next(gen)
-        #     print(type(gen), type(first))
-        #     def new_gen():
-        #         yield first
-        #         yield from gen
-        #
-        #     return first, new_gen()
-        #
-        # peeked, items = peek_generator(items)
-        # print("Peeked:", peeked)
-        # if not isinstance(items, list | tuple | set):
-        #     items = {items}
-        # else:
-        #     items = set(items)
-
-        # print("extending with", items)
+    def extend(self, items: Iterable[T]) -> None:
+        """Add multiple items to the current level."""
         for item in items:
             self.add(item)
 
-    def contains(self, item):
-        """Checks whether an item exists in any level."""
-        return self._convert_in(item) in self._global_set
+    def contains(self, item: T) -> bool:
+        """Return True if the item appears in any level."""
+        return self._in(item) in self._global_set
 
-    # def get_level(self, level):
-    #     """
-    #     Retrieves all items at a specific level, converted to original form if using conversion.
-    #     """
-    #     return {self._convert_out(s) for s in self[level]}
+    # ---- Set-like global operations ----------------------------------------
 
-    def union(self, other):
-        return self._global_set | other._global_set
+    def union(self, other: "LeveledSet[T, I]") -> set[T]:
+        """Return the union of contents (as external items) with another LeveledSet."""
+        return {self._out(x) for x in (self._global_set | other._global_set)}
 
-    def intersection(self, other):
-        return self._global_set & other._global_set
+    def intersection(self, other: "LeveledSet[T, I]") -> set[T]:
+        """Return the intersection of contents (as external items) with another LeveledSet."""
+        return {self._out(x) for x in (self._global_set & other._global_set)}
 
-    def difference(self, other):
-        return self._global_set - other._global_set
+    def difference(self, other: "LeveledSet[T, I]") -> set[T]:
+        """Return the difference of contents (as external items) with another LeveledSet."""
+        return {self._out(x) for x in (self._global_set - other._global_set)}
 
-    def isdisjoint(self, other):
+    def isdisjoint(self, other: "LeveledSet[T, I]") -> bool:
+        """Return True if the two LeveledSets share no common items."""
         return self._global_set.isdisjoint(other._global_set)
 
-    # support for get_item removed, since one can then fill the level with non-unique elements
-    # def __getitem__(self, level):
-    #     #if 0 <= level < len(self.levels):
-    #     return self.levels[level]
-    #     #return set()
+    # ---- Iteration ----------------------------------------------------------
 
-    def __iter__(self):
-        """Iterates over all elements, converted if÷ using conversion."""
-        return (self._convert_out(s) for s in self._global_set)
+    def iter_level(self, level: int) -> Iterator[T]:
+        """Iterate items of a specific level (converted to external items).
+
+        Args:
+            level: Level index (supports negative indexing).
+
+        Yields:
+            Items at the requested level.
+
+        Raises:
+            IndexError: If level is out of range.
+        """
+        if not -len(self._levels) <= level < len(self._levels):
+            raise IndexError(f"Level {level} out of range.")
+        # Snapshot the set to keep iteration stable if the structure mutates elsewhere.
+        items = tuple(self._levels[level])
+        return (self._out(s) for s in items)
+
+    def __iter__(self) -> Iterator[T]:
+        """Iterate all unique items (converted to external items)."""
+        return (self._out(s) for s in self._global_set)
 
 
-
-
-#
-#
-# class LeveledSet:
-#     """
-#     A leveled set structure that keeps track of items at different levels.
-#
-#     - Allows inserting new elements at a specific level.
-#     - Prevents duplicate entries across all levels.
-#     - Provides fast lookups to check if an item exists at any level.
-#     - Allows retrieval of all elements at a given level.
-#     - Supports batch insertion via `extend()`.
-#     - Supports iteration, allowing use in `min()`, `max()`, and loops.
-#     """
-#
-#     def __init__(self, items=None):
-#         """Initializes an empty leveled set structure."""
-#         self.levels = [set()]  # List of sets, where each set stores diagrams at a level
-#         self.global_set = set()  # Fast lookup to check if an item exists at any level
-#
-#         if items is not None:
-#             # Ensure `items` is iterable (convert to set if it's not a list, tuple, or set)
-#             if not isinstance(items, (list, tuple, set)):
-#                 items = {items}  # Convert single item into a set
-#             else:
-#                 items = set(items)  # Convert list/tuple into a set
-#
-#             self.levels[0] = items
-#             self.global_set.update(items)
-#
-#     def new_level(self, items=None):
-#         """Creates a new level if the last level contains items."""
-#         if self.levels[-1]:
-#             self.levels.append(set())
-#
-#         if items:
-#             if isinstance(items, (list, tuple, set)):
-#                 self.extend(items)
-#             else:
-#                 self.add(items)
-#
-#     def remove_empy_levels(self):
-#         """Removes empty levels from the end of the list."""
-#         while self.levels and not self.levels[-1]:
-#             self.levels.pop()
-#
-#     def add(self, item):
-#         """
-#         Adds an item to the specified level, ensuring it hasn't been added before.
-#
-#         :param item: The item (diagram) to add.
-#         """
-#         if item not in self.global_set:
-#             self.levels[-1].add(item)
-#             self.global_set.add(item)
-#
-#     def extend(self, items):
-#         """
-#         Adds multiple items at the specified level.
-#
-#         :param items: An iterable of items to add.
-#         """
-#         if not isinstance(items, (list, tuple, set)):
-#             items = {items}  # Convert single item to a set
-#         else:
-#             items = set(items)  # Convert to set to remove duplicates
-#
-#         for item in items:
-#             self.add(item)
-#
-#     def contains(self, item):
-#         """
-#         Checks if an item exists in any level.
-#
-#         :param item: The item (diagram) to check.
-#         :return: True if the item exists, False otherwise.
-#         """
-#         return item in self.global_set
-#
-#     def get_level(self, level):
-#         """
-#         Retrieves all items at a specific level.
-#
-#         :param level: The level to retrieve.
-#         :return: A set of items at the given level.
-#         """
-#         return self[level]
-#
-#     def union(self, other):
-#         """
-#         Returns the union of the global set with another set.
-#
-#         :param other: The set to union with.
-#         :return: A new set containing all elements from both sets.
-#         """
-#         return self.global_set | set(other)  # why not global set?
-#
-#     def intersection(self, other):
-#         """
-#         Returns the intersection of the global set with another set.
-#
-#         :param other: The set to intersect with.
-#         :return: A new set containing elements common to both sets.
-#         """
-#         return self.global_set & set(other)
-#
-#     def difference(self, other):
-#         """
-#         Returns the difference of the global set with another set.
-#
-#         :param other: The set to subtract.
-#         :return: A new set containing elements in the global set but not in other.
-#         """
-#         return self.global_set - set(other)
-#
-#     def isdisjoint(self, other):
-#         """
-#         Checks if the global set has no elements in common with another set.
-#
-#         :param other: The set to check against.
-#         :return: True if the sets are disjoint, False otherwise.
-#         """
-#         return self.global_set.isdisjoint(set(other))
-#
-#     def __getitem__(self, level):
-#         if level < len(self.levels) or level < 0:
-#             return self.levels[level]
-#         return set()
-#
-#     def __iter__(self):
-#         """
-#         Allows iteration over all elements in the leveled set.
-#         This makes it possible to use built-in functions like min(), max(), and sorted().
-#         """
-#         return iter(self.global_set)
-#
-#
-#
-#     # def __len__(self):
-#     #     NotImplementedError()  # ambiguous (number of elements or number of levels)
-#
-#
-#     def __repr__(self):
-#         """Returns a string representation of the leveled set."""
-#         return f"LeveledSet({self.levels})"
+if __name__ == "__main__":
+    pass

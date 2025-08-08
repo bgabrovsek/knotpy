@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use KnotPy in your research, please cite it as below."
+title: "KnotPy: A Python library for knot theory and spatial graph computations"
+version: "1.0.0"
+authors:
+  - family-names: "Gabrovšek"
+    given-names: "Boštjan"
+    email: "bostjan.gabrovsek@pef.uni-lj.si"
+    affiliation: "Faculty of Education, University of Ljubljana; Rudolfovo – Science and Technology Centre Novo mesto"
+date-released: 2025-08-08
+doi: "xxxxx"  # Replace with actual DOI after Zenodo release
+url: "https://github.com/bgabrovsek/KnotPy"
+license: "MIT"
+abstract: >
+  KnotPy is a Python 3.10+ library for the manipulation, analysis, and
+  visualization of knots, links, knotoids, and spatial graphs. It supports
+  Reidemeister moves, computation of polynomial invariants, and tools for
+  topological research and education.
+preferred-citation:
+  type: software
+  authors:
+    - family-names: "Gabrovšek"
+      given-names: "Boštjan"
+  title: "KnotPy: A Python library for knot theory and spatial graph computations"
+  version: "1.0.0"
+  doi: "xxxxx"  # Replace with actual DOI
+  date-released: 2025-08-08
+  url: "https://github.com/bgabrovsek/KnotPy"

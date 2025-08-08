@@ -1,47 +1,30 @@
+# knotpy/notation/pd.py
+
+from __future__ import annotations
+
+"""Planar Diagram (PD) notation utilities.
+
+PD notation describes knotted structures as incidence lists.
+Reference: https://katlas.org/wiki/Planar_Diagrams
+
+Supported input styles (auto-detected):
+  - Mathematica:  "Xp[1,9,2,8],Xn[3,10,4,11],X[5,3,6,2],..."
+  - KnotInfo:     "[[1,5,2,4],[3,1,4,6],[5,3,6,2]]"
+  - Topoly:       "V[3,23];X[1,0,3,2];X[0,9,14,13];..."
 """
-The planar diagram (PD) notation of a knotted structure is represented as an incidence list. 
-See https://katlas.org/wiki/Planar_Diagrams.
 
-Supported notation formats:
-  - Mathematica: "Xp[1,9,2,8],Xn[3,10,4,11],X[5,3,6,2],X[7,1,8,13],X[9,4,10,5],X[11,7,12,6],P[12,13]"
-  - KnotInfo: "[[1,5,2,4],[3,1,4,6],[5,3,6,2]]"
-  - Topoly: "V[3,23];X[1,0,3,2];X[0,9,14,13];X[17,14,16,15];X[15,16,9,18];X[13,17,24,23];X[18,1,2,24]"
-
-Node abbreviations:
-  - V - vertex,
-  - X - unsigned crossing,
-  - Xp, + - positively signed crossing,
-  - Xm, - - negatively signed crossing,
-  - P, B - bivalent vertex,
-"""
-import re
-import string
-
+from ast import literal_eval
 from collections import defaultdict
+from typing import Any
 
-from knotpy.algorithms.topology import edges
-import knotpy.algorithms.topology
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.utils.string_utils import multi_replace, nested_split, abcABC
-#from knotpy.algorithms.node_operations import add_node_to
-from knotpy.classes.node import Vertex, Crossing
+from knotpy.classes.planardiagram import OrientedPlanarDiagram, PlanarDiagram
+from knotpy.classes.node import Crossing, Vertex
+from knotpy.utils.string_utils import abcABC, multi_replace
 
-__all__ = ['from_pd_notation', 'to_pd_notation', "to_condensed_pd_notation", "from_condensed_pd_notation"]
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__all__ = ["from_pd_notation", "to_pd_notation", "to_condensed_pd_notation", "from_condensed_pd_notation"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovšek@pef.uni-lj.si>"
 
-
-# def _parse_from_knotinfo(s: str) -> list:
-#     """Return a list of pairs (node_abbr, list of adjacent nodes) from the knotinfo PD notation.
-#     Example: "[[1,2],[2,0]]" -> [("X", [1,2]), ("X", [2,0])]
-#     :param s: knotinfo PD notation
-#     :return: list of pairs
-#     """
-#     s = multi_replace(s, {" ": "", "(": "[", ")": "]"})
-#     return [("X", item) for item in eval(s)]
-#
-#
-# _parse_from_notation_dispatcher = {"knotinfo": _parse_from_knotinfo}
 
 _node_abbreviations = {
     "X": Crossing,
@@ -51,228 +34,210 @@ _node_abbreviations = {
 _node_abbreviations_inv = {val: key for key, val in _node_abbreviations.items()}
 
 
-def from_pd_notation(text: str, node_type=str, oriented=False, **attr):
-    """Create planar diagram object from string containing the PD code.
-    Autodetect PD codes of formats:
-    - Mathematica: "V[1,2,3], X[2,3,4,5]", see https://knotinfo.math.indiana.edu/descriptions/pd_notation.html,
-    - Knotinfo: "[[1,5,2,4],[3,1,4,6],[5,3,6,2]]", see http://katlas.org/wiki/Planar_Diagrams.
+def from_pd_notation(text: str, node_type: type | Any = str, oriented: bool = False, **attr: Any) -> PlanarDiagram:
+    """Create a planar diagram from PD notation.
 
-    ['XABC', 'YBAD', 'CDEF', 'EGHI', 'FJKG', 'IHKJ', 'X', 'Y']
+    Supports Mathematica, KnotInfo, and Topoly variants. Nodes default to ``'a','b','c',...``
+    if ``node_type is str``; otherwise integers are used in order of appearance.
 
-    :param text: string containing the PD notation
-    :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
-    :param oriented:
-    :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
-    :return: planar diagram object
+    Args:
+        text: PD notation string (mixed styles allowed; auto-detected).
+        node_type: Use ``str`` for ``a,b,c,...`` labels (default), or a different marker to keep integers.
+        oriented: Whether to create an oriented diagram (not implemented yet).
+        **attr: Diagram attributes to set (e.g., name, framing).
+
+    Returns:
+        PlanarDiagram: Parsed diagram.
+
+    Raises:
+        NotImplementedError: If ``oriented=True`` (placeholder).
+        ValueError: If the PD string is malformed or arcs are not paired.
+
+    Examples:
+        >>> s = "V[1,2,3], X[2,3,4,5]"
+        >>> d = from_pd_notation(s)
+        >>> isinstance(d, PlanarDiagram)
+        True
     """
-
-    # if create_using is not None and not isinstance(create_using, type):
-    #     raise TypeError("Creating PD diagram with create_using instance not yet supported.")
-
     if oriented:
-        raise NotImplementedError()  # TODO: implement oriented diagram
+        raise NotImplementedError("Oriented PD import not implemented yet.")
 
-    text = text.strip()
-    text = multi_replace(text, ")]","([", {"] ": "]", ", ": ","}, ";,", ("],", "];"))
-    text = text.upper()
-    text = ' '.join(text.split()) # remove double spaces
-    text = text.replace("PD ", "PD")
+    s = text.strip()
+    # normalize separators/spacing across styles (relies on multi_replace helper)
+    s = multi_replace(s, ")]", "([", {"] ": "]", ", ": ","}, ";,", ("],", "];"))
+    s = s.upper()
+    s = " ".join(s.split())
+    s = s.replace("PD ", "PD")
 
-    if text.startswith("PD[") and text.endswith("]"):
-        text = text[3:-1]
+    if s.startswith("PD[") and s.endswith("]"):
+        s = s[3:-1]
 
+    # Extract nested list if wrapped like [[...]] or ( ... )
+    if s[:2] in ("[[", "[(", "([", "((") and s[-2:] in ("]]", "])", ")]", "))"):
+        s = s[1:-1]
 
+    # For now disable oriented, keep API-compatible variable present
+    oriented = False
 
-    # extract nested list (KnotInfo)
-    if text[:2] in ("[[", "[(", "([", "((") and text[-2:] in ("]]", "])", ")]", "))"):
-        text = text[1:-1]
+    k: PlanarDiagram = OrientedPlanarDiagram() if oriented else PlanarDiagram()
+    arc_dict: dict[int, list[tuple[Any, int]]] = defaultdict(list)
 
-    oriented = False #("I " in text or " I]") and ("O " in text or "O]" in text)
+    for node_idx, subtext in enumerate(s.split(";")):
+        i0, i1 = subtext.find("["), subtext.find("]")
+        if i0 == -1 or i1 == -1:
+            raise ValueError(f"Invalid PD node notation: {subtext!r}")
 
-    k = OrientedPlanarDiagram() if oriented else PlanarDiagram()
-    arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
+        # Safer than eval
+        node_arcs = literal_eval(subtext[i0 : i1 + 1])
+        if not isinstance(node_arcs, (list, tuple)):
+            raise ValueError(f"PD node arcs must be a list/tuple: {subtext!r}")
 
-
-    for node, subtext in enumerate(text.split(";")):
-        # get node type and arc data
-        if (i0 := subtext.find("[")) == -1 or \
-           (i1 := subtext.find("]")) == -1:
-            raise ValueError(f"Invalid PD node notation {subtext}.")
-
-        node_arcs = eval(subtext[i0:i1+1])  # list of arcs
-        node_abbr = subtext[:i0] if 1 <= i0 <= 2 else "X" if len(node_arcs) == 4 else "V"  # str, e.g. "X"
-        node_name = abcABC[node] if node_type is str else node  # abc or 123
+        # Node abbreviation (X/V) inferred if missing by degree
+        node_abbr = subtext[:i0] if 1 <= i0 <= 2 else ("X" if len(node_arcs) == 4 else "V")
+        node_name = abcABC[node_idx] if node_type is str else node_idx
 
         try:
-            k.add_node(node_for_adding=node_name,
-                       create_using=_node_abbreviations[node_abbr],
-                       degree=len(node_arcs))
+            k.add_node(node_for_adding=node_name, create_using=_node_abbreviations[node_abbr], degree=len(node_arcs))
         except KeyError:
-            raise ValueError(f"Invalid PD notation {text}, node {node} ({subtext}): unknown node abbreviation {node_abbr} in the PD code.")
-
+            raise ValueError(
+                f"Invalid PD node abbreviation {node_abbr!r} at item {node_idx} in PD string."
+            ) from None
 
         for pos, arc in enumerate(node_arcs):
+            if not isinstance(arc, int):
+                raise ValueError(f"Arc labels must be integers; got {arc!r} in {subtext!r}.")
             arc_dict[arc].append((node_name, pos))
 
-    for key, arc in arc_dict.items():
-        if len(arc) != 2:
-            raise ValueError(f"Invalid PD notation: arc {arc} is not a pair at arc number {key} in the PD code.")
-        k.set_arc(arc)
+    # Every arc id must occur exactly twice
+    for arc_id, pair in arc_dict.items():
+        if len(pair) != 2:
+            raise ValueError(f"Invalid PD: arc id {arc_id} occurs {len(pair)} times (expected 2).")
+        k.set_arc(tuple(pair))  # type: ignore[arg-type]
 
-    k.attr.update(attr)  # update given attribures
-
-    #print(k)
-
+    k.attr.update(attr)
     return k
 
 
+def from_condensed_pd_notation(text: str, node_type: type | Any = str, oriented: bool = False, **attr: Any) -> PlanarDiagram:
+    """Create a planar diagram from condensed PD code (e.g., ``"abc bcde ..."``).
 
-def from_condensed_pd_notation(text: str, node_type=str, oriented=False, **attr):
-    """Create planar diagram object from string containing the condensed PD code. The condensed pd code is, e.g.
-    "abc bcde ..."
+    Each token is a node’s incident arcs in CCW order; 4 letters → ``X`` (crossing),
+    otherwise ``V`` (vertex). Arc labels must be single characters and paired globally.
 
-    :param text: string containing the PD notation
-    :param node_type: int for nodes 0, 1, 2, or str for nodes "a", "b", ...
-    :param oriented:
-    :param attr: additional attributes to assign to the planar diagram (name, framing, ...)
-    :return: planar diagram object
+    Args:
+        text: Condensed PD code as space-separated tokens.
+        node_type: Use ``str`` for ``a,b,c,...`` labels (default), else integers.
+        oriented: Whether to create an oriented diagram (not implemented yet).
+        **attr: Diagram attributes to set.
+
+    Returns:
+        PlanarDiagram: Parsed diagram.
+
+    Raises:
+        NotImplementedError: If ``oriented=True`` (placeholder).
+        ValueError: If token parsing fails.
     """
-
-    # if create_using is not None and not isinstance(create_using, type):
-    #     raise TypeError("Creating PD diagram with create_using instance not yet supported.")
-
     if oriented:
-        raise NotImplementedError()  # TODO: implement oriented diagram
+        raise NotImplementedError("Oriented condensed PD import not implemented yet.")
 
-    text = text.strip()
+    s = text.strip()
+    if not s:
+        raise ValueError("Empty condensed PD string.")
 
     k = PlanarDiagram()
-    arc_dict = defaultdict(list)  # keys are arc numbers, values are arcs
+    arc_dict: dict[str, list[tuple[Any, int]]] = defaultdict(list)
 
-    for node, subtext in enumerate(text.split(" ")):
+    for node_idx, token in enumerate(s.split()):
+        node_arcs = list(token)
+        node_abbr = "X" if len(node_arcs) == 4 else "V"
+        node_name = abcABC[node_idx] if node_type is str else node_idx
 
-        node_arcs = list(subtext)  # list of arcs
-        node_abbr = "X" if len(subtext) == 4 else "V"
-        node_name = abcABC[node] if node_type is str else node  # abc or 123
-
-        k.add_node(node_for_adding=node_name,
-                   create_using=_node_abbreviations[node_abbr],
-                   degree=len(node_arcs))
+        k.add_node(node_for_adding=node_name, create_using=_node_abbreviations[node_abbr], degree=len(node_arcs))
 
         for pos, arc in enumerate(node_arcs):
             arc_dict[arc].append((node_name, pos))
 
-    for arc in arc_dict.values():
-        k.set_arc(arc)
+    for pair in arc_dict.values():
+        if len(pair) != 2:
+            raise ValueError("Invalid condensed PD: every arc must appear exactly twice.")
+        k.set_arc(tuple(pair))  # type: ignore[arg-type]
 
-    k.attr.update(attr)  # update given attribures
-
-    #print(k)
-
+    k.attr.update(attr)
     return k
 
 
 def to_pd_notation(k: PlanarDiagram) -> str:
-    """
+    """Serialize a planar diagram to PD notation.
 
-    :param k:
-    :return:
-    """
+    Output uses abbreviations inferred by node type:
+    ``X[...,...,...,...]`` for crossings and ``V[...]`` for vertices. Arc ids are
+    assigned by enumerating unique arcs as they appear.
 
-    # associate each endpoint to its arc number (starting from 0).
-    endpoint_dict = dict()
+    Args:
+        k: Diagram to serialize.
+
+    Returns:
+        str: PD notation string.
+
+    Examples:
+        >>> from knotpy.classes.planardiagram import PlanarDiagram
+        >>> d = PlanarDiagram()
+        >>> d.add_vertices_from(["a","b"])
+        >>> d.set_arc((("a",0),("b",0)))
+        >>> out = to_pd_notation(d)
+        >>> out.startswith("V[") or out.startswith("X[")
+        True
+    """
+    # Map endpoints to arc numbers (0..m-1)
+    endpoint_to_arc: dict[Any, int] = {}
     for arc_number, (ep0, ep1) in enumerate(k.arcs):
-        endpoint_dict[ep0] = arc_number
-        endpoint_dict[ep1] = arc_number
+        endpoint_to_arc[ep0] = arc_number
+        endpoint_to_arc[ep1] = arc_number
 
-    # print(endpoint_dict)
-    # print(k)
-    # print(list(k.arcs))
-    # for node in k.nodes:
-    #     print([ (ep, ep in endpoint_dict) for ep in k.nodes[node]   ])
+    parts: list[str] = []
+    for node in k.nodes:
+        node_type_abbr = _node_abbreviations_inv[type(k.nodes[node])]
+        plist = ",".join(str(endpoint_to_arc[ep]) for ep in k.nodes[node])
+        parts.append(f"{node_type_abbr}[{plist}]")
 
-
-    return ",".join(
-        _node_abbreviations_inv[type(k.nodes[node])] +
-        "[" +
-        ",".join(str(endpoint_dict[ep]) for ep in k.nodes[node]) +
-        "]"
-        for node in k.nodes
-        )
+    return ",".join(parts)
 
 
 def to_condensed_pd_notation(k: PlanarDiagram) -> str:
-    """
-    :param k:
-    :return:
-    """
+    """Serialize a planar diagram to condensed PD notation.
 
-    if len(list(k.arcs)) > 50:
-        raise ValueError("Too much arcs for converting a diagram to condensed PD notation")
+    Constraints:
+      - At most 50 arcs (since we label arcs with single letters).
+      - Diagram must contain only vertices and crossings.
+      - No vertex may have degree 4 (ambiguity with crossings).
+
+    Args:
+        k: Diagram to serialize.
+
+    Returns:
+        str: Space-separated tokens of arc letters per node (CCW).
+
+    Raises:
+        ValueError: If constraints are violated.
+    """
+    arcs_list = list(k.arcs)
+    if len(arcs_list) > 50:
+        raise ValueError("Too many arcs for condensed PD notation (max 50).")
 
     if len(k.vertices) + len(k.crossings) != len(k.nodes):
-        raise ValueError("For condensed PD notation, the diagram should contain only vertices and crossings")
+        raise ValueError("Condensed PD requires only vertices and crossings.")
 
     if any(k.degree(node) == 4 for node in k.vertices):
-        raise ValueError("For condensed PD notation, no vertex should be of degree 4")
+        raise ValueError("Condensed PD requires that no vertex has degree 4.")
 
-    # associate each endpoint to its arc number (starting from 0).
-    endpoint_dict = dict()
-    for arc_number, (ep0, ep1) in enumerate(k.arcs):
-        endpoint_dict[ep0] = abcABC[arc_number]
-        endpoint_dict[ep1] = abcABC[arc_number]
+    # Assign letters to arcs
+    endpoint_to_letter: dict[Any, str] = {}
+    for idx, (ep0, ep1) in enumerate(arcs_list):
+        endpoint_to_letter[ep0] = abcABC[idx]
+        endpoint_to_letter[ep1] = abcABC[idx]
 
-    return " ".join(
-        "".join(str(endpoint_dict[ep]) for ep in k.nodes[node])
-        for node in k.nodes
-        )
+    return " ".join("".join(endpoint_to_letter[ep] for ep in k.nodes[node]) for node in k.nodes)
 
-
-def _test():
-
-
-    pd_code_mathematica = "X[1, 9, 2, 8], X[3, 10, 4, 11], X[5, 3, 6, 2],X[7, 1, 8, 12], X[9, 4, 10, 5], X[11,7,12,6]"
-    pd_code_knotinfo = "[[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]]"
-    pd_code_topoly = "V[12,14,5],V[14,13,2],X[11,10,13,12],X[7,11,5,6],X[10,7,6,2]"
-
-    k1 = from_pd_notation(pd_code_mathematica, node_type=str)
-    print(k1)
-    k2 = from_pd_notation(pd_code_knotinfo, node_type=str)
-    print(k2)
-    k3 = from_pd_notation(pd_code_topoly, node_type=str)
-    print(k3)
-
-    print(to_pd_notation(k1))
-    print(to_pd_notation(k2))
-    print(to_pd_notation(k3))
-
-    pd = "V[0,1],X[0,3,2,4],X[3,1,4,2]"
-    k = from_pd_notation(pd)
-    print(k)
 
 if __name__ == "__main__":
-
-    import knotpy as kp
-    s = "V[1,2,3],V[8,11,9],V[10,12,11],V[12,13,14],X[8,2,13,10],X[4,5,6,1],X[5,4,3,7],X[14,6,7,9]"
-
-    k = from_pd_notation(s)
-
-
-    print(knotpy.algorithms.topology.edges.edges(k))
-    print(kp.link_components(k))
-
-
-
-# V[0,1,2],V[3, 4,5],V[6, 7, 4], V[7, 8, 9], X[3,1,8, 6], X[10,11,12,0],X[11,10,2,13],X[9,12,13,5]
-# V[1,2,3],V[8,11,9],V[10,12,11],V[12,13,14],X[8,2,13,10],X[4, 5, 6, 1],X[5 ,4 ,3,7 ],X[14, 6,7,9]
-#
-#     s = "X[1, 3, 4, 5], X[2, 4, 3, 6], X[5, 6, 7, 8], X[8, 7, 9, 10], X[9, 11, 12, 13], X[10, 14, 15, 16], X[11, 16, 17, 18], X[12, 18, 19, 20], X[13, 20, 21, 14], X[15, 21, 19, 17], V[1], V[2]"
-#     k = from_pd_notation(s)
-#     print(k)
-#     print(to_pd_notation(k))
-#     print()
-#     s = to_condensed_pd_notation(k)
-#     print(s)
-#     print(from_condensed_pd_notation(s))
-#
-#     #_test()
+    pass

@@ -1,137 +1,175 @@
+"""
+Implements a fast, dependency-free algorithm for packing circles with
+prescribed tangencies. Used internally in KnotPy for layout of graph structures.
+"""
 
-from math import pi, acos, sin, e
+__all__ = [
+    "circle_pack",
+    "invert_packing",
+    "normalize_packing",
+    "invert_around",
+]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-tolerance = 1 + 10e-12  # how accurately to approximate things
+tolerance = 1 + 1e-12  # Convergence threshold
 
-# ======================================================
-#   The main circle packing algorithm
-# ======================================================
 
-def CirclePack(internal, external):
-    """Find a circle packing for the given data.
-    The two arguments should be dictionaries with disjoint keys; the
-    keys of the two arguments are identifiers for circles in the packing.
-    The internal argument maps each internal circle to its cycle of
-    surrounding circles; the external argument maps each external circle
-    to its desired radius. The return function is a mapping from circle
-    keys to pairs (center,radius) where center is a complex number."""
+def circle_pack(internal: dict[str, list[str]], external: dict[str, float]) -> dict[str, tuple[complex, float]]:
+    """
+    Compute a circle packing layout given prescribed tangencies.
 
-    # Some sanity checks and preprocessing
+    Internal circles are surrounded by a cycle of other circles; external circles
+    have fixed radii.
+
+    Args:
+        internal: Mapping of internal keys to cyclic list of neighbor keys.
+        external: Mapping of external keys to fixed radii.
+
+    Returns:
+        A dictionary mapping each key to a (center, radius) pair.
+
+    Raises:
+        ValueError: If keys are not disjoint or external radii are non-positive.
+
+    Example:
+        >>> internal = {'A': ['B', 'C', 'D']}
+        >>> external = {'B': 1.0, 'C': 1.0, 'D': 1.0}
+        >>> packing = circle_pack(internal, external)
+        >>> len(packing)
+        4
+    """
+    from math import pi, sin
+
     if min(external.values()) <= 0:
-        raise ValueError("CirclePack: external radii must be positive")
+        raise ValueError("circle_pack: external radii must be positive")
     radii = dict(external)
+
     for k in internal:
         if k in external:
-            raise ValueError("CirclePack: keys are not disjoint")
-        radii[k] = 1
+            raise ValueError("circle_pack: keys are not disjoint")
+        radii[k] = 1.0  # Initial guess
 
-    # The main iteration for finding the correct set of radii
-    lastChange = 2
-    while lastChange > tolerance:
-        lastChange = 1
+    last_change = 2.0
+    while last_change > tolerance:
+        last_change = 1.0
         for k in internal:
             theta = flower(radii, k, internal[k])
-            hat = radii[k] / (1 / sin(theta / (2 * len(internal[k]))) - 1)
-            newrad = hat * (1 / (sin(pi / len(internal[k]))) - 1)
-            kc = max(newrad / radii[k], radii[k] / newrad)
-            lastChange = max(lastChange, kc)
-            radii[k] = newrad
+            n = len(internal[k])
+            # Estimate new radius based on current angle sum
+            hat = radii[k] / (1 / sin(theta / (2 * n)) - 1)
+            new_rad = hat * (1 / (sin(pi / n)) - 1)
+            ratio = max(new_rad / radii[k], radii[k] / new_rad)
+            last_change = max(last_change, ratio)
+            radii[k] = new_rad
 
-    # Recursively place all the circles
-    placements = {}
-    k1 = next(iter(internal))  # pick one internal circle
-    placements[k1] = 0j  # place it at the origin
-    k2 = internal[k1][0]  # pick one of its neighbors
-    placements[k2] = radii[k1] + radii[k2]  # place it on the real axis
-    place(placements, radii, internal, k1)  # recursively place the rest
+    placements: dict[str, complex] = {}
+    k1 = next(iter(internal))
+    k2 = internal[k1][0]
+    placements[k1] = 0j
+    placements[k2] = radii[k1] + radii[k2]
+    place(placements, radii, internal, k1)
     place(placements, radii, internal, k2)
 
-    # conjugate the dictionary
-    return dict((k, (placements[k], radii[k])) for k in radii)
+    return {k: (placements[k], radii[k]) for k in radii}
 
 
-# ======================================================
-#   Invert a collection of circles
-# ======================================================
+def invert_packing(packing: dict[str, tuple[complex, float]], center: complex) -> dict[str, tuple[complex, float]]:
+    """
+    Invert all circles in the packing around a given complex point.
 
-def InvertPacking(packing, center):
-    """Invert with specified center"""
-    result = {}
-    for k in packing:
-        z, r = packing[k]
+    Args:
+        packing: Dictionary mapping keys to (center, radius) pairs.
+        center: Complex point to invert around.
+
+    Returns:
+        A new packing where all circles are inverted.
+
+    Example:
+        >>> inverted = invert_packing(packing, 0j)
+    """
+    result: dict[str, tuple[complex, float]] = {}
+    for k, (z, r) in packing.items():
         z -= center
-        if z == 0:
-            offset = 1j
-        else:
-            offset = z / abs(z)
+        offset = z / abs(z) if z != 0 else 1j
         p, q = z - offset * r, z + offset * r
         p, q = 1 / p, 1 / q
-        z = (p + q) / 2
-        r = abs((p - q) / 2)
-        result[k] = z, r
+        z_new = (p + q) / 2
+        r_new = abs((p - q) / 2)
+        result[k] = (z_new, r_new)
     return result
 
 
-def NormalizePacking(packing, k=None, target=1.0):
-    """Make the given circle have radius one (or the target if given).
-    If no circle is given, the minimum radius circle is chosen instead."""
+def normalize_packing(packing: dict[str, tuple[complex, float]], k: str = None, target: float = 1.0) -> dict[str, tuple[complex, float]]:
+    """
+    Normalize the packing so that a given circle has radius `target`.
+
+    Args:
+        packing: Mapping from keys to (center, radius).
+        k: Optional key of the circle to normalize. If None, uses the smallest.
+        target: Desired radius for the selected circle.
+
+    Returns:
+        New packing with all circles scaled accordingly.
+    """
     if k is None:
-        r = min(r for z, r in packing.values())
+        r = min(r for _, r in packing.values())
     else:
-        z, r = packing[k]
+        _, r = packing[k]
     s = target / r
-    return dict((kk, (zz * s, rr * s)) for kk, (zz, rr) in packing.iteritems())
+    return {kk: (zz * s, rr * s) for kk, (zz, rr) in packing.items()}
 
 
-def InvertAround(packing, k, smallCircles=None):
-    """Invert so that the specified circle surrounds all the others.
-    Searches for the inversion center that maximizes the minimum radius.
+def invert_around(packing: dict[str, tuple[complex, float]], k: str, smallCircles: list[str] | None = None) -> dict[str, tuple[complex, float]]:
+    """
+    Invert packing so that circle `k` surrounds the others.
 
-    This can be expressed as a quasiconvex program, but in a related
-    hyperbolic space, so rather than applying QCP methods it seems
-    simpler to use a numerical hill-climbing approach, relying on the
-    theory of QCP to tell us there are no local maxima to get stuck in.
+    This finds a Möbius transform (via inversion) that places circle `k` large
+    enough to contain the others, based on a grid search.
 
-    If the smallCircles argument is given, the optimization
-    for the minimum radius circle will look only at these circles"""
+    Args:
+        packing: The circle packing to invert.
+        k: Key of the desired outer circle.
+        smallCircles: Optional list of keys to consider in optimization.
+
+    Returns:
+        A new packing with optimized inversion.
+    """
     z, r = packing[k]
-    if smallCircles:
-        optpack = {k: packing[k] for k in smallCircles}
-    else:
-        optpack = packing
+    optpack = {kk: packing[kk] for kk in smallCircles} if smallCircles else packing
     q, g = z, r * 0.4
-    oldrad, ratio = None, 2
+    old_rad = None
+    ratio = 2.0
+
     while abs(g) > r * (tolerance - 1) or ratio > tolerance:
-        rr, ignore1, ignore2, q = max(list(testgrid(optpack, k, z, r, q, g)))
-        if oldrad:
-            ratio = rr / oldrad
-        oldrad = rr
-        g *= 0.53 + 0.1j  # rotate so not always axis-aligned
-    return InvertPacking(packing, q)
+        rr, _, _, q = max(test_grid(optpack, k, z, r, q, g))
+        if old_rad:
+            ratio = rr / old_rad
+        old_rad = rr
+        g *= 0.53 + 0.1j  # rotate grid step
 
+    return invert_packing(packing, q)
 
-# ======================================================
-#   Utility routines, not for outside callers
-# ======================================================
+# Internal utilities
 
-def acxyz(x, y, z):
-    """Angle at a circle of radius x given by two circles of radii y and z"""
+def acxyz(x: float, y: float, z: float) -> float:
+    """Angle at x between y and z using circle geometry."""
+    from math import acos, pi
     try:
         return acos(((x + y) ** 2 + (x + z) ** 2 - (y + z) ** 2) / (2.0 * (x + y) * (x + z)))
-    except ValueError:
-        return pi / 3
-    except ZeroDivisionError:
-        return pi
+    except (ValueError, ZeroDivisionError):
+        return pi / 3 if x else pi
 
 
-def flower(radius, center, cycle):
-    """Compute the angle sum around a given internal circle"""
+def flower(radius: dict[str, float], center: str, cycle: list[str]) -> float:
+    """Sum of angles at center formed with its neighboring cycle."""
     return sum(acxyz(radius[center], radius[cycle[i - 1]], radius[cycle[i]])
                for i in range(len(cycle)))
 
 
-def place(placements, radii, internal, center):
-    """Recursively find centers of all circles surrounding k"""
+def place(placements: dict[str, complex], radii: dict[str, float], internal: dict[str, list[str]], center: str) -> None:
+    """Recursively place neighbors of a given center based on geometry."""
+    from math import e
     if center not in internal:
         return
     cycle = internal[center]
@@ -145,14 +183,13 @@ def place(placements, radii, internal, center):
             place(placements, radii, internal, t)
 
 
-def testgrid(packing, k, z, r, q, g):
-    """Build grid of test points around q with grid size g"""
+def test_grid(packing: dict[str, tuple[complex, float]], k: str, z: complex, r: float, q: complex, g: complex):
+    """Yield candidate centers and their resulting smallest radius after inversion and normalization."""
     for i in (-2, -1, 0, 1, 2):
         for j in (-2, -1, 0, 1, 2):
             center = q + i * g + j * 1j * g
             if abs(center - z) < r:
-                newpack = InvertPacking(packing, center)
-                newpack = NormalizePacking(newpack, k)
-                minrad = min(r for z, r in newpack.values())
+                newpack = invert_packing(packing, center)
+                newpack = normalize_packing(newpack, k)
+                minrad = min(rr for _, rr in newpack.values())
                 yield minrad, i, j, center
-

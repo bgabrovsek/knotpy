@@ -7,7 +7,7 @@ from sympy.core.sympify import SympifyError
 from knotpy.notation.dispatcher import from_notation_dispatcher
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.classes.freezing import freeze
-from knotpy.invariants._symbols import symbol_locals
+from knotpy.invariants._symbols import SYMBOL_LOCALS
 
 def _clean_csv_lines(file):
     for line in file:
@@ -27,19 +27,19 @@ def _eval_diagram_dict(uneval_dict: dict) -> dict:
     return {"diagram": freeze(from_knotpy_notation(uneval_dict["native notation"]))}
 
 def _eval_homflypt_dict(uneval_dict: dict) -> dict:
-    return {"homflypt": sympify(uneval_dict["homflypt"], locals=symbol_locals)}
+    return {"homflypt": sympify(uneval_dict["homflypt"], locals=SYMBOL_LOCALS)}
 
 def _eval_kauffman_dict(uneval_dict: dict) -> dict:
-    return {"kauffman": sympify(uneval_dict["kauffman"], locals=symbol_locals)}
+    return {"kauffman": sympify(uneval_dict["kauffman"], locals=SYMBOL_LOCALS)}
 
 def _eval_yamada_dict(uneval_dict: dict) -> dict:
-    return {"yamada": sympify(uneval_dict["yamada"], locals=symbol_locals)}
+    return {"yamada": sympify(uneval_dict["yamada"], locals=SYMBOL_LOCALS)}
 
 def _eval_multivariable_alexander_dict(uneval_dict: dict) -> dict:
-    return {"multivariable alexander": sympify(uneval_dict["multivariable alexander"], locals=symbol_locals)}
+    return {"multivariable alexander": sympify(uneval_dict["multivariable alexander"], locals=SYMBOL_LOCALS)}
 
 def _eval_components_dict(uneval_dict: dict) -> dict:
-    return {"components": sympify(uneval_dict["components"], locals=symbol_locals)}
+    return {"components": sympify(uneval_dict["components"], locals=SYMBOL_LOCALS)}
 
 def _evaluate_value(field_name: str | None, unevaluated_value: str):
     """Evaluate the value 'unevaluated_value' as a planar diagram, a string, integer, or SymPy expression."""

@@ -9,7 +9,7 @@ from statistics import mean
 from knotpy.algorithms.topology import leafs
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
-from knotpy.utils.circlepack import CirclePack
+from knotpy.utils.circlepack import circle_pack
 from knotpy.algorithms.topology import loops, kinks, bridges
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.drawing._support import _visible
@@ -29,7 +29,7 @@ external_arc_radius = 0.5  # radius of external circles corresponding to arcs
 
 _debug_leafs = False
 
-"""CirclePack.py
+"""circle_pack.py
 Compute circle packings according to the Koebe-Thurston-Andreev theory,
 Following data numerical algorithm by C. R. Collins and K. Stephenson,
 "A Circle Packing Algorithm", Comp. Geom. Theory and Appl. 2003.
@@ -181,7 +181,7 @@ def circle_packing(k: PlanarDiagram | OrientedPlanarDiagram):
     internal_circles = {key: internal_circles[key] for key in internal_circles if key not in external_circles}
 
     # Pack it!
-    circles = CirclePack(internal=internal_circles, external=external_circles)
+    circles = circle_pack(internal=internal_circles, external=external_circles)
 
     # we need to conjugate, for knotoids the diagram is in CW order
     return {key: Circle(value[0].conjugate(), value[1]) for key, value in circles.items()}  # return Circle objects

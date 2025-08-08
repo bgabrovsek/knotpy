@@ -18,8 +18,19 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx_gallery.gen_gallery',
-]
+    'sphinx_gallery.gen_gallery',,
+    "sphinx.ext.napoleon",
+    "sphinx.ext.mathjax"]
+
+# -- Docstring style & autosummary -------------------------------------------------
+autosummary_generate = True
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_use_param = True
+napoleon_use_rtype = False
+autodoc_typehints = "description"  # types shown in the doc body, not cluttering signatures
+
+
 
 templates_path = ['_templates']
 

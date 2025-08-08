@@ -15,7 +15,6 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.permute import permute_node
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
-from knotpy.utils.func_utils import min_elements_by
 
 _ascii_letters = string.ascii_lowercase + string.ascii_uppercase
 
@@ -23,6 +22,23 @@ def _under_endpoints_of_node(k: PlanarDiagram, node):
     """Return a tuple of endpoints that are under-endpoints in case of crossings and all endpoints in case of vertices."""
     return [(node, 0), (node, 2)] if isinstance(k.nodes[node], Crossing) else [(node, pos) for pos in range(k.degree(node))]
 
+def _min_elements_by(items, key):
+    """
+    Return all elements from the list that have the minimal value under the key function.
+
+    Args:
+        items (iterable): The list of elements to search.
+        key (callable): A function that maps each element to a value to compare.
+
+    Returns:
+        list: A list of elements where key(item) is minimal.
+    """
+    if not items:
+        return []
+
+    values = [(item, key(item)) for item in items]
+    min_val = min(val for _, val in values)
+    return [item for item, val in values if val == min_val]
 
 def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
     """Label nodes in a planar diagram using a counterclockwise (CCW) traversal.
@@ -135,8 +151,8 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable) -> PlanarDiagram
 
     # Identify minimal-degree nodes with minimal number of neighbours
     # TODO: one could get minimal endpoints
-    minimal_nodes = min_elements_by(k.nodes, k.degree)
-    minimal_nodes = min_elements_by(minimal_nodes, lambda _: neighbour_sequence(k, _))
+    minimal_nodes = _min_elements_by(k.nodes, k.degree)
+    minimal_nodes = _min_elements_by(minimal_nodes, lambda _: neighbour_sequence(k, _))
 
     # Gather endpoints of minimal nodes
     starting_endpoints = [ep for node in minimal_nodes for ep in _under_endpoints_of_node(k, node)]

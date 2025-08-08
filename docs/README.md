@@ -1,21 +1,23 @@
-# Documentation
+# KnotPy
 
-The knotpy project uses [Sphinx](https://github.com/sphinx-doc/sphinx) to generate documentation.
+KnotPy is a Python package designed for creating, manipulating, visualizing and studying knots, links, virtual links, knotoids, planar graphs and spatial graphs.
 
-## Installation
+- **Website (including documentation):** https://bgabrovsek.github.io/knotpy/
+- **Author:** Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>
+- **Publisher:** self-published by Boštjan Gabrovšek
 
-After cloning the *knotpy* project, install the requirements by running the following command from the project's root directory.
+## Install
 
-```bash
-pip install -r docs/requirements.txt
-```
-
-## Building documentation
-
-To build the entire documentation in the HTML format, run the following command inside the `docs/` directory.
+To install the latest version of knotpy, first clone the repository and install using pip:
 
 ```bash
-make html
+git clone https://github.com/bgabrovsek/knotpy.git
+cd knotpy
+pip install .
 ```
 
-This will generate the `_build/html` subdirectory containing the built documentation.
+For more information, please see [INSTALL.md](INSTALL.md).
+
+## License
+
+Released under the MIT license (see `LICENSE`).

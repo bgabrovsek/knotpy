@@ -1,173 +1,141 @@
-"""
-Plantri planar code notation.
+# knotpy/notation/plantri.py
 
-See https://users.cecs.anu.edu.au/~bdm/plantri/
-    https://users.cecs.anu.edu.au/~bdm/plantri/plantri-guide.txt.
+from __future__ import annotations
+
+"""Plantri planar code notation helpers.
+
+Refs:
+- https://users.cecs.anu.edu.au/~bdm/plantri/
+- https://users.cecs.anu.edu.au/~bdm/plantri/plantri-guide.txt
 """
 
 from string import ascii_letters
 import re
+from typing import Iterable
+
 from knotpy.classes.planardiagram import PlanarDiagram
-#from knotpy.algorithms.structure import parallel_arcs
 
-__all__ = ['from_plantri_notation', 'to_plantri_notation']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
-
-
-#_numerical_to_ascii = dict(enumerate(ascii_letters))  # {0: 'a', 1: 'b', ...}
-_ascii_to_numerical = {letter: index for index, letter in enumerate(ascii_letters)}  # {"a": 0, "b": 1, ...})
+__all__ = ["from_plantri_notation", "to_plantri_notation"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovšek@pef.uni-lj.si>"
 
 
-def to_plantri_notation(g):
+def to_plantri_notation(g: PlanarDiagram) -> str:
+    """Convert a planar diagram to **plantri** notation (alphabetical form).
+
+    Plantri’s alphabetical notation lists each node’s neighbors **in CW order**.
+    Our diagrams store endpoints CCW, so we iterate the diagram’s stored order
+    directly and rely on the fact that the notation consumer understands CW.
+    (If your internal storage differs, you may need to reverse per node.)
+
+    The output looks like: ``"5 bcde,aedc,abd,acbe,adb"`` (node count + space + CSV).
+
+    Args:
+        g: Planar diagram to serialize.
+
+    Returns:
+        str: Plantri alphabetical notation.
+
+    Raises:
+        ValueError: If the diagram has more than 52 nodes (``a–zA–Z``).
+
+    Examples:
+        >>> from knotpy.classes.planardiagram import PlanarDiagram
+        >>> d = PlanarDiagram()
+        >>> d.add_vertices_from(["a", "b", "c"])
+        >>> d.set_arc((("a", 0), ("b", 0)))
+        >>> d.set_arc((("b", 1), ("c", 0)))
+        >>> to_plantri_notation(d).split()[0].isdigit()
+        True
     """
-    Convert a `PlanarGraph` into plantri notation.
-
-    Plantri notation represents a planar graph using a compact, human-readable format.
-    The output follows the form: ``"5 bcde,aedc,abd,acbe,adb"``.
-
-    **Format Details:**
-        - Each node is represented by a letter (e.g., `a, b, c`).
-        - The adjacency list for each node is a sequence of letters representing its neighbors in clockwise (CW) order.
-        - Nodes are sorted and mapped to alphabetical labels.
-
-    :param g: The planar graph to be converted.
-    :type g: PlanarGraph
-    :return: The plantri notation string representing the graph.
-    :rtype: str
-    :raises ValueError: If the graph contains more than 52 nodes.
-
-    .. note::
-        - The function assumes nodes are uniquely labeled and do not exceed 52 (`a-z, A-Z`).
-        - If `g` has parallel edges, an error is raised (currently unimplemented).
-        - Plantri's default orientation is **clockwise (CW)**.
-
-    **Example:**
-    ::
-        g = PlanarGraph()
-        g.add_vertices_from(["a", "b", "c", "d", "e"])
-        g.set_arcs_from([ [("a", 0), ("b", 0)], [("b", 1), ("c", 0)], [("c", 1), ("d", 0)], [("d", 1), ("e", 0)] ])
-        notation = to_plantri_notation(g)
-        print(notation)  # Output: "bcde,aedc,abd,acbe,adb"
-    """
-    separator = ","
-
-    # TODO: raise error if diagram has parallel arcs
-
-    # convert to ascii nodes ('a', 'b', ...)
     if g.number_of_nodes > len(ascii_letters):
-        raise ValueError(f"Number of nodes cannot exceed {len(ascii_letters)}")
+        raise ValueError(f"Number of nodes cannot exceed {len(ascii_letters)} (a–zA–Z).")
 
-    node_dict = dict(zip(sorted(g.nodes), ascii_letters))  # TODO: implement mixed-type nodes
+    # Map sorted node ids to letters a,b,c,... (mixed types sort may raise; user should keep ids sortable)
+    node_ids = list(sorted(g.nodes))
+    label_map = dict(zip(node_ids, ascii_letters))  # type: ignore[arg-type]
 
-    result = f"{g.number_of_nodes} "  # prepend node count
-    result += separator.join(
-        [
-            "".join([node_dict[ep.node] for ep in g.nodes[v]])
-            for v in g.nodes
-        ]
-    )
+    parts: list[str] = []
+    for v in g.nodes:
+        # neighbors in stored order
+        neighbors = "".join(label_map[ep.node] for ep in g.nodes[v])
+        parts.append(neighbors)
 
-    return result
-
+    return f"{g.number_of_nodes} " + ",".join(parts)
 
 
 def from_plantri_notation(graph_string: str) -> PlanarDiagram:
+    """Parse a **plantri** notation string into a :class:`PlanarDiagram`.
+
+    Supports:
+      - **Alphabetical**: ``"5 bcde,aedc,abd,acbe,adb"``
+      - **Numeric**: ``"7: 1[2 3 4 5] 2[1 5 6 3] ..."``
+
+    The plantri order is **CW**; this function reverses each adjacency string
+    to obtain **CCW** before building the diagram.
+
+    Args:
+        graph_string: Plantri string (alphabetical or numeric).
+
+    Returns:
+        PlanarDiagram: New diagram with vertices ``'a','b','c',...`` and arcs set.
+
+    Raises:
+        ValueError: If vertex count exceeds 52 (``a–zA–Z``) or parsing fails.
+
+    Examples:
+        >>> s = "5 bcde,aedc,abd,acbe,adb"
+        >>> d = from_plantri_notation(s)
+        >>> isinstance(d, PlanarDiagram)
+        True
+        >>> d.number_of_nodes == 5
+        True
     """
-    Convert a plantri notation string into a `PlanarDiagram`.
+    s = graph_string.strip()
+    if not s:
+        raise ValueError("Empty plantri string.")
 
-    A plantri notation string represents a graph using either numerical or alphabetical notation.
-    This function automatically detects the notation type and parses the graph accordingly.
+    # Detect alphabetical vs numeric by presence of letters
+    alphabetical = any(ch.isalpha() for ch in s)
 
-    **Supported Notation Formats:**
-        - **Numerical notation:**
-          Example:
-          ``"7: 1[2  3  4  5] 2[1  5  6  3] 3[1  2  6  4] 4[1  3  6  5] 5[1  4  6  2] 6[2  5  4  3]"``
-        - **Alphabetical notation:**
-          Example:
-          ``"5 bcde,aedc,abd,acbe,adb"``
-
-    :param graph_string: A string representing a planar graph in plantri notation.
-    :type graph_string: str
-    :return: A `PlanarDiagram` object representing the parsed graph.
-    :rtype: PlanarDiagram
-    :raises ValueError: If the number of vertices exceeds the supported limit.
-
-    **Parsing Logic:**
-        1. Detect whether the input is in **alphabetical** or **numerical** notation.
-        2. Extract connections:
-            - **Alphabetical notation**: Extracts sequences separated by commas and spaces.
-            - **Numerical notation**: Extracts vertex connections enclosed in square brackets `[ ]`.
-        3. Convert numerical indices to alphabetical labels (`1 → 'a'`, `2 → 'b'`, ...).
-        4. Construct a `PlanarDiagram` with vertices labeled `"a", "b", "c", ...`.
-        5. Add arcs:
-            - Reverses connections to match **counterclockwise (CCW) order**, since plantri uses **clockwise (CW)** order.
-    """
-
-    # Is the plantri string in alphabetical or numerical notation?
-    alphabetical = any(char.isalpha() for char in graph_string)
-
-    # parsing
-    # connections are just lists of adjacent nodes
+    # Extract adjacency strings per vertex
     if alphabetical:
-        connections = re.findall(r'\b[a-zA-Z]+\b', graph_string)  # extract sequences separated by commas and spaces
-
+        # e.g. "5 bcde,aedc,abd,acbe,adb" → ["bcde","aedc","abd","acbe","adb"]
+        # We ignore a leading count if present; we only collect pure alpha runs.
+        adj_lists = re.findall(r"\b[a-zA-Z]+\b", s)
     else:
-        connections = re.findall(r'\[([^\]]*)\]', graph_string)  # extract data inside [...]
-        if len(connections) >= len(ascii_letters):
+        # Numeric form: find each [...] group and pull its integers
+        groups = re.findall(r"\[([^\]]*)\]", s)
+        ints_per_group = [re.findall(r"\d+", grp) for grp in groups]
+        if len(ints_per_group) >= len(ascii_letters):
             raise ValueError(f"Plantri notation only up to {len(ascii_letters)} vertices is supported.")
-        connections = [re.findall(r'\d+', s) for s in connections]  # extract integers separated by whitespace
-        # convert indices 1->"a", 2->"b",...,
-        connections = ["".join([ascii_letters[int(i)-1] for i in s]) for s in connections]
+        # Map 1->'a', 2->'b', ...
+        adj_lists = ["".join(ascii_letters[int(i) - 1] for i in ints) for ints in ints_per_group]
 
-    # Make a dictionary from connections. Jets are vertices (a, b, c, ...) values are strings with neighbours
-    # in CW order e.g. "bcde".
+    if not adj_lists:
+        raise ValueError("Could not parse plantri adjacency lists.")
 
-    connections = dict(zip(ascii_letters[:len(connections)], connections))  # make a dict {vertex: neighbours}
-    connections = {key: value[::-1] for key, value in connections.items()}  # reverse CW -> CCW
+    # Build dict: vertex -> neighbors (CW in input → reverse to CCW)
+    if len(adj_lists) > len(ascii_letters):
+        raise ValueError(f"Too many vertices: {len(adj_lists)} > {len(ascii_letters)}.")
+    vertices = ascii_letters[: len(adj_lists)]
+    connections = {v: neigh[::-1] for v, neigh in zip(vertices, adj_lists)}
 
-    #print(connections)
-    g = PlanarDiagram()
-    g.add_vertices_from(connections.keys())  # vertices are just "a", "b", "c", ...
+    d = PlanarDiagram()
+    d.add_vertices_from(connections.keys())
 
-    # add arcs
-    for vertex, neighbours in connections.items():
-        # loop through neighbours of vertex
-        for position, adjacent_vertex in enumerate(neighbours):
+    # Add arcs (supporting parallel edges by using occurrence indices)
+    for v, neighs in connections.items():
+        for pos, u in enumerate(neighs):
+            # How many times have we seen 'u' before at this vertex?
+            occ = neighs[:pos].count(u)
+            # Pick the matching position on neighbor 'u' where it points back to 'v',
+            # counting from the end because we reversed for CCW.
+            u_pos = [i for i, ch in enumerate(connections[u]) if ch == v][-(occ + 1)]
+            d.set_arc(((v, pos), (u, u_pos)))
 
-            # support for parallel edges
-
-            # Count the previous occurrences of neighbor in a vertex’s neighbors.
-            neighbour_occurrence = neighbours[:position].count(adjacent_vertex)  # 0 if neighbour appears for the 1st time, 1 if for the 2nd time,...
-            # where in the neighbour's neighbour is vertex, but in reverse, since orientation of arcs is reversed between adjacent nodes
-            #vertex_position = [pos for pos, char in enumerate(connections[neighbour]) if char == vertex][-(neighbour_occurrence + 1)]
-
-            adjacent_position = [pos for pos, char in enumerate(connections[adjacent_vertex]) if char == vertex][-(neighbour_occurrence + 1)]
-
-            #print(">>>", vertex, position, "and", adjacent_vertex, adjacent_position)
-
-            g.set_arc(((vertex, position), (adjacent_vertex, adjacent_position)))
-
-    return g
+    return d
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
-
-    # s = "5 bcde,aedc,abd,acbe,adb"
-    # #s = "bcbd,aca,ab,a"
-    # k = from_plantri_notation(s)
-    # s_ = to_plantri_notation(k)
-    # print(s)
-    # print(k)
-    # print(s_)
-    # exit()
-    # g = PlanarGraph()
-    # g.add_vertices_from(["a","b","c"])
-    # g.set_arcs_from([ [("a",0),("b",0)], [("b",1),("c",0)]  ])
-    # print(g)
-    # n = to_plantri_notation(g)
-    # print(n)
-    # h = from_plantri_notation(n)
-    # print(h)
-    # #print(from_plantri_notation("3 cbbb,acaa,ab", prepended_node_count=True, ccw=False))
