@@ -12,7 +12,7 @@ from knotpy.classes.node import Node, Crossing, Vertex, VirtualCrossing
 from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView, FilteredNodeView
 from knotpy.classes._abstractdiagram import _CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram
 
-__all__ = ["PlanarDiagram", "OrientedPlanarDiagram", "Diagram", "DiagramCollection"]
+__all__ = ["PlanarDiagram", "OrientedPlanarDiagram", "Diagram", "DiagramCollection", "UnorientedDiagramCollection"]
 __version__ = "0.1.1"
 __author__ = "Boštjan Gabrovšek"
 
@@ -921,6 +921,7 @@ Diagram = PlanarDiagram | OrientedPlanarDiagram
 
 #: Common collection types of diagrams.
 DiagramCollection = list[Diagram] | set[Diagram] | tuple[Diagram, ...]
+UnorientedDiagramCollection = list[PlanarDiagram] | set[PlanarDiagram] | tuple[PlanarDiagram, ...]
 
 if __name__ == "__main__":
     pass

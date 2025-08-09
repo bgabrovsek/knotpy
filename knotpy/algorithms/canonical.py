@@ -1,244 +1,241 @@
+# knotpy/algorithms/canonical.py
+
 """
-Putting a diagram into its canonical form.
+Putting a diagram into its canonical form (unoriented diagrams only).
+
+Given a `PlanarDiagram`, this module computes a canonical representative by
+relabeling nodes via a CCW BFS strategy from carefully chosen starting endpoints
+(min-degree nodes with a minimal neighbor sequence). Disjoint components are
+canonicalized independently and reassembled in canonical order.
 """
 
-__all__ = ['canonical', 'canonical_generator']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__all__ = ["canonical", "canonical_generator"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from collections.abc import Iterable
 from queue import Queue
 import string
 
 from knotpy.algorithms.degree_sequence import neighbour_sequence
+from knotpy.algorithms.disjoint_union import (
+    number_of_disjoint_components,
+    disjoint_union_decomposition,
+    disjoint_union,
+)
+from knotpy.algorithms.permute import permute_node
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Crossing
-from knotpy.algorithms.permute import permute_node
-from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
 
 _ascii_letters = string.ascii_lowercase + string.ascii_uppercase
 
+
 def _under_endpoints_of_node(k: PlanarDiagram, node):
-    """Return a tuple of endpoints that are under-endpoints in case of crossings and all endpoints in case of vertices."""
-    return [(node, 0), (node, 2)] if isinstance(k.nodes[node], Crossing) else [(node, pos) for pos in range(k.degree(node))]
+    """Endpoints to start from: under-endpoints for crossings; all for vertices."""
+    if isinstance(k.nodes[node], Crossing):
+        return [(node, 0), (node, 2)]
+    return [(node, pos) for pos in range(k.degree(node))]
+
 
 def _min_elements_by(items, key):
     """
-    Return all elements from the list that have the minimal value under the key function.
+    Return elements with minimal key value.
 
     Args:
-        items (iterable): The list of elements to search.
-        key (callable): A function that maps each element to a value to compare.
+        items: Iterable of items.
+        key: Callable mapping item -> comparable value.
 
     Returns:
-        list: A list of elements where key(item) is minimal.
+        list: Items whose key(item) is minimal.
     """
+    items = list(items)
     if not items:
         return []
+    keyed = [(item, key(item)) for item in items]
+    m = min(v for _, v in keyed)
+    return [item for item, v in keyed if v == m]
 
-    values = [(item, key(item)) for item in items]
-    min_val = min(val for _, val in values)
-    return [item for item, val in values if val == min_val]
 
-def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names):
-    """Label nodes in a planar diagram using a counterclockwise (CCW) traversal.
-
-    This function starts from a given endpoint in the diagram and iteratively assigns integer labels to nodes in a
-    counterclockwise direction. Nodes are traversed using a breadth-first search (BFS) approach.
-
-    :param k: The planar diagram to process.
-    :type k: PlanarDiagram
-    :param endpoint: The starting endpoint for labeling.
-    :type endpoint: tuple
-    :param node_names: A list of ordered labels to assign to nodes.
-    :type node_names: list[int]
-
-    :return: A dictionary mapping original node identifiers to their new integer labels.
-    :rtype: dict
-
-    The function maintains a queue to ensure breadth-first traversal. It first visits a node, assigns it a label, and
-    then explores its adjacent nodes in CCW order, enqueuing them for processing. The traversal continues until all
-    reachable nodes are labeled.
+def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names: list[str]):
     """
-    node_relabel = dict()  # also holds as a "visited node" set
-    node_first_position = dict()  # also holds as a "visited node" set
-    endpoint_queue = Queue()
-    endpoint_queue.put(endpoint)
+    Label nodes by CCW BFS starting from a given endpoint.
 
-    while not endpoint_queue.empty():
-        v, pos = endpoint_queue.get()
+    Args:
+        k: Planar diagram.
+        endpoint: Tuple (node, position) to start from.
+        node_names: Ordered list of new node names.
 
-        if v not in node_relabel:  # new node visited
-            new_node_name = node_names[len(node_relabel)]
-            node_relabel[v] = new_node_name  # rename the node to next available integer
-            node_first_position[new_node_name] = pos
-            v_deg = k.degree(v)
+    Returns:
+        tuple[dict, dict]: (node_relabel, node_first_position)
+            node_relabel maps old node -> new name.
+            node_first_position maps new name -> first position visited.
+    """
+    node_relabel: dict = {}
+    node_first_position: dict = {}
+    q: Queue = Queue()
+    q.put(endpoint)
 
-            # put all adjacent endpoints in queue in CCW order
-            for relative_pos in range(1, v_deg):
-                endpoint_queue.put((v, (pos + relative_pos) % v_deg))
+    while not q.empty():
+        v, pos = q.get()
 
-        # go to the adjacent endpoint and add it to the queue
+        if v not in node_relabel:
+            new_name = node_names[len(node_relabel)]
+            node_relabel[v] = new_name
+            node_first_position[new_name] = pos
+            deg = k.degree(v)
+            # push CCW-ordered positions at v
+            for rpos in range(1, deg):
+                q.put((v, (pos + rpos) % deg))
+
+        # traverse to adjacent endpoint
         adj_v, adj_pos = k.nodes[v][pos]
-
         if adj_v not in node_relabel:
-            endpoint_queue.put((adj_v, adj_pos))
+            q.put((adj_v, adj_pos))
+
     return node_relabel, node_first_position
 
 
-def canonical_generator(diagrams: Iterable):
+def canonical_generator(diagrams: Iterable[PlanarDiagram]):
+    """Yield canonical forms for a stream of diagrams."""
     if not isinstance(diagrams, Iterable):
         raise TypeError("Input must be an iterable.")
-    for _ in diagrams:
-        yield canonical(_)
+    for d in diagrams:
+        yield canonical(d)
 
-def canonical(k: PlanarDiagram | set | list | tuple | Iterable) -> PlanarDiagram | set | list | tuple:
+
+def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -> PlanarDiagram | set | list | tuple:
     """
-    Compute the canonical form of an unoriented planar diagram.
+    Compute the canonical form of an *unoriented* planar diagram.
 
-    This function processes an unoriented `PlanarDiagram` to determine its unique canonical form by iteratively
-    relabeling the diagram’s nodes. The labeling begins at endpoints of vertices with the minimal degree and proceeds
-    via breadth-first search (BFS) in a counterclockwise (CCW) order to achieve an ordered structure.
-
-    Disjoint components of the planar diagram are handled separately, where they are individually canonicalized and
-    then combined in their canonical order to produce the final result. The method ensures consistent ordering within
-    each component and among components of the diagram.
+    Strategy:
+      1) If the diagram is disconnected, canonicalize each component and
+         reassemble in canonical order.
+      2) Choose starting endpoints among nodes with minimal degree and
+         minimal neighbor-sequence; run CCW BFS to produce a relabeling.
+      3) For each start, relabel, then canonically permute node endpoints so
+         the first visited position becomes canonical; keep the lexicographically
+         minimal diagram among all starts.
 
     Warning:
-        - For graphs containing degree-2 vertices, there may be ambiguities as the canonical form might not be unique.
-        - If the input graph is disconnected, a `ValueError` is raised.
+        Canonical form may be ambiguous for diagrams containing degree-2 vertices.
 
     Args:
-        k (PlanarDiagram): The input planar diagram, such as a knot, graph, or other similar topological structure.
+        k: A `PlanarDiagram` or a collection (set/list/tuple/iterable) thereof.
 
     Returns:
-        PlanarDiagram: The canonical form of the input planar diagram, represented as a new `PlanarDiagram` instance.
+        The canonical `PlanarDiagram`, or a collection with each element canonicalized.
 
     Raises:
-        ValueError: If the graph is disconnected and cannot be transformed into a canonical form.
+        TypeError: If a non-diagram is provided.
+        ValueError: If the input diagram is not connected when expected.
     """
-
     from knotpy.algorithms.naming import number_to_alpha
 
-    # input is set/list/tuple
+    # Handle collections
     if isinstance(k, (set, list, tuple)):
-        return type(k)(canonical(_) for _ in k)
+        return type(k)(canonical(d) for d in k)
+    if isinstance(k, Iterable) and not isinstance(k, PlanarDiagram):
+        return [canonical(d) for d in k]
 
-    if isinstance(k, Iterable):
-        return [canonical(_) for _ in k]
-
-    # input is unsupported
     if not isinstance(k, PlanarDiagram):
         raise TypeError(f"Cannot put a {type(k)} instance into canonical form.")
-
-    # input is a planar diagram
-
-    # TODO: In case of degree 2 vertices, the canonical form might not be unique.
 
     if len(k) == 0:
         return k.copy()
 
-    # Generate node names: a,b,...,z,A,B,...,Z,aa,ab,...
-    letters = _ascii_letters if len(k) <= len(_ascii_letters) else [number_to_alpha(i) for i in range(len(k))]
+    # Node name supply: a,b,...,z,A,...,Z,aa,ab,...
+    if len(k) <= len(_ascii_letters):
+        letters = list(_ascii_letters[: len(k)])
+    else:
+        letters = [number_to_alpha(i) for i in range(len(k))]
 
-    # Handle disjoint components separately
+    # Disconnected case: canonicalize components and merge canonically
     if number_of_disjoint_components(k) >= 2:
-        # split, make each component canonical, sort and add together again
-        old_name = k.name
-        ds = disjoint_union(*sorted([canonical(c) for c in disjoint_union_decomposition(k)]))
+        old_name = getattr(k, "name", None)
+        comps = [canonical(c) for c in disjoint_union_decomposition(k)]
+        ds = disjoint_union(*sorted(comps))
         ds.name = old_name
         return ds
 
-    # Identify minimal-degree nodes with minimal number of neighbours
-    # TODO: one could get minimal endpoints
+    # Candidates: nodes with minimal degree, then minimal neighbor sequence
     minimal_nodes = _min_elements_by(k.nodes, k.degree)
-    minimal_nodes = _min_elements_by(minimal_nodes, lambda _: neighbour_sequence(k, _))
+    minimal_nodes = _min_elements_by(minimal_nodes, lambda n: neighbour_sequence(k, n))
 
-    # Gather endpoints of minimal nodes
-    starting_endpoints = [ep for node in minimal_nodes for ep in _under_endpoints_of_node(k, node)]
+    # Start from under-endpoints of candidate nodes
+    start_eps = [ep for n in minimal_nodes for ep in _under_endpoints_of_node(k, n)]
 
-    minimal_diagram = None  # Store here current minimal diagram
+    best = None
 
-    # Expand node enumeration from each minimal node's endpoint
-    for ep_start in starting_endpoints:
-        node_relabel, node_first_position = _ccw_expand_node_names(k, ep_start, letters)
+    for ep_start in start_eps:
+        node_relabel, node_first_pos = _ccw_expand_node_names(k, ep_start, letters)
 
         if len(node_relabel) != len(k):
             raise ValueError("Cannot put a non-connected graph into canonical form.")
 
-        new_graph = k.copy()  # Copy method is faster than built-in deepcopy
-
-        # Perform node relabeling
-        new_graph._nodes = {
-            node_relabel[node]:
-                type(node_inst)(
-                    [
-                        type(ep)(node_relabel[ep.node], ep.position)
-                        for ep in node_inst._inc
-                    ]
-                )
-            for node, node_inst in k._nodes.items()
+        # Relabel nodes and endpoints
+        new_g = k.copy()
+        new_g._nodes = {
+            node_relabel[old_node]: type(old_inst)(
+                [
+                    type(ep)(node_relabel[ep.node], ep.position)
+                    for ep in old_inst._inc
+                ]
+            )
+            for old_node, old_inst in k._nodes.items()
         }
 
-        _canonically_permute_nodes_with_given_first_positions(new_graph, node_first_position)
+        _canonically_permute_nodes_with_given_first_positions(new_g, node_first_pos)
 
-        # Update minimal diagram if this one is lexicographically smaller
-        if minimal_diagram is None or new_graph < minimal_diagram:
-            minimal_diagram = new_graph
+        if best is None or new_g < best:
+            best = new_g
 
-    # TODO: Consider adding support for in-place modification.
-
-    return minimal_diagram
+    return best
 
 
-def _canonically_permute_nodes(k: PlanarDiagram):
-    """Uniquely permutes the nodes in-place (smallest neighbour is first).
-    :param k: planar diagram
-    :return: None
+def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node_first_position: dict) -> None:
     """
-    if k.is_oriented():
-        raise NotImplementedError()
-    else:
-        for node in sorted(k.nodes):  # probably sorted not needed, on second though, probably is needed
+    Permute endpoints in-place so the first visited position is canonical.
 
-            degree = k.degree(node)
-            neighbours = [ep.node for ep in k.nodes[node]]
-
-
-            if isinstance(k.nodes[node], Crossing):
-                index = 0 if neighbours < (neighbours[2:] + neighbours[:2]) else 2
-            else:
-                cyclic_permutations = [neighbours[i:] + neighbours[:i] for i in range(degree)]
-                index = cyclic_permutations.index(min(cyclic_permutations))
-
-            permute_node(k, node, {i: (i - index) % degree for i in range(degree)})
-
-        """
-        p = {0: 0, 1: 2, 2: 3, 3: 1} (or p = [0,2,3,1]),
-        and if node has endpoints [a, b, c, d] (ccw) then the new endpoints will be [a, d, b, c].
-        """
-
-
-def _canonically_permute_nodes_with_given_first_positions(k: PlanarDiagram, node_first_position: dict):
-    """Uniquely permutes the nodes in-place (smallest neighbour is first).
-    :param k: planar diagram
-    :return: None
+    For crossings: if first_pos == 3, use the 180° rotation permutation [2,3,0,1].
+    For vertices: rotate so that `first_pos` moves to 0.
     """
     for node in k.nodes:
         first_pos = node_first_position[node]
 
         if first_pos == 0 or (isinstance(k.nodes[node], Crossing) and first_pos == 3):
-            # no need to permute node
             continue
 
         if isinstance(k.nodes[node], Crossing):
-            permutation = [2, 3, 0, 1]  # probably faster with a list
+            permutation = [2, 3, 0, 1]
         else:
-            degree = k.degree(node)
-            permutation = [(i - first_pos) % degree for i in range(degree)]
+            deg = k.degree(node)
+            permutation = [(i - first_pos) % deg for i in range(deg)]
 
-        #print(node, permutation)
         permute_node(k, node, permutation)
+
+
+# (Unused helper retained for reference; keep if other code imports it.)
+def _canonically_permute_nodes(k: PlanarDiagram) -> None:
+    """
+    Uniquely permute endpoints per node so the smallest neighbor appears first.
+
+    Note:
+        This is for unoriented diagrams only.
+    """
+    if k.is_oriented():
+        raise NotImplementedError("Canonical permutation not implemented for oriented diagrams.")
+
+    for node in sorted(k.nodes):
+        deg = k.degree(node)
+        neighbors = [ep.node for ep in k.nodes[node]]
+
+        if isinstance(k.nodes[node], Crossing):
+            idx = 0 if neighbors < (neighbors[2:] + neighbors[:2]) else 2
+        else:
+            rotations = [neighbors[i:] + neighbors[:i] for i in range(deg)]
+            idx = rotations.index(min(rotations))
+
+        permute_node(k, node, {i: (i - idx) % deg for i in range(deg)})
 
 
 if __name__ == "__main__":
