@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1180,6 +1184,52 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.tangle.tangle_decompositions">
+<span class="sig-name descname"><span class="pre">tangle_decompositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimal_component_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.tangle_decompositions" title="Link to this definition">#</a></dt>
+<dd><p>Return all tangle decompositions of a diagram. Each component of the decomposition must have at least minimal_nodes_in_component
+nodes in every component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+<li><p><strong>minimal_component_nodes</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.tangle.is_integer_tangle">
+<span class="sig-name descname"><span class="pre">is_integer_tangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.is_integer_tangle" title="Link to this definition">#</a></dt>
+<dd><p>Check if a tangle is an integer tangle. Can be a “horizontal” or a “vertical” integer tangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tangle</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.tangle.compose_tangles">
+<span class="sig-name descname"><span class="pre">compose_tangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangle1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tangle2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.compose_tangles" title="Link to this definition">#</a></dt>
+<dd><p>Compose two tangles by connecting all their endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tangle1</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+<li><p><strong>tangle2</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1192,6 +1242,26 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tangle.tangle_decompositions"><code class="docutils literal notranslate"><span class="pre">tangle_decompositions()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tangle.is_integer_tangle"><code class="docutils literal notranslate"><span class="pre">is_integer_tangle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tangle.compose_tangles"><code class="docutils literal notranslate"><span class="pre">compose_tangles()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

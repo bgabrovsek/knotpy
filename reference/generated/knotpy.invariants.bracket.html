@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1170,6 +1174,60 @@
 <p class="rubric">References</p>
 <p>Louis H. Kauffman, <em>State models and the Jones polynomial</em>,
 Topology 26 (1987), no. 3, 395–407.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.bracket.bracket">
+<span class="sig-name descname"><span class="pre">bracket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.bracket.bracket" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Kauffman bracket polynomial ⟨·⟩.</p>
+<dl class="simple">
+<dt>Defined by:</dt><dd><ol class="arabic simple">
+<li><p>⟨U⟩ = 1.</p></li>
+<li><p>⟨L_X⟩ = A⟨L_0⟩ + A⁻¹⟨L_∞⟩.</p></li>
+<li><p>⟨L ⊔ U⟩ = (−A² − A⁻²)⟨L⟩.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Planar diagram.</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – If True, multiply by factor <code class="docutils literal notranslate"><span class="pre">(-A³)^{-wr(k)}</span></code> (ignore framing).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Laurent polynomial in variable <code class="docutils literal notranslate"><span class="pre">A</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If unknot removal yields a non-empty diagram.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.bracket.kauffman_bracket_skein_module">
+<span class="sig-name descname"><span class="pre">kauffman_bracket_skein_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.bracket.kauffman_bracket_skein_module" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Kauffman bracket skein module (unoriented case).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Unoriented planar diagram. Oriented diagrams are not yet supported.</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – If True, normalize by a power of <code class="docutils literal notranslate"><span class="pre">(-A³)</span></code> depending on writhe/framing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of pairs <code class="docutils literal notranslate"><span class="pre">(polynomial,</span> <span class="pre">diagram)</span></code> for the module expansion.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If <code class="docutils literal notranslate"><span class="pre">k</span></code> is oriented.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[tuple[<em>Expr</em>, <a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1182,6 +1240,25 @@ Topology 26 (1987), no. 3, 395–407.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.bracket.bracket"><code class="docutils literal notranslate"><span class="pre">bracket()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.bracket.kauffman_bracket_skein_module"><code class="docutils literal notranslate"><span class="pre">kauffman_bracket_skein_module()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

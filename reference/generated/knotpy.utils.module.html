@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1171,6 +1175,139 @@
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">CoefT</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">BasisT</span></code>]</p>
+<p>Sparse formal linear combination over a basis.</p>
+<p>Stores terms as <code class="docutils literal notranslate"><span class="pre">[(coefficient,</span> <span class="pre">basis_element),</span> <span class="pre">...]</span></code> and automatically
+combines like basis elements.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Module</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Module</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+<span class="go">-3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+<span class="go">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Module</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>  <span class="c1"># substitution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">to_tuple</span><span class="p">()</span>
+<span class="go">[(15, &#39;a&#39;), (4, &#39;b&#39;), (-3, &#39;z&#39;), (-3, &#39;x&#39;)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>CoefT</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>s</strong> (<em>BasisT</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.copy" title="Link to this definition">#</a></dt>
+<dd><p>Return a deep copy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.utils.module.Module.html#knotpy.utils.module.Module" title="knotpy.utils.module.Module"><em>Module</em></a>[<em>CoefT</em>, <em>BasisT</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.index" title="Link to this definition">#</a></dt>
+<dd><p>Return index of basis element <cite>s</cite> or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>BasisT</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.append" title="Link to this definition">#</a></dt>
+<dd><p>Append a term, combining with an existing basis element if present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>CoefT</em><em> | </em><em>tuple</em><em>[</em><em>CoefT</em><em>, </em><em>BasisT</em><em>]</em>) – Coefficient or a (coefficient, basis) pair.</p></li>
+<li><p><strong>s</strong> (<em>BasisT</em><em> | </em><em>None</em>) – Basis element if <cite>r</cite> is just a coefficient.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_element</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.extend" title="Link to this definition">#</a></dt>
+<dd><p>Extend by an iterable of (coefficient, basis) pairs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>module_element</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>[</em><em>CoefT</em><em>, </em><em>BasisT</em><em>]</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_function</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.filter" title="Link to this definition">#</a></dt>
+<dd><p>Return list of basis elements <cite>s</cite> for which <cite>filter_function(s)</cite> is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<em>BasisT</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.sort" title="Link to this definition">#</a></dt>
+<dd><p>Sort terms by basis element (lexicographic).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.to_tuple">
+<span class="sig-name descname"><span class="pre">to_tuple</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.to_tuple" title="Link to this definition">#</a></dt>
+<dd><p>Return a sorted, zero-coefficient-pruned term list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[<em>CoefT</em>, <em>BasisT</em>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.module.Module.from_tuples">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_tuples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.module.Module.from_tuples" title="Link to this definition">#</a></dt>
+<dd><p>Construct a Module from an iterable of (coefficient, basis) pairs, combining duplicates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_of_tuples</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>[</em><em>CoefT</em><em>, </em><em>BasisT</em><em>]</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.module.Module.html#knotpy.utils.module.Module" title="knotpy.utils.module.Module"><em>Module</em></a>[<em>CoefT</em>, <em>BasisT</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -1183,6 +1320,34 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module"><code class="docutils literal notranslate"><span class="pre">Module</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.copy"><code class="docutils literal notranslate"><span class="pre">Module.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.index"><code class="docutils literal notranslate"><span class="pre">Module.index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.append"><code class="docutils literal notranslate"><span class="pre">Module.append()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.extend"><code class="docutils literal notranslate"><span class="pre">Module.extend()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.filter"><code class="docutils literal notranslate"><span class="pre">Module.filter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.sort"><code class="docutils literal notranslate"><span class="pre">Module.sort()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.to_tuple"><code class="docutils literal notranslate"><span class="pre">Module.to_tuple()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.module.Module.from_tuples"><code class="docutils literal notranslate"><span class="pre">Module.from_tuples()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

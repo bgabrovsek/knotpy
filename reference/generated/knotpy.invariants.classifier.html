@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1174,6 +1178,75 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.classifier.group_by_invariants">
+<span class="sig-name descname"><span class="pre">group_by_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagrams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invariant_funcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.classifier.group_by_invariants" title="Link to this definition">#</a></dt>
+<dd><p>Group diagrams by shared invariant values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagrams</strong> (<em>Iterable</em><em>[</em><em>Any</em><em>]</em>) – Iterable of diagram-like objects.</p></li>
+<li><p><strong>invariant_funcs</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Any</em><em>]</em>) – <ul>
+<li><p>If a mapping <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">func}</span></code>, group by multiple invariants.
+The key is a tuple <code class="docutils literal notranslate"><span class="pre">((name,</span> <span class="pre">value),</span> <span class="pre">...)</span></code> (order follows <code class="docutils literal notranslate"><span class="pre">dict.items()</span></code>).</p></li>
+<li><p>If a single callable, group by that invariant value.</p></li>
+</ul>
+</p></li>
+<li><p><strong>parallel</strong> (<em>bool</em>) – Compute invariants in parallel using processes.</p></li>
+<li><p><strong>max_workers</strong> (<em>int</em><em> | </em><em>None</em>) – Number of workers; defaults to <code class="docutils literal notranslate"><span class="pre">os.cpu_count()</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mapping from invariant key(s) to a list of diagrams.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[<em>Any</em>, list[<em>Any</em>]]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Functions must be picklable for process pools (no lambdas/closures).</p></li>
+<li><p>Exceptions in worker functions are swallowed; the offending diagram is skipped.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.classifier.save_invariants">
+<span class="sig-name descname"><span class="pre">save_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagrams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invariant_funcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.classifier.save_invariants" title="Link to this definition">#</a></dt>
+<dd><p>Compute and save invariants for diagrams.</p>
+<dl class="simple">
+<dt>Two modes:</dt><dd><ul class="simple">
+<li><p><strong>parallel=True</strong>: treat <code class="docutils literal notranslate"><span class="pre">path</span></code> as a <strong>directory</strong> and write <strong>one file per diagram</strong>.</p></li>
+<li><p><strong>parallel=False</strong>: treat <code class="docutils literal notranslate"><span class="pre">path</span></code> as a <strong>single file</strong> and write a <strong>combined table</strong>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagrams</strong> (<em>Iterable</em><em>[</em><em>Any</em><em>]</em>) – Iterable of diagram-like objects.</p></li>
+<li><p><strong>invariant_funcs</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Any</em><em>]</em>) – <ul>
+<li><p>Mapping <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">func}</span></code> for multi-invariant output.</p></li>
+<li><p>Single callable for single-invariant output.</p></li>
+</ul>
+</p></li>
+<li><p><strong>path</strong> (<em>str</em><em> | </em><em>Path</em>) – Directory (parallel) or file path (sequential).</p></li>
+<li><p><strong>parallel</strong> (<em>bool</em>) – Use process pool and per-diagram files when True.</p></li>
+<li><p><strong>max_workers</strong> (<em>int</em><em> | </em><em>None</em>) – Number of workers; defaults to <code class="docutils literal notranslate"><span class="pre">os.cpu_count()</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">parallel</span></code> is True and <code class="docutils literal notranslate"><span class="pre">path</span></code> is not a directory.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">parallel</span></code> is False and <code class="docutils literal notranslate"><span class="pre">path</span></code> already exists as a directory.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1186,6 +1259,25 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.classifier.group_by_invariants"><code class="docutils literal notranslate"><span class="pre">group_by_invariants()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.classifier.save_invariants"><code class="docutils literal notranslate"><span class="pre">save_invariants()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1174,6 +1178,79 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.plantri.from_plantri_notation">
+<span class="sig-name descname"><span class="pre">from_plantri_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.plantri.from_plantri_notation" title="Link to this definition">#</a></dt>
+<dd><p>Parse a <strong>plantri</strong> notation string into a <code class="xref py py-class docutils literal notranslate"><span class="pre">PlanarDiagram</span></code>.</p>
+<dl class="simple">
+<dt>Supports:</dt><dd><ul class="simple">
+<li><p><strong>Alphabetical</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;5</span> <span class="pre">bcde,aedc,abd,acbe,adb&quot;</span></code></p></li>
+<li><p><strong>Numeric</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;7:</span> <span class="pre">1[2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">5]</span> <span class="pre">2[1</span> <span class="pre">5</span> <span class="pre">6</span> <span class="pre">3]</span> <span class="pre">...&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p>The plantri order is <strong>CW</strong>; this function reverses each adjacency string
+to obtain <strong>CCW</strong> before building the diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph_string</strong> (<em>str</em>) – Plantri string (alphabetical or numeric).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – New diagram with vertices <code class="docutils literal notranslate"><span class="pre">'a','b','c',...</span></code> and arcs set.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If vertex count exceeds 52 (<code class="docutils literal notranslate"><span class="pre">a–zA–Z</span></code>) or parsing fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;5 bcde,aedc,abd,acbe,adb&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">from_plantri_notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">PlanarDiagram</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">number_of_nodes</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.plantri.to_plantri_notation">
+<span class="sig-name descname"><span class="pre">to_plantri_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.plantri.to_plantri_notation" title="Link to this definition">#</a></dt>
+<dd><p>Convert a planar diagram to <strong>plantri</strong> notation (alphabetical form).</p>
+<p>Plantri’s alphabetical notation lists each node’s neighbors <strong>in CW order</strong>.
+Our diagrams store endpoints CCW, so we iterate the diagram’s stored order
+directly and rely on the fact that the notation consumer understands CW.
+(If your internal storage differs, you may need to reverse per node.)</p>
+<p>The output looks like: <code class="docutils literal notranslate"><span class="pre">&quot;5</span> <span class="pre">bcde,aedc,abd,acbe,adb&quot;</span></code> (node count + space + CSV).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Planar diagram to serialize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Plantri alphabetical notation.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the diagram has more than 52 nodes (<code class="docutils literal notranslate"><span class="pre">a–zA–Z</span></code>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">knotpy.classes.planardiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanarDiagram</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">PlanarDiagram</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">add_vertices_from</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_arc</span><span class="p">(((</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_arc</span><span class="p">(((</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">to_plantri_notation</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
@@ -1186,6 +1263,25 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.plantri.from_plantri_notation"><code class="docutils literal notranslate"><span class="pre">from_plantri_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.plantri.to_plantri_notation"><code class="docutils literal notranslate"><span class="pre">to_plantri_notation()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

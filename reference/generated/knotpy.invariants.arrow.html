@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1175,6 +1179,30 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.arrow.arrow_polynomial">
+<span class="sig-name descname"><span class="pre">arrow_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.arrow.arrow_polynomial" title="Link to this definition">#</a></dt>
+<dd><p>Compute the arrow polynomial of a knotoid (arXiv:1602.03579).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Planar diagram of a knotoid. If not oriented, it will be oriented internally.</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – If True, multiply by <code class="docutils literal notranslate"><span class="pre">(-A^3)^(-writhe)</span></code> to ignore framing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A SymPy expression in <code class="docutils literal notranslate"><span class="pre">A</span></code> and formal variables <code class="docutils literal notranslate"><span class="pre">K_i,</span> <span class="pre">L_j</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The state sum expands over oriented/disoriented smoothings. After smoothing, consecutive
+opposite-acuteness cusps are reduced; each component contributes a factor as described in
+<code class="xref py py-func docutils literal notranslate"><span class="pre">_generator_to_variables()</span></code>.</p>
+</dd></dl>
+
 </section>
 
 
@@ -1187,6 +1215,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.arrow.arrow_polynomial"><code class="docutils literal notranslate"><span class="pre">arrow_polynomial()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

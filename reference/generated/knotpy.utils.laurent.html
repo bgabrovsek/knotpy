@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1191,6 +1195,146 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.reciprocal">
+<span class="sig-name descname"><span class="pre">reciprocal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.reciprocal" title="Link to this definition">#</a></dt>
+<dd><p>Return the reciprocal transform of a polynomial in a given variable.</p>
+<p>Applies the substitution var → var**(-1) and expands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em>) – SymPy expression.</p></li>
+<li><p><strong>var</strong> (<em>Symbol</em><em> | </em><em>str</em>) – The variable to invert (Symbol or its name).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em> – The transformed expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.normalize_polynomial">
+<span class="sig-name descname"><span class="pre">normalize_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.normalize_polynomial" title="Link to this definition">#</a></dt>
+<dd><p>Normalize a multivariate (non-Laurent) polynomial by removing minimal exponents.</p>
+<p>For each generator, divides the polynomial by the minimal exponent of that
+generator across all monomials, so exponents start at 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>poly</strong> (<em>Poly</em>) – SymPy Poly with nonnegative exponents.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Poly</em> – A normalized polynomial with minimal support.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Poly</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.normalize_laurent_polynomial">
+<span class="sig-name descname"><span class="pre">normalize_laurent_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.normalize_laurent_polynomial" title="Link to this definition">#</a></dt>
+<dd><p>Normalize a (Laurent) polynomial up to monomials and ±1.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><p>Shift exponents of selected variables so that all are nonnegative.</p></li>
+<li><p>Optionally flip overall sign so the leading term has positive coefficient.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em>) – SymPy expression (may have negative exponents).</p></li>
+<li><p><strong>variables</strong> (<em>Iterable</em><em>[</em><em>Symbol</em><em>] </em><em>| </em><em>None</em>) – Variables to consider. If None, use all free symbols.</p></li>
+<li><p><strong>normalize_sign</strong> (<em>bool</em>) – If True, ensure leading term’s coefficient is positive.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em> – A canonicalized expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.normalize_symmetric">
+<span class="sig-name descname"><span class="pre">normalize_symmetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.normalize_symmetric" title="Link to this definition">#</a></dt>
+<dd><p>Normalize a Laurent polynomial symmetrically in a single variable.</p>
+<p>The result is centered and made symmetric under variable ↔ 1/variable,
+then the overall sign is chosen so the leading term is positive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em>) – SymPy expression.</p></li>
+<li><p><strong>variable</strong> (<em>Symbol</em>) – The variable to symmetrize.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em> – Symmetrically normalized expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.extract_variables">
+<span class="sig-name descname"><span class="pre">extract_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.extract_variables" title="Link to this definition">#</a></dt>
+<dd><p>Extract variables of the form &lt;prefix&gt;&lt;digits&gt; from a SymPy expression.</p>
+<p class="rubric">Examples</p>
+<ul class="simple">
+<li><p>prefix=None  → returns all symbols like t1, x2, a10, grouped by (prefix, index)</p></li>
+<li><p>prefix=”t”   → returns only t1, t2, …</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em>) – SymPy expression.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em><em> | </em><em>None</em>) – Optional prefix filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list[Symbol]</em> – Symbols sorted by (prefix, numeric index).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<em>Symbol</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.laurent.canonicalize_under_variable_permutation">
+<span class="sig-name descname"><span class="pre">canonicalize_under_variable_permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_sign_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.canonicalize_under_variable_permutation" title="Link to this definition">#</a></dt>
+<dd><p>Canonicalize an expression up to permutations of variables (and optionally sign).</p>
+<p>For all permutations of the selected variables, compute the permuted polynomial and
+choose the lexicographically <strong>minimal</strong> representation of (exponent-vector → coefficient)
+pairs (optionally also considering the negated polynomial).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em>) – SymPy expression.</p></li>
+<li><p><strong>variables</strong> (<em>Sequence</em><em>[</em><em>Symbol</em><em>] </em><em>| </em><em>None</em>) – Sequence of variables to permute. If None, attempts to detect with
+<a class="reference internal" href="knotpy.utils.laurent.extract_variables.html#knotpy.utils.laurent.extract_variables" title="knotpy.utils.laurent.extract_variables"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_variables()</span></code></a> and then sorts them.</p></li>
+<li><p><strong>allow_sign_change</strong> (<em>bool</em>) – If True, also consider -f under permutations and pick the best.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em> – Canonical representative under variable permutations (and ±1 if enabled).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1203,6 +1347,29 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.reciprocal"><code class="docutils literal notranslate"><span class="pre">reciprocal()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.normalize_polynomial"><code class="docutils literal notranslate"><span class="pre">normalize_polynomial()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.normalize_laurent_polynomial"><code class="docutils literal notranslate"><span class="pre">normalize_laurent_polynomial()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.normalize_symmetric"><code class="docutils literal notranslate"><span class="pre">normalize_symmetric()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.extract_variables"><code class="docutils literal notranslate"><span class="pre">extract_variables()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.canonicalize_under_variable_permutation"><code class="docutils literal notranslate"><span class="pre">canonicalize_under_variable_permutation()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

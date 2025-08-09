@@ -1178,8 +1178,8 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>iterable</strong> (<em>Optional</em><em>[</em><em>Iterable</em><em>[</em><em>T</em><em>]</em><em>]</em>) – Any iterable to consume. If omitted, you can drive progress via <cite>tick()</cite>.</p></li>
-<li><p><strong>total</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Total number of items (required for manual / shared-counter modes).</p></li>
-<li><p><strong>comment</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional right-side comment (changes at runtime via <a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.set_comment" title="knotpy.utils.progressbar.ProgressBar.set_comment"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_comment()</span></code></a>).</p></li>
+<li><p><strong>total</strong> (<em>int</em>) – Total number of items (required for manual / shared-counter modes).</p></li>
+<li><p><strong>comment</strong> (<em>str</em><em> | </em><em>None</em>) – Optional right-side comment (changes at runtime via <a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.set_comment" title="knotpy.utils.progressbar.ProgressBar.set_comment"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_comment()</span></code></a>).</p></li>
 <li><p><strong>width</strong> (<em>int</em>) – Total character width of the bar line.</p></li>
 <li><p><strong>alpha</strong> (<em>float</em>) – Smoothing factor for EMA speed (0..1).</p></li>
 <li><p><strong>update_interval</strong> (<em>float</em>) – Minimum seconds between screen updates.</p></li>
@@ -1237,31 +1237,90 @@ Call <cite>refresh()</cite> periodically in the main process to redraw.</p></li>
 <p class="rubric">Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLUE</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.BLUE" title="knotpy.utils.progressbar.ProgressBar.BLUE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLUE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CYAN</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.CYAN" title="knotpy.utils.progressbar.ProgressBar.CYAN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CYAN</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">GRAY</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.GRAY" title="knotpy.utils.progressbar.ProgressBar.GRAY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GRAY</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">RESET</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.progressbar.ProgressBar.RESET" title="knotpy.utils.progressbar.ProgressBar.RESET"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RESET</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.refresh">
-<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.refresh" title="Link to this definition">#</a></dt>
-<dd><p>Force a redraw (useful in multiprocessing main loop).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.BLUE">
+<span class="sig-name descname"><span class="pre">BLUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0;34m'</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.BLUE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.CYAN">
+<span class="sig-name descname"><span class="pre">CYAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[1;35m'</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.CYAN" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.GRAY">
+<span class="sig-name descname"><span class="pre">GRAY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0;37m'</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.GRAY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.RESET">
+<span class="sig-name descname"><span class="pre">RESET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.RESET" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.total">
+<span class="sig-name descname"><span class="pre">total</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.total" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.comment">
+<span class="sig-name descname"><span class="pre">comment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.comment" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.width">
+<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.width" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.alpha" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.update_interval">
+<span class="sig-name descname"><span class="pre">update_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.update_interval" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.index">
+<span class="sig-name descname"><span class="pre">index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.index" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.start_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.smoothed_speed">
+<span class="sig-name descname"><span class="pre">smoothed_speed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.smoothed_speed" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.last_bar_size">
+<span class="sig-name descname"><span class="pre">last_bar_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.last_bar_size" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.last_update_time">
+<span class="sig-name descname"><span class="pre">last_update_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.last_update_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.set_comment">
@@ -1287,6 +1346,17 @@ Call <cite>refresh()</cite> periodically in the main process to redraw.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.progressbar.ProgressBar.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.progressbar.ProgressBar.refresh" title="Link to this definition">#</a></dt>
+<dd><p>Force a redraw (useful in multiprocessing main loop).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1320,9 +1390,23 @@ Call <cite>refresh()</cite> periodically in the main process to redraw.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar"><code class="docutils literal notranslate"><span class="pre">ProgressBar</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.__init__"><code class="docutils literal notranslate"><span class="pre">ProgressBar.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.refresh"><code class="docutils literal notranslate"><span class="pre">ProgressBar.refresh()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.BLUE"><code class="docutils literal notranslate"><span class="pre">ProgressBar.BLUE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.CYAN"><code class="docutils literal notranslate"><span class="pre">ProgressBar.CYAN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.GRAY"><code class="docutils literal notranslate"><span class="pre">ProgressBar.GRAY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.RESET"><code class="docutils literal notranslate"><span class="pre">ProgressBar.RESET</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.total"><code class="docutils literal notranslate"><span class="pre">ProgressBar.total</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.comment"><code class="docutils literal notranslate"><span class="pre">ProgressBar.comment</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.width"><code class="docutils literal notranslate"><span class="pre">ProgressBar.width</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.alpha"><code class="docutils literal notranslate"><span class="pre">ProgressBar.alpha</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.update_interval"><code class="docutils literal notranslate"><span class="pre">ProgressBar.update_interval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.index"><code class="docutils literal notranslate"><span class="pre">ProgressBar.index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.start_time"><code class="docutils literal notranslate"><span class="pre">ProgressBar.start_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.smoothed_speed"><code class="docutils literal notranslate"><span class="pre">ProgressBar.smoothed_speed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.last_bar_size"><code class="docutils literal notranslate"><span class="pre">ProgressBar.last_bar_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.last_update_time"><code class="docutils literal notranslate"><span class="pre">ProgressBar.last_update_time</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.set_comment"><code class="docutils literal notranslate"><span class="pre">ProgressBar.set_comment()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.tick"><code class="docutils literal notranslate"><span class="pre">ProgressBar.tick()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.progressbar.ProgressBar.refresh"><code class="docutils literal notranslate"><span class="pre">ProgressBar.refresh()</span></code></a></li>
 </ul>
 </li>
 </ul>

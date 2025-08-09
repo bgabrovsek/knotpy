@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1180,6 +1184,131 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.pd.from_pd_notation">
+<span class="sig-name descname"><span class="pre">from_pd_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oriented=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.pd.from_pd_notation" title="Link to this definition">#</a></dt>
+<dd><p>Create a planar diagram from PD notation.</p>
+<p>Supports Mathematica, KnotInfo, and Topoly variants. Nodes default to <code class="docutils literal notranslate"><span class="pre">'a','b','c',...</span></code>
+if <code class="docutils literal notranslate"><span class="pre">node_type</span> <span class="pre">is</span> <span class="pre">str</span></code>; otherwise integers are used in order of appearance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – PD notation string (mixed styles allowed; auto-detected).</p></li>
+<li><p><strong>node_type</strong> (<em>type</em><em> | </em><em>Any</em>) – Use <code class="docutils literal notranslate"><span class="pre">str</span></code> for <code class="docutils literal notranslate"><span class="pre">a,b,c,...</span></code> labels (default), or a different marker to keep integers.</p></li>
+<li><p><strong>oriented</strong> (<em>bool</em>) – Whether to create an oriented diagram (not implemented yet).</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Diagram attributes to set (e.g., name, framing).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – Parsed diagram.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If <code class="docutils literal notranslate"><span class="pre">oriented=True</span></code> (placeholder).</p></li>
+<li><p><strong>ValueError</strong> – If the PD string is malformed or arcs are not paired.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;V[1,2,3], X[2,3,4,5]&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">from_pd_notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">PlanarDiagram</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.pd.to_pd_notation">
+<span class="sig-name descname"><span class="pre">to_pd_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.pd.to_pd_notation" title="Link to this definition">#</a></dt>
+<dd><p>Serialize a planar diagram to PD notation.</p>
+<p>Output uses abbreviations inferred by node type:
+<code class="docutils literal notranslate"><span class="pre">X[...,...,...,...]</span></code> for crossings and <code class="docutils literal notranslate"><span class="pre">V[...]</span></code> for vertices. Arc ids are
+assigned by enumerating unique arcs as they appear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Diagram to serialize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – PD notation string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">knotpy.classes.planardiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanarDiagram</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">PlanarDiagram</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">add_vertices_from</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_arc</span><span class="p">(((</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">to_pd_notation</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;V[&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;X[&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.pd.to_condensed_pd_notation">
+<span class="sig-name descname"><span class="pre">to_condensed_pd_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.pd.to_condensed_pd_notation" title="Link to this definition">#</a></dt>
+<dd><p>Serialize a planar diagram to condensed PD notation.</p>
+<dl class="simple">
+<dt>Constraints:</dt><dd><ul class="simple">
+<li><p>At most 50 arcs (since we label arcs with single letters).</p></li>
+<li><p>Diagram must contain only vertices and crossings.</p></li>
+<li><p>No vertex may have degree 4 (ambiguity with crossings).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Diagram to serialize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Space-separated tokens of arc letters per node (CCW).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If constraints are violated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.pd.from_condensed_pd_notation">
+<span class="sig-name descname"><span class="pre">from_condensed_pd_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oriented=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.pd.from_condensed_pd_notation" title="Link to this definition">#</a></dt>
+<dd><p>Create a planar diagram from condensed PD code (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;abc</span> <span class="pre">bcde</span> <span class="pre">...&quot;</span></code>).</p>
+<p>Each token is a node’s incident arcs in CCW order; 4 letters → <code class="docutils literal notranslate"><span class="pre">X</span></code> (crossing),
+otherwise <code class="docutils literal notranslate"><span class="pre">V</span></code> (vertex). Arc labels must be single characters and paired globally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – Condensed PD code as space-separated tokens.</p></li>
+<li><p><strong>node_type</strong> (<em>type</em><em> | </em><em>Any</em>) – Use <code class="docutils literal notranslate"><span class="pre">str</span></code> for <code class="docutils literal notranslate"><span class="pre">a,b,c,...</span></code> labels (default), else integers.</p></li>
+<li><p><strong>oriented</strong> (<em>bool</em>) – Whether to create an oriented diagram (not implemented yet).</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Diagram attributes to set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – Parsed diagram.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If <code class="docutils literal notranslate"><span class="pre">oriented=True</span></code> (placeholder).</p></li>
+<li><p><strong>ValueError</strong> – If token parsing fails.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1192,6 +1321,27 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.pd.from_pd_notation"><code class="docutils literal notranslate"><span class="pre">from_pd_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.pd.to_pd_notation"><code class="docutils literal notranslate"><span class="pre">to_pd_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.pd.to_condensed_pd_notation"><code class="docutils literal notranslate"><span class="pre">to_condensed_pd_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.pd.from_condensed_pd_notation"><code class="docutils literal notranslate"><span class="pre">from_condensed_pd_notation()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1163,6 +1167,70 @@
   <section id="module-knotpy.invariants.alexander">
 <span id="alexander"></span><h1>alexander<a class="headerlink" href="#module-knotpy.invariants.alexander" title="Link to this heading">#</a></h1>
 <p>Alexander polynomials (one-variable and multivariable).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.alexander.alexander">
+<span class="sig-name descname"><span class="pre">alexander</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.alexander.alexander" title="Link to this definition">#</a></dt>
+<dd><p>Compute the one-variable Alexander polynomial via HOMFLY-PT specialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Planar diagram of a knot or link. If not oriented, it will be oriented internally.</p></li>
+<li><p><strong>symmetric</strong> (<em>bool</em>) – If True, normalize to a symmetric (palindromic) representative.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A SymPy expression in <code class="docutils literal notranslate"><span class="pre">t</span></code> representing the Alexander polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Uses the substitution <code class="docutils literal notranslate"><span class="pre">x=1</span></code>, <code class="docutils literal notranslate"><span class="pre">y=-1</span></code>, <code class="docutils literal notranslate"><span class="pre">z=-(t**1/2)</span> <span class="pre">+</span> <span class="pre">(t**(-1/2))</span></code> on HOMFLY-PT.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># K is a diagram of the trefoil (example; adjust to your construction)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># alexander(K)</span>
+<span class="go">t**2 - t + 1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.alexander.multivariable_alexander">
+<span class="sig-name descname"><span class="pre">multivariable_alexander</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.alexander.multivariable_alexander" title="Link to this definition">#</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#knotpy.invariants.alexander.alexander_multivariable" title="knotpy.invariants.alexander.alexander_multivariable"><code class="xref py py-func docutils literal notranslate"><span class="pre">alexander_multivariable()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.alexander.alexander_multivariable">
+<span class="sig-name descname"><span class="pre">alexander_multivariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.alexander.alexander_multivariable" title="Link to this definition">#</a></dt>
+<dd><p>Compute the multivariable Alexander polynomial from the abelianized Alexander matrix.</p>
+<p>This returns the gcd (up to units) of all <code class="docutils literal notranslate"><span class="pre">(n-1)×(n-1)</span></code> minors of the Alexander–Fox
+matrix after collapsing generators to one variable per link component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Planar diagram (knot or link). If not oriented, it will be oriented internally.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A SymPy expression in variables <code class="docutils literal notranslate"><span class="pre">t1,</span> <span class="pre">t2,</span> <span class="pre">...</span></code> (one per component).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If minors cannot be computed due to matrix shape.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1175,6 +1243,26 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.alexander.alexander"><code class="docutils literal notranslate"><span class="pre">alexander()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.alexander.multivariable_alexander"><code class="docutils literal notranslate"><span class="pre">multivariable_alexander()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.alexander.alexander_multivariable"><code class="docutils literal notranslate"><span class="pre">alexander_multivariable()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

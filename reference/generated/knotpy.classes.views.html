@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1183,6 +1187,107 @@
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.views.NodeView">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NodeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.NodeView" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></p>
+<p>Mapping/set-like view over the diagram’s nodes.</p>
+<p>Keys are node identifiers (hashable), values are <code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code> instances.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a <em>view</em>: it reflects the underlying diagram. Avoid mutating
+the diagram while iterating this view.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.views.NodeView._nodes">
+<span class="sig-name descname"><span class="pre">_nodes</span></span><a class="headerlink" href="#knotpy.classes.views.NodeView._nodes" title="Link to this definition">#</a></dt>
+<dd><p>Backing node mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[Hashable, <a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node">Node</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.views.NodeView.arcs">
+<span class="sig-name descname"><span class="pre">arcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.NodeView.arcs" title="Link to this definition">#</a></dt>
+<dd><p>Return the arcs emanating from a node.</p>
+<p>Each arc is returned as a pair <code class="docutils literal notranslate"><span class="pre">(adjacent_endpoint,</span> <span class="pre">endpoint)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>Hashable</em>) – Node identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list[tuple[Endpoint, Endpoint]]</em> – List of arcs from the node.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a>, <a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.views.EndpointView">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EndpointView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.EndpointView" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeView</span></code></a></p>
+<p>View over all endpoints of the diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.views.FilteredNodeView">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FilteredNodeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.FilteredNodeView" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeView</span></code></a></p>
+<p>Node view filtered by node type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p></li>
+<li><p><strong>node_type</strong> (<em>type</em><em>[</em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.views.FaceView">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FaceView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.FaceView" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeView</span></code></a></p>
+<p>View over faces (regions) of a planar diagram.</p>
+<p>A face (region, area) is modeled as a sequence of endpoints. Given a face
+on the plane, its boundary is returned by traversing in CCW fashion, using
+the target (second) endpoint at each step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.views.ArcView">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ArcView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.views.ArcView" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeView</span></code></a></p>
+<p>View over arcs (pairs of endpoints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node"><em>Node</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1195,6 +1300,32 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.NodeView"><code class="docutils literal notranslate"><span class="pre">NodeView</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.NodeView._nodes"><code class="docutils literal notranslate"><span class="pre">NodeView._nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.NodeView.arcs"><code class="docutils literal notranslate"><span class="pre">NodeView.arcs()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.EndpointView"><code class="docutils literal notranslate"><span class="pre">EndpointView</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.FilteredNodeView"><code class="docutils literal notranslate"><span class="pre">FilteredNodeView</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.FaceView"><code class="docutils literal notranslate"><span class="pre">FaceView</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.views.ArcView"><code class="docutils literal notranslate"><span class="pre">ArcView</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

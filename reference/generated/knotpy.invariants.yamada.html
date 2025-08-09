@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1169,6 +1173,26 @@
 * simplification of the knotted graphs mid-computation (reducing crossings via R1 unkinks and R2 unpokes,…)
 * caching of the Yamada polynomials for planar graphs,
 * caching of the Yamada polynomials for knotted graphs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.yamada.yamada">
+<span class="sig-name descname"><span class="pre">yamada</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.yamada.yamada" title="Link to this definition">#</a></dt>
+<dd><p>Return the Yamada polynomial of a given planar diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Planar diagram (knotted spatial graph allowed).</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – If True, multiply by a power of <code class="docutils literal notranslate"><span class="pre">(-A)</span></code> so the lowest term is constant.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SymPy expression for the Yamada polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1181,6 +1205,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.yamada.yamada"><code class="docutils literal notranslate"><span class="pre">yamada()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

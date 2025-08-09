@@ -45,6 +45,7 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.invariants.affine_index';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -219,6 +220,10 @@
     </div>
   
 
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
   
 </div>
 
@@ -1172,6 +1177,37 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.affine_index.affine_index_polynomial">
+<span class="sig-name descname"><span class="pre">affine_index_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.affine_index.affine_index_polynomial" title="Link to this definition">#</a></dt>
+<dd><p>Compute the affine index polynomial of a <strong>knotoid</strong>.</p>
+<p>The algorithm follows the standard labeling along the open arc starting from the
+outgoing terminal. Crossings receive weights that depend on the traversal label
+and crossing sign; the polynomial is then
+<span class="math notranslate nohighlight">\(\sum_{c \in \text{crossings}} \operatorname{sign}(c) (t^{w(c)} - 1)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – A planar diagram of a knotoid. If not oriented, it will be oriented internally.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A SymPy expression in the symbol <code class="docutils literal notranslate"><span class="pre">t</span></code> representing the affine index polynomial.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If a valid outgoing terminal endpoint of degree 1 cannot be found.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">knotpy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_pd</span>  <span class="c1"># example-only; adjust to your API #TODO: !!!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">K</span> <span class="o">=</span> <span class="n">read_pd</span><span class="p">(</span><span class="s2">&quot;knotoid_example&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">affine_index_polynomial</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="go">t**2 - 2*t + 1</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
@@ -1184,6 +1220,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.affine_index.affine_index_polynomial"><code class="docutils literal notranslate"><span class="pre">affine_index_polynomial()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

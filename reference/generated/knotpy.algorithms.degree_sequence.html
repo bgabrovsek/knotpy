@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1163,6 +1167,54 @@
   <section id="module-knotpy.algorithms.degree_sequence">
 <span id="degree-sequence"></span><h1>degree_sequence<a class="headerlink" href="#module-knotpy.algorithms.degree_sequence" title="Link to this heading">#</a></h1>
 <p>Degree sequence of a knotted graph diagram.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.degree_sequence.degree_sequence">
+<span class="sig-name descname"><span class="pre">degree_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.degree_sequence.degree_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Compute and return the degree sequence of all nodes in a given PlanarDiagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The input planar diagram, where each node has a certain degree
+representing the number of endpoints connected to it.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>A tuple containing the sorted degree sequence (in ascending order) of nodes in the</dt><dd><p>planar diagram.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.degree_sequence.neighbour_sequence">
+<span class="sig-name descname"><span class="pre">neighbour_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.degree_sequence.neighbour_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Computes the neighbor sequence for a given node in a PlanarDiagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The PlanarDiagram object containing nodes and edges.</p></li>
+<li><p><strong>node</strong> – Starting node for which the neighbor sequence is computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>A tuple where each element represents the size of a neighbor</dt><dd><p>layer in the sequence, starting from the initial node.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1175,6 +1227,25 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.degree_sequence.degree_sequence"><code class="docutils literal notranslate"><span class="pre">degree_sequence()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.degree_sequence.neighbour_sequence"><code class="docutils literal notranslate"><span class="pre">neighbour_sequence()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -1258,28 +1258,6 @@ iterating over components, and exporting components.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.classes">
-<span class="sig-name descname"><span class="pre">classes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.classes" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of all disjoint sets (components).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list[set[<em>Hashable</em>]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.elements">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.elements" title="Link to this definition">#</a></dt>
-<dd><p>Iterate over all elements ever added.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>An iterator over elements.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.find">
 <span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.find" title="Link to this definition">#</a></dt>
 <dd><p>Return the representative (root) of the set containing <code class="docutils literal notranslate"><span class="pre">item</span></code>.</p>
@@ -1304,35 +1282,37 @@ iterating over components, and exporting components.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives">
-<span class="sig-name descname"><span class="pre">representatives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives" title="Link to this definition">#</a></dt>
-<dd><p>Yield one representative per component (uses <code class="docutils literal notranslate"><span class="pre">min</span></code> for stability).</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Elements in a component must be mutually comparable for <code class="docutils literal notranslate"><span class="pre">min</span></code> to work.</p>
-</div>
+<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.union">
+<span class="sig-name descname"><span class="pre">union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.union" title="Link to this definition">#</a></dt>
+<dd><p>Merge the sets containing <code class="docutils literal notranslate"><span class="pre">item1</span></code> and <code class="docutils literal notranslate"><span class="pre">item2</span></code> (if both exist).</p>
+<p>Uses union-by-rank heuristic. If either item is unknown, nothing happens.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yields<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A representative element per component.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item1</strong> (<em>Hashable</em>) – First element.</p></li>
+<li><p><strong>item2</strong> (<em>Hashable</em>) – Second element.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Iterator</em>[<em>Hashable</em>]</p>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span> <span class="o">=</span> <span class="n">DisjointSetUnion</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">dsu</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict" title="Link to this definition">#</a></dt>
-<dd><p>Return a mapping {rep: others} for each component.</p>
-<p>The representative is chosen as <code class="docutils literal notranslate"><span class="pre">min(component)</span></code> (see caveat in
-<a class="reference internal" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives" title="knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives"><code class="xref py py-meth docutils literal notranslate"><span class="pre">representatives()</span></code></a>).</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.elements">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.elements" title="Link to this definition">#</a></dt>
+<dd><p>Iterate over all elements ever added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary mapping each representative to the other members in the set.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict[<em>Hashable</em>, set[<em>Hashable</em>]]</p>
+<dd class="field-odd"><p>An iterator over elements.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1362,28 +1342,48 @@ iterating over components, and exporting components.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.union">
-<span class="sig-name descname"><span class="pre">union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.union" title="Link to this definition">#</a></dt>
-<dd><p>Merge the sets containing <code class="docutils literal notranslate"><span class="pre">item1</span></code> and <code class="docutils literal notranslate"><span class="pre">item2</span></code> (if both exist).</p>
-<p>Uses union-by-rank heuristic. If either item is unknown, nothing happens.</p>
+<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives">
+<span class="sig-name descname"><span class="pre">representatives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives" title="Link to this definition">#</a></dt>
+<dd><p>Yield one representative per component (uses <code class="docutils literal notranslate"><span class="pre">min</span></code> for stability).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Elements in a component must be mutually comparable for <code class="docutils literal notranslate"><span class="pre">min</span></code> to work.</p>
+</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>item1</strong> (<em>Hashable</em>) – First element.</p></li>
-<li><p><strong>item2</strong> (<em>Hashable</em>) – Second element.</p></li>
-</ul>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A representative element per component.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p><em>Iterator</em>[<em>Hashable</em>]</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span> <span class="o">=</span> <span class="n">DisjointSetUnion</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dsu</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">dsu</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.classes">
+<span class="sig-name descname"><span class="pre">classes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.classes" title="Link to this definition">#</a></dt>
+<dd><p>Return a list of all disjoint sets (components).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[set[<em>Hashable</em>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict" title="Link to this definition">#</a></dt>
+<dd><p>Return a mapping {rep: others} for each component.</p>
+<p>The representative is chosen as <code class="docutils literal notranslate"><span class="pre">min(component)</span></code> (see caveat in
+<a class="reference internal" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives" title="knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives"><code class="xref py py-meth docutils literal notranslate"><span class="pre">representatives()</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary mapping each representative to the other members in the set.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[<em>Hashable</em>, set[<em>Hashable</em>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1416,13 +1416,13 @@ iterating over components, and exporting components.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.__init__"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.add"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.add()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.classes"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.classes()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.elements"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.elements</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.find"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.find()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.representatives()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.to_dict()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_set"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.to_set()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.union"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.union()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.elements"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.elements</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_set"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.to_set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.representatives"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.representatives()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.classes"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.classes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.disjoint_union_set.DisjointSetUnion.to_dict"><code class="docutils literal notranslate"><span class="pre">DisjointSetUnion.to_dict()</span></code></a></li>
 </ul>
 </li>
 </ul>

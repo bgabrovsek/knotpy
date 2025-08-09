@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1174,6 +1178,70 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.export.export_pdf">
+<span class="sig-name descname"><span class="pre">export_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagrams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.export.export_pdf" title="Link to this definition">#</a></dt>
+<dd><p>Draw the planar diagram(s) using Matplotlib and save to a PDF file.</p>
+<p>This function takes a planar diagram or a list of planar diagrams, draws
+them using Matplotlib, and exports the resulting visualizations to a PDF
+file. The drawing behavior can be customized using the optional parameters.
+If the diagrams contain unsupported features such as loops or bridges,
+they will be skipped, and a warning message will be generated. Progress
+indicators can be displayed if the export involves multiple diagrams.</p>
+<p>Parameters:
+diagrams: PlanarDiagram | list[PlanarDiagram]</p>
+<blockquote>
+<div><p>A planar diagram or a list of planar diagrams to be drawn.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>filename: str</dt><dd><p>The name of the output PDF file where the drawings will be saved.</p>
+</dd>
+<dt>draw_circles: bool, optional</dt><dd><p>If True, circles will be drawn around the diagrams. Defaults to False.</p>
+</dd>
+<dt>with_labels: bool, optional</dt><dd><p>If True, labels will be displayed on the diagrams. Defaults to False.</p>
+</dd>
+<dt>with_title: bool, optional</dt><dd><p>If True, titles will be added to the diagrams. Defaults to False.</p>
+</dd>
+<dt>show_progress: bool, optional</dt><dd><p>If True, progress indicators will be displayed if the number of diagrams
+is 10 or more. Defaults to True.</p>
+</dd>
+</dl>
+<p>Returns:
+None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.export.export_pdf_groups">
+<span class="sig-name descname"><span class="pre">export_pdf_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.export.export_pdf_groups" title="Link to this definition">#</a></dt>
+<dd><p>Draw the planar diagram(s) using Matplotlib and save to a PDF file.</p>
+<p>This function takes a planar diagram or a list of planar diagrams, draws
+them using Matplotlib, and exports the resulting visualizations to a PDF
+file. The drawing behavior can be customized using the optional parameters.
+If the diagrams contain unsupported features such as loops or bridges,
+they will be skipped, and a warning message will be generated. Progress
+indicators can be displayed if the export involves multiple diagrams.</p>
+<p>Parameters:
+diagrams: PlanarDiagram | list[PlanarDiagram]</p>
+<blockquote>
+<div><p>A planar diagram or a list of planar diagrams to be drawn.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>filename: str</dt><dd><p>The name of the output PDF file where the drawings will be saved.</p>
+</dd>
+<dt>draw_circles: bool, optional</dt><dd><p>If True, circles will be drawn around the diagrams. Defaults to False.</p>
+</dd>
+<dt>with_labels: bool, optional</dt><dd><p>If True, labels will be displayed on the diagrams. Defaults to False.</p>
+</dd>
+<dt>with_title: bool, optional</dt><dd><p>If True, titles will be added to the diagrams. Defaults to False.</p>
+</dd>
+<dt>show_progress: bool, optional</dt><dd><p>If True, progress indicators will be displayed if the number of diagrams
+is 10 or more. Defaults to True.</p>
+</dd>
+</dl>
+<p>Returns:
+None</p>
+</dd></dl>
+
 </section>
 
 
@@ -1186,6 +1254,25 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.export.export_pdf"><code class="docutils literal notranslate"><span class="pre">export_pdf()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.export.export_pdf_groups"><code class="docutils literal notranslate"><span class="pre">export_pdf_groups()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

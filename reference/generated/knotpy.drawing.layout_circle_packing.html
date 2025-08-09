@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1163,6 +1167,28 @@
   <section id="module-knotpy.drawing.layout_circle_packing">
 <span id="layout-circle-packing"></span><h1>layout_circle_packing<a class="headerlink" href="#module-knotpy.drawing.layout_circle_packing" title="Link to this heading">#</a></h1>
 <p>Layout functions for drawing a planar graph.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.layout_circle_packing.layout_circle_packing">
+<span class="sig-name descname"><span class="pre">layout_circle_packing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.layout_circle_packing.layout_circle_packing" title="Link to this definition">#</a></dt>
+<dd><p>Computes the layout using circle packing for a given planar or oriented planar diagram. A layout is a dictionary,
+where keys are diagram elements (nodes, arcs, endpoints, faces) and values are the corresponding geometric objects
+(e.g., points, segments, circle arcs) which, upon plotting, will represent the diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – The input planar or oriented planar diagram representing the knot or link for which the layout is calculated.</p></li>
+<li><p><strong>return_circles</strong> (<em>bool</em>) – If True, the function also returns the computed circles for the circle packing. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict or tuple</em> – If <cite>return_circles</cite> is False, the function returns a dictionary
+mapping nodes, endpoints, arcs, and faces to their corresponding layout positions.
+If <cite>return_circles</cite> is True, it returns a tuple containing the layout dictionary
+and the computed circles.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1175,6 +1201,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.layout_circle_packing.layout_circle_packing"><code class="docutils literal notranslate"><span class="pre">layout_circle_packing()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

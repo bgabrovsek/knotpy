@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1171,6 +1175,42 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.contract.contract_arc">
+<span class="sig-name descname"><span class="pre">contract_arc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arc_for_contracting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.contract.contract_arc" title="Link to this definition">#</a></dt>
+<dd><p>Contracts a specific arc in a PlanarDiagram by merging its endpoints into one vertex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The planar diagram in which the arc contraction will be performed.</p></li>
+<li><p><strong>arc_for_contracting</strong> (<em>Tuple</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em>) – The arc to be contracted,
+represented as a tuple of two endpoints, where each endpoint is a tuple consisting
+of a node identifier and a position index. The first tuple is the ‘contracted’
+endpoint that remains after contraction, and the second tuple is the endpoint to
+be removed.</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the operation is performed directly on the input
+PlanarDiagram object. If False, a copy of the input diagram will be modified, and
+the original remains unchanged. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – The modified planar diagram after the arc contraction if <cite>inplace</cite> is
+False, or the same (mutated) diagram if <cite>inplace</cite> is True.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – If either of the endpoints specified in <cite>arc_for_contracting</cite> does not</p></li>
+<li><p><strong>belong to a vertex in the planar diagram.</strong> – </p></li>
+<li><p><strong>ValueError</strong> – If the arc specified forms a loop (i.e., the endpoints are on the same</p></li>
+<li><p><strong>vertex</strong><strong>) </strong><strong>and cannot be contracted.</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1183,6 +1223,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.contract.contract_arc"><code class="docutils literal notranslate"><span class="pre">contract_arc()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1177,6 +1181,72 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.dt.from_dt_notation">
+<span class="sig-name descname"><span class="pre">from_dt_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oriented</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.dt.from_dt_notation" title="Link to this definition">#</a></dt>
+<dd><p>Parse DT notation (knot or link) and return a diagram.</p>
+<p>This currently <strong>parses and validates</strong> the input but does not finish the
+DT→diagram construction (the original code also stopped mid-way). For now,
+non-empty inputs raise a clear <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> instead of silently
+printing and returning <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dl class="simple">
+<dt>Accepts:</dt><dd><ul class="simple">
+<li><p>A string with rows separated by commas/semicolons/spaces (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;4</span> <span class="pre">-6</span> <span class="pre">2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;4</span> <span class="pre">-6</span> <span class="pre">2</span> <span class="pre">;</span> <span class="pre">8</span> <span class="pre">-10</span> <span class="pre">12&quot;</span></code>)</p></li>
+<li><p>A list of ints (knot) → will be wrapped as a single-component link</p></li>
+<li><p>A list of lists of ints (link)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notation</strong> (<em>str</em><em> | </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>int</em><em>]</em><em>]</em>) – DT notation (string or nested iterables of ints).</p></li>
+<li><p><strong>oriented</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns an oriented diagram instance; if <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+an unoriented one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram | OrientedPlanarDiagram</em> – Empty diagram if input is empty.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If parsing fails.</p></li>
+<li><p><strong>NotImplementedError</strong> – For non-empty inputs until the constructor is completed.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The unfinished part in the original code explored endpoint placement
+options but never built the final diagram. This version preserves
+behavior safely by raising a clear exception.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.dt.to_dt_notation">
+<span class="sig-name descname"><span class="pre">to_dt_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.dt.to_dt_notation" title="Link to this definition">#</a></dt>
+<dd><p>Serialize a knot/link diagram to DT notation.</p>
+<p>For knots, returns a single tuple of signed odd labels. For links, returns a
+tuple of tuples (one per component), following the usual conventions:
+- Label even indices along the traversal at each crossing on the <em>incoming over</em> endpoint.
+- The sign of the paired odd label is positive/negative based on the local crossing orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> – Planar or oriented diagram.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple</em> – For a knot, <code class="docutils literal notranslate"><span class="pre">(l1,</span> <span class="pre">l2,</span> <span class="pre">...,</span> <span class="pre">l_{2n})</span></code>. For a link, <code class="docutils literal notranslate"><span class="pre">((...),</span> <span class="pre">(...),</span> <span class="pre">...)</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the diagram is not a knot/link in a way compatible with DT.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple</em>[<em>Tuple</em>[int, …], …] | <em>Tuple</em>[int, …]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1189,6 +1259,25 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.dt.from_dt_notation"><code class="docutils literal notranslate"><span class="pre">from_dt_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.dt.to_dt_notation"><code class="docutils literal notranslate"><span class="pre">to_dt_notation()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1175,6 +1179,46 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.string_utils.multi_replace">
+<span class="sig-name descname"><span class="pre">multi_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">replacements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.string_utils.multi_replace" title="Link to this definition">#</a></dt>
+<dd><p>Repeatedly apply multiple substring replacements until no change occurs.</p>
+<p>Replacements can be given as <cite>(old, new)</cite> tuples or <cite>{old: new}</cite> dicts.
+All replacements are applied in sequence per pass, and the process repeats
+until the text stops changing or <cite>max_passes</cite> is reached.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your replacements create a cycle (e.g., <cite>(“A”,”B”)</cite> and <cite>(“B”,”A”)</cite>),
+the function would otherwise loop forever. <cite>max_passes</cite> prevents that;
+if reached, the current text is returned.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – Input string to transform.</p></li>
+<li><p><strong>*replacements</strong> (<em>tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – One or more <cite>(old, new)</cite> tuples or <cite>{old: new}</cite> dicts.</p></li>
+<li><p><strong>max_passes</strong> – Safety cap on the number of full replacement passes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transformed string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">multi_replace</span><span class="p">(</span><span class="s2">&quot;AAAABC&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;AA&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">},</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">))</span>
+<span class="go">&#39;aabc&#39;  # first pass: AAAABC -&gt; aAABC -&gt; aaABC -&gt; aabC -&gt; aab c</span>
+<span class="go">        # second pass: aabc (no change) -&gt; stop</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">multi_replace</span><span class="p">(</span><span class="s2">&quot;foo-bar&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">))</span>
+<span class="go">&#39;bar-baz&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
@@ -1187,6 +1231,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.string_utils.multi_replace"><code class="docutils literal notranslate"><span class="pre">multi_replace()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

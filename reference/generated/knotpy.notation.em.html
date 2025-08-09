@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1180,6 +1184,125 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.em.to_em_notation">
+<span class="sig-name descname"><span class="pre">to_em_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.em.to_em_notation" title="Link to this definition">#</a></dt>
+<dd><p>Return EM dict notation of a planar diagram.</p>
+<p>For each node, returns a CCW-ordered list of <code class="docutils literal notranslate"><span class="pre">(neighbor,</span> <span class="pre">neighbor_pos)</span></code> tuples.
+This uses the diagram’s endpoint “twin” relation to find the adjacent endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Planar diagram.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Mapping <code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">-&gt;</span> <span class="pre">[(neighbor,</span> <span class="pre">neighbor_pos),</span> <span class="pre">...]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Dict</em>[<em>Any</em>, list[tuple[<em>Any</em>, int]]]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">knotpy.classes.planardiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanarDiagram</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">PlanarDiagram</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">add_vertices_from</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_arc</span><span class="p">(((</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">em</span> <span class="o">=</span> <span class="n">to_em_notation</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">em</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.em.from_em_notation">
+<span class="sig-name descname"><span class="pre">from_em_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oriented</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.em.from_em_notation" title="Link to this definition">#</a></dt>
+<dd><p>Create a planar diagram from EM dict (or stringified dict) notation.</p>
+<p>The input should map each node to a CCW-ordered list of
+<code class="docutils literal notranslate"><span class="pre">(neighbor,</span> <span class="pre">neighbor_position)</span></code> pairs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Mapping</em><em>[</em><em>Any</em><em>, </em><em>Iterable</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>int</em><em>]</em><em>]</em><em>] </em><em>| </em><em>str</em>) – EM dict, or a string that safely evaluates to such a dict.</p></li>
+<li><p><strong>oriented</strong> (<em>bool</em>) – Whether to construct an oriented diagram (not implemented).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – Parsed diagram.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If <code class="docutils literal notranslate"><span class="pre">oriented=True</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – On malformed inputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.em.to_condensed_em_notation">
+<span class="sig-name descname"><span class="pre">to_condensed_em_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.em.to_condensed_em_notation" title="Link to this definition">#</a></dt>
+<dd><p>Return condensed EM notation for diagrams with single-letter node labels.</p>
+<dl class="simple">
+<dt>Constraints:</dt><dd><ul class="simple">
+<li><p>Nodes must be sortable and of the same type (e.g., all strings or all ints).</p></li>
+<li><p>At most 52 nodes (a–zA–Z).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>g</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Diagram to serialize.</p></li>
+<li><p><strong>separator</strong> (<em>str</em>) – Token separator (default: comma).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Condensed EM string (alphabetical node order).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If node count exceeds 52.</p></li>
+<li><p><strong>TypeError</strong> – If nodes are not mutually comparable for sorting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.notation.em.from_condensed_em_notation">
+<span class="sig-name descname"><span class="pre">from_condensed_em_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oriented</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.notation.em.from_condensed_em_notation" title="Link to this definition">#</a></dt>
+<dd><p>Parse condensed EM notation into a planar diagram.</p>
+<p>Token format per node (CCW): <code class="docutils literal notranslate"><span class="pre">&lt;neighbor-letter&gt;&lt;neighbor-position&gt;...</span></code>.
+Nodes are assigned in alphabetical order: a, b, c, …</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>str</em>) – Condensed EM string.</p></li>
+<li><p><strong>separator</strong> (<em>str</em>) – Token separator used in the string (default: comma).</p></li>
+<li><p><strong>oriented</strong> (<em>bool</em>) – Whether to construct an oriented diagram (not implemented).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – Parsed diagram.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If <code class="docutils literal notranslate"><span class="pre">oriented=True</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – For malformed tokens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1192,6 +1315,27 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.em.to_em_notation"><code class="docutils literal notranslate"><span class="pre">to_em_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.em.from_em_notation"><code class="docutils literal notranslate"><span class="pre">from_em_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.em.to_condensed_em_notation"><code class="docutils literal notranslate"><span class="pre">to_condensed_em_notation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.notation.em.from_condensed_em_notation"><code class="docutils literal notranslate"><span class="pre">from_condensed_em_notation()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

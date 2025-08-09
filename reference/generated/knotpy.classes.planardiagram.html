@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1195,6 +1199,638 @@
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PlanarDiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_diagram_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_CrossingDiagram</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_VertexDiagram</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_VirtualCrossingDiagram</span></code></p>
+<p>Planar diagram for spatial graphs, knots, links, and related structures.</p>
+<p>The diagram holds nodes (vertices/crossings), endpoints (incidences of nodes),
+arcs (pairs of endpoints), and faces (regions). Many of these are derived
+views over the core <code class="docutils literal notranslate"><span class="pre">_nodes</span></code> structure and cached lazily.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>incoming_diagram_data</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>attr</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram._nodes">
+<span class="sig-name descname"><span class="pre">_nodes</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram._nodes" title="Link to this definition">#</a></dt>
+<dd><p>Internal mapping from node identifiers to node instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[Hashable, <a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.Node">Node</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.attr">
+<span class="sig-name descname"><span class="pre">attr</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.attr" title="Link to this definition">#</a></dt>
+<dd><p>Diagram-level attributes (e.g., name, framing, meta).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.clear" title="Link to this definition">#</a></dt>
+<dd><p>Remove all nodes and attributes from the diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_using</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.copy" title="Link to this definition">#</a></dt>
+<dd><p>Return a shallow copy of the diagram.</p>
+<p>Serves for converting, e.g., oriented to unoriented diagrams.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>copy_using</strong> (<em>Optional</em><em>[</em><em>type</em><em>[</em><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em>]</em><em>]</em>) – Concrete diagram type to create;
+defaults to <code class="docutils literal notranslate"><span class="pre">type(self)</span></code>.</p></li>
+<li><p><strong>attr</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – New diagram instance with duplicated structure and attributes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.nodes">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><span class="pre">NodeView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.nodes" title="Link to this definition">#</a></dt>
+<dd><p>Return a view of the diagram’s nodes, providing adjacency information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>NodeView</em> – View of nodes backed by the internal mapping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.endpoints">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">endpoints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.EndpointView.html#knotpy.classes.views.EndpointView" title="knotpy.classes.views.EndpointView"><span class="pre">EndpointView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.endpoints" title="Link to this definition">#</a></dt>
+<dd><p>Return a view of endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>EndpointView</em> – View of all endpoints in the diagram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.arcs">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.ArcView.html#knotpy.classes.views.ArcView" title="knotpy.classes.views.ArcView"><span class="pre">ArcView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.arcs" title="Link to this definition">#</a></dt>
+<dd><p>Return a view of arcs (pairs of endpoints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ArcView</em> – View of diagram arcs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.faces">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">faces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FaceView.html#knotpy.classes.views.FaceView" title="knotpy.classes.views.FaceView"><span class="pre">FaceView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.faces" title="Link to this definition">#</a></dt>
+<dd><p>Return a view of faces (regions enclosed by arcs).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>FaceView</em> – View of diagram faces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.add_node">
+<span class="sig-name descname"><span class="pre">add_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_for_adding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_using</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.add_node" title="Link to this definition">#</a></dt>
+<dd><p>Add or update a single node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_for_adding</strong> (<em>Hashable</em>) – Node identifier (hashable).</p></li>
+<li><p><strong>create_using</strong> (<em>type</em>) – Node class to construct (e.g., <code class="docutils literal notranslate"><span class="pre">Vertex</span></code> or <code class="docutils literal notranslate"><span class="pre">Crossing</span></code>).</p></li>
+<li><p><strong>degree</strong> (<em>int</em><em> | </em><em>None</em>) – Degree of the node (optional).</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes to store on the node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">create_using</span></code> is not a type.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">node_for_adding</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>NotImplementedError</strong> – If attempting to change an existing node’s concrete type.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.add_nodes_from">
+<span class="sig-name descname"><span class="pre">add_nodes_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_for_adding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_using</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.add_nodes_from" title="Link to this definition">#</a></dt>
+<dd><p>Add or update multiple nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_for_adding</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>] </em><em>| </em><em>dict</em><em>[</em><em>Hashable</em><em>, </em><a class="reference internal" href="knotpy.classes.node.Node.html#knotpy.classes.node.Node" title="knotpy.classes.node.node.Node"><em>Node</em></a><em>]</em>) – Iterable of node identifiers or mapping to existing node instances.</p></li>
+<li><p><strong>create_using</strong> (<em>type</em><em> | </em><em>None</em>) – Node class used when creating from identifiers.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes applied to created/updated nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.add_crossings_from">
+<span class="sig-name descname"><span class="pre">add_crossings_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crossings_for_adding</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.add_crossings_from" title="Link to this definition">#</a></dt>
+<dd><p>Add or update multiple classical crossings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>crossings_for_adding</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – Iterable of crossing identifiers.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes for crossings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.add_vertex">
+<span class="sig-name descname"><span class="pre">add_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertex_for_adding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.add_vertex" title="Link to this definition">#</a></dt>
+<dd><p>Add or update a vertex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertex_for_adding</strong> (<em>Hashable</em>) – Vertex identifier.</p></li>
+<li><p><strong>degree</strong> (<em>int</em><em> | </em><em>None</em>) – Optional vertex degree.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.permute_node">
+<span class="sig-name descname"><span class="pre">permute_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permutation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.permute_node" title="Link to this definition">#</a></dt>
+<dd><p>Permute positions of a node’s endpoints.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">permutation</span> <span class="pre">=</span> <span class="pre">{0:</span> <span class="pre">0,</span> <span class="pre">1:</span> <span class="pre">2,</span> <span class="pre">2:</span> <span class="pre">3,</span> <span class="pre">3:</span> <span class="pre">1}</span></code> (or a list/tuple with these images),
+and the CCW endpoints are <code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b,</span> <span class="pre">c,</span> <span class="pre">d]</span></code>, the new endpoints become <code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">d,</span> <span class="pre">b,</span> <span class="pre">c]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<em>Hashable</em>) – Node whose endpoints should be permuted.</p></li>
+<li><p><strong>permutation</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>int</em><em>]</em>) – Mapping or sequence describing the new positions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Endpoint attributes are preserved via <code class="docutils literal notranslate"><span class="pre">set_endpoint</span></code>. Loops may require special care.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.convert_node">
+<span class="sig-name descname"><span class="pre">convert_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_for_converting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.convert_node" title="Link to this definition">#</a></dt>
+<dd><p>Convert a node’s concrete type (e.g., vertex → crossing).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_for_converting</strong> (<em>Hashable</em>) – Node identifier.</p></li>
+<li><p><strong>node_type</strong> (<em>type</em>) – Target node class (e.g., <code class="docutils literal notranslate"><span class="pre">Crossing</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.convert_nodes">
+<span class="sig-name descname"><span class="pre">convert_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_for_converting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.convert_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Convert multiple nodes to a given concrete type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_for_converting</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – Iterable of node identifiers.</p></li>
+<li><p><strong>node_type</strong> (<em>type</em>) – Target node class (e.g., <code class="docutils literal notranslate"><span class="pre">Crossing</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_node">
+<span class="sig-name descname"><span class="pre">remove_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_for_removing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_incident_endpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_node" title="Link to this definition">#</a></dt>
+<dd><p>Remove a node (optionally removing incident endpoints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_for_removing</strong> (<em>Hashable</em>) – Node identifier to remove.</p></li>
+<li><p><strong>remove_incident_endpoints</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code>, leaves dangling endpoints (breaks planarity).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – The diagram (mutated).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from">
+<span class="sig-name descname"><span class="pre">remove_nodes_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_for_removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_incident_endpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from" title="Link to this definition">#</a></dt>
+<dd><p>Remove multiple nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_for_removal</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – Iterable of node identifiers.</p></li>
+<li><p><strong>remove_incident_endpoints</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code>, leaves dangling endpoints.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.degree">
+<span class="sig-name descname"><span class="pre">degree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.degree" title="Link to this definition">#</a></dt>
+<dd><p>Return a node’s degree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>Hashable</em>) – Node identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em> – Degree of the node.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes">
+<span class="sig-name descname"><span class="pre">relabel_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Relabel nodes using a (possibly partial) mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>Hashable</em><em>, </em><em>Hashable</em><em>]</em>) – Node-identifier mapping. Unmapped nodes keep original identifiers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.set_endpoint">
+<span class="sig-name descname"><span class="pre">set_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_for_setting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjacent_endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_using=&lt;class</span> <span class="pre">'knotpy.classes.endpoint.Endpoint'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.set_endpoint" title="Link to this definition">#</a></dt>
+<dd><p>Set an endpoint to the specified adjacent endpoint, updating attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint_for_setting</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em>) – Endpoint instance or pair <code class="docutils literal notranslate"><span class="pre">(node,</span> <span class="pre">position)</span></code> to modify.</p></li>
+<li><p><strong>adjacent_endpoint</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em>) – Endpoint instance or pair <code class="docutils literal notranslate"><span class="pre">(node,</span> <span class="pre">position)</span></code> to set as the twin.</p></li>
+<li><p><strong>create_using</strong> (<em>type</em>) – Endpoint class to construct if tuples are provided. If an instance is given,
+its concrete type is used and attributes copied.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes for the adjacent endpoint.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">create_using</span></code> is not a type.</p></li>
+<li><p><strong>ValueError</strong> – If orientation constraints are violated.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.twin">
+<span class="sig-name descname"><span class="pre">twin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.twin" title="Link to this definition">#</a></dt>
+<dd><p>Return the opposite endpoint (twin) of an endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoint</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em>) – Endpoint instance or pair <code class="docutils literal notranslate"><span class="pre">(node,</span> <span class="pre">position)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Endpoint</em> – The twin endpoint instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.endpoint_from_pair">
+<span class="sig-name descname"><span class="pre">endpoint_from_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_pair</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.endpoint_from_pair" title="Link to this definition">#</a></dt>
+<dd><p>Return the endpoint instance given a pair description.</p>
+<p>If the second component is a descriptive string for a crossing endpoint
+(e.g., <code class="docutils literal notranslate"><span class="pre">&quot;over</span> <span class="pre">ingoing&quot;</span></code>), this resolves to the appropriate endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoint_pair</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em> | </em><em>str</em><em>]</em>) – Endpoint instance or pair <code class="docutils literal notranslate"><span class="pre">(node,</span> <span class="pre">position_or_description)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Endpoint</em> – Resolved endpoint instance.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If description is invalid or node is not a crossing.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint">
+<span class="sig-name descname"><span class="pre">remove_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_for_removal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint" title="Link to this definition">#</a></dt>
+<dd><p>Remove a single endpoint and adjust neighbor positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoint_for_removal</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em>) – Endpoint instance or pair <code class="docutils literal notranslate"><span class="pre">(node,</span> <span class="pre">position)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from">
+<span class="sig-name descname"><span class="pre">remove_endpoints_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoints_for_removal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from" title="Link to this definition">#</a></dt>
+<dd><p>Remove multiple endpoints safely (order-aware).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoints_for_removal</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>]</em>) – Iterable of endpoint instances or pairs.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.set_arc">
+<span class="sig-name descname"><span class="pre">set_arc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arc_for_setting</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arc" title="Link to this definition">#</a></dt>
+<dd><p>Set an arc (pair of endpoints), setting each endpoint to the other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arc_for_setting</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>, </em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>]</em>) – Tuple <code class="docutils literal notranslate"><span class="pre">(v_endpoint,</span> <span class="pre">u_endpoint)</span></code> each as Endpoint or pair.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes to apply to the endpoints.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from">
+<span class="sig-name descname"><span class="pre">set_arcs_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arcs_for_adding</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from" title="Link to this definition">#</a></dt>
+<dd><p>Set multiple arcs, optionally parsing from a simple string syntax.</p>
+<p>Example string: <code class="docutils literal notranslate"><span class="pre">&quot;a1b4,c2d3&quot;</span></code>—also creates missing vertices when needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arcs_for_adding</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>, </em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>]</em><em>] </em><em>| </em><em>str</em>) – Iterable of endpoint pairs or a string in the simple syntax.</p></li>
+<li><p><strong>**attr</strong> (<em>Any</em>) – Additional attributes to apply.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_arc">
+<span class="sig-name descname"><span class="pre">remove_arc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arc_for_removing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arc" title="Link to this definition">#</a></dt>
+<dd><p>Remove an arc by removing its two endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arc_for_removing</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>, </em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>]</em>) – Tuple <code class="docutils literal notranslate"><span class="pre">(v_endpoint,</span> <span class="pre">u_endpoint)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from">
+<span class="sig-name descname"><span class="pre">remove_arcs_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arcs_for_removing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from" title="Link to this definition">#</a></dt>
+<dd><p>Remove multiple arcs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arcs_for_removing</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>, </em><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a><em> | </em><em>tuple</em><em>[</em><em>Hashable</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em>) – Iterable of endpoint pairs to remove.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.is_oriented">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the diagram is oriented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">False</span></code> for the base <code class="docutils literal notranslate"><span class="pre">PlanarDiagram</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_nodes">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of nodes in the diagram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_crossings">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_crossings" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of classical crossings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of crossings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_vertices">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_vertices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_vertices" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of vertices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of vertices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_virtual_crossings">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_virtual_crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_virtual_crossings" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of virtual crossings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of virtual crossings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_endpoints">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_endpoints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_endpoints" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of endpoints over all nodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.number_of_arcs">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_arcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_arcs" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of arcs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Number of arcs (half the number of endpoints).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.is_framed">
+<span class="sig-name descname"><span class="pre">is_framed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.is_framed" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the diagram is framed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">True</span></code> if framed, otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.name" title="Link to this definition">#</a></dt>
+<dd><p>Return the diagram name identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em> – Diagram name (empty if not set).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.framing">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">framing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.framing" title="Link to this definition">#</a></dt>
+<dd><p>Return the blackboard framing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Optional[int]</em> – Framing number or <code class="docutils literal notranslate"><span class="pre">None</span></code> if unframed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrientedPlanarDiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_diagram_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanarDiagram</span></code></a></p>
+<p>Planar diagram with orientation enabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>incoming_diagram_data</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>attr</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the diagram is oriented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – Always <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.Diagram">
+<span class="sig-name descname"><span class="pre">Diagram</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">knotpy.classes.planardiagram.PlanarDiagram</span> <span class="pre">|</span> <span class="pre">knotpy.classes.planardiagram.OrientedPlanarDiagram</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.Diagram" title="Link to this definition">#</a></dt>
+<dd><p>Union of knot diagram types used across KnotPy.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.DiagramCollection">
+<span class="sig-name descname"><span class="pre">DiagramCollection</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">list[knotpy.classes.planardiagram.PlanarDiagram</span> <span class="pre">|</span> <span class="pre">knotpy.classes.planardiagram.OrientedPlanarDiagram]</span> <span class="pre">|</span> <span class="pre">set[knotpy.classes.planardiagram.PlanarDiagram</span> <span class="pre">|</span> <span class="pre">knotpy.classes.planardiagram.OrientedPlanarDiagram]</span> <span class="pre">|</span> <span class="pre">tuple[knotpy.classes.planardiagram.PlanarDiagram</span> <span class="pre">|</span> <span class="pre">knotpy.classes.planardiagram.OrientedPlanarDiagram,</span> <span class="pre">...]</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.DiagramCollection" title="Link to this definition">#</a></dt>
+<dd><p>Common collection types of diagrams.</p>
+</dd></dl>
+
 </section>
 
 
@@ -1207,6 +1843,70 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram._nodes"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram._nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.attr"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.attr</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.clear"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.clear()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.copy"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.nodes"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.endpoints"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.endpoints</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.arcs"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.arcs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.faces"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.faces</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.add_node"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.add_node()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.add_nodes_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.add_nodes_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.add_crossings_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.add_crossings_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.add_vertex"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.add_vertex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.permute_node"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.permute_node()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.convert_node"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.convert_node()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.convert_nodes"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.convert_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_node"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_node()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_nodes_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.degree"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.degree()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.relabel_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.set_endpoint"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.set_endpoint()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.twin"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.twin()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.endpoint_from_pair"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.endpoint_from_pair()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_endpoint()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_endpoints_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arc"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.set_arc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.set_arcs_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arc"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_arc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.remove_arcs_from()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.is_oriented"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.is_oriented()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_nodes"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_crossings"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_crossings</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_vertices"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_vertices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_virtual_crossings"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_virtual_crossings</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_endpoints"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_endpoints</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.number_of_arcs"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.number_of_arcs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.is_framed"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.is_framed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.name"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.framing"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.framing</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.is_oriented()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.Diagram"><code class="docutils literal notranslate"><span class="pre">Diagram</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.DiagramCollection"><code class="docutils literal notranslate"><span class="pre">DiagramCollection</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

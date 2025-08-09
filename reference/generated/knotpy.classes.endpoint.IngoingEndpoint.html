@@ -1222,18 +1222,46 @@
 <p class="rubric">Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">node</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.endpoint.IngoingEndpoint.node" title="knotpy.classes.endpoint.IngoingEndpoint.node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">node</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">position</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.endpoint.IngoingEndpoint.position" title="knotpy.classes.endpoint.IngoingEndpoint.position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">position</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.endpoint.IngoingEndpoint.attr" title="knotpy.classes.endpoint.IngoingEndpoint.attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.reverse_type">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reverse_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.reverse_type" title="Link to this definition">#</a></dt>
+<dd><p>Return the opposite endpoint type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>type[OutgoingEndpoint]</em> – The outgoing endpoint class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type[<a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html#knotpy.classes.endpoint.OutgoingEndpoint" title="knotpy.classes.endpoint.OutgoingEndpoint"><em>OutgoingEndpoint</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.is_oriented">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.is_oriented" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the endpoint type is oriented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – Always <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_Endpoint__default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.get" title="Link to this definition">#</a></dt>
@@ -1255,33 +1283,20 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.is_oriented">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.is_oriented" title="Link to this definition">#</a></dt>
-<dd><p>Return whether the endpoint type is oriented.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>bool</em> – Always <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.node">
+<span class="sig-name descname"><span class="pre">node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Hashable</span></em><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.node" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.reverse_type">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reverse_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.reverse_type" title="Link to this definition">#</a></dt>
-<dd><p>Return the opposite endpoint type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>type[OutgoingEndpoint]</em> – The outgoing endpoint class.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>type[<a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html#knotpy.classes.endpoint.OutgoingEndpoint" title="knotpy.classes.endpoint.OutgoingEndpoint"><em>OutgoingEndpoint</em></a>]</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.position">
+<span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.position" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.endpoint.IngoingEndpoint.attr">
+<span class="sig-name descname"><span class="pre">attr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#knotpy.classes.endpoint.IngoingEndpoint.attr" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1312,9 +1327,12 @@
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.__init__"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.get"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.get()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.is_oriented"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.is_oriented()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.reverse_type"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.reverse_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.is_oriented"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.is_oriented()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.get"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.node"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.node</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.position"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.position</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.endpoint.IngoingEndpoint.attr"><code class="docutils literal notranslate"><span class="pre">IngoingEndpoint.attr</span></code></a></li>
 </ul>
 </li>
 </ul>

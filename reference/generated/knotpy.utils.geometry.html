@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1260,6 +1264,627 @@ and bounding boxes. All points are complex numbers.</p>
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Circle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Circle" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A circle in the complex plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>complex</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Circle.length">
+<span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Circle.length" title="Link to this definition">#</a></dt>
+<dd><p>Circumference length (2πr).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CircularArc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code></a></p>
+<p>An unoriented circular arc on a circle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>complex</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta1</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta2</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.angle">
+<span class="sig-name descname"><span class="pre">angle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.angle" title="Link to this definition">#</a></dt>
+<dd><p>Arc angle length (radians) in [0, 2π).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.length">
+<span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.length" title="Link to this definition">#</a></dt>
+<dd><p>Arc length = radius * angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.A">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.A" title="Link to this definition">#</a></dt>
+<dd><p>Start point of the arc.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.B">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.B" title="Link to this definition">#</a></dt>
+<dd><p>End point of the arc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.OrientedCircularArc">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrientedCircularArc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reversed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.OrientedCircularArc" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><code class="xref py py-class docutils literal notranslate"><span class="pre">CircularArc</span></code></a></p>
+<p>A circular arc with an orientation flag (reversed or not).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>complex</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta1</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta2</strong> (<em>float</em>)</p></li>
+<li><p><strong>reversed</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.OrientedCircularArc.set_orientation">
+<span class="sig-name descname"><span class="pre">set_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.OrientedCircularArc.set_orientation" title="Link to this definition">#</a></dt>
+<dd><p>Set orientation so A is closer to start and B closer to end (heuristic).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>end_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.OrientedCircularArc.shorten">
+<span class="sig-name descname"><span class="pre">shorten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.OrientedCircularArc.shorten" title="Link to this definition">#</a></dt>
+<dd><p>Shorten the arc by <cite>length</cite> from side ‘A’ or ‘B’ (w.r.t. orientation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The modified/new arc or None if fully consumed.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>length</strong> (<em>float</em>)</p></li>
+<li><p><strong>side</strong> (<em>str</em>)</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.utils.geometry.OrientedCircularArc.html#knotpy.utils.geometry.OrientedCircularArc" title="knotpy.utils.geometry.OrientedCircularArc"><em>OrientedCircularArc</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.OrientedCircularArc.A">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.OrientedCircularArc.A" title="Link to this definition">#</a></dt>
+<dd><p>Start point respecting orientation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.OrientedCircularArc.B">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.OrientedCircularArc.B" title="Link to this definition">#</a></dt>
+<dd><p>End point respecting orientation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Line">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Line" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An infinite line through two distinct points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>complex</em>)</p></li>
+<li><p><strong>B</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Line.parameter_from_point">
+<span class="sig-name descname"><span class="pre">parameter_from_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Line.parameter_from_point" title="Link to this definition">#</a></dt>
+<dd><p>Parameter t for which A + t(B-A) = point, or None if not on the line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>complex</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Line.length">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Line.length" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Segment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><code class="xref py py-class docutils literal notranslate"><span class="pre">Line</span></code></a></p>
+<p>A line segment between A and B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>complex</em>)</p></li>
+<li><p><strong>B</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.length">
+<span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.length" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.set_orientation">
+<span class="sig-name descname"><span class="pre">set_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.set_orientation" title="Link to this definition">#</a></dt>
+<dd><p>Orient so A is closer to start_point and B closer to end_point (heuristic).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>end_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.shorten">
+<span class="sig-name descname"><span class="pre">shorten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.shorten" title="Link to this definition">#</a></dt>
+<dd><p>Shorten by <cite>length</cite> from side ‘A’ or ‘B’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The modified/new segment or None if fully consumed.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>length</strong> (<em>float</em>)</p></li>
+<li><p><strong>side</strong> (<em>str</em>)</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.sample" title="Link to this definition">#</a></dt>
+<dd><p>Return n evenly spaced points on the segment (including endpoints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List</em>[complex]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BoundingBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Axis-aligned bounding box for basic primitives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a><em>, </em><em>complex</em><em>]</em><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox.make_square">
+<span class="sig-name descname"><span class="pre">make_square</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox.make_square" title="Link to this definition">#</a></dt>
+<dd><p>Expand to the smallest square that contains the current box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox.add_padding">
+<span class="sig-name descname"><span class="pre">add_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox.add_padding" title="Link to this definition">#</a></dt>
+<dd><p>Pad the box by absolute units and/or by a fraction of its size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>units</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>fraction</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.PolySegment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PolySegment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.PolySegment" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A polyline defined by a list of complex points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>Iterable</em><em>[</em><em>complex</em><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.PolySegment.length">
+<span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.PolySegment.length" title="Link to this definition">#</a></dt>
+<dd><p>Total length of the polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.PolySegment.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.PolySegment.sample" title="Link to this definition">#</a></dt>
+<dd><p>Return n approximately evenly spaced points along the polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List</em>[complex]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.antipode">
+<span class="sig-name descname"><span class="pre">antipode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.antipode" title="Link to this definition">#</a></dt>
+<dd><p>Antipodal point of <cite>point</cite> through <cite>circle.center</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>point</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.perpendicular_line">
+<span class="sig-name descname"><span class="pre">perpendicular_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.perpendicular_line" title="Link to this definition">#</a></dt>
+<dd><p>Line through p perpendicular to l.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a>)</p></li>
+<li><p><strong>p</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.bisect">
+<span class="sig-name descname"><span class="pre">bisect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.bisect" title="Link to this definition">#</a></dt>
+<dd><p>Split a Segment or CircularArc into two equal halves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple</em>[<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>, <a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.tangent_line">
+<span class="sig-name descname"><span class="pre">tangent_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.tangent_line" title="Link to this definition">#</a></dt>
+<dd><p>Tangent line to circle c at point p (or perpendicular to radius if p not on c).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>p</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.middle">
+<span class="sig-name descname"><span class="pre">middle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.middle" title="Link to this definition">#</a></dt>
+<dd><p>Geometric middle point of a Segment or CircularArc, or the point itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em> | </em><em>complex</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.bisector">
+<span class="sig-name descname"><span class="pre">bisector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.bisector" title="Link to this definition">#</a></dt>
+<dd><p>Perpendicular bisector of a segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.is_angle_between">
+<span class="sig-name descname"><span class="pre">is_angle_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.is_angle_between" title="Link to this definition">#</a></dt>
+<dd><p>Return True if theta2 is between theta1 and theta3 (mod 2π).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta1</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta2</strong> (<em>float</em>)</p></li>
+<li><p><strong>theta3</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.perpendicular_arc_through_point">
+<span class="sig-name descname"><span class="pre">perpendicular_arc_through_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.perpendicular_arc_through_point" title="Link to this definition">#</a></dt>
+<dd><p>Arc through <cite>circle_point</cite> and <cite>point</cite> perpendicular to <cite>circle</cite> at <cite>circle_point</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>circle_point</strong> (<em>complex</em>)</p></li>
+<li><p><strong>point</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.perpendicular_arc">
+<span class="sig-name descname"><span class="pre">perpendicular_arc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.perpendicular_arc" title="Link to this definition">#</a></dt>
+<dd><p>Arc inside <cite>circle</cite> connecting its intersections with <cite>circle1</cite> and <cite>circle2</cite>, perpendicular to <cite>circle</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>circle1</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>circle2</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.circle_through_points">
+<span class="sig-name descname"><span class="pre">circle_through_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.circle_through_points" title="Link to this definition">#</a></dt>
+<dd><p>Circle through three points A, B, C (or None if collinear).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>complex</em>)</p></li>
+<li><p><strong>B</strong> (<em>complex</em>)</p></li>
+<li><p><strong>C</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.weighted_circle_center_mean">
+<span class="sig-name descname"><span class="pre">weighted_circle_center_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.weighted_circle_center_mean" title="Link to this definition">#</a></dt>
+<dd><p>Weighted mean of centers proportional to opposite radii (heuristic).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle1</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>circle2</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.split" title="Link to this definition">#</a></dt>
+<dd><p>Split an arc/segment at a point lying on it, returning two pieces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>)</p></li>
+<li><p><strong>point</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple</em>[<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>, <a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.translate">
+<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displacement</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.translate" title="Link to this definition">#</a></dt>
+<dd><p>Translate a geometric element by a complex displacement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> (<a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.PolySegment.html#knotpy.utils.geometry.PolySegment" title="knotpy.utils.geometry.PolySegment"><em>PolySegment</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.OrientedCircularArc.html#knotpy.utils.geometry.OrientedCircularArc" title="knotpy.utils.geometry.OrientedCircularArc"><em>OrientedCircularArc</em></a><em> | </em><em>complex</em><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>displacement</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.bounding_box">
+<span class="sig-name descname"><span class="pre">bounding_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.bounding_box" title="Link to this definition">#</a></dt>
+<dd><p>Compute an axis-aligned bounding box (min_corner, max_corner).</p>
+<p>For iterables, returns the union over elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a><em> | </em><em>complex</em><em> | </em><em>Iterable</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple</em>[complex, complex]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.inverse_point_through_circle">
+<span class="sig-name descname"><span class="pre">inverse_point_through_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.inverse_point_through_circle" title="Link to this definition">#</a></dt>
+<dd><p>Invert a point w.r.t. a circle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>) – Circle of inversion.</p></li>
+<li><p><strong>point</strong> (<em>complex</em>) – Point to invert.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inverse point as complex.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>complex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.arc_from_circle_and_points">
+<span class="sig-name descname"><span class="pre">arc_from_circle_and_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.arc_from_circle_and_points" title="Link to this definition">#</a></dt>
+<dd><p>Arc on <cite>circle</cite> from <cite>point1</cite> to <cite>point2</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circle</strong> (<a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a>)</p></li>
+<li><p><strong>point1</strong> (<em>complex</em>)</p></li>
+<li><p><strong>point2</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.geometry.arc_from_diameter">
+<span class="sig-name descname"><span class="pre">arc_from_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.arc_from_diameter" title="Link to this definition">#</a></dt>
+<dd><p>Arc on the circle having diameter (point1, point2), from point1 to point2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point1</strong> (<em>complex</em>)</p></li>
+<li><p><strong>point2</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1272,6 +1897,80 @@ and bounding boxes. All points are complex numbers.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Circle"><code class="docutils literal notranslate"><span class="pre">Circle</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Circle.length"><code class="docutils literal notranslate"><span class="pre">Circle.length()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.CircularArc"><code class="docutils literal notranslate"><span class="pre">CircularArc</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.CircularArc.angle"><code class="docutils literal notranslate"><span class="pre">CircularArc.angle()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.CircularArc.length"><code class="docutils literal notranslate"><span class="pre">CircularArc.length()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.CircularArc.A"><code class="docutils literal notranslate"><span class="pre">CircularArc.A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.CircularArc.B"><code class="docutils literal notranslate"><span class="pre">CircularArc.B</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.OrientedCircularArc"><code class="docutils literal notranslate"><span class="pre">OrientedCircularArc</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.OrientedCircularArc.set_orientation"><code class="docutils literal notranslate"><span class="pre">OrientedCircularArc.set_orientation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.OrientedCircularArc.shorten"><code class="docutils literal notranslate"><span class="pre">OrientedCircularArc.shorten()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.OrientedCircularArc.A"><code class="docutils literal notranslate"><span class="pre">OrientedCircularArc.A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.OrientedCircularArc.B"><code class="docutils literal notranslate"><span class="pre">OrientedCircularArc.B</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Line"><code class="docutils literal notranslate"><span class="pre">Line</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Line.parameter_from_point"><code class="docutils literal notranslate"><span class="pre">Line.parameter_from_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Line.length"><code class="docutils literal notranslate"><span class="pre">Line.length()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Segment"><code class="docutils literal notranslate"><span class="pre">Segment</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Segment.length"><code class="docutils literal notranslate"><span class="pre">Segment.length()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Segment.set_orientation"><code class="docutils literal notranslate"><span class="pre">Segment.set_orientation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Segment.shorten"><code class="docutils literal notranslate"><span class="pre">Segment.shorten()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.Segment.sample"><code class="docutils literal notranslate"><span class="pre">Segment.sample()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.BoundingBox"><code class="docutils literal notranslate"><span class="pre">BoundingBox</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.BoundingBox.make_square"><code class="docutils literal notranslate"><span class="pre">BoundingBox.make_square()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.BoundingBox.add_padding"><code class="docutils literal notranslate"><span class="pre">BoundingBox.add_padding()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.PolySegment"><code class="docutils literal notranslate"><span class="pre">PolySegment</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.PolySegment.length"><code class="docutils literal notranslate"><span class="pre">PolySegment.length()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.PolySegment.sample"><code class="docutils literal notranslate"><span class="pre">PolySegment.sample()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.antipode"><code class="docutils literal notranslate"><span class="pre">antipode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.perpendicular_line"><code class="docutils literal notranslate"><span class="pre">perpendicular_line()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.bisect"><code class="docutils literal notranslate"><span class="pre">bisect()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.tangent_line"><code class="docutils literal notranslate"><span class="pre">tangent_line()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.middle"><code class="docutils literal notranslate"><span class="pre">middle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.bisector"><code class="docutils literal notranslate"><span class="pre">bisector()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.is_angle_between"><code class="docutils literal notranslate"><span class="pre">is_angle_between()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.perpendicular_arc_through_point"><code class="docutils literal notranslate"><span class="pre">perpendicular_arc_through_point()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.perpendicular_arc"><code class="docutils literal notranslate"><span class="pre">perpendicular_arc()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.circle_through_points"><code class="docutils literal notranslate"><span class="pre">circle_through_points()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.weighted_circle_center_mean"><code class="docutils literal notranslate"><span class="pre">weighted_circle_center_mean()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.translate"><code class="docutils literal notranslate"><span class="pre">translate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.bounding_box"><code class="docutils literal notranslate"><span class="pre">bounding_box()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.inverse_point_through_circle"><code class="docutils literal notranslate"><span class="pre">inverse_point_through_circle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.arc_from_circle_and_points"><code class="docutils literal notranslate"><span class="pre">arc_from_circle_and_points()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.geometry.arc_from_diameter"><code class="docutils literal notranslate"><span class="pre">arc_from_diameter()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

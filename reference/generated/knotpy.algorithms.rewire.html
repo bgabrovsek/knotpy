@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1177,6 +1181,51 @@
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.rewire.pull_and_plug_endpoint">
+<span class="sig-name descname"><span class="pre">pull_and_plug_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_endpoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.rewire.pull_and_plug_endpoint" title="Link to this definition">#</a></dt>
+<dd><p>Pull out one endpoint and stick it somewhere else.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.rewire.replug_endpoint">
+<span class="sig-name descname"><span class="pre">replug_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_endpoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.rewire.replug_endpoint" title="Link to this definition">#</a></dt>
+<dd><p>Unplugs the endpoint endpoint_source and plugs it into endpoint_destination. Takes care of removing the source
+endpoint (shifting bigger indices). Does not insert the destination endpoint, but overwrites it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – planar diagram</p></li>
+<li><p><strong>source_endpoint</strong></p></li>
+<li><p><strong>destination_endpoint</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.rewire.swap_endpoints">
+<span class="sig-name descname"><span class="pre">swap_endpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ep1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ep2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.rewire.swap_endpoints" title="Link to this definition">#</a></dt>
+<dd><p>Swaps endpoints, no deletion or insertion, just overwriting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+<li><p><strong>ep1</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a>)</p></li>
+<li><p><strong>ep2</strong> (<a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html#knotpy.classes.endpoint.Endpoint" title="knotpy.classes.endpoint.Endpoint"><em>Endpoint</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1189,6 +1238,26 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.rewire.pull_and_plug_endpoint"><code class="docutils literal notranslate"><span class="pre">pull_and_plug_endpoint()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.rewire.replug_endpoint"><code class="docutils literal notranslate"><span class="pre">replug_endpoint()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.rewire.swap_endpoints"><code class="docutils literal notranslate"><span class="pre">swap_endpoints()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

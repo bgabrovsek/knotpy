@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1187,6 +1191,261 @@ compact internal storage via (to_string/from_string) conversions.</p></li>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.powerset">
+<span class="sig-name descname"><span class="pre">powerset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.powerset" title="Link to this definition">#</a></dt>
+<dd><p>Iterate over all subsets (the power set) of an iterable.</p>
+<p>Subsets are yielded as tuples in increasing size order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iterable</strong> (<em>Iterable</em><em>[</em><em>T</em><em>]</em>) – Any iterable of items.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuples representing each subset, starting with the empty tuple.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Iterator</em>[tuple[<em>T</em>, …]]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">powerset</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<span class="go">[(), (1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LeveledSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">I</span></code>]</p>
+<p>A leveled set structure with optional compact internal representation.</p>
+<p>Items can be stored internally as strings (or any type <code class="docutils literal notranslate"><span class="pre">I</span></code>) to reduce memory
+usage or enable hashing on otherwise unhashable public types. You can provide
+a pair of conversion functions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to_string(item:</span> <span class="pre">T)</span> <span class="pre">-&gt;</span> <span class="pre">I</span></code> stores items internally (often as <code class="docutils literal notranslate"><span class="pre">str</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from_string(stored:</span> <span class="pre">I)</span> <span class="pre">-&gt;</span> <span class="pre">T</span></code> reconstructs external/public items.</p></li>
+</ul>
+<p>If either function is omitted (<code class="docutils literal notranslate"><span class="pre">None</span></code>), items are stored directly.</p>
+<dl class="simple">
+<dt>Levels:</dt><dd><p>The structure maintains a list of <em>levels</em>. New items are added into the
+<em>current</em> level (the last one). Calling <a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html#knotpy.utils.set_utils.LeveledSet.new_level" title="knotpy.utils.set_utils.LeveledSet.new_level"><code class="xref py py-meth docutils literal notranslate"><span class="pre">new_level()</span></code></a> creates a new
+level <strong>only if</strong> the last level is non-empty (so you don’t accumulate
+trailing empties). All seen items are tracked in a global set to avoid
+duplicates across levels.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All set operations (union, intersection, difference) act on the <em>global</em>
+content, not per-level content.</p></li>
+<li><p>Iteration yields public/external items (<code class="docutils literal notranslate"><span class="pre">T</span></code>), applying conversion back
+if needed.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>] </em><em>| </em><em>None</em>) – Optional initial items to insert at level 0.</p></li>
+<li><p><strong>to_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>T</em><em>]</em><em>, </em><em>I</em><em>] </em><em>| </em><em>None</em>) – Function to convert an external item <code class="docutils literal notranslate"><span class="pre">T</span></code> to internal <code class="docutils literal notranslate"><span class="pre">I</span></code>.</p></li>
+<li><p><strong>from_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>I</em><em>]</em><em>, </em><em>T</em><em>] </em><em>| </em><em>None</em>) – Function to convert an internal item <code class="docutils literal notranslate"><span class="pre">I</span></code> back to <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.number_of_levels">
+<span class="sig-name descname"><span class="pre">number_of_levels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.number_of_levels" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of levels currently stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.level_sizes">
+<span class="sig-name descname"><span class="pre">level_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.level_sizes" title="Link to this definition">#</a></dt>
+<dd><p>Return a tuple with the size of each level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.number_of_items">
+<span class="sig-name descname"><span class="pre">number_of_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.number_of_items" title="Link to this definition">#</a></dt>
+<dd><p>Return the total number of unique items across all levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.is_level_empty">
+<span class="sig-name descname"><span class="pre">is_level_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.is_level_empty" title="Link to this definition">#</a></dt>
+<dd><p>Return whether a given level is empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em>) – Level index (supports negative indexing like Python lists).</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>IndexError</strong> – If level is out of range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.new_level">
+<span class="sig-name descname"><span class="pre">new_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.new_level" title="Link to this definition">#</a></dt>
+<dd><p>Create a new current level (only if last level is non-empty), then add optional items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>] </em><em>| </em><em>T</em><em> | </em><em>None</em>) – Optional single item or iterable of items to add to the new current level.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.remove_empty_levels">
+<span class="sig-name descname"><span class="pre">remove_empty_levels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.remove_empty_levels" title="Link to this definition">#</a></dt>
+<dd><p>Remove trailing empty levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.add" title="Link to this definition">#</a></dt>
+<dd><p>Add a single item to the current level if not seen before.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>T</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.extend" title="Link to this definition">#</a></dt>
+<dd><p>Add multiple items to the current level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.contains" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the item appears in any level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>T</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.union">
+<span class="sig-name descname"><span class="pre">union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.union" title="Link to this definition">#</a></dt>
+<dd><p>Return the union of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.intersection">
+<span class="sig-name descname"><span class="pre">intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.intersection" title="Link to this definition">#</a></dt>
+<dd><p>Return the intersection of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.difference">
+<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.difference" title="Link to this definition">#</a></dt>
+<dd><p>Return the difference of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.isdisjoint">
+<span class="sig-name descname"><span class="pre">isdisjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.isdisjoint" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the two LeveledSets share no common items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.iter_level">
+<span class="sig-name descname"><span class="pre">iter_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.iter_level" title="Link to this definition">#</a></dt>
+<dd><p>Iterate items of a specific level (converted to external items).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em>) – Level index (supports negative indexing).</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Items at the requested level.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>IndexError</strong> – If level is out of range.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Iterator</em>[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -1199,6 +1458,41 @@ compact internal storage via (to_string/from_string) conversions.</p></li>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.powerset"><code class="docutils literal notranslate"><span class="pre">powerset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet"><code class="docutils literal notranslate"><span class="pre">LeveledSet</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.number_of_levels"><code class="docutils literal notranslate"><span class="pre">LeveledSet.number_of_levels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.level_sizes"><code class="docutils literal notranslate"><span class="pre">LeveledSet.level_sizes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.number_of_items"><code class="docutils literal notranslate"><span class="pre">LeveledSet.number_of_items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.is_level_empty"><code class="docutils literal notranslate"><span class="pre">LeveledSet.is_level_empty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.new_level"><code class="docutils literal notranslate"><span class="pre">LeveledSet.new_level()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.remove_empty_levels"><code class="docutils literal notranslate"><span class="pre">LeveledSet.remove_empty_levels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.add"><code class="docutils literal notranslate"><span class="pre">LeveledSet.add()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.extend"><code class="docutils literal notranslate"><span class="pre">LeveledSet.extend()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.contains"><code class="docutils literal notranslate"><span class="pre">LeveledSet.contains()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.union"><code class="docutils literal notranslate"><span class="pre">LeveledSet.union()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.intersection"><code class="docutils literal notranslate"><span class="pre">LeveledSet.intersection()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.difference"><code class="docutils literal notranslate"><span class="pre">LeveledSet.difference()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.isdisjoint"><code class="docutils literal notranslate"><span class="pre">LeveledSet.isdisjoint()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.iter_level"><code class="docutils literal notranslate"><span class="pre">LeveledSet.iter_level()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

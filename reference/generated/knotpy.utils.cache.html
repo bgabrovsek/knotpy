@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1174,6 +1178,67 @@ Designed for fast, dependency-free use in performance-sensitive contexts.</p>
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="knotpy.utils.cache.Cache">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_cache_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_key_length</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.cache.Cache" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Hashable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+<p>In-memory bounded-size cache for key-value pairs with limited key lengths.</p>
+<dl class="simple">
+<dt>This cache:</dt><dd><ul class="simple">
+<li><p>Limits the total number of items (<code class="docutils literal notranslate"><span class="pre">max_cache_size</span></code>).</p></li>
+<li><p>Skips keys whose length (<code class="docutils literal notranslate"><span class="pre">len(key)</span></code>) exceeds <code class="docutils literal notranslate"><span class="pre">max_key_length</span></code>.</p></li>
+<li><p>When full, evicts the entry with the <strong>longest key</strong> if the incoming key is <strong>shorter</strong>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Keys must be hashable. If a key has no length (i.e., <code class="docutils literal notranslate"><span class="pre">len(key)</span></code> raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>),
+it is ignored (not cached).</p></li>
+<li><p>Updating an existing key always succeeds (no eviction), even when the cache is full.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">max_cache_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_key_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;abc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;def&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;ghi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;abcdef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># ignored: key too long</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;abc&#39;, 1), (&#39;def&#39;, 2), (&#39;ghi&#39;, 3)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_cache_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>max_key_length</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.cache.Cache.max_cache_size">
+<span class="sig-name descname"><span class="pre">max_cache_size</span></span><a class="headerlink" href="#knotpy.utils.cache.Cache.max_cache_size" title="Link to this definition">#</a></dt>
+<dd><p>Maximum number of entries the cache can hold (&lt;=0 disables caching).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.utils.cache.Cache.max_key_length">
+<span class="sig-name descname"><span class="pre">max_key_length</span></span><a class="headerlink" href="#knotpy.utils.cache.Cache.max_key_length" title="Link to this definition">#</a></dt>
+<dd><p>Maximum allowed length of any key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -1186,6 +1251,28 @@ Designed for fast, dependency-free use in performance-sensitive contexts.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.cache.Cache"><code class="docutils literal notranslate"><span class="pre">Cache</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.cache.Cache.max_cache_size"><code class="docutils literal notranslate"><span class="pre">Cache.max_cache_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.cache.Cache.max_key_length"><code class="docutils literal notranslate"><span class="pre">Cache.max_key_length</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

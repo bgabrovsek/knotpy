@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1173,6 +1177,76 @@
 <p>References:
 - <a class="reference external" href="https://ncatlab.org/nlab/show/HOMFLY-PT+polynomial">https://ncatlab.org/nlab/show/HOMFLY-PT+polynomial</a>
 - <a class="reference external" href="https://en.wikipedia.org/wiki/HOMFLY_polynomial">https://en.wikipedia.org/wiki/HOMFLY_polynomial</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.homflypt.homflypt">
+<span class="sig-name descname"><span class="pre">homflypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.homflypt.homflypt" title="Link to this definition">#</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#knotpy.invariants.homflypt.homflypt_vz" title="knotpy.invariants.homflypt.homflypt_vz"><code class="xref py py-func docutils literal notranslate"><span class="pre">homflypt_vz()</span></code></a> (v–z form).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.homflypt.homflypt_lm">
+<span class="sig-name descname"><span class="pre">homflypt_lm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.homflypt.homflypt_lm" title="Link to this definition">#</a></dt>
+<dd><p>Return the l–m form of HOMFLY-PT: <code class="docutils literal notranslate"><span class="pre">l·P(L+)</span> <span class="pre">+</span> <span class="pre">l⁻¹·P(L−)</span> <span class="pre">+</span> <span class="pre">m·P(L₀)</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.homflypt.homflypt_vz">
+<span class="sig-name descname"><span class="pre">homflypt_vz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.homflypt.homflypt_vz" title="Link to this definition">#</a></dt>
+<dd><p>Return the v–z form of HOMFLY-PT: <code class="docutils literal notranslate"><span class="pre">v⁻¹·P(L+)</span> <span class="pre">−</span> <span class="pre">v·P(L−)</span> <span class="pre">−</span> <span class="pre">z·P(L₀)</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.homflypt.homflypt_az">
+<span class="sig-name descname"><span class="pre">homflypt_az</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.homflypt.homflypt_az" title="Link to this definition">#</a></dt>
+<dd><p>Return the A–z form of HOMFLY-PT: <code class="docutils literal notranslate"><span class="pre">A·P(L+)</span> <span class="pre">−</span> <span class="pre">A⁻¹·P(L−)</span> <span class="pre">−</span> <span class="pre">z·P(L₀)</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.homflypt.homflypt_xyz">
+<span class="sig-name descname"><span class="pre">homflypt_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.homflypt.homflypt_xyz" title="Link to this definition">#</a></dt>
+<dd><p>Return the HOMFLY-PT polynomial in variables <code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z</span></code>, satisfying <code class="docutils literal notranslate"><span class="pre">xP(L+)</span> <span class="pre">+</span> <span class="pre">yP(L−)</span> <span class="pre">+</span> <span class="pre">zP(L₀)</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Expr</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1185,6 +1259,28 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.homflypt.homflypt"><code class="docutils literal notranslate"><span class="pre">homflypt()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.homflypt.homflypt_lm"><code class="docutils literal notranslate"><span class="pre">homflypt_lm()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.homflypt.homflypt_vz"><code class="docutils literal notranslate"><span class="pre">homflypt_vz()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.homflypt.homflypt_az"><code class="docutils literal notranslate"><span class="pre">homflypt_az()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.homflypt.homflypt_xyz"><code class="docutils literal notranslate"><span class="pre">homflypt_xyz()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

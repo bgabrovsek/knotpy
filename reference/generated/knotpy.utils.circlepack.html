@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1194,6 +1198,107 @@ prescribed tangencies. Used internally in KnotPy for layout of graph structures.
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.circlepack.circle_pack">
+<span class="sig-name descname"><span class="pre">circle_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">internal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.circlepack.circle_pack" title="Link to this definition">#</a></dt>
+<dd><p>Compute a circle packing layout given prescribed tangencies.</p>
+<p>Internal circles are surrounded by a cycle of other circles; external circles
+have fixed radii.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>internal</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Mapping of internal keys to cyclic list of neighbor keys.</p></li>
+<li><p><strong>external</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – Mapping of external keys to fixed radii.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary mapping each key to a (center, radius) pair.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If keys are not disjoint or external radii are non-positive.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, tuple[complex, float]]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">internal</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">external</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packing</span> <span class="o">=</span> <span class="n">circle_pack</span><span class="p">(</span><span class="n">internal</span><span class="p">,</span> <span class="n">external</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">packing</span><span class="p">)</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.circlepack.invert_packing">
+<span class="sig-name descname"><span class="pre">invert_packing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.circlepack.invert_packing" title="Link to this definition">#</a></dt>
+<dd><p>Invert all circles in the packing around a given complex point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>packing</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>complex</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Dictionary mapping keys to (center, radius) pairs.</p></li>
+<li><p><strong>center</strong> (<em>complex</em>) – Complex point to invert around.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new packing where all circles are inverted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, tuple[complex, float]]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inverted</span> <span class="o">=</span> <span class="n">invert_packing</span><span class="p">(</span><span class="n">packing</span><span class="p">,</span> <span class="mi">0</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.circlepack.normalize_packing">
+<span class="sig-name descname"><span class="pre">normalize_packing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.circlepack.normalize_packing" title="Link to this definition">#</a></dt>
+<dd><p>Normalize the packing so that a given circle has radius <cite>target</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>packing</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>complex</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Mapping from keys to (center, radius).</p></li>
+<li><p><strong>k</strong> (<em>str</em>) – Optional key of the circle to normalize. If None, uses the smallest.</p></li>
+<li><p><strong>target</strong> (<em>float</em>) – Desired radius for the selected circle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>New packing with all circles scaled accordingly.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, tuple[complex, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.utils.circlepack.invert_around">
+<span class="sig-name descname"><span class="pre">invert_around</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smallCircles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.circlepack.invert_around" title="Link to this definition">#</a></dt>
+<dd><p>Invert packing so that circle <cite>k</cite> surrounds the others.</p>
+<p>This finds a Möbius transform (via inversion) that places circle <cite>k</cite> large
+enough to contain the others, based on a grid search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>packing</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>complex</em><em>, </em><em>float</em><em>]</em><em>]</em>) – The circle packing to invert.</p></li>
+<li><p><strong>k</strong> (<em>str</em>) – Key of the desired outer circle.</p></li>
+<li><p><strong>smallCircles</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – Optional list of keys to consider in optimization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new packing with optimized inversion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, tuple[complex, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1206,6 +1311,27 @@ prescribed tangencies. Used internally in KnotPy for layout of graph structures.
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.circlepack.circle_pack"><code class="docutils literal notranslate"><span class="pre">circle_pack()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.circlepack.invert_packing"><code class="docutils literal notranslate"><span class="pre">invert_packing()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.circlepack.normalize_packing"><code class="docutils literal notranslate"><span class="pre">normalize_packing()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.circlepack.invert_around"><code class="docutils literal notranslate"><span class="pre">invert_around()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

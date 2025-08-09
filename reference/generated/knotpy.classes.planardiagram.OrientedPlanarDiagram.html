@@ -1352,6 +1352,20 @@ is populated from the provided input.</p>
 </table>
 </div>
 <dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the diagram is oriented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – Always <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.add_crossing">
 <span class="sig-name descname"><span class="pre">add_crossing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crossing_for_adding</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.add_crossing" title="Link to this definition">#</a></dt>
 <dd><p>Add or update a classical crossing.</p>
@@ -1680,20 +1694,6 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">True</span></code> if frozen; otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
-<dd><p>Return whether the diagram is oriented.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>bool</em> – Always <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram</span></code>.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
@@ -2063,6 +2063,7 @@ its concrete type is used and attributes copied.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.__init__"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.is_oriented()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.add_crossing"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.add_crossing()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.add_crossings_from"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.add_crossings_from()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.add_node"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.add_node()</span></code></a></li>
@@ -2084,7 +2085,6 @@ its concrete type is used and attributes copied.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.framing"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.framing</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_framed"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.is_framed()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_frozen"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.is_frozen()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.is_oriented()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.name"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.nodes"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.nodes</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_arcs"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.number_of_arcs</span></code></a></li>

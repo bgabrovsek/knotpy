@@ -220,6 +220,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -1165,6 +1169,111 @@
 <p>Disjoint components are the diagram components that do not share a common node (crossing, vertex, …).</p>
 <p>A disjoint sum, in the context of planar knot diagrams, is the combination of two or more planar diagrams
 such that they remain independent and do not share any nodes or arcs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.disjoint_union.number_of_disjoint_components">
+<span class="sig-name descname"><span class="pre">number_of_disjoint_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.disjoint_union.number_of_disjoint_components" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of disjoint (connected) components in the given planar diagram.
+:param k: The input planar diagram.
+:type k: PlanarDiagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – The number of disjoint components.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.disjoint_union.disjoint_union_decomposition">
+<span class="sig-name descname"><span class="pre">disjoint_union_decomposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.disjoint_union.disjoint_union_decomposition" title="Link to this definition">#</a></dt>
+<dd><p>Return a list of disjoint components of the given planar diagram.
+Each component is returned as a separate PlanarDiagram instance.
+:param k: The input planar diagram.
+:type k: PlanarDiagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list[PlanarDiagram]</em> – A list of disjoint components, each as a PlanarDiagram instance.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.disjoint_union.add_unknot">
+<span class="sig-name descname"><span class="pre">add_unknot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_unknots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.disjoint_union.add_unknot" title="Link to this definition">#</a></dt>
+<dd><p>Add one or more unknots disjointly to the given planar diagram.</p>
+<p>An unknot is represented as a vertex with a single edge forming a loop.
+The function modifies the diagram in place unless specified otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The input planar diagram.</p></li>
+<li><p><strong>number_of_unknots</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of unknots to add. Defaults to 1.</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, modifies the diagram in place. If False, returns a modified copy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PlanarDiagram</em> – The modified planar diagram with added unknots.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function supports both oriented and unoriented planar diagrams.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.disjoint_union.is_disjoint_union">
+<span class="sig-name descname"><span class="pre">is_disjoint_union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.disjoint_union.is_disjoint_union" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the given planar diagram consists of multiple disjoint components.
+:param k: The input planar diagram.
+:type k: PlanarDiagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – True if the diagram has more than one disjoint component, False otherwise.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.disjoint_union.disjoint_union">
+<span class="sig-name descname"><span class="pre">disjoint_union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">knots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_relabel_dictionaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.disjoint_union.disjoint_union" title="Link to this definition">#</a></dt>
+<dd><p>Create the disjoint sum of planar diagrams.</p>
+<p>The function takes multiple planar diagrams (oriented or not) of the same type and
+generates a new diagram representing their disjoint sum. Attributes are aggregated from the input diagrams,
+and framing is computed or set to None if applicable.</p>
+<p>Raises a ValueError if no diagrams are provided and raises a TypeError if the types
+of the diagrams are inconsistent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>knots</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a><em>]</em>) – A variable number of input planar or
+oriented planar diagrams.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>PlanarDiagram | OrientedPlanarDiagram</em> –</p>
+<dl class="simple">
+<dt>A new diagram representing the disjoint sum of</dt><dd><p>the input diagrams.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If no diagrams are passed to the function.</p></li>
+<li><p><strong>TypeError</strong> – If the input diagrams have inconsistent types.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1177,6 +1286,28 @@ such that they remain independent and do not share any nodes or arcs.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.disjoint_union.number_of_disjoint_components"><code class="docutils literal notranslate"><span class="pre">number_of_disjoint_components()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.disjoint_union.disjoint_union_decomposition"><code class="docutils literal notranslate"><span class="pre">disjoint_union_decomposition()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.disjoint_union.add_unknot"><code class="docutils literal notranslate"><span class="pre">add_unknot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.disjoint_union.is_disjoint_union"><code class="docutils literal notranslate"><span class="pre">is_disjoint_union()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.disjoint_union.disjoint_union"><code class="docutils literal notranslate"><span class="pre">disjoint_union()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
