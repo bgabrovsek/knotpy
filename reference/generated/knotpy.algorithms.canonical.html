@@ -1162,7 +1162,11 @@
                   
   <section id="module-knotpy.algorithms.canonical">
 <span id="canonical"></span><h1>canonical<a class="headerlink" href="#module-knotpy.algorithms.canonical" title="Link to this heading">#</a></h1>
-<p>Putting a diagram into its canonical form.</p>
+<p>Putting a diagram into its canonical form (unoriented diagrams only).</p>
+<p>Given a <cite>PlanarDiagram</cite>, this module computes a canonical representative by
+relabeling nodes via a CCW BFS strategy from carefully chosen starting endpoints
+(min-degree nodes with a minimal neighbor sequence). Disjoint components are
+canonicalized independently and reassembled in canonical order.</p>
 </section>
 
 
