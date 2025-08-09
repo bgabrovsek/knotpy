@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="angle_between" href="knotpy.utils.geometry.angle_between.html" />
-    <link rel="prev" title="min_elements_by" href="knotpy.utils.func_utils.min_elements_by.html" />
+    <link rel="prev" title="DisjointSetUnion" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -551,10 +551,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.convert.html">convert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.convert.vertices_to_crossings.html">vertices_to_crossings</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
@@ -602,6 +598,18 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_pickle.html">test_pickle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_pickle.test_pickability.html">test_pickability</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.html">test_planardiagram</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.make_simple_diagram.html">make_simple_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_add_crossings_from_and_degree_sequence.html">test_add_crossings_from_and_degree_sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_add_vertices_and_arcs.html">test_add_vertices_and_arcs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_compare_ordering_by_size_and_degree.html">test_compare_ordering_by_size_and_degree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_copy_shallow_and_attr_independence.html">test_copy_shallow_and_attr_independence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_orientation_constraints_in_oriented_diagram.html">test_orientation_constraints_in_oriented_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_planar_diagram_from_data_with_instance.html">test_planar_diagram_from_data_with_instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_relabel_nodes_updates_endpoints.html">test_relabel_nodes_updates_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_remove_arc_and_endpoints.html">test_remove_arc_and_endpoints</a></li>
 </ul>
 </details></li>
 </ul>
@@ -691,6 +699,7 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.bracket.html">bracket</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.HashableSized.html">HashableSized</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.classifier.html">classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -710,10 +719,6 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.module.Module.html">Module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -794,6 +799,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.dt.html">dt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.flatten_nested_list.html">flatten_nested_list</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.from_dt_notation.html">from_dt_notation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.to_dt_notation.html">to_dt_notation</a></li>
 </ul>
@@ -862,24 +868,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.cache.Cache.html">Cache</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.chunked.html">chunked</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.circlepack.html">circlepack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.CirclePack.html">CirclePack</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.InvertAround.html">InvertAround</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.InvertPacking.html">InvertPacking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.NormalizePacking.html">NormalizePacking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.acxyz.html">acxyz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.circle_pack.html">circle_pack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.flower.html">flower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.invert_around.html">invert_around</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.invert_packing.html">invert_packing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.normalize_packing.html">normalize_packing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.place.html">place</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.testgrid.html">testgrid</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.combinatorics.html">combinatorics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.combinations_with_limited_repetitions.html">combinations_with_limited_repetitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.iterable_depth.html">iterable_depth</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.lexicographical_minimal_cyclic_rotation_shift.html">lexicographical_minimal_cyclic_rotation_shift</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.parted_permutations.html">parted_permutations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.union.html">union</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.test_grid.html">test_grid</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.decorators.html">decorators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -902,15 +899,12 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.func_utils.html">func_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.func_utils.min_elements_by.html">min_elements_by</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">geometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bounding_box.html">bounding_box</a></li>
@@ -938,20 +932,14 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.laurent.html">laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.canonicalize_under_variable_permutation.html">canonicalize_under_variable_permutation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.extract_variables.html">extract_variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.laurent_polynomial_to_tuples.html">laurent_polynomial_to_tuples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_laurent_polynomial.html">normalize_laurent_polynomial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_polynomial.html">normalize_polynomial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_symmetric.html">normalize_symmetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.reciprocal.html">reciprocal</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.module.module.html">module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.module.Module.html">Module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.parsing.html">parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -963,6 +951,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.progressbar.html">progressbar</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.progressbar.ProgressBar.html">ProgressBar</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.progressbar.bar.html">bar</a></li>
 </ul>
 </details></li>
@@ -971,28 +960,96 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.set_utils.LeveledSet.html">LeveledSet</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.statistics.html">statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.statistics.print_bar_chart.html">print_bar_chart</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.string_utils.html">string_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.multi_replace.html">multi_replace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.nested_split.html">nested_split</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.string_to_nested_tuple_with_prefixes.html">string_to_nested_tuple_with_prefixes</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.test.html">test</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_cache.html">test_cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_cache_eviction_on_full.html">test_cache_eviction_on_full</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_cache_insertion_and_length_limits.html">test_cache_insertion_and_length_limits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_eviction_prefers_longest_key.html">test_eviction_prefers_longest_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_key_too_long_is_ignored.html">test_key_too_long_is_ignored</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_refuse_replace_when_key_not_shorter.html">test_refuse_replace_when_key_not_shorter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_circlepack.html">test_circlepack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_basic_circle_pack.html">test_basic_circle_pack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_disjoint_key_check.html">test_disjoint_key_check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_inversion_preserves_count.html">test_inversion_preserves_count</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_invert_around.html">test_invert_around</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_negative_radius_check.html">test_negative_radius_check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_normalization.html">test_normalization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.test.test_combinatorics.html">test_combinatorics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dict.html">test_dict</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict.test_dict.html">test_dict</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.html">test_dict_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_classifier_dict_groups_by_functions.html">test_classifier_dict_groups_by_functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_common_dict_empty_input.html">test_common_dict_empty_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_common_dict_intersection.html">test_common_dict_intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_equal_simple.html">test_compare_dicts_equal_simple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_exclude_and_include.html">test_compare_dicts_exclude_and_include</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_nested.html">test_compare_dicts_nested</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_ordering_by_keys.html">test_compare_dicts_ordering_by_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_sets.html">test_compare_dicts_sets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_type_mismatch.html">test_compare_dicts_type_mismatch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_identity_dict_missing_returns_key.html">test_identity_dict_missing_returns_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_duplicate_value_raises.html">test_invert_dict_duplicate_value_raises</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_of_sets.html">test_invert_dict_of_sets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_unique_values.html">test_invert_dict_unique_values</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_multi_dict_groups.html">test_invert_multi_dict_groups</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_nested_dict.html">test_invert_nested_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_lazydict_loads_on_access_and_evaluates_once.html">test_lazydict_loads_on_access_and_evaluates_once</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_lazydict_reload.html">test_lazydict_reload</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dsu.html">test_dsu</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_dsu.html">test_dsu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_unknown_and_known.html">test_find_unknown_and_known</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iadd_and_setitem_shortcuts.html">test_iadd_and_setitem_shortcuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_init_and_add.html">test_init_and_add</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iter_components_and_len.html">test_iter_components_and_len</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_path_compression_idempotence.html">test_path_compression_idempotence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_representatives_and_classes.html">test_representatives_and_classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_to_dict_rep_map.html">test_to_dict_rep_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_to_set_and_unknown.html">test_to_set_and_unknown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_union_and_connectivity.html">test_union_and_connectivity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_geometry.html">test_geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_angles_helpers.html">test_angles_helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_antipode_and_inversion.html">test_antipode_and_inversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_arc_from_circle_and_points_and_diameter.html">test_arc_from_circle_and_points_and_diameter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_bisector_and_middle.html">test_bisector_and_middle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_circle_intersection_two_points.html">test_circle_circle_intersection_two_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_circle_tangent_one_point.html">test_circle_circle_tangent_one_point</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_contains_and_length.html">test_circle_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_through_points.html">test_circle_through_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circular_arc_contains_and_length.html">test_circular_arc_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_line_circle_intersection_two_points.html">test_line_circle_intersection_two_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_line_param_and_contains.html">test_line_param_and_contains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_oriented_circular_arc_shorten.html">test_oriented_circular_arc_shorten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_perpendicular_arc_through_point_and_perpendicular_arc.html">test_perpendicular_arc_through_point_and_perpendicular_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_perpendicular_line_and_tangent_line.html">test_perpendicular_line_and_tangent_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_polysegment_length_and_sample.html">test_polysegment_length_and_sample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_segment_contains_and_length.html">test_segment_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_split_and_bisect_segment_and_arc.html">test_split_and_bisect_segment_and_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_weighted_center_and_orient_arc.html">test_weighted_center_and_orient_arc</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_laurent.html">test_laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonical_laurent.html">test_canonical_laurent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_permutation_with_sign_change.html">test_canonicalize_under_permutation_with_sign_change</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_variable_permutation_minimal_rep.html">test_canonicalize_under_variable_permutation_minimal_rep</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_extract_variables_with_and_without_prefix.html">test_extract_variables_with_and_without_prefix</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial.html">test_normalize_laurent_polynomial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial_make_nonnegative.html">test_normalize_laurent_polynomial_make_nonnegative</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_polynomial_basic.html">test_normalize_polynomial_basic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_symmetric_centering_and_sign.html">test_normalize_symmetric_centering_and_sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_reciprocal_roundtrip.html">test_reciprocal_roundtrip</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.html">test_lazy_dict</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1002,7 +1059,15 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_module.html">test_module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_add_sub_extend.html">test_add_sub_extend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_append_combines_like_terms.html">test_append_combines_like_terms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_construct_and_basic_ops.html">test_construct_and_basic_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_filter_and_sort_and_equality.html">test_filter_and_sort_and_equality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_module.html">test_module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_radd_sum_zero_seed.html">test_radd_sum_zero_seed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_scalar_multiply_divide.html">test_scalar_multiply_divide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_setitem_substitution.html">test_setitem_substitution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_sympy_coefficients.html">test_sympy_coefficients</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_parser.html">test_parser</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1012,6 +1077,12 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_set_utils.html">test_set_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveled_set.html">test_leveled_set</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveled_set_reidemeister.html">test_leveled_set_reidemeister</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_contains_and_extend.html">test_leveledset_contains_and_extend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_iter_level_indexing_and_errors.html">test_leveledset_iter_level_indexing_and_errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_no_conversion_basic_levels_and_counts.html">test_leveledset_no_conversion_basic_levels_and_counts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_remove_empty_levels_trailing_only.html">test_leveledset_remove_empty_levels_trailing_only</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_with_conversion_roundtrip_and_ops.html">test_leveledset_with_conversion_roundtrip_and_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_powerset_basic.html">test_powerset_basic</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.html">test_value_partitioner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1089,66 +1160,73 @@
                   
   <section id="module-knotpy.utils.geometry">
 <span id="geometry"></span><h1>geometry<a class="headerlink" href="#module-knotpy.utils.geometry" title="Link to this heading">#</a></h1>
-<p>Library for (numerical) geometry.</p>
+<p>Library for (numerical) geometry on the complex plane.</p>
+<p>This module provides lightweight geometric primitives (Circle, Line, Segment,
+CircularArc, OrientedCircularArc, PolySegment) and operations such as
+intersections, perpendicular/tangent constructions, arc splitting/shortening,
+and bounding boxes. All points are complex numbers.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.angle_between.html#knotpy.utils.geometry.angle_between" title="knotpy.utils.geometry.angle_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_between</span></code></a>(z1, z2, z3)</p></td>
-<td><p></p></td>
+<td><p>Unsigned angle ∠z1 z2 z3 in radians.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.antipode.html#knotpy.utils.geometry.antipode" title="knotpy.utils.geometry.antipode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">antipode</span></code></a>(circle, point)</p></td>
-<td><p></p></td>
+<td><p>Antipodal point of <cite>point</cite> through <cite>circle.center</cite>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html#knotpy.utils.geometry.arc_from_circle_and_points" title="knotpy.utils.geometry.arc_from_circle_and_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arc_from_circle_and_points</span></code></a>(circle, point1, ...)</p></td>
-<td><p>Return the circular arcs lying on circle going from point1 to point2.</p></td>
+<td><p>Arc on <cite>circle</cite> from <cite>point1</cite> to <cite>point2</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html#knotpy.utils.geometry.arc_from_diamater" title="knotpy.utils.geometry.arc_from_diamater"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arc_from_diamater</span></code></a>(point1, point2)</p></td>
-<td><p>Return the circular arcs lying on circle going from point1 to point2.</p></td>
+<td><p>Arc on the circle having diameter (point1, point2), from point1 to point2.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.bisect.html#knotpy.utils.geometry.bisect" title="knotpy.utils.geometry.bisect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bisect</span></code></a>(g)</p></td>
-<td><p>Split object (Segment or CircularArc) into two equal halves.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html#knotpy.utils.geometry.arc_from_diameter" title="knotpy.utils.geometry.arc_from_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arc_from_diameter</span></code></a>(point1, point2)</p></td>
+<td><p>Arc on the circle having diameter (point1, point2), from point1 to point2.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.bisector.html#knotpy.utils.geometry.bisector" title="knotpy.utils.geometry.bisector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bisector</span></code></a>(s)</p></td>
-<td><p>Return the bisector line of the segment</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.bisect.html#knotpy.utils.geometry.bisect" title="knotpy.utils.geometry.bisect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bisect</span></code></a>(g)</p></td>
+<td><p>Split a Segment or CircularArc into two equal halves.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.bounding_box.html#knotpy.utils.geometry.bounding_box" title="knotpy.utils.geometry.bounding_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounding_box</span></code></a>(g)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.bisector.html#knotpy.utils.geometry.bisector" title="knotpy.utils.geometry.bisector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bisector</span></code></a>(s)</p></td>
+<td><p>Perpendicular bisector of a segment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.circle_through_points.html#knotpy.utils.geometry.circle_through_points" title="knotpy.utils.geometry.circle_through_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circle_through_points</span></code></a>(A, B, C)</p></td>
-<td><p>Return a circle through points A, B, and C.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.bounding_box.html#knotpy.utils.geometry.bounding_box" title="knotpy.utils.geometry.bounding_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounding_box</span></code></a>(g)</p></td>
+<td><p>Compute an axis-aligned bounding box (min_corner, max_corner).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.inverse_point_through_circle.html#knotpy.utils.geometry.inverse_point_through_circle" title="knotpy.utils.geometry.inverse_point_through_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_point_through_circle</span></code></a>(circle, point)</p></td>
-<td><p>Perform inverse geometry transformation on a given point with respect to a circle.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.circle_through_points.html#knotpy.utils.geometry.circle_through_points" title="knotpy.utils.geometry.circle_through_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circle_through_points</span></code></a>(A, B, C)</p></td>
+<td><p>Circle through three points A, B, C (or None if collinear).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.is_angle_between.html#knotpy.utils.geometry.is_angle_between" title="knotpy.utils.geometry.is_angle_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_angle_between</span></code></a>(theta1, theta2, theta3)</p></td>
-<td><p>Check if angle theta2 is between angles theta1 and theta3 (modulo 2*pi).</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.inverse_point_through_circle.html#knotpy.utils.geometry.inverse_point_through_circle" title="knotpy.utils.geometry.inverse_point_through_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_point_through_circle</span></code></a>(circle, point)</p></td>
+<td><p>Invert a point w.r.t.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.middle.html#knotpy.utils.geometry.middle" title="knotpy.utils.geometry.middle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">middle</span></code></a>(g)</p></td>
-<td><p>Returns geometric center of a segment or arc</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.is_angle_between.html#knotpy.utils.geometry.is_angle_between" title="knotpy.utils.geometry.is_angle_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_angle_between</span></code></a>(theta1, theta2, theta3)</p></td>
+<td><p>Return True if theta2 is between theta1 and theta3 (mod 2π).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.orient_arc.html#knotpy.utils.geometry.orient_arc" title="knotpy.utils.geometry.orient_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orient_arc</span></code></a>(g[, start_point, end_point])</p></td>
-<td><p>From an unoriented arc/segment, return an oriented one so that the (starting) point 'A' is on average closer to start_point and the (ending) point 'B' is on average closer to end_point.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.middle.html#knotpy.utils.geometry.middle" title="knotpy.utils.geometry.middle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">middle</span></code></a>(g)</p></td>
+<td><p>Geometric middle point of a Segment or CircularArc, or the point itself.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc.html#knotpy.utils.geometry.perpendicular_arc" title="knotpy.utils.geometry.perpendicular_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_arc</span></code></a>(circle, circle1, circle2)</p></td>
-<td><p>Return the perpendicular circular arc through the circle that starts and ends at the intersection of circle and circle1 and circle2, respectively.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.orient_arc.html#knotpy.utils.geometry.orient_arc" title="knotpy.utils.geometry.orient_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orient_arc</span></code></a>(g[, start_point, end_point])</p></td>
+<td><p>Return an oriented copy of <cite>g</cite> according to start/end heuristics.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc_through_point.html#knotpy.utils.geometry.perpendicular_arc_through_point" title="knotpy.utils.geometry.perpendicular_arc_through_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_arc_through_point</span></code></a>(circle, ...)</p></td>
-<td><p>Return the arc that is: - perpendicular to the circle at circle_point - starts at the circle point and goes through the point - (if the point lies on the circle, the arc is perpendicular also at point.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc.html#knotpy.utils.geometry.perpendicular_arc" title="knotpy.utils.geometry.perpendicular_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_arc</span></code></a>(circle, circle1, circle2)</p></td>
+<td><p>Arc inside <cite>circle</cite> connecting its intersections with <cite>circle1</cite> and <cite>circle2</cite>, perpendicular to <cite>circle</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_line.html#knotpy.utils.geometry.perpendicular_line" title="knotpy.utils.geometry.perpendicular_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_line</span></code></a>(l, p)</p></td>
-<td><p>Return a line that is perpendicular to the other line.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_arc_through_point.html#knotpy.utils.geometry.perpendicular_arc_through_point" title="knotpy.utils.geometry.perpendicular_arc_through_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_arc_through_point</span></code></a>(circle, ...)</p></td>
+<td><p>Arc through <cite>circle_point</cite> and <cite>point</cite> perpendicular to <cite>circle</cite> at <cite>circle_point</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.split.html#knotpy.utils.geometry.split" title="knotpy.utils.geometry.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(g, point)</p></td>
-<td><p>Split arc/segment g at point (that lies on the arc/segment)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.perpendicular_line.html#knotpy.utils.geometry.perpendicular_line" title="knotpy.utils.geometry.perpendicular_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_line</span></code></a>(l, p)</p></td>
+<td><p>Line through p perpendicular to l.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.tangent_line.html#knotpy.utils.geometry.tangent_line" title="knotpy.utils.geometry.tangent_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangent_line</span></code></a>(c, p)</p></td>
-<td><p>Return tangent line assuming point lies on circle, otherwise returns line perpendicular to the radius through the center and p.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.split.html#knotpy.utils.geometry.split" title="knotpy.utils.geometry.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(g, point)</p></td>
+<td><p>Split an arc/segment at a point lying on it, returning two pieces.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.translate.html#knotpy.utils.geometry.translate" title="knotpy.utils.geometry.translate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate</span></code></a>(element, displacement)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.tangent_line.html#knotpy.utils.geometry.tangent_line" title="knotpy.utils.geometry.tangent_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangent_line</span></code></a>(c, p)</p></td>
+<td><p>Tangent line to circle c at point p (or perpendicular to radius if p not on c).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.weighted_circle_center_mean.html#knotpy.utils.geometry.weighted_circle_center_mean" title="knotpy.utils.geometry.weighted_circle_center_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted_circle_center_mean</span></code></a>(circle1, circle2)</p></td>
-<td><p>Compute a weighted mean, so that the intersection of cicles are scaled proportinately so they meet.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.translate.html#knotpy.utils.geometry.translate" title="knotpy.utils.geometry.translate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate</span></code></a>(element, displacement)</p></td>
+<td><p>Translate a geometric element by a complex displacement.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.weighted_circle_center_mean.html#knotpy.utils.geometry.weighted_circle_center_mean" title="knotpy.utils.geometry.weighted_circle_center_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted_circle_center_mean</span></code></a>(circle1, circle2)</p></td>
+<td><p>Weighted mean of centers proportional to opposite radii (heuristic).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1157,25 +1235,25 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.BoundingBox.html#knotpy.utils.geometry.BoundingBox" title="knotpy.utils.geometry.BoundingBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundingBox</span></code></a>([g])</p></td>
-<td><p></p></td>
+<td><p>Axis-aligned bounding box for basic primitives.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Circle</span></code></a>(center, radius)</p></td>
-<td><p>Representation of a geometric circle in the complex plane.</p></td>
+<td><p>A circle in the complex plane.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CircularArc</span></code></a>(center, radius, theta1, theta2)</p></td>
-<td><p></p></td>
+<td><p>An unoriented circular arc on a circle.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Line</span></code></a>(A, B)</p></td>
-<td><p></p></td>
+<td><p>An infinite line through two distinct points.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.OrientedCircularArc.html#knotpy.utils.geometry.OrientedCircularArc" title="knotpy.utils.geometry.OrientedCircularArc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrientedCircularArc</span></code></a>(center, radius, theta1, ...)</p></td>
-<td><p></p></td>
+<td><p>A circular arc with an orientation flag (reversed or not).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.utils.geometry.PolySegment.html#knotpy.utils.geometry.PolySegment" title="knotpy.utils.geometry.PolySegment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolySegment</span></code></a>(points)</p></td>
-<td><p>A polyline segment defined by a list of complex points.</p></td>
+<td><p>A polyline defined by a list of complex points.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Segment</span></code></a>(A, B)</p></td>
-<td><p></p></td>
+<td><p>A line segment between A and B.</p></td>
 </tr>
 </tbody>
 </table>

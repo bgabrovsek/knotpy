@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.set_utils.LeveledSet';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="statistics" href="knotpy.utils.statistics.html" />
+    <link rel="next" title="string_utils" href="knotpy.utils.string_utils.html" />
     <link rel="prev" title="powerset" href="knotpy.utils.set_utils.powerset.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -555,10 +555,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.convert.html">convert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.convert.vertices_to_crossings.html">vertices_to_crossings</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
@@ -606,6 +602,18 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_pickle.html">test_pickle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_pickle.test_pickability.html">test_pickability</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.html">test_planardiagram</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.make_simple_diagram.html">make_simple_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_add_crossings_from_and_degree_sequence.html">test_add_crossings_from_and_degree_sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_add_vertices_and_arcs.html">test_add_vertices_and_arcs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_compare_ordering_by_size_and_degree.html">test_compare_ordering_by_size_and_degree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_copy_shallow_and_attr_independence.html">test_copy_shallow_and_attr_independence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_orientation_constraints_in_oriented_diagram.html">test_orientation_constraints_in_oriented_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_planar_diagram_from_data_with_instance.html">test_planar_diagram_from_data_with_instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_relabel_nodes_updates_endpoints.html">test_relabel_nodes_updates_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.classes.tests.test_planardiagram.test_remove_arc_and_endpoints.html">test_remove_arc_and_endpoints</a></li>
 </ul>
 </details></li>
 </ul>
@@ -695,6 +703,7 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.bracket.html">bracket</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.Cache.html">Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.cache.HashableSized.html">HashableSized</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.classifier.html">classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -714,10 +723,6 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.module.Module.html">Module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -798,6 +803,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.notation.dt.html">dt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.flatten_nested_list.html">flatten_nested_list</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.from_dt_notation.html">from_dt_notation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.notation.dt.to_dt_notation.html">to_dt_notation</a></li>
 </ul>
@@ -866,24 +872,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.cache.Cache.html">Cache</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.chunked.html">chunked</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.circlepack.html">circlepack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.CirclePack.html">CirclePack</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.InvertAround.html">InvertAround</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.InvertPacking.html">InvertPacking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.NormalizePacking.html">NormalizePacking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.acxyz.html">acxyz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.circle_pack.html">circle_pack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.flower.html">flower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.invert_around.html">invert_around</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.invert_packing.html">invert_packing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.normalize_packing.html">normalize_packing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.place.html">place</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.testgrid.html">testgrid</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.combinatorics.html">combinatorics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.combinations_with_limited_repetitions.html">combinations_with_limited_repetitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.iterable_depth.html">iterable_depth</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.lexicographical_minimal_cyclic_rotation_shift.html">lexicographical_minimal_cyclic_rotation_shift</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.parted_permutations.html">parted_permutations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.combinatorics.union.html">union</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.circlepack.test_grid.html">test_grid</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.decorators.html">decorators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -906,15 +903,12 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.func_utils.html">func_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.func_utils.min_elements_by.html">min_elements_by</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.geometry.html">geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bounding_box.html">bounding_box</a></li>
@@ -942,20 +936,14 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.laurent.html">laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.canonicalize_under_variable_permutation.html">canonicalize_under_variable_permutation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.extract_variables.html">extract_variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.laurent_polynomial_to_tuples.html">laurent_polynomial_to_tuples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_laurent_polynomial.html">normalize_laurent_polynomial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_polynomial.html">normalize_polynomial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_symmetric.html">normalize_symmetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.reciprocal.html">reciprocal</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.utils.lazy.html">lazy</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.list_utils.html">list_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.list_utils.flatten_nested_list.html">flatten_nested_list</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.module.module.html">module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.module.Module.html">Module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.parsing.html">parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -967,6 +955,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.progressbar.html">progressbar</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.progressbar.ProgressBar.html">ProgressBar</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.progressbar.bar.html">bar</a></li>
 </ul>
 </details></li>
@@ -975,28 +964,96 @@
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">LeveledSet</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.statistics.html">statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.statistics.print_bar_chart.html">print_bar_chart</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.string_utils.html">string_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.multi_replace.html">multi_replace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.nested_split.html">nested_split</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.string_utils.string_to_nested_tuple_with_prefixes.html">string_to_nested_tuple_with_prefixes</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.test.html">test</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_cache.html">test_cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_cache_eviction_on_full.html">test_cache_eviction_on_full</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_cache_insertion_and_length_limits.html">test_cache_insertion_and_length_limits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_eviction_prefers_longest_key.html">test_eviction_prefers_longest_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_key_too_long_is_ignored.html">test_key_too_long_is_ignored</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_cache.test_refuse_replace_when_key_not_shorter.html">test_refuse_replace_when_key_not_shorter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_circlepack.html">test_circlepack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_basic_circle_pack.html">test_basic_circle_pack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_disjoint_key_check.html">test_disjoint_key_check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_inversion_preserves_count.html">test_inversion_preserves_count</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_invert_around.html">test_invert_around</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_negative_radius_check.html">test_negative_radius_check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_circlepack.test_normalization.html">test_normalization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.test.test_combinatorics.html">test_combinatorics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dict.html">test_dict</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict.test_dict.html">test_dict</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.html">test_dict_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_classifier_dict_groups_by_functions.html">test_classifier_dict_groups_by_functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_common_dict_empty_input.html">test_common_dict_empty_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_common_dict_intersection.html">test_common_dict_intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_equal_simple.html">test_compare_dicts_equal_simple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_exclude_and_include.html">test_compare_dicts_exclude_and_include</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_nested.html">test_compare_dicts_nested</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_ordering_by_keys.html">test_compare_dicts_ordering_by_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_sets.html">test_compare_dicts_sets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_compare_dicts_type_mismatch.html">test_compare_dicts_type_mismatch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_identity_dict_missing_returns_key.html">test_identity_dict_missing_returns_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_duplicate_value_raises.html">test_invert_dict_duplicate_value_raises</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_of_sets.html">test_invert_dict_of_sets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_dict_unique_values.html">test_invert_dict_unique_values</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_multi_dict_groups.html">test_invert_multi_dict_groups</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_invert_nested_dict.html">test_invert_nested_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_lazydict_loads_on_access_and_evaluates_once.html">test_lazydict_loads_on_access_and_evaluates_once</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dict_utils.test_lazydict_reload.html">test_lazydict_reload</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dsu.html">test_dsu</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_dsu.html">test_dsu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_unknown_and_known.html">test_find_unknown_and_known</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iadd_and_setitem_shortcuts.html">test_iadd_and_setitem_shortcuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_init_and_add.html">test_init_and_add</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iter_components_and_len.html">test_iter_components_and_len</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_path_compression_idempotence.html">test_path_compression_idempotence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_representatives_and_classes.html">test_representatives_and_classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_to_dict_rep_map.html">test_to_dict_rep_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_to_set_and_unknown.html">test_to_set_and_unknown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_union_and_connectivity.html">test_union_and_connectivity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_geometry.html">test_geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_angles_helpers.html">test_angles_helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_antipode_and_inversion.html">test_antipode_and_inversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_arc_from_circle_and_points_and_diameter.html">test_arc_from_circle_and_points_and_diameter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_bisector_and_middle.html">test_bisector_and_middle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_circle_intersection_two_points.html">test_circle_circle_intersection_two_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_circle_tangent_one_point.html">test_circle_circle_tangent_one_point</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_contains_and_length.html">test_circle_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circle_through_points.html">test_circle_through_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_circular_arc_contains_and_length.html">test_circular_arc_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_line_circle_intersection_two_points.html">test_line_circle_intersection_two_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_line_param_and_contains.html">test_line_param_and_contains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_oriented_circular_arc_shorten.html">test_oriented_circular_arc_shorten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_perpendicular_arc_through_point_and_perpendicular_arc.html">test_perpendicular_arc_through_point_and_perpendicular_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_perpendicular_line_and_tangent_line.html">test_perpendicular_line_and_tangent_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_polysegment_length_and_sample.html">test_polysegment_length_and_sample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_segment_contains_and_length.html">test_segment_contains_and_length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_split_and_bisect_segment_and_arc.html">test_split_and_bisect_segment_and_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_geometry.test_weighted_center_and_orient_arc.html">test_weighted_center_and_orient_arc</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_laurent.html">test_laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonical_laurent.html">test_canonical_laurent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_permutation_with_sign_change.html">test_canonicalize_under_permutation_with_sign_change</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_variable_permutation_minimal_rep.html">test_canonicalize_under_variable_permutation_minimal_rep</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_extract_variables_with_and_without_prefix.html">test_extract_variables_with_and_without_prefix</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial.html">test_normalize_laurent_polynomial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial_make_nonnegative.html">test_normalize_laurent_polynomial_make_nonnegative</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_polynomial_basic.html">test_normalize_polynomial_basic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_symmetric_centering_and_sign.html">test_normalize_symmetric_centering_and_sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_reciprocal_roundtrip.html">test_reciprocal_roundtrip</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_lazy_dict.html">test_lazy_dict</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1006,7 +1063,15 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_module.html">test_module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_add_sub_extend.html">test_add_sub_extend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_append_combines_like_terms.html">test_append_combines_like_terms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_construct_and_basic_ops.html">test_construct_and_basic_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_filter_and_sort_and_equality.html">test_filter_and_sort_and_equality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_module.html">test_module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_radd_sum_zero_seed.html">test_radd_sum_zero_seed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_scalar_multiply_divide.html">test_scalar_multiply_divide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_setitem_substitution.html">test_setitem_substitution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_module.test_sympy_coefficients.html">test_sympy_coefficients</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_parser.html">test_parser</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1016,6 +1081,12 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_set_utils.html">test_set_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveled_set.html">test_leveled_set</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveled_set_reidemeister.html">test_leveled_set_reidemeister</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_contains_and_extend.html">test_leveledset_contains_and_extend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_iter_level_indexing_and_errors.html">test_leveledset_iter_level_indexing_and_errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_no_conversion_basic_levels_and_counts.html">test_leveledset_no_conversion_basic_levels_and_counts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_remove_empty_levels_trailing_only.html">test_leveledset_remove_empty_levels_trailing_only</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_leveledset_with_conversion_roundtrip_and_ops.html">test_leveledset_with_conversion_roundtrip_and_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_set_utils.test_powerset_basic.html">test_powerset_basic</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_value_partitioner.html">test_value_partitioner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1099,23 +1170,53 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LeveledSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A leveled set structure that optionally uses string representations for memory efficiency.</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">I</span></code>]</p>
+<p>A leveled set structure with optional compact internal representation.</p>
+<p>Items can be stored internally as strings (or any type <code class="docutils literal notranslate"><span class="pre">I</span></code>) to reduce memory
+usage or enable hashing on otherwise unhashable public types. You can provide
+a pair of conversion functions:</p>
 <ul class="simple">
-<li><p>If <cite>to_string</cite> and <cite>from_string</cite> are provided, items are stored as strings internally.</p></li>
-<li><p>If they are None, items are stored and accessed as-is.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to_string(item:</span> <span class="pre">T)</span> <span class="pre">-&gt;</span> <span class="pre">I</span></code> stores items internally (often as <code class="docutils literal notranslate"><span class="pre">str</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from_string(stored:</span> <span class="pre">I)</span> <span class="pre">-&gt;</span> <span class="pre">T</span></code> reconstructs external/public items.</p></li>
 </ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.__init__" title="Link to this definition">#</a></dt>
-<dd><p>Initializes the LeveledSet.</p>
+<p>If either function is omitted (<code class="docutils literal notranslate"><span class="pre">None</span></code>), items are stored directly.</p>
+<dl class="simple">
+<dt>Levels:</dt><dd><p>The structure maintains a list of <em>levels</em>. New items are added into the
+<em>current</em> level (the last one). Calling <a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.new_level" title="knotpy.utils.set_utils.LeveledSet.new_level"><code class="xref py py-meth docutils literal notranslate"><span class="pre">new_level()</span></code></a> creates a new
+level <strong>only if</strong> the last level is non-empty (so you don’t accumulate
+trailing empties). All seen items are tracked in a global set to avoid
+duplicates across levels.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All set operations (union, intersection, difference) act on the <em>global</em>
+content, not per-level content.</p></li>
+<li><p>Iteration yields public/external items (<code class="docutils literal notranslate"><span class="pre">T</span></code>), applying conversion back
+if needed.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>items</strong> – Optional initial items to insert at level 0.</p></li>
-<li><p><strong>to_string</strong> – Function to convert an object to a string (or None for identity).</p></li>
-<li><p><strong>from_string</strong> – Function to convert a string back to object (or None for identity).</p></li>
+<li><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>] </em><em>| </em><em>None</em>) – Optional initial items to insert at level 0.</p></li>
+<li><p><strong>to_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>T</em><em>]</em><em>, </em><em>I</em><em>] </em><em>| </em><em>None</em>) – Function to convert an external item <code class="docutils literal notranslate"><span class="pre">T</span></code> to internal <code class="docutils literal notranslate"><span class="pre">I</span></code>.</p></li>
+<li><p><strong>from_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>I</em><em>]</em><em>, </em><em>T</em><em>] </em><em>| </em><em>None</em>) – Function to convert an internal item <code class="docutils literal notranslate"><span class="pre">I</span></code> back to <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p></li>
 </ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.__init__" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>to_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>T</em><em>]</em><em>, </em><em>I</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>from_string</strong> (<em>Callable</em><em>[</em><em>[</em><em>I</em><em>]</em><em>, </em><em>T</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1124,52 +1225,49 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.__init__" title="knotpy.utils.set_utils.LeveledSet.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([items, to_string, from_string])</p></td>
-<td><p>Initializes the LeveledSet.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.add" title="knotpy.utils.set_utils.LeveledSet.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(item)</p></td>
-<td><p>Adds a single item to the current level if not already present.</p></td>
+<td><p>Add a single item to the current level if not seen before.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.contains" title="knotpy.utils.set_utils.LeveledSet.contains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contains</span></code></a>(item)</p></td>
-<td><p>Checks whether an item exists in any level.</p></td>
+<td><p>Return True if the item appears in any level.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">difference</span></code>(other)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.difference" title="knotpy.utils.set_utils.LeveledSet.difference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">difference</span></code></a>(other)</p></td>
+<td><p>Return the difference of contents (as external items) with another LeveledSet.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.extend" title="knotpy.utils.set_utils.LeveledSet.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(items)</p></td>
-<td><p>Adds multiple items to the current level.</p></td>
+<td><p>Add multiple items to the current level.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersection</span></code>(other)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.intersection" title="knotpy.utils.set_utils.LeveledSet.intersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersection</span></code></a>(other)</p></td>
+<td><p>Return the intersection of contents (as external items) with another LeveledSet.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_level_empty</span></code>(level)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.is_level_empty" title="knotpy.utils.set_utils.LeveledSet.is_level_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_level_empty</span></code></a>(level)</p></td>
+<td><p>Return whether a given level is empty.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdisjoint</span></code>(other)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.isdisjoint" title="knotpy.utils.set_utils.LeveledSet.isdisjoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdisjoint</span></code></a>(other)</p></td>
+<td><p>Return True if the two LeveledSets share no common items.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.iter_level" title="knotpy.utils.set_utils.LeveledSet.iter_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_level</span></code></a>(level)</p></td>
-<td><p>Generator that yields items from a specific level, applying conversion if needed.</p></td>
+<td><p>Iterate items of a specific level (converted to external items).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">level_sizes</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.level_sizes" title="knotpy.utils.set_utils.LeveledSet.level_sizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">level_sizes</span></code></a>()</p></td>
+<td><p>Return a tuple with the size of each level.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.new_level" title="knotpy.utils.set_utils.LeveledSet.new_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_level</span></code></a>([items])</p></td>
-<td><p>Creates a new level if the last one has items, and optionally adds to it.</p></td>
+<td><p>Create a new current level (only if last level is non-empty), then add optional items.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_items</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.number_of_items" title="knotpy.utils.set_utils.LeveledSet.number_of_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_items</span></code></a>()</p></td>
+<td><p>Return the total number of unique items across all levels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_levels</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.number_of_levels" title="knotpy.utils.set_utils.LeveledSet.number_of_levels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_levels</span></code></a>()</p></td>
+<td><p>Return the number of levels currently stored.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.remove_empty_levels" title="knotpy.utils.set_utils.LeveledSet.remove_empty_levels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_empty_levels</span></code></a>()</p></td>
-<td><p>Removes empty levels from the end.</p></td>
+<td><p>Remove trailing empty levels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">temp</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">union</span></code>(other)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet.union" title="knotpy.utils.set_utils.LeveledSet.union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union</span></code></a>(other)</p></td>
+<td><p>Return the union of contents (as external items) with another LeveledSet.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1177,28 +1275,131 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.add">
 <span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.add" title="Link to this definition">#</a></dt>
-<dd><p>Adds a single item to the current level if not already present.</p>
+<dd><p>Add a single item to the current level if not seen before.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>T</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.contains">
 <span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.contains" title="Link to this definition">#</a></dt>
-<dd><p>Checks whether an item exists in any level.</p>
+<dd><p>Return True if the item appears in any level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>T</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.difference">
+<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.difference" title="Link to this definition">#</a></dt>
+<dd><p>Return the difference of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.extend">
-<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.extend" title="Link to this definition">#</a></dt>
-<dd><p>Adds multiple items to the current level.</p>
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.extend" title="Link to this definition">#</a></dt>
+<dd><p>Add multiple items to the current level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.intersection">
+<span class="sig-name descname"><span class="pre">intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.intersection" title="Link to this definition">#</a></dt>
+<dd><p>Return the intersection of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.is_level_empty">
+<span class="sig-name descname"><span class="pre">is_level_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.is_level_empty" title="Link to this definition">#</a></dt>
+<dd><p>Return whether a given level is empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em>) – Level index (supports negative indexing like Python lists).</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>IndexError</strong> – If level is out of range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.isdisjoint">
+<span class="sig-name descname"><span class="pre">isdisjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.isdisjoint" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the two LeveledSets share no common items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.iter_level">
 <span class="sig-name descname"><span class="pre">iter_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.iter_level" title="Link to this definition">#</a></dt>
-<dd><p>Generator that yields items from a specific level, applying conversion if needed.</p>
+<dd><p>Iterate items of a specific level (converted to external items).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>level</strong> – Integer index of the level (can be negative).</p>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em>) – Level index (supports negative indexing).</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Items at the requested level.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>IndexError</strong> – If level is out of range.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Iterator</em>[<em>T</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.level_sizes">
+<span class="sig-name descname"><span class="pre">level_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.level_sizes" title="Link to this definition">#</a></dt>
+<dd><p>Return a tuple with the size of each level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, …]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1206,13 +1407,62 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.new_level">
 <span class="sig-name descname"><span class="pre">new_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.new_level" title="Link to this definition">#</a></dt>
-<dd><p>Creates a new level if the last one has items, and optionally adds to it.</p>
+<dd><p>Create a new current level (only if last level is non-empty), then add optional items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> (<em>Iterable</em><em>[</em><em>T</em><em>] </em><em>| </em><em>T</em><em> | </em><em>None</em>) – Optional single item or iterable of items to add to the new current level.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.number_of_items">
+<span class="sig-name descname"><span class="pre">number_of_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.number_of_items" title="Link to this definition">#</a></dt>
+<dd><p>Return the total number of unique items across all levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.number_of_levels">
+<span class="sig-name descname"><span class="pre">number_of_levels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.number_of_levels" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of levels currently stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.remove_empty_levels">
 <span class="sig-name descname"><span class="pre">remove_empty_levels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.remove_empty_levels" title="Link to this definition">#</a></dt>
-<dd><p>Removes empty levels from the end.</p>
+<dd><p>Remove trailing empty levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="knotpy.utils.set_utils.LeveledSet.union">
+<span class="sig-name descname"><span class="pre">union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.set_utils.LeveledSet.union" title="Link to this definition">#</a></dt>
+<dd><p>Return the union of contents (as external items) with another LeveledSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#knotpy.utils.set_utils.LeveledSet" title="knotpy.utils.set_utils.LeveledSet"><em>LeveledSet</em></a><em>[</em><em>T</em><em>, </em><em>I</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[<em>T</em>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1246,10 +1496,18 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.__init__"><code class="docutils literal notranslate"><span class="pre">LeveledSet.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.add"><code class="docutils literal notranslate"><span class="pre">LeveledSet.add()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.contains"><code class="docutils literal notranslate"><span class="pre">LeveledSet.contains()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.difference"><code class="docutils literal notranslate"><span class="pre">LeveledSet.difference()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.extend"><code class="docutils literal notranslate"><span class="pre">LeveledSet.extend()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.intersection"><code class="docutils literal notranslate"><span class="pre">LeveledSet.intersection()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.is_level_empty"><code class="docutils literal notranslate"><span class="pre">LeveledSet.is_level_empty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.isdisjoint"><code class="docutils literal notranslate"><span class="pre">LeveledSet.isdisjoint()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.iter_level"><code class="docutils literal notranslate"><span class="pre">LeveledSet.iter_level()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.level_sizes"><code class="docutils literal notranslate"><span class="pre">LeveledSet.level_sizes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.new_level"><code class="docutils literal notranslate"><span class="pre">LeveledSet.new_level()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.number_of_items"><code class="docutils literal notranslate"><span class="pre">LeveledSet.number_of_items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.number_of_levels"><code class="docutils literal notranslate"><span class="pre">LeveledSet.number_of_levels()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.remove_empty_levels"><code class="docutils literal notranslate"><span class="pre">LeveledSet.remove_empty_levels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.set_utils.LeveledSet.union"><code class="docutils literal notranslate"><span class="pre">LeveledSet.union()</span></code></a></li>
 </ul>
 </li>
 </ul>
