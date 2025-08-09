@@ -18,7 +18,7 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx_gallery.gen_gallery',,
+    'sphinx_gallery.gen_gallery',
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax"]
 
