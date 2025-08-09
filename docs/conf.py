@@ -24,12 +24,12 @@ extensions = [
 ]
 # -- Docstring style & autosummary -------------------------------------------------
 autosummary_generate = True
+autosummary_generate_overwrite = True
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 napoleon_use_param = True
 napoleon_use_rtype = False
 autodoc_typehints = "description"
-
 
 autodoc_default_options = {
     "members": True,

@@ -1,10 +1,16 @@
+# knotpy/algorithms/closure.py
 """
 Closure of an open knot (knotoid).
+
+Provides underpass, overpass, and double-sided (over+under) closures by routing a path
+through faces in the dual planar diagram.
 """
 
+from __future__ import annotations
+
 __all__ = ["closure"]
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek"
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
@@ -13,85 +19,68 @@ from knotpy.algorithms.remove import remove_bivalent_vertex
 from knotpy.algorithms.naming import unique_new_node_name
 
 
-def _face_intersection_arc(k:PlanarDiagram, f, g):
-    """Find a intersection arc of F and G. If F contains arc (A,B), G should contain (B,A)
-    :param f:
-    :param g:
-    :return:
-    """
+def _face_intersection_arc(k: PlanarDiagram, f, g):
+    """Return the oriented arc shared by consecutive faces ``f`` and ``g``.
 
+    If face ``f`` contains arc ``(A, B)``, face ``g`` should contain ``(B, A)``.
+    The returned pair is oriented so that the first endpoint is CCW with respect to ``f``.
+    """
     for i in range(len(f)):
         f_pair = (f[i], f[(i + 1) % len(f)])
         for j in range(len(g)):
             g_pair = (g[j], g[(j + 1) % len(g)])
-            if f_pair[0].node == g_pair[1].node and f_pair[1].node == g_pair[0].node and (f_pair[1].position + 1) % k.degree(f_pair[1].node) == g_pair[0].position:
+            if (
+                f_pair[0].node == g_pair[1].node
+                and f_pair[1].node == g_pair[0].node
+                and (f_pair[1].position + 1) % k.degree(f_pair[1].node) == g_pair[0].position
+            ):
                 return f_pair[1], g_pair[1]
     return None
 
 
 def _underpass_closure(k: PlanarDiagram, A, B, arcs):
-    """
-    Make an "underpass closure" of the diagram k, where A and B are degree-1 vertices (leafs) that will be closed and
-    arcs is the set of arcs (list od tuples) through which the closure will pass.
-    Each arc is oriented: the first endpoint is CCW with respect to the face of the path starting at A.
-    """
+    """Perform an underpass closure from leaf ``A`` to leaf ``B`` along ``arcs``."""
     k = k.copy()
-    # loop through all neighbouring faces and get the common arc that we must pass
     previous_open_endpoint = (A, 1)
     for ep_f, ep_g in arcs:
         crossing = unique_new_node_name(k)
-        # insert the crossing and attach endpoints
         k.add_crossing(crossing_for_adding=crossing)
         k.set_arc((previous_open_endpoint, (crossing, 0)))
         k.set_arc((ep_f, (crossing, 3)))
         k.set_arc((ep_g, (crossing, 1)))
         previous_open_endpoint = (crossing, 2)
-    #attach the final endpoints from the last node
     k.set_arc((previous_open_endpoint, (B, 1)))
 
     if k.degree(A) != 2 or k.degree(B) != 2:
-        raise ValueError("The leafs should have degree 2 after closure")
+        raise ValueError("The leaves should have degree 2 after underpass closure.")
     remove_bivalent_vertex(k, A)
     remove_bivalent_vertex(k, B)
     return k
 
 
 def _overpass_closure(k: PlanarDiagram, A, B, arcs):
-    """
-    Make an "overpass closure" of the diagram k, where A and B are degree-1 vertices (leafs) that will be closed and
-    arcs is the set of arcs (list od tuples) through which the closure will pass.
-    Each arc is oriented: the first endpoint is CCW with respect to the face of the path starting at A.
-    """
+    """Perform an overpass closure from leaf ``A`` to leaf ``B`` along ``arcs``."""
     k = k.copy()
-    # loop through all neighbouring faces and get the common arc that we must pass
     previous_open_endpoint = (A, 1)
     for ep_f, ep_g in arcs:
         crossing = unique_new_node_name(k)
-        # insert the crossing and attach endpoints
         k.add_crossing(crossing_for_adding=crossing)
         k.set_arc((previous_open_endpoint, (crossing, 1)))
         k.set_arc((ep_f, (crossing, 0)))
         k.set_arc((ep_g, (crossing, 2)))
         previous_open_endpoint = (crossing, 3)
-    # attach the final endpoints from the last node
     k.set_arc((previous_open_endpoint, (B, 1)))
 
     if k.degree(A) != 2 or k.degree(B) != 2:
-        raise ValueError("The leafs should have degree 2 after closure")
+        raise ValueError("The leaves should have degree 2 after overpass closure.")
     remove_bivalent_vertex(k, A)
     remove_bivalent_vertex(k, B)
     return k
 
+
 def _over_and_under_closure(k: PlanarDiagram, A, B, arcs):
-    """
-    Make an "double-sided over and under closure" of the diagram k, where A and B are degree-1 vertices (leafs) that will be closed and
-    arcs is the set of arcs (list od tuples) through which the closure will pass.
-    Each arc is oriented: the first endpoint is CCW with respect to the face of the path starting at A.
-    """
-
-
+    """Perform a double-sided closure: one overpass and one underpass from ``A`` to ``B``."""
     k = k.copy()
-    # loop through all neighbouring faces and get the common arc that we must pass
     previous_open_endpoint_over = (A, 1)
     previous_open_endpoint_under = (A, 2)
     for ep_f, ep_g in arcs:
@@ -99,8 +88,6 @@ def _over_and_under_closure(k: PlanarDiagram, A, B, arcs):
         k.add_crossing(crossing_for_adding=crossing_over)
         crossing_under = unique_new_node_name(k)
         k.add_crossing(crossing_for_adding=crossing_under)
-        # insert the crossing and attach endpoints
-        #k.add_crossings_from([crossing_over, crossing_under])
 
         k.set_arc((previous_open_endpoint_over, (crossing_over, 1)))
         k.set_arc((previous_open_endpoint_under, (crossing_under, 0)))
@@ -111,64 +98,57 @@ def _over_and_under_closure(k: PlanarDiagram, A, B, arcs):
 
         previous_open_endpoint_over = (crossing_over, 3)
         previous_open_endpoint_under = (crossing_under, 2)
-    #attach the final endpoints from the last node
 
     k.set_arc((previous_open_endpoint_over, (B, 2)))
     k.set_arc((previous_open_endpoint_under, (B, 1)))
 
     if k.degree(A) != 3 or k.degree(B) != 3:
-        raise ValueError("The leafs should have degree 3 after double-closure")
-
+        raise ValueError("The leaves should have degree 3 after double-sided closure.")
     return k
 
-def closure(k: PlanarDiagram, over=False, under=False):
+
+def closure(k: PlanarDiagram, *, over: bool = False, under: bool = False) -> PlanarDiagram:
+    """Close a knotoid by routing through the dual graph between its two degree-1 vertices.
+
+    You must choose at least one of ``over`` or ``under``. If both are True, a double-sided
+    closure is performed (one overpass and one underpass).
+
+    Args:
+        k: Planar diagram with exactly two leaves (degree-1 vertices).
+        over: Use overpass closure.
+        under: Use underpass closure.
+
+    Returns:
+        A new ``PlanarDiagram`` with the chosen closure applied.
+
+    Raises:
+        ValueError: If neither over nor under is selected.
+        ValueError: If the diagram does not have exactly two leaves.
     """
-
-    :param k:
-    :param over:
-    :param under:
-    :return:
-    """
-
-    _DEBUG = False
-
     if not under and not over:
-        raise ValueError("Cannot have both underpass and overpass closure to False")
+        raise ValueError("Select at least one closure type: over=True or under=True.")
 
-    leafs = list(v for v in k.vertices if k.degree(v) == 1)
+    leafs = [v for v in k.vertices if k.degree(v) == 1]
     if len(leafs) != 2:
-        raise ValueError("Can only close a diagram with two leafs")
-
-    # get the two connected nodes
+        raise ValueError("Can only close a diagram with exactly two leaves.")
     A, B = leafs
-    # dual planar graph
+
     dual = dual_planar_diagram(k)
 
-    if _DEBUG: print("DUAL", dual)
-
-    # get faces of the two leafs
     A_ep = k.endpoint_from_pair((A, 0))
     B_ep = k.endpoint_from_pair((B, 0))
     A_face = next(f for f in dual.vertices if A_ep in f)
     B_face = next(f for f in dual.vertices if B_ep in f)
 
-    # the shortest path from the two endpoint faces will yield the arcs we must add to the structure
     path = bfs_shortest_path(dual, A_face, B_face)
-    if _DEBUG: print("path:", " -> ".join(str(f) for f in path))
-
-    if _DEBUG: print("start endpoint", A_ep, "end endpoint", B_ep)
-
     arcs = [_face_intersection_arc(k, f, g) for f, g in zip(path, path[1:])]
-    if over and under:
-        closed_k = _over_and_under_closure(k, A, B, arcs)
-    elif over:
-        closed_k = _overpass_closure(k, A, B, arcs)
-    else:
-        closed_k = _underpass_closure(k, A, B, arcs)
 
-    return closed_k
+    if over and under:
+        return _over_and_under_closure(k, A, B, arcs)
+    if over:
+        return _overpass_closure(k, A, B, arcs)
+    return _underpass_closure(k, A, B, arcs)
+
 
 if __name__ == "__main__":
     pass
-
-
