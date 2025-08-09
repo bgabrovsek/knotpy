@@ -1166,13 +1166,13 @@
                   
   <section id="module-knotpy.algorithms.components_link">
 <span id="components-link"></span><h1>components_link<a class="headerlink" href="#module-knotpy.algorithms.components_link" title="Link to this heading">#</a></h1>
-<p>Link components represent distinct closed loops in a link diagram.
-For example, a trefoil knot has one component, while the Hopf link has two.</p>
+<p>Link components represent distinct closed loops in a link diagram.</p>
+<p>A trefoil knot has one component, while the Hopf link has two.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.components_link.link_components_endpoints.html#knotpy.algorithms.components_link.link_components_endpoints" title="knotpy.algorithms.components_link.link_components_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_components_endpoints</span></code></a>(k)</p></td>
-<td><p>Return a list of sets of endpoints belonging to the same link component.</p></td>
+<td><p>Return sets of endpoints belonging to the same link component.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.components_link.number_of_link_components.html#knotpy.algorithms.components_link.number_of_link_components" title="knotpy.algorithms.components_link.number_of_link_components"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_link_components</span></code></a>(k)</p></td>
 <td><p>Return the number of link components in a planar diagram.</p></td>
@@ -1184,18 +1184,14 @@ For example, a trefoil knot has one component, while the Hopf link has two.</p>
 <dt class="sig sig-object py" id="knotpy.algorithms.components_link.number_of_link_components">
 <span class="sig-name descname"><span class="pre">number_of_link_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.components_link.number_of_link_components" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of link components in a planar diagram.</p>
-<p>This function determines the number of connected components (link
-components) in a given planar diagram representation of a link.
-For example, a trefoil knot has 1 component, while the Hopf link
-consists of 2 components.</p>
+<p>For example, a trefoil knot has 1 component, while the Hopf link
+has 2 components.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The input planar diagram representing the link, from which
-the number of components will be derived.</p>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>int</em> – The number of link components present in the given planar
-diagram.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1203,22 +1199,15 @@ diagram.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.components_link.link_components_endpoints">
 <span class="sig-name descname"><span class="pre">link_components_endpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.components_link.link_components_endpoints" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of sets of endpoints belonging to the same link component.</p>
-<p>This function takes a planar diagram representing a knot or link and determines the groups of endpoints that belong
-to the same connected link components. Each endpoint is grouped based on equivalence relations derived from the arcs
-and node connections in the planar diagram.</p>
+<dd><p>Return sets of endpoints belonging to the same link component.</p>
+<p>Endpoints are grouped into the same component if they are connected
+through arcs or at nodes in the diagram.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – The planar diagram object that contains arcs, nodes, and endpoints associated with a
-knot or link structure.</p>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p><em>list[set]</em> –</p>
-<dl class="simple">
-<dt>A list of sets where each set contains unordered endpoints that are determined to belong to the</dt><dd><p>same link component.</p>
-</dd>
-</dl>
-</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[set]</p>
 </dd>
 </dl>
 </dd></dl>

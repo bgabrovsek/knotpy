@@ -1167,19 +1167,33 @@
   <section id="module-knotpy.algorithms.closure">
 <span id="closure"></span><h1>closure<a class="headerlink" href="#module-knotpy.algorithms.closure" title="Link to this heading">#</a></h1>
 <p>Closure of an open knot (knotoid).</p>
+<p>Provides underpass, overpass, and double-sided (over+under) closures by routing a path
+through faces in the dual planar diagram.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.closure.closure">
-<span class="sig-name descname"><span class="pre">closure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">over</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">under</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.closure.closure" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">closure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">over</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">under</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.closure.closure" title="Link to this definition">#</a></dt>
+<dd><p>Close a knotoid by routing through the dual graph between its two degree-1 vertices.</p>
+<p>You must choose at least one of <code class="docutils literal notranslate"><span class="pre">over</span></code> or <code class="docutils literal notranslate"><span class="pre">under</span></code>. If both are True, a double-sided
+closure is performed (one overpass and one underpass).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p></li>
-<li><p><strong>over</strong></p></li>
-<li><p><strong>under</strong></p></li>
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>) – Planar diagram with exactly two leaves (degree-1 vertices).</p></li>
+<li><p><strong>over</strong> (<em>bool</em>) – Use overpass closure.</p></li>
+<li><p><strong>under</strong> (<em>bool</em>) – Use underpass closure.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">PlanarDiagram</span></code> with the chosen closure applied.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If neither over nor under is selected.</p></li>
+<li><p><strong>ValueError</strong> – If the diagram does not have exactly two leaves.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
 </dd>
 </dl>
 </dd></dl>
