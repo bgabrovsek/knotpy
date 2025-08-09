@@ -1,178 +1,113 @@
-__all__ = ['tutte']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+# knotpy/invariants/tutte.py
+"""
+Tutte polynomial for planar graphs represented as ``PlanarDiagram`` objects.
 
-from sympy import Integer, symbols, Symbol
+This computes the Tutte polynomial ``T(_x, _y)`` for planar graphs (no crossings)
+using the standard deletion–contraction recursion until only loops and bridges remain,
+where each terminal graph contributes ``_x^(#bridges) * _y^(#loops)``.
+"""
+
+from __future__ import annotations
+
+__all__ = ["tutte"]
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
+
 from collections import deque
+import sympy as sp
 
-from knotpy import from_pd_notation, bridges, is_loop, loops, is_bridge, OrientedPlanarDiagram
-from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.topology import is_planar_graph
-from knotpy.tables.graphs import wheel_graph
+from knotpy.invariants._symbols import _x, _y
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.algorithms.topology import (
+    is_planar_graph,
+    is_loop,
+    is_bridge,
+    bridges,
+    loops,
+)
 from knotpy.algorithms.contract import contract_arc
 from knotpy.algorithms.remove import remove_arc
 from knotpy.algorithms.orientation import unorient
 
 
+def deletion_contraction(k: PlanarDiagram, *, contract_bridges: bool = True) -> list[PlanarDiagram]:
+    """Return terminal diagrams after recursive deletion–contraction.
 
-def deletion_contraction(k: PlanarDiagram, contract_bridges=True):
+    Args:
+        k: Input planar diagram (graph, no crossings).
+        contract_bridges: If False, skip contracting bridges (useful for Tutte T(x,y)).
+
+    Returns:
+        A list of diagrams in which every arc is a loop or a bridge.
+    """
     if "_deletions" not in k.attr:
         k.attr["_deletions"] = 0
     if "_contractions" not in k.attr:
         k.attr["_contractions"] = 0
 
-    resolved = []
-    stack = deque()
-    stack.append(k)
+    resolved: list[PlanarDiagram] = []
+    stack: deque[PlanarDiagram] = deque([k])
 
     while stack:
         k = stack.pop()
 
         has_regular_arcs = False
         for arc in k.arcs:
-
-            if not is_loop(k, arc) and (not is_bridge(k, arc) or contract_bridges):
+            # Only branch on non-loops; contract bridges only if allowed.
+            if not is_loop(k, arc) and (contract_bridges or not is_bridge(k, arc)):
                 k_delete = remove_arc(k, arc_for_removing=arc, inplace=False)
                 k_delete.attr["_deletions"] += k.attr["_deletions"] + 1
+
                 k_contract = contract_arc(k, arc_for_contracting=arc, inplace=False)
                 k_contract.attr["_contractions"] += k.attr["_contractions"] + 1
+
                 stack.append(k_delete)
                 stack.append(k_contract)
                 has_regular_arcs = True
-                break  # TODO: optimize
+                break  # process one arc at a time for a binary recursion
 
         if not has_regular_arcs:
             resolved.append(k)
+
     return resolved
 
-def tutte(k: PlanarDiagram | OrientedPlanarDiagram, variables="xy"):
-    """
-    Compute the Tutte polynomial of a planar graph represented as a PlanarDiagram.
 
-    The Tutte polynomial is a two-variable polynomial known for its applications
-    in graph theory, combinatorics, and statistical physics. This function
-    computes the Tutte polynomial for planar graphs without crossings.
+def tutte(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
+    """Compute the Tutte polynomial ``T(_x, _y)`` of a planar graph (no crossings).
 
-    Parameters:
-    -----------
-    k : PlanarDiagram
-        A planar graph represented as a PlanarDiagram object. The input graph must be free of crossings.
-
-    variables : str or iterable[Symbol], optional, default="xy"
-        A string (of length 2) or an iterable containing two variables to be used
-        in the Tutte polynomial (e.g., "xy" or [x, y]). If using a string, its two
-        characters will be interpreted as symbolic variables.
-
-    Raises:
-    -------
-    ValueError
-        If `k` is not a planar graph (i.e., it contains crossings).
+    Args:
+        k: Planar diagram representing a planar graph (unoriented or oriented).
 
     Returns:
-    --------
-    sympy.Expr
-        The symbolic representation of the Tutte polynomial as a `sympy.Expr` object.
+        SymPy expression ``T(_x, _y)``.
 
-    Notes:
-    ------
-    1. The function uses a recursive contraction-deletion approach to compute the
-       polynomial by traversing and simplifying the arcs in the graph.
-
-    Examples:
-    ---------
-    Compute the Tutte polynomial for a wheel graph with 4 nodes:
-
-    ```python
-    from knotpy.tables.graphs import wheel_graph
-    from tutte import tutte
-
-    w = wheel_graph(4)
-    polynomial = tutte(w)
-    print(polynomial)
-    ```
+    Raises:
+        ValueError: If ``k`` is not a planar graph (contains crossings).
     """
-
-    if len(variables) != 2:
-        raise ValueError("Two variables mst be given for the tutte polynomial")
-
     if not is_planar_graph(k):
-        raise ValueError("Tutte polynomial can only be computed on planar graphs without crossings")
+        raise ValueError("Tutte polynomial can only be computed on planar graphs without crossings.")
 
+    # Work on an unoriented copy; ensure framing exists
     k = unorient(k) if k.is_oriented() else k.copy()
-
-    x = variables[0] if isinstance(variables[0], Symbol) else symbols(variables[0])
-    y = variables[1] if isinstance(variables[1], Symbol) else symbols(variables[1])
-
-    stack = deque()  # keep diagrams with non-loop and non-bridges
-    resolved = []
-
     if not k.is_framed():
         k.framing = 0
-
     k.attr["_deletions"] = 0
     k.attr["_contractions"] = 0
 
-    resolved = deletion_contraction(k, contract_bridges=False)
-    # resolved graphs consists of only of loops and bridges
-    polynomial = Integer(0)
-    for g in resolved:
-        # ignore number of deletions/contractions
-        b, l = len(bridges(g)), len(loops(g))
-        if b + l != len(g.arcs):  # just a quick check
-            raise ValueError("Not all arcs are bridges or loops")
+    # Expand via deletion–contraction without contracting bridges in the recursion
+    terminal_graphs = deletion_contraction(k, contract_bridges=False)
 
-        polynomial += x ** b * y ** l
+    # Each terminal graph contributes _x^(#bridges) * _y^(#loops)
+    polynomial = sp.Integer(0)
+    for g in terminal_graphs:
+        b = len(bridges(g))
+        l = len(loops(g))
+        if b + l != len(g.arcs):
+            raise ValueError("Terminal diagram contains a non-loop, non-bridge arc.")
+        polynomial += (_x ** b) * (_y ** l)
 
     return polynomial
 
 
 if __name__ == "__main__":
-
-    m = from_pd_notation("V[0,1,2],V[0,3,4],V[4,5,6,1],V[2,6,7,8],V[8,7,5,3],V[9,9]")
-    print(m)
-    for q in deletion_contraction(m, contract_bridges=False):
-        print("  ", q)
-
-    for a in m.arcs:
-        print("arc", a, "->", is_loop(m, a), is_bridge(m, a))
-    exit()
-
-
-    g = wheel_graph(7)  # works!!!!
-    print(tutte(g))
-
-    # g = PlanarDiagram()
-    # g.set_arcs_from("a0a3,a1b0,a2b1")
-    # # print(g)
-    # # g_ = contract_arc(g, arc_for_contracting=(("b",0),("a",1)))
-    # # print(g_)
-    # print(tutte(g))
-    #
-    #
-
-
-    exit()
-
-    # g = PlanarDiagram()
-    # g.add_vertices_from("abd")
-    # g.set_arc((("a",0),("d",1)))
-    # g.set_arc((("a", 1), ("d", 0)))
-    # g.set_arc((("b", 0), ("d", 2)))
-    # print(g)
-    # for arc in g.arcs:
-    #     print(arc)
-    #     print(is_bridge(g, arc),is_loop(g, arc) )
-    # exit()
-
-    # q = PlanarDiagram()
-    # q.add_vertices_from("ab")
-    # q.set_arc((("a",0),("b",0)))
-    # arc = list(q.arcs)[0]
-    # print(is_bridge(q,arc))
-    # print(q)
-    # exit()
-
-    for i in range(1):
-        w = wheel_graph(4)
-
-        print(tutte(w))
+    pass

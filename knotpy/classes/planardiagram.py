@@ -916,6 +916,8 @@ def planar_diagram_from_data(incoming_data: Any, create_using: type[PlanarDiagra
 
     return create_using
 
+Diagram = PlanarDiagram | OrientedPlanarDiagram
+DiagramOrCollection = Diagram | list[Diagram] | set[Diagram] | tuple[Diagram, ...]
 
 if __name__ == "__main__":
     pass

@@ -119,7 +119,7 @@ def crossing_to_vertex(k: PlanarDiagram, crossing, inplace=False):
 #     return k
 
 
-def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inplace=False, **attr):
+def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inplace=False, **attr) -> PlanarDiagram | OrientedPlanarDiagram:
     """
     Smoothens a specified crossing in a planar diagram using type "A", "B", or oriented ("O") smoothing,
     depending on the method specified. The function modifies the connectivity of the crossing to achieve

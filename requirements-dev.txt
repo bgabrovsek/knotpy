@@ -1,0 +1,17 @@
+# Full development and documentation environment for KnotPy
+# Compatible with Python >=3.10
+
+# Core runtime dependencies (including plotting)
+sympy>=1.12
+matplotlib>=3.8.3
+
+# Documentation
+sphinx>=7.3
+sphinx-gallery>=0.15
+pydata-sphinx-theme>=0.15
+
+# Development tools
+pytest>=8.0
+ruff>=0.5
+black>=24.3
+mypy>=1.10

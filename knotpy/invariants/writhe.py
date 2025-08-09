@@ -1,13 +1,41 @@
-__all__ = ['writhe']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+"""
+Writhe of a knot or link diagram.
+
+The writhe is the number of positive crossings minus the number of negative crossings.
+For oriented diagrams this is computed directly. For unoriented diagrams, we take the
+minimum over all orientations.
+"""
+
+from __future__ import annotations
+
+__all__ = ["writhe"]
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.orientation import all_orientations
-from knotpy.algorithms.topology import edges as get_edges
-from knotpy.algorithms.orientation import all_orientations, orient
-from knotpy.utils.set_utils import powerset
-#
+
+
+def writhe(k: PlanarDiagram | OrientedPlanarDiagram) -> int:
+    """Return the writhe of ``k``.
+
+    For oriented diagrams, this is:
+        sum(sign(c) for c in crossings)
+
+    For unoriented diagrams, it is the minimum over all orientations.
+
+    Args:
+        k: Planar or oriented diagram.
+
+    Returns:
+        The writhe as an integer.
+    """
+    if k.is_oriented():
+        return sum(k.nodes[c].sign() for c in k.crossings)
+    # TODO: optimize for multi-component links (avoid enumerating all orientations if possible)
+    return min(sum(o.nodes[c].sign() for c in o.crossings) for o in all_orientations(k))
+
+
 # def crossing_signs_dict(k: PlanarDiagram | OrientedPlanarDiagram) -> dict:
 #     """ If the knot or link is oriented, compute all crossing signs directly from the crossings.
 #     If the k is an unoriented knot, compute the crossing signs from the diagram. In case k is an unoriented link,
@@ -72,54 +100,7 @@ from knotpy.utils.set_utils import powerset
 #         raise ValueError(f"Cannot compute crossing sign for {crossing}")
 #     return signs[crossing]
 
+if __name__ == "__main__":
+    pass
 
-def writhe(k: PlanarDiagram | OrientedPlanarDiagram) -> int:
-    """The writhe is the total number of positive crossings minus the total number of negative crossings.
-    :param k:
-    :return:
-    """
-    print(k)
-    if type(k) is OrientedPlanarDiagram:
-        return sum(k.nodes[c].sign() for c in k.crossings)
-    else:
-        return min(sum(o.nodes[c].sign() for c in o.crossings) for o in all_orientations(k))  # TODO: make this faster
 
-# def knot_crossing_signs(k: PlanarDiagram):
-#     """ works only for knots"""
-#     if not k.is_oriented():
-#         k = orient(k)
-#
-#     return {c:k.sign(c) for c in k.crossings}
-#
-# def writhe(k: PlanarDiagram) -> int:
-#
-#     # TODO: orient if one component, otherwise raise error
-#     if not k.is_oriented():
-#         if number_of_disjoint_components(k) != 1:
-#             raise ValueError(f"Cannot determine the writhe of a unoriented link with {number_of_disjoint_components(k)} disjoint components")
-#         else:
-#             k = orient(k)
-#
-#
-#     return sum(k.nodes[node].sign() for node in k.crossings)
-#
-#
-# def forced_writhe(k: PlanarDiagram) -> int:
-#     """
-#     TODO: optimize for knots, etc.
-#     :param k:
-#     :return:
-#     """
-#     if k.is_oriented():
-#         return writhe(k)
-#     else:
-#         try:
-#             return writhe(k)
-#         except ValueError:
-#             return min(writhe(ok) for ok in all_orientations(k))
-
-# if __name__ == "__main__":
-#     import knotpy as kp
-#
-#     k = kp.link("l5a1")
-#     print(writhe(k))

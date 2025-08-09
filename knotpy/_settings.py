@@ -8,7 +8,7 @@ import re
 _DEFAULT_ALLOWED_MOVES = ["R1", "R2", "R3", "R4", "R5"]
 _EXISTING_REIDEMEISTER_MOVES = ["R1", "R2", "R3", "R4", "R5", "FLIP", "FLYPE"]
 
-_DEFAULT_TRACE_MOVES = True  # let the Reidemeister moves be traced
+_DEFAULT_TRACE_MOVES = False  # let the Reidemeister moves be traced
 _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES = False  # by default graphs are topological (not rigid)
 _DEFAULT_FRAMED = False  # track framing on Reidemeister moves (R1, R4)
 #_DEFAULT_R1_INCREASE_SIMPLIFICATION = False  # use increasing R1 move to simplify knots
