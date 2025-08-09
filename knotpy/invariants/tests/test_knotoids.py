@@ -76,7 +76,7 @@ def test_yamada_polynomial():
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
 
-    p = kp.yamada(kp.closure(k, True, True))
+    p = kp.yamada(kp.closure(k, over=True, under=True))
 
     for i,k_ in enumerate(kp.all_reidemeister_moves(k, depth=1)):
         if i%15:

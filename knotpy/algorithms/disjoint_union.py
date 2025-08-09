@@ -1,16 +1,21 @@
-"""Disjoint components are the diagram components that do not share a common node (crossing, vertex, ...).
+# knotpy/algorithms/disjoint_union.py
 
-A disjoint sum, in the context of planar knot diagrams, is the combination of two or more planar diagrams 
-such that they remain independent and do not share any nodes or arcs.
+"""Disjoint components and disjoint sums of planar diagrams.
+
+A *disjoint component* is a connected component that shares no nodes (crossings,
+vertices, …) with another. The *disjoint sum* of diagrams places them side-by-side
+without identifying any nodes or arcs.
 """
 
-
-__all__ = ['number_of_disjoint_components', 'disjoint_union_decomposition',
-           'add_unknot', "is_disjoint_union",
-           "disjoint_union"
-           ]
-__version__ = '0.2'
-__author__ = 'Boštjan Gabrovšek'
+__all__ = [
+    "number_of_disjoint_components",
+    "disjoint_union_decomposition",
+    "add_unknot",
+    "is_disjoint_union",
+    "disjoint_union",
+]
+__version__ = "0.3"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from itertools import permutations
 
@@ -20,167 +25,183 @@ from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
 
 
-def add_unknot(k: PlanarDiagram, number_of_unknots=1, inplace=True):
+def add_unknot(k: PlanarDiagram, number_of_unknots: int = 1, inplace: bool = True) -> PlanarDiagram:
     """
-    Add one or more unknots disjointly to the given planar diagram.
+    Add one or more unknots disjointly to a diagram.
 
-    An unknot is represented as a vertex with a single edge forming a loop.
-    The function modifies the diagram in place unless specified otherwise.
+    Each unknot is represented by a single degree-2 vertex with a loop (two
+    opposite endpoints joined).
 
     Args:
-        k (PlanarDiagram): The input planar diagram.
-        number_of_unknots (int, optional): The number of unknots to add. Defaults to 1.
-        inplace (bool, optional): If True, modifies the diagram in place. If False, returns a modified copy.
+        k: Target diagram.
+        number_of_unknots: How many unknots to add.
+        inplace: If False, operate on a copy and return it.
 
     Returns:
-        PlanarDiagram: The modified planar diagram with added unknots.
-
-    Notes:
-        The function supports both oriented and unoriented planar diagrams.
+        The diagram with the unknots added (same object if ``inplace=True``).
     """
     if not inplace:
         k = k.copy()
+
     oriented = k.is_oriented()
+
     for _ in range(number_of_unknots):
         node = unique_new_node_name(k)
         k.add_vertex(node, degree=2)
-        k.set_endpoint((node, 0), (node, 1), IngoingEndpoint if oriented else Endpoint)
-        k.set_endpoint((node, 1), (node, 0), OutgoingEndpoint if oriented else Endpoint)
+        # connect the two endpoints of the same vertex
+        k.set_endpoint((node, 0), (node, 1), create_using=(IngoingEndpoint if oriented else Endpoint))
+        k.set_endpoint((node, 1), (node, 0), create_using=(OutgoingEndpoint if oriented else Endpoint))
+
     return k
 
 
-def _disjoint_components_nodes(k: PlanarDiagram) -> list:
+def _disjoint_components_nodes(k: PlanarDiagram) -> list[set]:
     """
-    Return a list of sets of nodes that belong to the same disjoint components.
+    Compute connected components as sets of nodes.
+
     Args:
-        k (PlanarDiagram): A (disjoint) planar diagram.
+        k: Diagram.
+
     Returns:
-        list[set[int]]: A list where each set contains the node indices of one connected component.
+        List of node-sets, one per connected component.
     """
-    dsu = DisjointSetUnion(k.nodes)  # TODO: replace with DSU
+    dsu = DisjointSetUnion(k.nodes)
     for ep0, ep1 in k.arcs:
         dsu[ep0.node] = ep1.node
     return list(dsu.classes())
 
 
-def number_of_disjoint_components(k: PlanarDiagram):
+def number_of_disjoint_components(k: PlanarDiagram) -> int:
     """
-    Return the number of disjoint (connected) components in the given planar diagram.
+    Number of connected components.
+
     Args:
-        k (PlanarDiagram): The input planar diagram.
+        k: Diagram.
+
     Returns:
-        int: The number of disjoint components.
+        Count of components.
     """
     return len(_disjoint_components_nodes(k))
 
 
-def is_disjoint_union(k: PlanarDiagram):
+def is_disjoint_union(k: PlanarDiagram) -> bool:
     """
-   Return whether the given planar diagram consists of multiple disjoint components.
-   Args:
-       k (PlanarDiagram): The input planar diagram.
-   Returns:
-       bool: True if the diagram has more than one disjoint component, False otherwise.
-   """
-    return len(_disjoint_components_nodes(k)) > 1
+    Whether the diagram has more than one connected component.
 
-
-def disjoint_union_decomposition(k: PlanarDiagram) -> list:
-    """
-    Return a list of disjoint components of the given planar diagram.
-    Each component is returned as a separate PlanarDiagram instance.
     Args:
-        k (PlanarDiagram): The input planar diagram.
+        k: Diagram.
+
     Returns:
-        list[PlanarDiagram]: A list of disjoint components, each as a PlanarDiagram instance.
+        True if there are ≥ 2 components.
     """
+    return number_of_disjoint_components(k) > 1
 
-    list_of_knot_components = []
 
-    for component_nodes in sorted(_disjoint_components_nodes(k), reverse=True):
+def disjoint_union_decomposition(k: PlanarDiagram) -> list[PlanarDiagram]:
+    """
+    Split a diagram into its disjoint (connected) components.
+
+    Components are returned as standalone diagrams. The result is ordered
+    deterministically by the tuple of sorted node names in each component.
+
+    Notes:
+        If ``k.framing`` is not None, the framing is placed on the first
+        returned component and set to 0 on all subsequent ones.
+
+    Args:
+        k: Diagram to decompose.
+
+    Returns:
+        List of component diagrams.
+    """
+    components: list[PlanarDiagram] = []
+
+    # Sort deterministically by node-name signature to avoid non-orderable sets
+    for comp_nodes in sorted(_disjoint_components_nodes(k), key=lambda s: tuple(sorted(s))):
         g = k.copy()
         if "name" in g.attr:
             del g.attr["name"]
-        g.remove_nodes_from(set(g.nodes) - component_nodes,
-                            remove_incident_endpoints=False)  # incident ep will be removed automatically
+        # Removing all nodes not in this component (incident endpoints fall out)
+        g.remove_nodes_from(set(g.nodes) - set(comp_nodes), remove_incident_endpoints=False)
+        components.append(g)
 
-        list_of_knot_components.append(g)
-
-    # put framing only to the first component
-    if k.framing is not None:
-        list_of_knot_components[0].framing = k.framing
-        for g in list_of_knot_components[1:]:
+    # Put framing only on the first component (if present)
+    if components and k.framing is not None:
+        components[0].framing = k.framing
+        for g in components[1:]:
             g.framing = 0
 
-    return list_of_knot_components
+    return components
 
 
-def disjoint_union(*knots: PlanarDiagram | OrientedPlanarDiagram, return_relabel_dictionaries=False):
+def disjoint_union(
+    *knots: PlanarDiagram | OrientedPlanarDiagram,
+    return_relabel_dicts: bool = False
+):
     """
-    Create the disjoint sum of planar diagrams.
+    Disjoint sum of multiple diagrams (all of the same type).
 
-    The function takes multiple planar diagrams (oriented or not) of the same type and
-    generates a new diagram representing their disjoint sum. Attributes are aggregated from the input diagrams,
-    and framing is computed or set to None if applicable.
+    The nodes of each input are relabeled to unique fresh names and placed into
+    a single diagram without identifying any nodes or arcs.
 
-    Raises a ValueError if no diagrams are provided and raises a TypeError if the types
-    of the diagrams are inconsistent.
-
-    Parameters:
-        knots (tuple[PlanarDiagram | OrientedPlanarDiagram]): A variable number of input planar or
-                                                              oriented planar diagrams.
+    Args:
+        *knots: One or more diagrams (all ``PlanarDiagram`` or all ``OrientedPlanarDiagram``).
+        return_relabel_dictionaries: If True, also return a list of dictionaries
+            mapping old node names (per component) to new node names in the sum.
 
     Returns:
-        PlanarDiagram | OrientedPlanarDiagram: A new diagram representing the disjoint sum of
-                                               the input diagrams.
+        The disjoint sum diagram, and optionally the relabeling dictionaries.
 
     Raises:
-        ValueError: If no diagrams are passed to the function.
-        TypeError: If the input diagrams have inconsistent types.
+        ValueError: If no diagrams are provided.
+        TypeError: If input diagrams mix oriented and unoriented types.
     """
     if len(knots) == 0:
-        raise ValueError("No diagrams provided")
+        raise ValueError("No diagrams provided.")
     if len(knots) == 1:
-        return knots[0].copy()
+        return (knots[0].copy(), [{}]) if return_relabel_dictionaries else knots[0].copy()
 
     if len({type(k) for k in knots}) != 1:
-        raise TypeError(f"Cannot create a disjoint sum of different type diagrams ({' and '.join({type(k).__name__ for k in knots})})")
+        types = ", ".join(sorted({type(k).__name__ for k in knots}))
+        raise TypeError(f"Cannot create a disjoint sum of different diagram types ({types}).")
 
     new_knot = type(knots[0])()
-    new_node_name_iter = iter(generate_node_names(sum(len(k) for k in knots)))
+    new_name_iter = iter(generate_node_names(sum(len(k) for k in knots)))
 
-    # framing
+    # framing: sum when any is present; else None
     if any(k.framing is not None for k in knots):
         new_knot.framing = sum(k.framing or 0 for k in knots)
 
+    relabel_dicts: list[dict] = []
 
-    relabel_dicts = []  # dicts that map the node of the component to the new node in the disjoint sum
     for k in knots:
+        new_knot.attr.update(k.attr)
 
-        new_knot.attr.update(k.attr)  # update attributes
-        relabel_dicts.append(relabelling := dict())  # create new node dict for the component
+        relabel = {}
+        relabel_dicts.append(relabel)
 
+        # create nodes
         for node, inst in k.nodes.items():
-            relabelling[node] = (node_label := next(new_node_name_iter))
+            new_name = next(new_name_iter)
+            relabel[node] = new_name
             new_knot.add_node(
-                node_for_adding=node_label,
+                node_for_adding=new_name,
                 create_using=type(inst),
                 degree=len(inst),
-                **inst.attr
+                **inst.attr,
             )
 
+        # create arcs
         for arc in k.arcs:
             for ep1, ep2 in permutations(arc):
                 new_knot.set_endpoint(
-                    endpoint_for_setting=(relabelling[ep1.node], ep1.position),
-                    adjacent_endpoint=(relabelling[ep2.node], ep2.position),
+                    endpoint_for_setting=(relabel[ep1.node], ep1.position),
+                    adjacent_endpoint=(relabel[ep2.node], ep2.position),
                     create_using=type(ep2),
-                    **ep2.attr
+                    **ep2.attr,
                 )
 
-    return (new_knot, relabel_dicts) if return_relabel_dictionaries else new_knot
-
-
+    return (new_knot, relabel_dicts) if return_relabel_dicts else new_knot
 
 
 if __name__ == "__main__":

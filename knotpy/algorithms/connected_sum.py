@@ -7,14 +7,14 @@ __all__ = ['is_connected_sum', 'is_connected_sum_third_order', "connected_sum_de
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-# TODO: write tests
-
 from collections import deque
 
+from knotpy.classes.planardiagram import Diagram
 from knotpy.classes.endpoint import Endpoint
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.disjoint_union import disjoint_union_decomposition, disjoint_union
 from knotpy.algorithms.cut_set import find_arc_cut_set
+
 
 def is_connected_sum(k: PlanarDiagram | OrientedPlanarDiagram) -> bool:
     """Determine if the given planar diagram represents a connected sum.
@@ -30,7 +30,7 @@ def is_connected_sum(k: PlanarDiagram | OrientedPlanarDiagram) -> bool:
     """
     return find_arc_cut_set(k, order=2, minimum_partition_nodes=2) is not None
 
-def _split_at_arcs(k: PlanarDiagram | OrientedPlanarDiagram, arcs: tuple):
+def _split_at_arcs(k: Diagram, arcs: tuple[frozenset[Endpoint], frozenset[Endpoint]]) -> list[Diagram]:
     """Split a planar diagram at the given arcs."""
     (e, f) = arcs  # get the two edges of the cut-set
     e_a, e_b = e
@@ -87,7 +87,7 @@ def is_connected_sum_third_order(g: PlanarDiagram) -> bool:
     return find_arc_cut_set(g, order=3, minimum_partition_nodes=2) is not None
 
 
-def connected_sum(a: PlanarDiagram | OrientedPlanarDiagram, b:PlanarDiagram | OrientedPlanarDiagram, arcs:None | list | tuple = None) -> PlanarDiagram | OrientedPlanarDiagram:
+def connected_sum(a: Diagram, b: Diagram, arcs:None | list | tuple = None) -> Diagram:
 
     if type(a) != type(b):
         raise TypeError("The two diagrams must be of the same type.")
@@ -98,7 +98,7 @@ def connected_sum(a: PlanarDiagram | OrientedPlanarDiagram, b:PlanarDiagram | Or
     ep_a_1, ep_a_2 = arc_a
     ep_b_1, ep_b_2 = arc_b
 
-    ab, node_relabel_dicts = disjoint_union(a, b, return_relabel_dictionaries=True)
+    ab, node_relabel_dicts = disjoint_union(a, b, return_relabel_dicts=True)
 
     # Switch endpoints if orientation does not match
     if type(ep_a_1) is not Endpoint and type(ep_a_1) == type(ep_b_1):

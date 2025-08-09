@@ -14,12 +14,9 @@ from .insert import *
 from .join import *
 from .naming import *
 from .orientation import *
-from .paths import *
-from .permute import *
 from .remove import *
 from .rewire import *
 from .sanity import *
-from .skein import *
 from .subdivide import *
 from .symmetry import *
 from .tangle import *

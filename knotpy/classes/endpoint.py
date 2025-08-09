@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Hashable
 from typing import Any
+from collections.abc import Iterable
 
 from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.utils.dict_utils import compare_dicts
 
 __all__ = ["Endpoint", "IngoingEndpoint", "OutgoingEndpoint"]
 __version__ = "0.1"
-
 
 def _dict2str(d: dict[str, Any] | dict[Any, Any]) -> str:
     """Return a compact, stable string for attribute dicts.
@@ -265,6 +265,40 @@ class OutgoingEndpoint(Endpoint):
         """
         return True
 
+
+def ensure_endpoint(k, ep_like) -> Endpoint:
+    """Return an Endpoint for an endpoint-like input.
+
+    Args:
+        k (PlanarDiagram): A planar diagram providing ``endpoint_from_pair``.
+        ep_like: Either an Endpoint instance or a pair ``(node, position)``.
+
+    Returns:
+        Endpoint: The concrete endpoint object in ``k``.
+    """
+    if isinstance(ep_like, Endpoint):
+        return ep_like
+    node, pos = ep_like
+    return k.endpoint_from_pair((node, pos))
+
+
+def ensure_arc(k, arc_like) -> frozenset[Endpoint]:
+    """
+    Convert various arc-like inputs into a frozenset of two Endpoints.
+
+    Args:
+        k: A PlanarDiagram containing the arc.
+        arc_like: Either a frozenset, set, list, or tuple containing two endpoints
+                  (Endpoints or (node, position) tuples).
+
+    Returns:
+        frozenset[Endpoint]: The arc as a frozenset of two validated Endpoints.
+    """
+    if not isinstance(arc_like, Iterable) or len(arc_like) != 2:
+        raise TypeError(f"Arc must be an iterable of two endpoints, got: {arc_like!r}")
+
+    ep1, ep2 = (ensure_endpoint(k, ep) for ep in arc_like)
+    return frozenset({ep1, ep2})
 
 if __name__ == "__main__":
     pass

@@ -1,52 +1,61 @@
+# knotpy/algorithms/degree_sequence.py
+
 """
-Degree sequence of a knotted graph diagram.
+Degree and neighborhood growth sequences for planar diagrams.
 """
 
-__all__ = ['degree_sequence', 'neighbour_sequence']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__all__ = ["degree_sequence", "neighbour_sequence"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.utils.set_utils import LeveledSet
 
-def degree_sequence(k: PlanarDiagram) -> tuple:
-    """
-    Compute and return the degree sequence of all nodes in a given PlanarDiagram.
-    
-    Args:
-        k (PlanarDiagram): The input planar diagram, where each node has a certain degree 
-                           representing the number of endpoints connected to it.
-    
-    Returns:
-        tuple: A tuple containing the sorted degree sequence (in ascending order) of nodes in the 
-               planar diagram.
-    """
-    return tuple(sorted([k.degree(node) for node in k.nodes]))  
 
-
-def neighbour_sequence(k: PlanarDiagram, node) -> tuple:
+def degree_sequence(k: PlanarDiagram) -> tuple[int, ...]:
     """
-    Computes the neighbor sequence for a given node in a PlanarDiagram.
+    Return the sorted degree sequence of all nodes.
 
     Args:
-        k (PlanarDiagram): The PlanarDiagram object containing nodes and edges.
-        node: Starting node for which the neighbor sequence is computed.
+        k: Unoriented planar diagram.
 
     Returns:
-        tuple: A tuple where each element represents the size of a neighbor
-            layer in the sequence, starting from the initial node.
-
+        Tuple of node degrees in nondecreasing order.
     """
+    return tuple(sorted(k.degree(v) for v in k.nodes))
+
+
+def neighbour_sequence(k: PlanarDiagram, node) -> tuple[int, ...]:
+    """
+    Return the BFS layer sizes starting from ``node``.
+
+    This is the “neighbor sequence” used in canonicalization: perform a BFS
+    from ``node`` and record how many *new* nodes appear at each distance.
+
+    Args:
+        k: Unoriented planar diagram.
+        node: Starting node.
+
+    Returns:
+        Tuple where the i-th entry is the number of nodes at distance i from
+        ``node`` (i ≥ 1). The 0-th layer (the start) is not included.
+
+    Raises:
+        KeyError: If ``node`` is not present in the diagram.
+    """
+    if node not in k.nodes:
+        raise KeyError(f"Node {node!r} not found in the diagram.")
 
     seq = LeveledSet([node])
 
+    # Build successive BFS layers until the last layer is empty.
     while not seq.is_level_empty(-1):
         seq.new_level()
-        seq.extend([ep.node for node in seq.iter_level(-2) for ep in k.nodes[node]])
+        seq.extend(ep.node for v in seq.iter_level(-2) for ep in k.nodes[v])
 
-    #return tuple(len(l) for l in seq.iter_level(slice(None, -1)))
-    #return tuple(len(list(seq.iter_level(i))) for i in range(seq.number_of_levels()))[:-1]
+    # Drop the last (empty) layer count.
     return seq.level_sizes()[:-1]
+
 
 if __name__ == "__main__":
     pass

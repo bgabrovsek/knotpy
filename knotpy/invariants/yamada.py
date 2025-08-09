@@ -22,7 +22,7 @@ import sympy as sp
 from knotpy.algorithms.canonical import canonical
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.orientation import unorient
-from knotpy.algorithms.skein import smoothen_crossing, crossing_to_vertex
+from knotpy.invariants.skein import smoothen_crossing, crossing_to_vertex
 from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.algorithms.topology import bridges, loops
 from knotpy.algorithms.remove import remove_arc, remove_bivalent_vertices

@@ -12,7 +12,7 @@ from itertools import product
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.orientation import orient
-from knotpy.algorithms.skein import smoothen_crossing
+from knotpy.invariants.skein import smoothen_crossing
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import OutgoingEndpoint
 from knotpy.algorithms.disjoint_union import add_unknot

@@ -1,65 +1,71 @@
+# knotpy/algorithms/cycles.py
+
 """
-Cycles
+Enumerate simple cycles of a given length.
 """
 
-__all__ = ['cycles']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
-
+__all__ = ["cycles"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from knotpy.classes.planardiagram import PlanarDiagram
 
-def cycles(g:PlanarDiagram, n:int):
-    """ return cycles of length n"""
 
+def cycles(g: PlanarDiagram, n: int) -> set[tuple]:
+    """
+    Return all simple cycles of length ``n`` in the diagram.
+
+    Cycles are reported in a canonical form: among all rotations and the reversed
+    cycle’s rotations, the lexicographically smallest tuple is kept. This avoids
+    duplicates caused by different starting points or direction.
+
+    Args:
+        g: Unoriented planar diagram.
+        n: Target cycle length (must be ≥ 1).
+
+    Returns:
+        A set of node-tuples, each tuple representing a simple cycle of length ``n``.
+    """
     if n < 1:
         raise ValueError("Length must be at least 1")
 
-    all_cycles = set()
+    # Precompute neighbors (by node only; ignore endpoint positions)
+    neighbors: dict = {v: [adj.node for adj in g.nodes[v]] for v in g.nodes}
 
-    def depth_first_search(path, visited):
-        current = path[-1]
+    found: set[tuple] = set()
+
+    def dfs(path: list, visited: set) -> None:
+        curr = path[-1]
         start = path[0]
+
         if len(path) == n:
-            if start in [node for node, _ in g.nodes[current]]:
-                cycle = tuple(path)
-                canonical = _min_lex_rotation(cycle)
-                all_cycles.add(canonical)
+            # close the cycle if there is an edge back to start
+            if start in neighbors[curr]:
+                can = _min_lex_rotation(tuple(path))
+                found.add(can)
             return
 
-        for neighbour_node, position in g.nodes[current]:
-            if neighbour_node in visited or neighbour_node in path:
+        for nb in neighbors[curr]:
+            if nb in visited:
                 continue
-            depth_first_search(path + [neighbour_node], visited | {neighbour_node})
+            dfs(path + [nb], visited | {nb})
 
     for v in g.nodes:
-        depth_first_search(path=[v], visited={v})
+        dfs([v], {v})
 
-    return all_cycles
+    return found
 
-def _min_lex_rotation(cycle):
-    """Return canonical rotation of a cycle (min of all rotations and reversed rotations)."""
-    rotations = [tuple(cycle[i:] + cycle[:i]) for i in range(len(cycle))]
-    reversed_rotations = [tuple(reversed(c)) for c in rotations]
-    return min(rotations + reversed_rotations)
+
+def _min_lex_rotation(cycle: tuple) -> tuple:
+    """
+    Canonical representative of a cycle under rotation and reversal.
+    """
+    L = len(cycle)
+    rots = [cycle[i:] + cycle[:i] for i in range(L)]
+    rev = tuple(reversed(cycle))
+    rev_rots = [rev[i:] + rev[:i] for i in range(L)]
+    return min(rots + rev_rots)
 
 
 if __name__ == "__main__":
-    import knotpy as kp
-    k = kp.from_knotpy_notation(
-        "a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 d2 e0 b2) d=X(f0 e1 c1 b3) e=X(c2 d1 g3 f1) f=X(d0 e3 g2 h0) g=X(h3 h1 f2 e2) h=X(f3 g1 i0 g0) i=V(h2)")
-
-    print(k)
-    k_ = kp.dual_planar_diagram(k)
-    print(k_)
-
-    print(    )
-    print("regions")
-    for r in k_.nodes:
-        print("  region", r)
-
-    for n in range(1, 5):
-        print()
-        print(n)
-        for c in cycles(k_, n):
-            print("  cycle", c)
+    pass

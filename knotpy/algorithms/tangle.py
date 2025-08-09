@@ -16,7 +16,7 @@ def tangle_decompositions(k: PlanarDiagram | OrientedPlanarDiagram, minimal_comp
 
     if any("tangle_endpoints" in node.attr for node in k.nodes.values()):
         raise ValueError("The diagram already has tangle endpoints")
-    #TODO: make ways to
+
 
     if number_of_disjoint_components(k) != 1:
         raise ValueError("Cannot compute tangle decomposition of a diagram with more than one disjoint component")

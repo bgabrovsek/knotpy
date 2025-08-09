@@ -12,11 +12,54 @@ __all__ = ["closure"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
 
+from collections import deque
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.duality import dual_planar_diagram
-from knotpy.algorithms.paths import bfs_shortest_path
 from knotpy.algorithms.remove import remove_bivalent_vertex
 from knotpy.algorithms.naming import unique_new_node_name
+
+
+def _bfs_shortest_path(graph: PlanarDiagram, start, goal):
+    """
+    Find the shortest path in a graph using the Breadth-First Search (BFS) algorithm.
+
+    This function explores paths in a graph layer by layer starting from the `start` node to
+    find the shortest possible path to the `goal` node. The function returns the shortest
+    path if one exists. If no path exists between `start` and `goal`, the function returns None.
+
+    Args:
+        graph (PlanarDiagram): The graph structure to search, where nodes and connections are
+            defined as per the PlanarDiagram class or equivalent structure.
+        start: The starting node for the search.
+        goal: The target node to find the shortest path to.
+
+    Returns:
+        list: A list representing the nodes in the shortest path from `start` to `goal`,
+            including both endpoints. If no path exists, returns None.
+    """
+    # Queue for exploring nodes and tracking paths
+    queue = deque([[start]])
+    visited = set()
+
+    while queue:
+        # Get the current path and node
+        path = queue.popleft()
+        node = path[-1]
+
+        # Check if the goal is reached
+        if node == goal:
+            return path  # This is the shortest path
+
+        # If the node hasn't been visited yet, explore its neighbors
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph.nodes[node]:
+                new_path = list(path)
+                new_path.append(neighbor.node)
+                queue.append(new_path)
+
+    return None  # Return None if no path exists between start and goal
 
 
 def _face_intersection_arc(k: PlanarDiagram, f, g):
@@ -107,7 +150,7 @@ def _over_and_under_closure(k: PlanarDiagram, A, B, arcs):
     return k
 
 
-def closure(k: PlanarDiagram, *, over: bool = False, under: bool = False) -> PlanarDiagram:
+def closure(k: PlanarDiagram, over: bool = False, under: bool = False) -> PlanarDiagram:
     """Close a knotoid by routing through the dual graph between its two degree-1 vertices.
 
     You must choose at least one of ``over`` or ``under``. If both are True, a double-sided
@@ -140,7 +183,7 @@ def closure(k: PlanarDiagram, *, over: bool = False, under: bool = False) -> Pla
     A_face = next(f for f in dual.vertices if A_ep in f)
     B_face = next(f for f in dual.vertices if B_ep in f)
 
-    path = bfs_shortest_path(dual, A_face, B_face)
+    path = _bfs_shortest_path(dual, A_face, B_face)
     arcs = [_face_intersection_arc(k, f, g) for f, g in zip(path, path[1:])]
 
     if over and under:

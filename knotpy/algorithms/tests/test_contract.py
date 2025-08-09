@@ -2,9 +2,11 @@
 from knotpy.tables.graphs import bouquet
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.tables.graphs import path_graph, cycle_graph
-from knotpy.algorithms.contract import contract_arc
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.disjoint_union import disjoint_union
+
+from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.algorithms.contract import contract_arc
 
 
 def test_contract_edge():
@@ -55,9 +57,40 @@ frozenset({d1, e2})
     g = from_knotpy_notation("d=V(d6 e2 d3 d2 e1 e0 d0) e=V(d5 d4 d1) ['framing'=0,'A'=0,'B'=0,'X'=3,'_deletions'=1,'_contractions'=7,'name'=None; ; d2:{'color'=1} d3:{'color'=1}]")
     c = contract_arc(g, (('d', 1), ("e", 2)))
 
+# tests/test_contract.py
+
+def test_contract_arc():
+    # 1) Contract where the removed vertex has a loop
+    k, r = PlanarDiagram(), PlanarDiagram()
+    k.set_arcs_from("x0a0,x1x2,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
+    r.set_arcs_from("y0e0,y1f0,y2d0,y3a0,y4y5,y6g0,y7h0")
+    contract_arc(k, (("y", 2), ("x", 3)))
+    assert k == r
+
+    # 2) Contract in a “nice” graph
+    k, r = PlanarDiagram(), PlanarDiagram()
+    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
+    r.set_arcs_from("y0e0,y1f0,y2d0,y3a0,y4b0,y5c0,y6g0,y7h0")
+    contract_arc(k, (("y", 2), ("x", 3)))
+    assert k == r
+
+    # 3) Contract where the remaining vertex has a loop
+    k, r = PlanarDiagram(), PlanarDiagram()
+    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0y1,y3g0,y4h0")
+    r.set_arcs_from("y0y1,y2d0,y3a0,y4b0,y5c0,y6g0,y7h0")
+    contract_arc(k, (("y", 2), ("x", 3)))
+    assert k == r
+
+    # 4) Mixed-loop case
+    k, r = PlanarDiagram(), PlanarDiagram()
+    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0e0,y1y4,y3g0")
+    r.set_arcs_from("y0e0,y1y7,y2d0,y3a0,y4b0,y5c0,y6g0")
+    contract_arc(k, (("y", 2), ("x", 3)))
+    assert k == r
 
 
 if __name__ == "__main__":
 
     test_contract_edge()
     test_contract_edge_attributes()
+    test_contract_arc()

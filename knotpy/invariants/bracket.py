@@ -19,7 +19,7 @@ __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 from collections import deque
 import sympy as sp
 
-from knotpy.algorithms.skein import smoothen_crossing
+from knotpy.invariants.skein import smoothen_crossing
 from knotpy.invariants.writhe import writhe
 from knotpy.algorithms.orientation import unorient
 from knotpy.classes.planardiagram import PlanarDiagram

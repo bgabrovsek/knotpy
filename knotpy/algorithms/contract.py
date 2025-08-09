@@ -1,127 +1,119 @@
+# knotpy/algorithms/contract.py
+
+"""
+Contracting an arc in a planar diagram.
+
+This module provides a single operation that *contracts* a chosen arc by
+merging its two endpoints into one vertex. The two endpoints must be given
+as an **ordered pair**: the first endpoint is kept, and the second endpoint’s
+vertex is removed (its other incident endpoints are pulled into the kept vertex).
+
+Notes:
+    - Only (unoriented) vertex–vertex arcs are supported.
+    - The operation can be performed in-place or on a copy.
+
+Example:
+    >>> from knotpy.classes.planardiagram import PlanarDiagram
+    >>> from knotpy.algorithms.contract import contract_arc
+    >>> k = PlanarDiagram()
+    >>> _ = k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
+    >>> # contract arc (keep ('y',2), remove ('x',3))
+    >>> k2 = contract_arc(k, (('y', 2), ('x', 3)), inplace=False)
+"""
+
+__all__ = ["contract_arc"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Vertex
+from knotpy.classes.endpoint import Endpoint, ensure_endpoint
 from knotpy.algorithms.rewire import pull_and_plug_endpoint
 
-def contract_arc(k: PlanarDiagram, arc_for_contracting, inplace=True) -> PlanarDiagram:
-    """
-    Contracts a specific arc in a PlanarDiagram by merging its endpoints into one vertex.
+
+def contract_arc(
+    k: PlanarDiagram,
+    arc_for_contracting: tuple[Endpoint | tuple, Endpoint | tuple],
+    inplace: bool = True,
+) -> PlanarDiagram:
+    """Contract a specific arc by merging its endpoints into a single vertex.
+
+    The arc is specified as an **ordered pair** of endpoints:
+    the first endpoint is kept (its vertex remains),
+    and the second endpoint's vertex is removed. All other incident endpoints
+    of the removed vertex are reattached to the kept vertex, preserving cyclic
+    order via ``pull_and_plug_endpoint``.
+
+    This operation is only defined for vertex–vertex arcs (both endpoints must
+    lie on vertices). Loops (both endpoints on the same vertex) are not contractible.
 
     Args:
-        k (PlanarDiagram): The planar diagram in which the arc contraction will be performed.
-        arc_for_contracting (Tuple[Tuple[int, int], Tuple[int, int]]): The arc to be contracted,
-            represented as a tuple of two endpoints, where each endpoint is a tuple consisting
-            of a node identifier and a position index. The first tuple is the 'contracted'
-            endpoint that remains after contraction, and the second tuple is the endpoint to
-            be removed.
-        inplace (bool, optional): If True, the operation is performed directly on the input
-            PlanarDiagram object. If False, a copy of the input diagram will be modified, and
-            the original remains unchanged. Defaults to True.
+        k:
+            The planar diagram to modify.
+        arc_for_contracting:
+            Ordered pair ``(keep_endpoint, remove_endpoint)`` where each endpoint is
+            either an :class:`~knotpy.classes.endpoint.Endpoint` or a ``(node, position)`` tuple.
+        inplace:
+            If ``True`` (default), mutate ``k``. If ``False``, return a modified copy.
 
     Returns:
-        PlanarDiagram: The modified planar diagram after the arc contraction if `inplace` is
-        False, or the same (mutated) diagram if `inplace` is True.
+        The diagram with the arc contracted (``k`` itself if ``inplace=True``).
 
     Raises:
-        TypeError: If either of the endpoints specified in `arc_for_contracting` does not
-        belong to a vertex in the planar diagram.
-        ValueError: If the arc specified forms a loop (i.e., the endpoints are on the same
-        vertex) and cannot be contracted.
+        TypeError: If either endpoint is not on a vertex.
+        ValueError: If the arc is a loop (both endpoints on the same vertex).
     """
     if not inplace:
         k = k.copy()
 
-
-    # print("++++ CONTRACTING ****")
-    # print(to_knotpy_notation(k), arc_for_contracting)
-
-    #k.name = None
+    # Drop a stored name if any (canonical forms typically ignore names)
     if "name" in k.attr:
         del k.attr["name"]
 
-    c_ep, del_ep = arc_for_contracting  # "contracted" endpoint c_ep (remains) and deleted endpoint d_ep (removed)
+    # Normalize endpoints
+    keep_like, drop_like = arc_for_contracting
+    keep_ep: Endpoint = ensure_endpoint(k, keep_like)
+    drop_ep: Endpoint = ensure_endpoint(k, drop_like)
 
-    c_node, c_pos = c_ep = k.endpoint_from_pair(c_ep)  # will be kept
-    del_node, del_pos = del_ep = k.endpoint_from_pair(del_ep)  # will be removed
+    keep_node, keep_pos = keep_ep.node, keep_ep.position
+    drop_node, drop_pos = drop_ep.node, drop_ep.position
 
-    del_node_inst = k.nodes[del_node]
+    # Validate vertex–vertex and non-loop
+    if not isinstance(k.nodes[keep_node], Vertex) or not isinstance(k.nodes[drop_node], Vertex):
+        raise TypeError(
+            f"Cannot contract arc: endpoints must lie on vertices "
+            f"(got {type(k.nodes[keep_node]).__name__}, {type(k.nodes[drop_node]).__name__})."
+        )
+    if keep_node == drop_node:
+        raise ValueError("Cannot contract a loop (both endpoints on the same vertex).")
 
-    if not isinstance(k.nodes[c_node], Vertex) or not isinstance(k.nodes[del_node], Vertex):
-        raise TypeError(f"Cannot contract arc since either '{c_node}' or '{del_node}' is not a Vertex.")
+    # Remove the arc itself
+    k.remove_arc((keep_ep, drop_ep))
 
-    if c_node == del_node:
-        raise ValueError("Cannot contract a loop")
+    # Pull all other endpoints incident to drop_node, one-by-one, into keep_node @ keep_pos.
+    # We iterate by decreasing the index relative to drop_pos, letting the node shrink as we pull.
+    drop_node_inst = k.nodes[drop_node]
+    idx = drop_pos
+    while drop_node_inst:  # while there remain incident endpoints
+        idx -= 1
+        src_pos = max(idx, -1) % len(drop_node_inst)
+        pull_and_plug_endpoint(
+            k,
+            source_endpoint=(drop_node, src_pos),
+            destination_endpoint=(keep_node, keep_pos),
+        )
+        # node object is updated by pull_and_plug_endpoint through k; refresh reference
+        drop_node_inst = k.nodes.get(drop_node, None)
+        if drop_node_inst is None:
+            break
 
-    k.remove_arc(arc_for_contracting)
-
-    index = del_pos
-    while del_node_inst:
-
-        # print(">", k)
-        # print(" src", (del_node, max(index, -2) % len(del_node_inst)))
-        # print(" dst", (c_node, c_pos))
-        # print("***", to_knotpy_notation(k))
-        # if (del_node, max(index, -1) % len(del_node_inst)) == ("a",0 ):
-        #     pass
-
-
-        index -= 1
-        pull_and_plug_endpoint(k,
-                               source_endpoint=(del_node, max(index, -1) % len(del_node_inst)),
-                               destination_endpoint=(c_node, c_pos))
-
-        # print("=", k)
-
-        #assert len({ep for ep in k.endpoints if "color" in ep}) == 2, f"{k}"
-
-    # Finally, remove the "other" endpoint
-    k.remove_node(del_node, remove_incident_endpoints=False)
+    # Finally remove the emptied node container (endpoints already unplugged)
+    if drop_node in k.nodes:
+        k.remove_node(drop_node, remove_incident_endpoints=False)
 
     return k
 
 
 if __name__ == "__main__":
-
-    # contracting an endpoint from a graph with a loop in the vertex that is removed
-    k, r = PlanarDiagram(), PlanarDiagram()
-    k.set_arcs_from("x0a0,x1x2,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
-    r.set_arcs_from("y0e0,y1f0,y2d0,y3a0,y4y5,y6g0,y7h0")
-    contract_arc(k, (("y", 2), ("x", 3)))
-    if k != r:
-        print(k, "(wrong)")
-        print(r)
-    else:
-        print("ok")
-
-
-    # contracting an endpoint from a nice graph
-    k, r = PlanarDiagram(), PlanarDiagram()
-    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
-    r.set_arcs_from("y0e0,y1f0,y2d0,y3a0,y4b0,y5c0,y6g0,y7h0")
-    contract_arc(k, (("y",2),("x",3)))
-    if k != r:
-        print(k, "(wrong")
-    else:
-        print("ok")
-
-
-    #contracting an endpoint from a graph with a loop in the point that remains
-    k, r = PlanarDiagram(), PlanarDiagram()
-    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0y1,y3g0,y4h0")
-    r.set_arcs_from("y0y1,y2d0,y3a0,y4b0,y5c0,y6g0,y7h0")
-    contract_arc(k, (("y",2),("x",3)))
-    if k != r:
-        print(k, "(wrong)")
-    else:
-        print("ok")
-
-    k, r = PlanarDiagram(), PlanarDiagram()
-    k.set_arcs_from("x0a0,x1b0,x2c0,x4d0,x3y2,y0e0,y1y4,y3g0")
-    r.set_arcs_from("y0e0,y1y7,y2d0,y3a0,y4b0,y5c0,y6g0")
-    contract_arc(k, (("y",2),("x",3)))
-    if k != r:
-        print(k, "(wrong)")
-        print(r)
-    else:
-        print("ok")
-
+    pass
 

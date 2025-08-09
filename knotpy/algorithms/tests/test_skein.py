@@ -1,6 +1,6 @@
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.canonical import canonical
-from knotpy.algorithms.skein import crossing_to_vertex, smoothen_crossing
+from knotpy.invariants.skein import crossing_to_vertex, smoothen_crossing
 
 def test_skein():
     trefoil = "a=X(b3 c0 c3 b0) b=X(a3 c2 c1 a0) c=X(a1 b2 b1 a2)"

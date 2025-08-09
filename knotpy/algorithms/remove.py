@@ -1,8 +1,40 @@
+# knotpy/algorithms/remove.py
+
+"""
+Utilities for removing structure from planar diagrams:
+- empty nodes
+- a specific arc
+- all loops
+- unknots
+- bivalent (degree-2) vertices
+"""
+
+__all__ = [
+    "remove_empty_nodes",
+    "remove_arc",
+    "remove_loops",
+    "remove_unknots",
+    "remove_bivalent_vertex",
+    "remove_bivalent_vertices",
+]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
+
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import loops
-from knotpy.algorithms.topology import _is_vertex_an_unknot
-def remove_empty_nodes(k:PlanarDiagram, inplace=True) -> PlanarDiagram:
+from knotpy.algorithms.topology import _is_vertex_an_unknot  # used intentionally
 
+
+def remove_empty_nodes(k: PlanarDiagram, inplace: bool = True) -> PlanarDiagram:
+    """Remove all nodes with degree 0.
+
+    Args:
+        k: Diagram to clean.
+        inplace: If False, operate on a copy.
+
+    Returns:
+        The mutated diagram (or the new copy if ``inplace=False``).
+    """
     if not inplace:
         k = k.copy()
 
@@ -11,123 +43,153 @@ def remove_empty_nodes(k:PlanarDiagram, inplace=True) -> PlanarDiagram:
             k.remove_node(n)
     return k
 
-def remove_arc(k: PlanarDiagram, arc_for_removing: tuple, inplace=True) -> PlanarDiagram:
-    """
+
+def remove_arc(k: PlanarDiagram, arc_for_removing: frozenset, inplace: bool = True) -> PlanarDiagram:
+    """Remove a single arc.
 
     Args:
-        k:
-        arc_for_removing:
-        inplace:
+        k: Diagram to modify.
+        arc_for_removing: The arc to remove (conventionally a ``frozenset`` of two endpoints).
+        inplace: If False, operate on a copy.
 
     Returns:
-
+        The mutated diagram (or the new copy if ``inplace=False``).
     """
-
     if not inplace:
         k = k.copy()
 
+    # Clear human name if present (canonical naming may change after removal)
     if "name" in k.attr:
         del k.attr["name"]
-    #k.name = None
+
     k.remove_arc(arc_for_removing=arc_for_removing)
     return k
 
 
-def remove_loops(k: PlanarDiagram) -> PlanarDiagram:
-    """ Remove loops and return how many loops were removed. Inplace.
+def remove_loops(k: PlanarDiagram) -> int:
+    """Remove all loops (arcs whose endpoints share the same node).
+
+    Operates in place.
 
     Args:
-        k:
+        k: Diagram to modify.
 
     Returns:
-
+        The number of removed loops.
     """
-    count_removed = 0
+    count = 0
+    # Repeatedly query loops; remove one by one
+    while (ls := loops(k)):
+        k.remove_arc(ls[0])
+        count += 1
 
-    # TODO: speed up, since we compute all loops and remove only one
-    while l := loops(k):
-        k.remove_arc(l[0])
-        count_removed += 1
-    #k.name = None
     if "name" in k.attr:
         del k.attr["name"]
 
-    return count_removed
+    return count
 
 
-def remove_unknots(k: PlanarDiagram, max_unknots=None):
+def remove_unknots(k: PlanarDiagram, max_unknots: int | None = None) -> int:
+    """Remove disjoint unknots (degree-2 looped vertices) from the diagram.
+
+    Args:
+        k: Diagram to modify (in place).
+        max_unknots: If provided, remove at most this many unknots.
+
+    Returns:
+        Number of removed unknots.
     """
-    Remove unknots from the diagram (up to `max_unknots` unknots if given).
-
-    :param k: The input planar diagram.
-    :type k: PlanarDiagram
-    :param max_unknots: Maximum number of unknots to remove (removes all if None).
-    :type max_unknots: int, optional
-    :return: The number of unknots removed.
-    :rtype: int
-    """
-    vertices_to_remove = [v for v in k.vertices if _is_vertex_an_unknot(k, v)]
-
+    vertices = [v for v in k.vertices if _is_vertex_an_unknot(k, v)]
     if max_unknots is not None:
-        vertices_to_remove = vertices_to_remove[:max_unknots]
+        vertices = vertices[:max_unknots]
 
-    # vertices_to_remove = []
-    # for v in k.vertices:
-    #     if max_unknots is not None and len(vertices_to_remove) >= max_unknots:
-    #         break
-    #     if _is_vertex_an_unknot(k, v):
-    #         vertices_to_remove.append(v)
-
-    for v in vertices_to_remove:
+    for v in vertices:
         k.remove_node(v, remove_incident_endpoints=True)
-    return len(vertices_to_remove)
+
+    return len(vertices)
 
 
+def remove_bivalent_vertex(k: PlanarDiagram, node, keep_if_unknot: bool = True) -> None:
+    """Remove a degree-2 vertex by splicing its incident edges.
 
-def remove_bivalent_vertex(k:PlanarDiagram, node, keep_if_unknot=True):
+    If both incident arcs form a trivial loop at the same vertex and
+    ``keep_if_unknot`` is True, the vertex is kept.
 
+    Args:
+        k: Diagram to modify (in place).
+        node: The degree-2 vertex to remove.
+        keep_if_unknot: Preserve the vertex if it is the center of an unknot.
+
+    Raises:
+        ValueError: If ``node`` is not degree-2.
+    """
     if k.degree(node) != 2:
-        raise ValueError(f"Node {node} is not a bivalent vertex")
+        raise ValueError(f"Node {node} is not a bivalent vertex.")
 
     ep_a, ep_b = k.nodes[node]
 
+    # keep trivial loop (optional)
     if keep_if_unknot and ep_a.node == ep_b.node == node:
         return
 
+    # splice
     k.set_endpoint(ep_a, ep_b)
     k.set_endpoint(ep_b, ep_a)
     k.remove_node(node, remove_incident_endpoints=False)
 
 
-def remove_bivalent_vertices(k:PlanarDiagram, match_attributes=False):
-    """Remove bivalent vertices from knotted graph k
-    :param k:
-    :param match_attributes: if True, removes bivalent vertices only if all four adjacent/incident endpoints match,
-    if False, it removes the bivalent vertices regardless
-    :return: None
+def remove_bivalent_vertices(k: PlanarDiagram, match_attributes: bool = False) -> int:
+    """Remove all degree-2 vertices by splicing their incident edges.
+
+    Args:
+        k: Diagram to modify (in place).
+        match_attributes: If True, only remove a bivalent vertex when the
+            four adjacent/incident endpoints have matching attributes in pairs
+            (i.e., compatible to splice). If False, remove regardless of attrs.
+
+    Returns:
+        The number of removed bivalent vertices.
+
+    Notes:
+        - Loops are never spliced here.
+        - For oriented diagrams, vertices whose two outward endpoints have the
+          same direction are skipped (incoherent pairing).
     """
     if not hasattr(k, "vertices"):
-        raise TypeError(f"cannot remove bivalent vertices from an instance of type {type(k)}")
+        raise TypeError(f"Cannot remove bivalent vertices from type {type(k)}.")
 
-    bivalent_vertices = {node for node in k.vertices if len(k.nodes[node]) == 2}
+    removed = 0
+    candidates = {node for node in k.vertices if len(k.nodes[node]) == 2}
 
-    while bivalent_vertices:
-        node = bivalent_vertices.pop()
-        # get the incident endpoints b0 and b1 and the incident endpoints a0 and a1 (ai is the twin of bi for i=0,1)
+    while candidates:
+        node = candidates.pop()
+
+        # incident endpoints at node
         b0 = k.endpoint_from_pair((node, 0))
         a0 = k.twin(b0)
         b1 = k.endpoint_from_pair((node, 1))
         a1 = k.twin(b1)
 
-        if match_attributes and (b0.attr == a0.attr == b1.attr == a1.attr):
-            continue  # skip removing vertex
-
+        # keep loops intact
         if b0.node == a0.node or b1.node == a1.node:
-            continue  # cannot remove loops
+            continue
 
+        # oriented: skip incoherent pairing
         if k.is_oriented() and (type(a0) is type(a1)):
-            continue  # skip incoherently ordered endpoints
+            continue
 
+        # attribute compatibility gate (only remove if they match when requested)
+        if match_attributes and not (b0.attr == a0.attr == b1.attr == a1.attr):
+            continue
+
+        # splice a0 <-> a1
         k.nodes[a0.node][a0.position] = a1
         k.nodes[a1.node][a1.position] = a0
         k.remove_node(node_for_removing=node, remove_incident_endpoints=False)
+        removed += 1
+
+    return removed
+
+
+if __name__ == "__main__":
+    pass

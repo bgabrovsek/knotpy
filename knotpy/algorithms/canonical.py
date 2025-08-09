@@ -23,7 +23,7 @@ from knotpy.algorithms.disjoint_union import (
     disjoint_union_decomposition,
     disjoint_union,
 )
-from knotpy.algorithms.permute import permute_node
+from knotpy.algorithms.rewire import permute_node
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Crossing
 

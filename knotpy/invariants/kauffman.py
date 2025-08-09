@@ -46,7 +46,7 @@ from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.algorithms.remove import remove_unknots
 from knotpy.invariants.homflypt import _choose_crossing_for_switching
 from knotpy.algorithms.symmetry import mirror
-from knotpy.algorithms.skein import smoothen_crossing
+from knotpy.invariants.skein import smoothen_crossing
 from knotpy.invariants.writhe import writhe
 from knotpy.algorithms.orientation import unorient
 from knotpy.invariants._symbols import _a, _z, _KAUFFMAN_2_VARIABLE_SUM

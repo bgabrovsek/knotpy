@@ -30,7 +30,7 @@ from knotpy.algorithms.alternating import is_face_alternating
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.remove import remove_unknots
-from knotpy.algorithms.skein import smoothen_crossing
+from knotpy.invariants.skein import smoothen_crossing
 from knotpy.algorithms.symmetry import mirror
 from knotpy.classes.freezing import freeze
 from knotpy.classes.planardiagram import OrientedPlanarDiagram, PlanarDiagram

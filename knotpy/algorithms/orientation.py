@@ -1,94 +1,142 @@
+# knotpy/algorithms/orientation.py
+
 """
 Algorithms that deal with orientation.
 """
 
 __all__ = ["orient", "unorient", "all_orientations"]
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 import itertools as it
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-from knotpy.algorithms.topology import edges
+from knotpy.algorithms.topology import edges as compute_edges
 
-def orient_edges(k: PlanarDiagram, edges: list):
-    """Orient the diagram so that edges are positively ordered, i.e. the orientations follows the endpoints
-    edge[0], edge[1], ..."""
 
+def orient_edges(k: PlanarDiagram, edge_paths: list[list[Endpoint]]) -> OrientedPlanarDiagram:
+    """Orient an unoriented diagram along given edge paths.
+
+    Each item in ``edge_paths`` is a sequence of endpoints describing an edge
+    as a chain of alternating endpoints. The orientation is assigned along each
+    path by pairing consecutive endpoints: (0→1), (2→3), ...
+
+    Args:
+        k: Unoriented diagram to orient.
+        edge_paths: List of edge endpoint sequences. For each path, orientation
+            goes from index 0 to 1, 2 to 3, etc. If you want the opposite
+            orientation for a particular edge, reverse that list.
+
+    Returns:
+        A new :class:`OrientedPlanarDiagram`.
+
+    Example:
+        >>> # Given an unoriented diagram k:
+        >>> paths = compute_edges(k)               # list of edges (endpoint sequences)
+        >>> ok = orient_edges(k, paths)            # orient along the given direction
+    """
     new_k = OrientedPlanarDiagram(**k.attr)
-    for node in k.nodes:
-        new_k.add_node(node_for_adding=node,
-                       create_using=type(k.nodes[node]),
-                       degree=k.nodes[node].degree(),
-                       **k.nodes[node].attr)
 
-    for edge in edges:
-        for ep, twin_ep in zip(edge[::2], edge[1::2]):
-            new_k.set_endpoint(endpoint_for_setting=ep,
-                               adjacent_endpoint=twin_ep,
-                               create_using=OutgoingEndpoint,
-                               **k.nodes[ep.node].attr
-                               )
-            new_k.set_endpoint(endpoint_for_setting=twin_ep,
-                               adjacent_endpoint=ep,
-                               create_using=IngoingEndpoint,
-                               **k.nodes[ep.node].attr
-                               )
+    # copy nodes
+    for node, inst in k.nodes.items():
+        new_k.add_node(
+            node_for_adding=node,
+            create_using=type(inst),
+            degree=len(inst),
+            **inst.attr,
+        )
+
+    # wire oriented endpoints
+    for path in edge_paths:
+        # pair up (0->1), (2->3), ...
+        for ep, twin_ep in zip(path[::2], path[1::2]):
+            # forward direction
+            new_k.set_endpoint(
+                endpoint_for_setting=(ep.node, ep.position),
+                adjacent_endpoint=(twin_ep.node, twin_ep.position),
+                create_using=OutgoingEndpoint,
+                **ep.attr,
+            )
+            # reverse direction
+            new_k.set_endpoint(
+                endpoint_for_setting=(twin_ep.node, twin_ep.position),
+                adjacent_endpoint=(ep.node, ep.position),
+                create_using=IngoingEndpoint,
+                **twin_ep.attr,
+            )
+
     return new_k
 
 
-def all_orientations(k: PlanarDiagram, up_to_reversal=False) -> list[OrientedPlanarDiagram]:
-    """
-    Return all possible orientations of a given unoriented PlanarDiagram. If the diagram is invertible, both orientations are still returned.
+def all_orientations(k: PlanarDiagram, up_to_reversal: bool = False) -> list[OrientedPlanarDiagram]:
+    """Generate all orientations of an unoriented diagram.
 
-    Parameters:
-        k (PlanarDiagram): The PlanarDiagram for which all possible orientations are generated.
+    If ``up_to_reversal`` is True, the first edge is always oriented “forward”
+    and only the remaining edges are flipped (removing a global reversal).
+
+    Args:
+        k: Unoriented diagram.
+        up_to_reversal: If True, return orientations modulo global reversal.
 
     Returns:
-        list: A list of oriented planar diagrams.
-    """
+        List of :class:`OrientedPlanarDiagram`.
 
+    Notes:
+        - If ``k`` is already oriented, it is first “unoriented” (structure
+          preserved) and then all orientations are generated.
+        - If ``k.name`` is set, each result’s name is suffixed with a string of
+          “+”/“–” per-edge choices (useful for debugging).
+
+    Example:
+        >>> diagrams = all_orientations(k, up_to_reversal=True)
+        >>> len(diagrams)  # number depends on number of edges
+    """
     if k.is_oriented():
         k = unorient(k)
 
-    base_name = str(k.name).strip().strip('+-') if k.name is not None else None
+    edge_list = sorted(compute_edges(k))
+    m = len(edge_list)
 
-    all_edges = sorted(edges(k))
     if up_to_reversal:
-        orient = [(True,) + rest for rest in it.product((True, False), repeat=len(all_edges) - 1)]  # not needed to be a list
+        # fix first edge to True, vary the rest
+        flip_choices = [(True,) + rest for rest in it.product((True, False), repeat=m - 1)]
     else:
-        orient = list(it.product((True, False), repeat=len(all_edges)))  # not needed to be a list
+        flip_choices = list(it.product((True, False), repeat=m))
 
-    result = [
-        orient_edges(k=k, edges=edge_orientations)
-        for edge_orientations in ([e if _ else e[::-1] for e, _ in zip(all_edges, o)] for o in orient)
-    ]
+    results: list[OrientedPlanarDiagram] = []
+    for choice in flip_choices:
+        oriented_paths = [e if keep else e[::-1] for e, keep in zip(edge_list, choice)]
+        ok = orient_edges(k, oriented_paths)
 
-    # add signs to the end of the string
-    if k.name is not None:
-        for k, o in zip(result, orient):
-            if k.name:
-                k.name = str(k.name) + "".join(["+" if _ else "-" for _ in o])
+        if k.name:
+            suffix = "".join("+" if keep else "-" for keep in choice)
+            ok.name = f"{k.name}{suffix}"
+        results.append(ok)
 
-    return result
+    return results
 
-def orient(k: PlanarDiagram):
-    """
-    Orient the given unoriented planar. The returned orientation is random.
-    Parameters:
-        k (PlanarDiagram)
-            The planar diagram to be oriented.
+
+def orient(k: PlanarDiagram) -> OrientedPlanarDiagram:
+    """Orient an unoriented diagram using the default edge directions.
+
+    This picks the natural direction for every edge returned by
+    :func:`knotpy.algorithms.topology.edges`.
+
+    Args:
+        k: Unoriented diagram.
 
     Returns:
-        PlanarDiagram
-            The oriented planar diagram based on the specified configuration.
+        Oriented diagram.
+
+    Example:
+        >>> ok = orient(k)
     """
+    return orient_edges(k, compute_edges(k))
 
-    return orient_edges(k=k, edges=edges(k))
 
-
-def unorient(k:OrientedPlanarDiagram | PlanarDiagram) -> PlanarDiagram:
+def unorient(k: OrientedPlanarDiagram | PlanarDiagram) -> PlanarDiagram:
+    """Return an unoriented copy of the diagram."""
     return k.copy(copy_using=PlanarDiagram)
 
 

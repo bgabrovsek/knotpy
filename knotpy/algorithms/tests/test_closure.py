@@ -10,7 +10,7 @@ def test_closure():
     assert sanity_check(u)
     o = closure(k, over=True)
     assert sanity_check(o)
-    b = closure(k, True, True)
+    b = closure(k, over=True, under=True)
     assert sanity_check(b)
 
 
