@@ -20,17 +20,25 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx_gallery.gen_gallery',
     "sphinx.ext.napoleon",
-    "sphinx.ext.mathjax"]
-
+    "sphinx.ext.mathjax",
+]
 # -- Docstring style & autosummary -------------------------------------------------
 autosummary_generate = True
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 napoleon_use_param = True
 napoleon_use_rtype = False
-autodoc_typehints = "description"  # types shown in the doc body, not cluttering signatures
+autodoc_typehints = "description"
 
 
+autodoc_default_options = {
+    "members": True,
+    "undoc-members": True,         # show even functions without docstrings
+    "show-inheritance": False,
+    # If __all__ is hiding things, uncomment the next line:
+    # "ignore-module-all": True,
+}
+autodoc_member_order = "bysource"  # optional: keep source order
 
 templates_path = ['_templates']
 
