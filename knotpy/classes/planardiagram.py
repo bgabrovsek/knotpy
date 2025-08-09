@@ -12,7 +12,7 @@ from knotpy.classes.node import Node, Crossing, Vertex, VirtualCrossing
 from knotpy.classes.views import NodeView, EndpointView, ArcView, FaceView, FilteredNodeView
 from knotpy.classes._abstractdiagram import _CrossingDiagram, _VertexDiagram, _VirtualCrossingDiagram
 
-__all__ = ["PlanarDiagram", "_NodeCachedPropertyResetter", "OrientedPlanarDiagram"]
+__all__ = ["PlanarDiagram", "OrientedPlanarDiagram", "Diagram", "DiagramCollection"]
 __version__ = "0.1.1"
 __author__ = "Boštjan Gabrovšek"
 
@@ -916,8 +916,11 @@ def planar_diagram_from_data(incoming_data: Any, create_using: type[PlanarDiagra
 
     return create_using
 
+#: Union of knot diagram types used across KnotPy.
 Diagram = PlanarDiagram | OrientedPlanarDiagram
-DiagramOrCollection = Diagram | list[Diagram] | set[Diagram] | tuple[Diagram, ...]
+
+#: Common collection types of diagrams.
+DiagramCollection = list[Diagram] | set[Diagram] | tuple[Diagram, ...]
 
 if __name__ == "__main__":
     pass

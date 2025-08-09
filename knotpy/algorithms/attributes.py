@@ -1,194 +1,174 @@
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+# knotpy/algorithms/attributes.py
 
-def clear_node_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
-    """Clear node attributes of the planar diagram k, or the list of planar
-    diagrams k.
+"""
+Utilities for clearing attributes on diagrams (nodes, endpoints, diagram-level).
 
-    Args:
-        k (Union[PlanarDiagram, List[PlanarDiagram], Set[PlanarDiagram]]):
-            The object or a collection of objects whose node attributes
-            are to be cleared.
-        attr (Optional[Union[List, Set, Tuple, str]]): The attribute(s) to
-            remove. Can be a single attribute (str), or a collection of
-            attributes (list, set, or tuple). If None, all attributes
-            will be cleared.
-    """
+These helpers work both on a single diagram and on collections (list, set, tuple)
+of diagrams. Attribute selection can be a single string or an iterable of strings.
+"""
 
-    if isinstance(k, (list, set, tuple)):
-        for _ in k:
-            clear_node_attributes(_, attr)
-        return
+__all__ = [
+    "clear_node_attributes",
+    "clear_endpoint_attributes",
+    "clear_diagram_attributes",
+    "clear_attributes",
+    "clear_temporary_node_attributes",
+    "clear_temporary_endpoint_attributes",
+    "clear_temporary_diagram_attributes",
+    "clear_temporary_attributes",
+]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-    if not isinstance(k, PlanarDiagram):
-        raise TypeError(f"k should be a PlanarDiagram, got {type(k)}")
+from knotpy.classes.planardiagram import (
+    PlanarDiagram,
+    OrientedPlanarDiagram,
+    Diagram,             # type alias: PlanarDiagram | OrientedPlanarDiagram
+    DiagramCollection,   # type alias: list[Diagram] | set[Diagram] | tuple[Diagram, ...]
+)
 
+
+def _as_attr_list(attr) -> list[str] | None:
+    """Normalize `attr` to a list of strings (or None)."""
     if attr is None:
-        for node in k.nodes:
-            k.nodes[node].attr.clear()
-    else:
-        for node in k.nodes:
-            if attr in k.nodes[node].attr:
-                del k.nodes[node].attr[attr]
-
-
-def clear_endpoint_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
-    """Clear endpoint attributes of the planar diagram k, or the list of planar diagrams k.
-
-    This function operates in-place to remove specified attributes from nodes
-    in a given object or collection of objects. If the collection is a list,
-    set, or tuple, the function is applied recursively to each object within
-    the collection. If the `attr` parameter is not specified, all attributes
-    of the nodes are cleared.
-
-    Args:
-        k (Union[PlanarDiagram, List[PlanarDiagram], Set[PlanarDiagram]]):
-            The object or a collection of objects whose endpoint attributes
-            are to be cleared.
-        attr (Optional[Union[List, Set, Tuple, str]]): The attribute(s) to
-            remove. Can be a single attribute (str), or a collection of
-            attributes (list, set, or tuple). If None, all attributes
-            will be cleared.
-    """
-
-
-    if isinstance(k, (list, set, tuple)):
-        for _ in k:
-            clear_endpoint_attributes(_, attr)
-        return
-
-    # Clear single diagram attributes.
-
+        return None
     if isinstance(attr, (list, set, tuple)):
-        for key in attr:
-            clear_endpoint_attributes(k, key)
-        return
+        return [str(a) for a in attr]
+    return [str(attr)]
 
-    if attr is None:
-        for ep in k.endpoints:
-            k.nodes[ep.node][ep.position].attr.clear()
+
+def _iter_diagrams(obj: Diagram | DiagramCollection):
+    """Yield diagrams from a diagram or a collection of diagrams."""
+    if isinstance(obj, (list, set, tuple)):
+        for d in obj:
+            yield from _iter_diagrams(d)
     else:
-        for ep in k.endpoints:
-            if attr in k.nodes[ep.node][ep.position].attr:
-                del k.nodes[ep.node][ep.position].attr[attr]
+        yield obj
 
 
-def clear_diagram_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple, attr=None):
-    """Clear main diagram-level attributes of the diagram k, or the list of planar diagrams k.
-
-    This function removes specified attributes from a given diagram or collection of diagrams.
-    If no attribute is specified, all attributes will be cleared. The function supports individual
-    diagrams or collections of diagrams such as lists, sets, or tuples. If a collection of attributes
-    is provided, all specified attributes will be removed.
+def clear_node_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear node attributes.
 
     Args:
-        k (Union[PlanarDiagram, List[PlanarDiagram], Set[PlanarDiagram]]):
-            The object or a collection of objects whose attributes are to be cleared.
-        attr (Optional[Union[List, Set, Tuple, str]]): The attribute(s) to remove. Can
-            be a single attribute (str), or a collection of attributes (list, set, or
-            tuple). If None, all attributes will be cleared.
+        k: A diagram or a collection of diagrams.
+        attr: Attribute name or iterable of names to remove. If None, clear all node attrs.
+
+    Raises:
+        TypeError: If any element is not a PlanarDiagram/OrientedPlanarDiagram.
     """
-
-    if isinstance(k, (list, set, tuple)):
-        for sub_knot in k:
-            clear_diagram_attributes(sub_knot, attr)
-        return
-
-    if isinstance(attr, (list, set, tuple)):
-        for key in attr:
-            clear_diagram_attributes(k, key)
-        return
-
-    if attr is None:
-        k.attr.clear()
-    else:
-        del k.attr[attr]
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        if not isinstance(d, (PlanarDiagram, OrientedPlanarDiagram)):
+            raise TypeError(f"k should be a PlanarDiagram, got {type(d)}")
+        for node in d.nodes:
+            if attrs is None:
+                d.nodes[node].attr.clear()
+            else:
+                for key in attrs:
+                    d.nodes[node].attr.pop(key, None)
 
 
-def clear_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple):
-    """ Clear all attributes from a PlanarDiagram or a list of planar diagrams."""
+def clear_endpoint_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear endpoint attributes.
 
+    Args:
+        k: A diagram or a collection of diagrams.
+        attr: Attribute name or iterable of names to remove. If None, clear all endpoint attrs.
+    """
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        for ep in d.endpoints:
+            ep_attr = d.nodes[ep.node][ep.position].attr
+            if attrs is None:
+                ep_attr.clear()
+            else:
+                for key in attrs:
+                    ep_attr.pop(key, None)
+
+
+def clear_diagram_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear diagram-level attributes.
+
+    Args:
+        k: A diagram or a collection of diagrams.
+        attr: Attribute name or iterable of names to remove. If None, clear all diagram attrs.
+    """
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        if attrs is None:
+            d.attr.clear()
+        else:
+            for key in attrs:
+                d.attr.pop(key, None)
+
+
+def clear_attributes(k: Diagram | DiagramCollection) -> None:
+    """Clear all attributes (nodes, endpoints, diagram-level)."""
     clear_node_attributes(k)
     clear_endpoint_attributes(k)
     clear_diagram_attributes(k)
 
 
-def clear_temporary_node_attributes(k, attr=None):
-    """Clear temporary node attributes (those starting with "_") from the planar diagram(s)."""
+def clear_temporary_node_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear temporary node attributes (keys starting with '_').
 
-    if isinstance(k, (list, set, tuple)):
-        for _ in k:
-            clear_temporary_node_attributes(_, attr)
-        return
+    Args:
+        k: A diagram or a collection of diagrams.
+        attr: Optional specific temporary key(s) to remove (must start with '_').
+              If None, remove all temporary node keys.
+    """
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        if attrs is None:
+            for node in d.nodes:
+                for key in list(d.nodes[node].attr):
+                    if isinstance(key, str) and key.startswith("_"):
+                        d.nodes[node].attr.pop(key, None)
+        else:
+            for node in d.nodes:
+                for key in attrs:
+                    if isinstance(key, str) and key.startswith("_"):
+                        d.nodes[node].attr.pop(key, None)
 
-    if not isinstance(k, PlanarDiagram):
-        raise TypeError(f"k should be a PlanarDiagram, got {type(k)}")
 
-    if attr is None:
-        for node in k.nodes:
-            for key in list(k.nodes[node].attr):
+def clear_temporary_endpoint_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear temporary endpoint attributes (keys starting with '_')."""
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        if attrs is None:
+            for ep in d.endpoints:
+                ep_attr = d.nodes[ep.node][ep.position].attr
+                for key in list(ep_attr):
+                    if isinstance(key, str) and key.startswith("_"):
+                        ep_attr.pop(key, None)
+        else:
+            for ep in d.endpoints:
+                ep_attr = d.nodes[ep.node][ep.position].attr
+                for key in attrs:
+                    if isinstance(key, str) and key.startswith("_"):
+                        ep_attr.pop(key, None)
+
+
+def clear_temporary_diagram_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:
+    """Clear temporary diagram-level attributes (keys starting with '_')."""
+    attrs = _as_attr_list(attr)
+    for d in _iter_diagrams(k):
+        if attrs is None:
+            for key in list(d.attr):
                 if isinstance(key, str) and key.startswith("_"):
-                    del k.nodes[node].attr[key]
-    else:
-        if isinstance(attr, (list, set, tuple)):
-            for key in attr:
-                clear_temporary_node_attributes(k, key)
-            return
-        if isinstance(attr, str) and attr.startswith("_"):
-            for node in k.nodes:
-                if attr in k.nodes[node].attr:
-                    del k.nodes[node].attr[attr]
-
-
-def clear_temporary_endpoint_attributes(k, attr=None):
-    """Clear temporary endpoint attributes (those starting with "_") from the diagram(s)."""
-
-    if isinstance(k, (list, set, tuple)):
-        for _ in k:
-            clear_temporary_endpoint_attributes(_, attr)
-        return
-
-    if isinstance(attr, (list, set, tuple)):
-        for key in attr:
-            clear_temporary_endpoint_attributes(k, key)
-        return
-
-    if attr is None:
-        for ep in k.endpoints:
-            for key in list(k.nodes[ep.node][ep.position].attr):
+                    d.attr.pop(key, None)
+        else:
+            for key in attrs:
                 if isinstance(key, str) and key.startswith("_"):
-                    del k.nodes[ep.node][ep.position].attr[key]
-    elif isinstance(attr, str) and attr.startswith("_"):
-        for ep in k.endpoints:
-            if attr in k.nodes[ep.node][ep.position].attr:
-                del k.nodes[ep.node][ep.position].attr[attr]
+                    d.attr.pop(key, None)
 
 
-
-def clear_temporary_diagram_attributes(k, attr=None):
-    """Clear temporary diagram attributes (those starting with "_") from the diagram(s)."""
-
-    if isinstance(k, (list, set, tuple)):
-        for _ in k:
-            clear_temporary_diagram_attributes(_, attr)
-        return
-
-    if isinstance(attr, (list, set, tuple)):
-        for key in attr:
-            clear_temporary_diagram_attributes(k, key)
-        return
-
-    if attr is None:
-        for key in list(k.attr):
-            if isinstance(key, str) and key.startswith("_"):
-                del k.attr[key]
-    elif isinstance(attr, str) and attr.startswith("_") and attr in k.attr:
-        del k.attr[attr]
-
-
-def clear_temporary_attributes(k: PlanarDiagram | OrientedPlanarDiagram | set | list | tuple):
-    """ Clear all attributes that start with a "_" from a PlanarDiagram or a list of planar diagrams."""
-
+def clear_temporary_attributes(k: Diagram | DiagramCollection) -> None:
+    """Clear all temporary attributes (keys starting with '_') at all levels."""
     clear_temporary_node_attributes(k)
     clear_temporary_endpoint_attributes(k)
     clear_temporary_diagram_attributes(k)
 
+
+if __name__ == "__main__":
+    pass
