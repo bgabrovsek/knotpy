@@ -568,6 +568,8 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.planardiagram.html">planardiagram</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.Diagram.html">Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.DiagramCollection.html">DiagramCollection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.planar_diagram_from_data.html">planar_diagram_from_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html">OrientedPlanarDiagram</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html">PlanarDiagram</a></li>
@@ -1160,32 +1162,35 @@
                   
   <section id="module-knotpy.algorithms.attributes">
 <span id="attributes"></span><h1>attributes<a class="headerlink" href="#module-knotpy.algorithms.attributes" title="Link to this heading">#</a></h1>
+<p>Utilities for clearing attributes on diagrams (nodes, endpoints, diagram-level).</p>
+<p>These helpers work both on a single diagram and on collections (list, set, tuple)
+of diagrams. Attribute selection can be a single string or an iterable of strings.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_attributes.html#knotpy.algorithms.attributes.clear_attributes" title="knotpy.algorithms.attributes.clear_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_attributes</span></code></a>(k)</p></td>
-<td><p>Clear all attributes from a PlanarDiagram or a list of planar diagrams.</p></td>
+<td><p>Clear all attributes (nodes, endpoints, diagram-level).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_diagram_attributes.html#knotpy.algorithms.attributes.clear_diagram_attributes" title="knotpy.algorithms.attributes.clear_diagram_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_diagram_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear main diagram-level attributes of the diagram k, or the list of planar diagrams k.</p></td>
+<td><p>Clear diagram-level attributes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_endpoint_attributes.html#knotpy.algorithms.attributes.clear_endpoint_attributes" title="knotpy.algorithms.attributes.clear_endpoint_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_endpoint_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear endpoint attributes of the planar diagram k, or the list of planar diagrams k.</p></td>
+<td><p>Clear endpoint attributes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_node_attributes.html#knotpy.algorithms.attributes.clear_node_attributes" title="knotpy.algorithms.attributes.clear_node_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_node_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear node attributes of the planar diagram k, or the list of planar diagrams k.</p></td>
+<td><p>Clear node attributes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_temporary_attributes.html#knotpy.algorithms.attributes.clear_temporary_attributes" title="knotpy.algorithms.attributes.clear_temporary_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_temporary_attributes</span></code></a>(k)</p></td>
-<td><p>Clear all attributes that start with a &quot;_&quot; from a PlanarDiagram or a list of planar diagrams.</p></td>
+<td><p>Clear all temporary attributes (keys starting with '_') at all levels.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_temporary_diagram_attributes.html#knotpy.algorithms.attributes.clear_temporary_diagram_attributes" title="knotpy.algorithms.attributes.clear_temporary_diagram_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_temporary_diagram_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear temporary diagram attributes (those starting with &quot;_&quot;) from the diagram(s).</p></td>
+<td><p>Clear temporary diagram-level attributes (keys starting with '_').</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_temporary_endpoint_attributes.html#knotpy.algorithms.attributes.clear_temporary_endpoint_attributes" title="knotpy.algorithms.attributes.clear_temporary_endpoint_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_temporary_endpoint_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear temporary endpoint attributes (those starting with &quot;_&quot;) from the diagram(s).</p></td>
+<td><p>Clear temporary endpoint attributes (keys starting with '_').</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.attributes.clear_temporary_node_attributes.html#knotpy.algorithms.attributes.clear_temporary_node_attributes" title="knotpy.algorithms.attributes.clear_temporary_node_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_temporary_node_attributes</span></code></a>(k[, attr])</p></td>
-<td><p>Clear temporary node attributes (those starting with &quot;_&quot;) from the planar diagram(s).</p></td>
+<td><p>Clear temporary node attributes (keys starting with '_').</p></td>
 </tr>
 </tbody>
 </table>

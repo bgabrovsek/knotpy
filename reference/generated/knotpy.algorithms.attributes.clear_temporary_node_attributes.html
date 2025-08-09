@@ -572,6 +572,8 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.planardiagram.html">planardiagram</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.Diagram.html">Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.DiagramCollection.html">DiagramCollection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.planar_diagram_from_data.html">planar_diagram_from_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html">OrientedPlanarDiagram</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html">PlanarDiagram</a></li>
@@ -1170,7 +1172,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.attributes.clear_temporary_node_attributes">
 <span class="sig-name descname"><span class="pre">clear_temporary_node_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.attributes.clear_temporary_node_attributes" title="Link to this definition">#</a></dt>
-<dd><p>Clear temporary node attributes (those starting with “_”) from the planar diagram(s).</p>
+<dd><p>Clear temporary node attributes (keys starting with ‘_’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a><em> | </em><em>list</em><em>[</em><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a><em>] </em><em>| </em><em>set</em><em>[</em><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a><em>] </em><em>| </em><em>tuple</em><em>[</em><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a><em>, </em><em>...</em><em>]</em>) – A diagram or a collection of diagrams.</p></li>
+<li><p><strong>attr</strong> (<em>str</em><em> | </em><em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>set</em><em>[</em><em>str</em><em>] </em><em>| </em><em>tuple</em><em>[</em><em>str</em><em>, </em><em>...</em><em>] </em><em>| </em><em>None</em>) – Optional specific temporary key(s) to remove (must start with ‘_’).
+If None, remove all temporary node keys.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
