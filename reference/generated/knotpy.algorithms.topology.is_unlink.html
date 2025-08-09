@@ -368,7 +368,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.insert.html">insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc.html">insert_arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc2.html">insert_arc2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_endpoint.html">insert_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_loop.html">insert_loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_new_leaf.html">insert_new_leaf</a></li>
@@ -394,15 +393,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.paths.html">paths</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.bfs_shortest_path.html">bfs_shortest_path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.path_from_endpoint.html">path_from_endpoint</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.permute.html">permute</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.permute.permute_node.html">permute_node</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.remove.html">remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_arc.html">remove_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_bivalent_vertex.html">remove_bivalent_vertex</a></li>
@@ -413,6 +403,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.rewire.html">rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.permute_node.html">permute_node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.pull_and_plug_endpoint.html">pull_and_plug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.replug_endpoint.html">replug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.swap_endpoints.html">swap_endpoints</a></li>
@@ -420,11 +411,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -470,6 +456,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.html">test_contract</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html">test_contract_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html">test_contract_edge</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html">test_contract_edge_attributes</a></li>
 </ul>
@@ -511,6 +498,16 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_reverse.test_reverse.html">test_reverse</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.html">test_rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.test_pull_and_plug_endpoint_sanity.html">test_pull_and_plug_endpoint_sanity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.html">test_sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_none_endpoints.html">test_sanity_raises_on_none_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_oriented_arc_with_same_direction.html">test_sanity_raises_on_oriented_arc_with_same_direction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_valid_diagram.html">test_sanity_valid_diagram</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.html">test_skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.test_skein.html">test_skein</a></li>
 </ul>
@@ -550,12 +547,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_arc.html">ensure_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_endpoint.html">ensure_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
@@ -725,6 +725,11 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1172,7 +1177,8 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.topology.is_unlink">
 <span class="sig-name descname"><span class="pre">is_unlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.topology.is_unlink" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if the diagram is empty or all nodes are unknots (isolated looped vertices).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
 </dd>

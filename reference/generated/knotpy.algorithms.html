@@ -364,7 +364,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.insert.html">insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc.html">insert_arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc2.html">insert_arc2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_endpoint.html">insert_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_loop.html">insert_loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_new_leaf.html">insert_new_leaf</a></li>
@@ -390,15 +389,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.paths.html">paths</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.bfs_shortest_path.html">bfs_shortest_path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.path_from_endpoint.html">path_from_endpoint</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.permute.html">permute</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.permute.permute_node.html">permute_node</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.remove.html">remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_arc.html">remove_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_bivalent_vertex.html">remove_bivalent_vertex</a></li>
@@ -409,6 +399,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.rewire.html">rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.permute_node.html">permute_node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.pull_and_plug_endpoint.html">pull_and_plug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.replug_endpoint.html">replug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.swap_endpoints.html">swap_endpoints</a></li>
@@ -416,11 +407,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -466,6 +452,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.html">test_contract</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html">test_contract_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html">test_contract_edge</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html">test_contract_edge_attributes</a></li>
 </ul>
@@ -507,6 +494,16 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_reverse.test_reverse.html">test_reverse</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.html">test_rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.test_pull_and_plug_endpoint_sanity.html">test_pull_and_plug_endpoint_sanity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.html">test_sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_none_endpoints.html">test_sanity_raises_on_none_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_oriented_arc_with_same_direction.html">test_sanity_raises_on_oriented_arc_with_same_direction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_valid_diagram.html">test_sanity_valid_diagram</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.html">test_skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.test_skein.html">test_skein</a></li>
 </ul>
@@ -546,12 +543,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_arc.html">ensure_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_endpoint.html">ensure_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
@@ -721,6 +721,11 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1171,7 +1176,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.canonical.html#module-knotpy.algorithms.canonical" title="knotpy.algorithms.canonical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">canonical</span></code></a>(k)</p></td>
 <td><p>Compute the canonical form of an <em>unoriented</em> planar diagram.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.closure.html#module-knotpy.algorithms.closure" title="knotpy.algorithms.closure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closure</span></code></a>(k, *[, over, under])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.closure.html#module-knotpy.algorithms.closure" title="knotpy.algorithms.closure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closure</span></code></a>(k[, over, under])</p></td>
 <td><p>Close a knotoid by routing through the dual graph between its two degree-1 vertices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.components_link.html#module-knotpy.algorithms.components_link" title="knotpy.algorithms.components_link"><code class="xref py py-obj docutils literal notranslate"><span class="pre">components_link</span></code></a></p></td>
@@ -1181,66 +1186,57 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.contract.html#module-knotpy.algorithms.contract" title="knotpy.algorithms.contract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contract</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Contracting an arc in a planar diagram.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.cut_set.html#module-knotpy.algorithms.cut_set" title="knotpy.algorithms.cut_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cut_set</span></code></a></p></td>
 <td><p>This module provides tools for identifying and analyzing (arc) cut sets in planar diagrams.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.cycles.html#module-knotpy.algorithms.cycles" title="knotpy.algorithms.cycles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cycles</span></code></a>(g, n)</p></td>
-<td><p>return cycles of length n</p></td>
+<td><p>Return all simple cycles of length <code class="docutils literal notranslate"><span class="pre">n</span></code> in the diagram.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.degree_sequence.html#module-knotpy.algorithms.degree_sequence" title="knotpy.algorithms.degree_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">degree_sequence</span></code></a>(k)</p></td>
-<td><p>Compute and return the degree sequence of all nodes in a given PlanarDiagram.</p></td>
+<td><p>Return the sorted degree sequence of all nodes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.disjoint_union.html#module-knotpy.algorithms.disjoint_union" title="knotpy.algorithms.disjoint_union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">disjoint_union</span></code></a>(*knots[, ...])</p></td>
-<td><p>Create the disjoint sum of planar diagrams.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.disjoint_union.html#module-knotpy.algorithms.disjoint_union" title="knotpy.algorithms.disjoint_union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">disjoint_union</span></code></a>(*knots[, return_relabel_dicts])</p></td>
+<td><p>Disjoint sum of multiple diagrams (all of the same type).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.duality.html#module-knotpy.algorithms.duality" title="knotpy.algorithms.duality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">duality</span></code></a></p></td>
-<td><p>&quot; Create a dual graph of a planar diagram</p></td>
+<td><p>&quot;Create a dual graph of a planar diagram.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.insert.html#module-knotpy.algorithms.insert" title="knotpy.algorithms.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a></p></td>
-<td><p>This module provides functions for manipulating and modifying planar diagrams, which are representations of mathematical knots or graphs.</p></td>
+<td><p>Insert and modify arcs/endpoints in a planar diagram.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.join.html#module-knotpy.algorithms.join" title="knotpy.algorithms.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></a></p></td>
-<td><p>Join diagrams by bridge or crossing.</p></td>
+<td><p>Join diagrams by a bridge or by introducing a crossing.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.naming.html#module-knotpy.algorithms.naming" title="knotpy.algorithms.naming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">naming</span></code></a></p></td>
-<td><p>Unique node name for a diagram.</p></td>
+<td><p>Utilities for generating unique node names for planar diagrams.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.orientation.html#module-knotpy.algorithms.orientation" title="knotpy.algorithms.orientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span></code></a></p></td>
 <td><p>Algorithms that deal with orientation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.paths.html#module-knotpy.algorithms.paths" title="knotpy.algorithms.paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paths</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.permute.html#module-knotpy.algorithms.permute" title="knotpy.algorithms.permute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permute</span></code></a></p></td>
-<td><p></p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.remove.html#module-knotpy.algorithms.remove" title="knotpy.algorithms.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Utilities for removing structure from planar diagrams: - empty nodes - a specific arc - all loops - unknots - bivalent (degree-2) vertices</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.rewire.html#module-knotpy.algorithms.rewire" title="knotpy.algorithms.rewire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewire</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.sanity.html#module-knotpy.algorithms.sanity" title="knotpy.algorithms.sanity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sanity</span></code></a></p></td>
-<td><p>Check if the diagram makes sense (is planar,...)</p></td>
+<td><p>Check if the diagram makes sense (is planar, consistent, etc.).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.skein.html#module-knotpy.algorithms.skein" title="knotpy.algorithms.skein"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skein</span></code></a></p></td>
-<td><p>Implementations of Skein operations.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.subdivide.html#module-knotpy.algorithms.subdivide" title="knotpy.algorithms.subdivide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subdivide</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.subdivide.html#module-knotpy.algorithms.subdivide" title="knotpy.algorithms.subdivide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subdivide</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.symmetry.html#module-knotpy.algorithms.symmetry" title="knotpy.algorithms.symmetry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">symmetry</span></code></a></p></td>
-<td><p>Oriented chiral K, K*, -K, -K* fully amphicheiral K = K* = -K = -K* negative amphicheiral K = -K*, K* = -K positive amphicheiral K = K*, -K = -K* reversible K = -K. <a href="#id1"><span class="problematic" id="id2">*</span></a>K = -<a href="#id3"><span class="problematic" id="id4">*</span></a>K.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.symmetry.html#module-knotpy.algorithms.symmetry" title="knotpy.algorithms.symmetry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">symmetry</span></code></a></p></td>
+<td><p>Symmetry operations on planar knot diagrams.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.html#module-knotpy.algorithms.tangle" title="knotpy.algorithms.tangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangle</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.html#module-knotpy.algorithms.tangle" title="knotpy.algorithms.tangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangle</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tests.html#module-knotpy.algorithms.tests" title="knotpy.algorithms.tests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tests</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tests.html#module-knotpy.algorithms.tests" title="knotpy.algorithms.tests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tests</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.html#module-knotpy.algorithms.topology" title="knotpy.algorithms.topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">topology</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.html#module-knotpy.algorithms.topology" title="knotpy.algorithms.topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">topology</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>

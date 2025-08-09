@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.algorithms.tests.test_contract';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="test_contract_edge" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html" />
+    <link rel="next" title="test_contract_arc" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html" />
     <link rel="prev" title="test_number_of_link_components" href="knotpy.algorithms.tests.test_component_links.test_number_of_link_components.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -368,7 +368,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.insert.html">insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc.html">insert_arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc2.html">insert_arc2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_endpoint.html">insert_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_loop.html">insert_loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_new_leaf.html">insert_new_leaf</a></li>
@@ -394,15 +393,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.paths.html">paths</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.bfs_shortest_path.html">bfs_shortest_path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.path_from_endpoint.html">path_from_endpoint</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.permute.html">permute</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.permute.permute_node.html">permute_node</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.remove.html">remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_arc.html">remove_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_bivalent_vertex.html">remove_bivalent_vertex</a></li>
@@ -413,6 +403,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.rewire.html">rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.permute_node.html">permute_node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.pull_and_plug_endpoint.html">pull_and_plug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.replug_endpoint.html">replug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.swap_endpoints.html">swap_endpoints</a></li>
@@ -420,11 +411,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -470,6 +456,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">test_contract</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html">test_contract_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html">test_contract_edge</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html">test_contract_edge_attributes</a></li>
 </ul>
@@ -511,6 +498,16 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_reverse.test_reverse.html">test_reverse</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.html">test_rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.test_pull_and_plug_endpoint_sanity.html">test_pull_and_plug_endpoint_sanity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.html">test_sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_none_endpoints.html">test_sanity_raises_on_none_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_oriented_arc_with_same_direction.html">test_sanity_raises_on_oriented_arc_with_same_direction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_valid_diagram.html">test_sanity_valid_diagram</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.html">test_skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.test_skein.html">test_skein</a></li>
 </ul>
@@ -550,12 +547,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_arc.html">ensure_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_endpoint.html">ensure_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
@@ -725,6 +725,11 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1172,10 +1177,13 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html#knotpy.algorithms.tests.test_contract.test_contract_edge" title="knotpy.algorithms.tests.test_contract.test_contract_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_contract_edge</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html#knotpy.algorithms.tests.test_contract.test_contract_arc" title="knotpy.algorithms.tests.test_contract.test_contract_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_contract_arc</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html#knotpy.algorithms.tests.test_contract.test_contract_edge_attributes" title="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_contract_edge_attributes</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html#knotpy.algorithms.tests.test_contract.test_contract_edge" title="knotpy.algorithms.tests.test_contract.test_contract_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_contract_edge</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html#knotpy.algorithms.tests.test_contract.test_contract_edge_attributes" title="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_contract_edge_attributes</span></code></a>()</p></td>
 <td><p>++++ CONTRACTING <a href="#id1"><span class="problematic" id="id2">**</span></a>** d=V(d6 e2 d3 d2 e1 e0 d0) e=V(d5 d4 d1) ['framing'=0,'A'=0,'B'=0,'X'=3,'_deletions'=1,'_contractions'=7,'name'=None; ; d2:{'color'=1} d3:{'color'=1}] frozenset({d1, e2}) &gt; PlanarDiagram with 2 nodes, 4 arcs, and adjacencies d → V(d5 d2=1 d1=1 e1 e0 d0), e → V(d4 d3) with framing 0 (A=0 B=0 X=3 _deletions=1 _contractions=7)  src ('e', 0)  dst ('d', 1) <strong>* d=V(d5 d2 d1 e1 e0 d0) e=V(d4 d3) ['framing'=0,'A'=0,'B'=0,'X'=3,'_deletions'=1,'_contractions'=7,'name'=None; ; d1:{'color'=1} d2:{'color'=1}] = PlanarDiagram with 2 nodes, 4 arcs, and adjacencies d → V(d6 d4 d3=1 d2=1 d1 e0 d0), e → V(d5) with framing 0 (A=0 B=0 X=3 _deletions=1 _contractions=7) &gt; PlanarDiagram with 2 nodes, 4 arcs, and adjacencies d → V(d6 d4 d3=1 d2=1 d1 e0 d0), e → V(d5) with framing 0 (A=0 B=0 X=3 _deletions=1 _contractions=7)  src ('e', 0)  dst ('d', 1) *</strong> d=V(d6 d4 d3 d2 d1 e0 d0) e=V(d5) ['framing'=0,'A'=0,'B'=0,'X'=3,'_deletions'=1,'_contractions'=7,'name'=None; ; d2:{'color'=1} d3:{'color'=1}] = PlanarDiagram with 2 nodes, 4 arcs, and adjacencies d → V(d7 d6 d5=1 d4=1 d3=1 d2 d1 d0), e → V() with framing 0 (A=0 B=0 X=3 _deletions=1 _contractions=7)</p></td>
 </tr>
 </tbody>
@@ -1208,6 +1216,11 @@ dst (‘d’, 1)</p>
 = PlanarDiagram with 2 nodes, 4 arcs, and adjacencies d → V(d7 d6 d5=1 d4=1 d3=1 d2 d1 d0), e → V() with framing 0 (A=0 B=0 X=3 _deletions=1 _contractions=7)</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.tests.test_contract.test_contract_arc">
+<span class="sig-name descname"><span class="pre">test_contract_arc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tests.test_contract.test_contract_arc" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -1235,6 +1248,7 @@ dst (‘d’, 1)</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tests.test_contract.test_contract_edge"><code class="docutils literal notranslate"><span class="pre">test_contract_edge()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tests.test_contract.test_contract_edge_attributes"><code class="docutils literal notranslate"><span class="pre">test_contract_edge_attributes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tests.test_contract.test_contract_arc"><code class="docutils literal notranslate"><span class="pre">test_contract_arc()</span></code></a></li>
 </ul>
   </nav></div>
 

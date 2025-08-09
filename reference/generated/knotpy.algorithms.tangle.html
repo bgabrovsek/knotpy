@@ -368,7 +368,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.insert.html">insert</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc.html">insert_arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_arc2.html">insert_arc2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_endpoint.html">insert_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_loop.html">insert_loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.insert.insert_new_leaf.html">insert_new_leaf</a></li>
@@ -394,15 +393,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.paths.html">paths</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.bfs_shortest_path.html">bfs_shortest_path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.paths.path_from_endpoint.html">path_from_endpoint</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.permute.html">permute</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.permute.permute_node.html">permute_node</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.remove.html">remove</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_arc.html">remove_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.remove.remove_bivalent_vertex.html">remove_bivalent_vertex</a></li>
@@ -413,6 +403,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.rewire.html">rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.permute_node.html">permute_node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.pull_and_plug_endpoint.html">pull_and_plug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.replug_endpoint.html">replug_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.rewire.swap_endpoints.html">swap_endpoints</a></li>
@@ -420,11 +411,6 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -470,6 +456,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.html">test_contract</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_arc.html">test_contract_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge.html">test_contract_edge</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_contract.test_contract_edge_attributes.html">test_contract_edge_attributes</a></li>
 </ul>
@@ -511,6 +498,16 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_reverse.test_reverse.html">test_reverse</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.html">test_rewire</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_rewire.test_pull_and_plug_endpoint_sanity.html">test_pull_and_plug_endpoint_sanity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.html">test_sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_none_endpoints.html">test_sanity_raises_on_none_endpoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_raises_on_oriented_arc_with_same_direction.html">test_sanity_raises_on_oriented_arc_with_same_direction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_sanity.test_sanity_valid_diagram.html">test_sanity_valid_diagram</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.html">test_skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_skein.test_skein.html">test_skein</a></li>
 </ul>
@@ -550,12 +547,15 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.classes.html">classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.endpoint.html">endpoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_arc.html">ensure_arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.ensure_endpoint.html">ensure_endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.Endpoint.html">Endpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.IngoingEndpoint.html">IngoingEndpoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.endpoint.OutgoingEndpoint.html">OutgoingEndpoint</a></li>
@@ -725,6 +725,11 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.mock_alexander.html">mock_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.mock_alexander.mock_alexander_polynomial.html">mock_alexander_polynomial</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.skein.html">skein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.crossing_to_vertex.html">crossing_to_vertex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1170,16 +1175,16 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.compose_tangles.html#knotpy.algorithms.tangle.compose_tangles" title="knotpy.algorithms.tangle.compose_tangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compose_tangles</span></code></a>(tangle1, tangle2)</p></td>
-<td><p>Compose two tangles by connecting all their endpoints.</p></td>
+<td><p>Compose two tangles by connecting matching tangle endpoints.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.is_integer_tangle.html#knotpy.algorithms.tangle.is_integer_tangle" title="knotpy.algorithms.tangle.is_integer_tangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_integer_tangle</span></code></a>(tangle)</p></td>
 <td><p>Check if a tangle is an integer tangle.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.rotate.html#knotpy.algorithms.tangle.rotate" title="knotpy.algorithms.tangle.rotate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate</span></code></a>(tangle, angle[, inplace])</p></td>
-<td><p>Rotate a tangle by angle degrees.</p></td>
+<td><p>Rotate a tangle diagram by a multiple of 90 degrees.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.tangle.tangle_decompositions.html#knotpy.algorithms.tangle.tangle_decompositions" title="knotpy.algorithms.tangle.tangle_decompositions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangle_decompositions</span></code></a>(k[, ...])</p></td>
-<td><p>Return all tangle decompositions of a diagram.</p></td>
+<td><p>Return all possible tangle decompositions of a knot diagram.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1187,14 +1192,22 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.tangle.tangle_decompositions">
 <span class="sig-name descname"><span class="pre">tangle_decompositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimal_component_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.tangle_decompositions" title="Link to this definition">#</a></dt>
-<dd><p>Return all tangle decompositions of a diagram. Each component of the decomposition must have at least minimal_nodes_in_component
-nodes in every component.</p>
+<dd><p>Return all possible tangle decompositions of a knot diagram.</p>
+<p>Each component in the decomposition must have at least
+<cite>minimal_component_nodes</cite> nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
-<li><p><strong>minimal_component_nodes</strong> (<em>int</em>)</p></li>
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Input diagram (planar or oriented).</p></li>
+<li><p><strong>minimal_component_nodes</strong> (<em>int</em>) – Minimum number of nodes per component.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the diagram already has <cite>tangle_endpoints</cite> in any node,
+    or if the diagram has more than one disjoint component.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of decomposed tangle diagrams.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
@@ -1205,13 +1218,24 @@ nodes in every component.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.tangle.is_integer_tangle">
 <span class="sig-name descname"><span class="pre">is_integer_tangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.is_integer_tangle" title="Link to this definition">#</a></dt>
-<dd><p>Check if a tangle is an integer tangle. Can be a “horizontal” or a “vertical” integer tangle.</p>
+<dd><p>Check if a tangle is an integer tangle.</p>
+<p>An integer tangle can be “horizontal” or “vertical”.
+Conditions checked:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Diagram has exactly <cite>n - 4</cite> crossings (where <cite>n</cite> is the number of nodes).</p></li>
+<li><p>All but one of its faces are bigons (2-gons).</p></li>
+</ul>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tangle</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+<dd class="field-odd"><p><strong>tangle</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – The tangle diagram to check.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the tangle is an integer tangle, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1219,13 +1243,24 @@ nodes in every component.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.algorithms.tangle.compose_tangles">
 <span class="sig-name descname"><span class="pre">compose_tangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangle1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tangle2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tangle.compose_tangles" title="Link to this definition">#</a></dt>
-<dd><p>Compose two tangles by connecting all their endpoints.</p>
+<dd><p>Compose two tangles by connecting matching tangle endpoints.</p>
+<p>Both tangles must have endpoints labeled with <cite>tangle_endpoint</cite> values
+0–3. Each label must appear exactly twice across the combined diagram.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tangle1</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
-<li><p><strong>tangle2</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+<li><p><strong>tangle1</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – First tangle diagram.</p></li>
+<li><p><strong>tangle2</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Second tangle diagram.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If endpoint labels are missing or not paired correctly.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The composed tangle diagram.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a> | <a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a></p>
 </dd>
 </dl>
 </dd></dl>
