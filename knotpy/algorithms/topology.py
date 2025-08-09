@@ -1,3 +1,5 @@
+# knotpy/algorithms/topology.py
+
 __all__ = [
     "is_unlink", "is_unknot", "number_of_unknots", "is_knot", "is_link",
     "is_planar_graph", "is_empty_diagram",
@@ -8,326 +10,192 @@ __all__ = [
     "bridges", "is_bridge",
     "edges", "overstrands",
 ]
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek"
 
 from collections import defaultdict
 
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.cut_set import _is_arc_cut_set
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.algorithms.components_link import number_of_link_components
 
-def _is_vertex_an_unknot(k: PlanarDiagram, vertex):
-    """
-    Return True if the given vertex is an unknot, i.e., a degree-2 vertex with both endpoints forming a loop to itself.
 
-    :param k: The input planar diagram.
-    :type k: PlanarDiagram
-    :param vertex: The vertex to check.
-    :type vertex: Hashable
-    :return: True if the vertex is an unknot, False otherwise.
-    :rtype: bool
-    """
+def _is_vertex_an_unknot(k: PlanarDiagram, vertex) -> bool:
+    """Return True if `vertex` is a degree-2 vertex whose two ends form a loop to itself."""
     return len(k.nodes[vertex]) == 2 and k.nodes[vertex][0].node == k.nodes[vertex][1].node == vertex
 
+
 def _split_nodes_by_type(k: PlanarDiagram) -> dict:
-    """
-    Categorizes the nodes in a planar diagram by their types.
-
-    This function returns a dictionary where the keys represent node types
-    (e.g., `Crossing`, `Vertex`, etc.) and the values are sets containing
-    the nodes that belong to each respective type.
-
-    Args:
-        k (PlanarDiagram): The planar diagram whose nodes are to be categorized.
-
-    Returns:
-        dict: A dictionary with node types as keys and sets of corresponding nodes as values.
-   """
-
-    result = defaultdict(set)
+    """Group node names by their concrete node class."""
+    grouped = defaultdict(set)
     for node in k.nodes:
-        result[type(k.nodes[node])].add(node)
-    return result
+        grouped[type(k.nodes[node])].add(node)
+    return grouped
+
 
 def is_unlink(k: PlanarDiagram) -> bool:
+    """Return True if the diagram is empty or all nodes are unknots (isolated looped vertices)."""
     return len(k) == 0 or all(_is_vertex_an_unknot(k, v) for v in k.nodes)
 
+
 def is_unknot(k: PlanarDiagram) -> bool:
+    """Return True if the diagram is a single unknot component."""
     return len(k) == 1 and is_unlink(k)
 
 
-def number_of_unknots(k: PlanarDiagram):
-    """
-    Return the number of unknots (degree-1 vertices with a self-loop).
-
-    :param k: The input planar diagram.
-    :type k: PlanarDiagram
-    :return: The count of unknots.
-    :rtype: int
-    """
+def number_of_unknots(k: PlanarDiagram) -> int:
+    """Return the number of degree-2 looped vertices (unknots)."""
     return sum(1 for v in k.vertices if _is_vertex_an_unknot(k, v))
 
 
 def is_knot(k: PlanarDiagram) -> bool:
-    """
-    Determines whether the given planar diagram represents a knot.
-
-    A diagram is a knot if all its nodes are crossings.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-
-    Returns:
-        bool: True if all nodes are crossings, False otherwise.
-    """
-
+    """Return True if all nodes are crossings and the diagram has a single link component."""
     return all(type(k.nodes[node]) is Crossing for node in k.nodes) and number_of_link_components(k) == 1
 
 
-
 def is_link(k: PlanarDiagram) -> bool:
-    """
-    Determines whether the given planar diagram represents a knot.
-
-    A diagram is a knot if all its nodes are crossings.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-
-    Returns:
-        bool: True if all nodes are crossings, False otherwise.
-    """
-
+    """Return True if all nodes are crossings (possibly multiple components)."""
     return all(type(k.nodes[node]) is Crossing for node in k.nodes)
 
 
 def is_planar_graph(k: PlanarDiagram) -> bool:
-    """
-    Determines whether the given planar diagram represents a planar graph.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-
-    Returns:
-        bool: True if all nodes are vertices, False otherwise.
-    """
+    """Return True if all nodes are vertices (no crossings)."""
     return all(type(k.nodes[node]) is Vertex for node in k.nodes)
 
 
 def is_empty_diagram(k: PlanarDiagram) -> bool:
+    """Return True if the diagram has no nodes."""
     return len(k) == 0
 
+
 def is_knotoid(k: PlanarDiagram) -> bool:
-    """Is the diagram a (multi) knotoid?"""
+    """Return True if the diagram is a (multi)-knotoid (exactly two degree-1 vertices, rest crossings)."""
     node_sets = _split_nodes_by_type(k)
-    return (len(node_sets[Crossing]) == len(k) - 2 and
-            len(node_sets[Vertex]) == 2 and
-            all(k.degree(node) == 1 for node in node_sets[Vertex]))
+    return (
+        len(node_sets[Crossing]) == len(k) - 2
+        and len(node_sets[Vertex]) == 2
+        and all(k.degree(node) == 1 for node in node_sets[Vertex])
+    )
+
 
 def is_linkoid(k: PlanarDiagram) -> bool:
-    """Is the diagram a multi-linkoid?"""
+    """Return True if the diagram is a multi-linkoid (even number of leaf vertices; others crossings)."""
     node_sets = _split_nodes_by_type(k)
-    return (len(node_sets[Crossing]) + len(node_sets[Vertex]) == len(k) and
-            len(node_sets[Vertex]) % 2 == 0 and
-            all(k.degree(node) == 1 for node in node_sets[Vertex]))
+    return (
+        len(node_sets[Crossing]) + len(node_sets[Vertex]) == len(k)
+        and len(node_sets[Vertex]) % 2 == 0
+        and all(k.degree(node) == 1 for node in node_sets[Vertex])
+    )
 
 
-def is_leaf(k, node):
-    """Is the node a leaf?"""
+def is_leaf(k: PlanarDiagram, node) -> bool:
+    """Return True if `node` is a degree-1 vertex."""
     return k.degree(node) == 1 and isinstance(k.nodes[node], Vertex)
 
 
-def leafs(k):
-    """Returns the leafs of a planar diagram."""
+def leafs(k: PlanarDiagram) -> set:
+    """Return the set of degree-1 vertices."""
     return {node for node in k.vertices if k.degree(node) == 1}
 
-def is_loop(k: PlanarDiagram, arc_or_endpoint) -> bool:
-    """
-    Determine whether the given arc or endpoint forms a loop in the planar diagram.
 
-    A loop is an arc that connects a node to itself. If given an endpoint, the function checks
-    whether its twin belongs to the same node. If given an arc (set of two endpoints), it checks
-    whether both endpoints belong to the same node.
-    The difference between is_kink() is that kinks are defined at crossings and contain only the endpoint.
+def is_loop(k: PlanarDiagram, arc_or_endpoint) -> bool:
+    """Return True if an arc/endpoint forms a loop (an arc whose ends are on the same node which is a Vertex).
 
     Args:
-        k (PlanarDiagram): The planar diagram.
-        arc_or_endpoint (Union[Endpoint, set[Endpoint], frozenset[Endpoint]]):
-            The endpoint or arc to check.
+        k: Diagram.
+        arc_or_endpoint: Either a single `Endpoint` or a 2-endpoint container (arc).
 
-    Returns:
-        bool: True if the arc or endpoint forms a loop, False otherwise.
-
-    Raises:
-        TypeError: If `arc_or_endpoint` is not an `Endpoint` or a set of endpoints.
+    Notes:
+        “Kink” is a special loop notion at crossings; see `is_kink`.
     """
-
     ep1, ep2 = (arc_or_endpoint, k.twin(arc_or_endpoint)) if isinstance(arc_or_endpoint, Endpoint) else arc_or_endpoint
     return isinstance(k.nodes[ep1.node], Vertex) and ep1.node == ep2.node
 
 
 def loops(k: PlanarDiagram) -> list:
-    """
-    Returns a set of arcs that form loops in the planar diagram.
-
-    A loop is an arc that connects a node to itself, provided the node is not a vertex.
-    An arc is a tuple of two endpoints.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-
-    Returns:
-        set: A set of arcs that are loops.
-    """
+    """Return a list of arcs (each a 2-endpoint container) that are loops."""
     return [arc for arc in k.arcs if is_loop(k, arc)]
-    # return set(arc for arc in k.arcs if
-    #            len({ep.node for ep in arc}) == 1
-    #            and all(not isinstance(k.nodes[ep.node], Crossing) for ep in arc))
-
 
 
 def is_kink(k: PlanarDiagram, endpoint: Endpoint) -> bool:
-    """
-    Determines whether an endpoint forms a kink in the planar diagram.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-        endpoint (Endpoint): The endpoint being checked.
-
-    Returns:
-        bool: True if the endpoint forms a kink, False otherwise.
-    """
+    """Return True if `endpoint` forms a kink at a crossing (CCW neighbor is itself)."""
     if not isinstance(k.nodes[endpoint.node], Crossing):
         return False
-    #print("is kink", k, endpoint)
     return k.nodes[endpoint.node][(endpoint.position - 1) % 4] == endpoint
 
 
 def kinks(k: PlanarDiagram, crossing=None) -> set:
-    """
-    Returns the set of kinks in the planar diagram. A kink is given as an endpoint that defines a face.
-    Note that the twin of a kink is not a kink.
-
-    A kink is a loop at a crossing where traversal in a counterclockwise direction returns to the same node.
-
-    Args:
-        k (PlanarDiagram): The planar diagram.
-        crossing: If provided, only kinks attached to the specified crossing will be considered.
-
-    Returns:
-        set: A set of kinks (endpoints defining the face of the kink)
-    """
-
+    """Return the set of kink endpoints; optionally restrict to a given `crossing`."""
     if crossing is None:
-        return set(ep for ep in k.endpoints if is_kink(k, ep))
-    else:
-        if type(k.nodes[crossing]) != Crossing:
-            # perhaps we could just return an empty set instead of throwing an error?
-            raise ValueError(f"The node {crossing} is not a crossing")
-
-        return set(ep for ep in k.endpoints[crossing] if is_kink(k, ep))
+        return {ep for ep in k.endpoints if is_kink(k, ep)}
+    if type(k.nodes[crossing]) is not Crossing:
+        raise ValueError(f"The node {crossing} is not a crossing")
+    return {ep for ep in k.endpoints[crossing] if is_kink(k, ep)}
 
 
 def kink_region_iterator(k: PlanarDiagram, of_node=None):
-    """
-    An iterator (generator) over regions of kinks/loops.
-
-    The regions are singleton lists containing the endpoint. See also regions().
+    """Yield singleton “regions” (lists with one endpoint) representing kinks at crossings.
 
     Args:
-        k (PlanarDiagram): planar diagram object
-        of_node: if of_node is not None, only the kinks attached to the node will be given.
-
-    Returns:
-        iterator: an iterator (generator) over kink regions.
+        k: Diagram.
+        of_node: If given, only consider kinks attached to this node.
     """
-    for node in k.crossings if of_node is None else (of_node,):  # loop through all crossings if of_node is not given
+    for node in (k.crossings if of_node is None else (of_node,)):
         for ep in k.nodes[node]:
-            if ep == k.nodes[ep.node][(ep.position + 3) & 3]:  # is the endpoint and the ccw endpoint the same?
+            # Is ep equal to its CCW neighbor? (kink)
+            if ep == k.nodes[ep.node][(ep.position + 3) & 3]:
                 yield [ep]
 
 
 def bridges(k: PlanarDiagram) -> set:
-    """
-    Return the set of bridges in the planar diagram. A bridge is an arc whose removal disconnects the diagram into two disjoint components.
+    """Return the set of bridges (arcs whose removal disconnects the diagram) using a fast face-based test.
 
-    Args:
-        k (PlanarDiagram): The planar diagram.
-
-    Returns:
-        set: A set of bridges represented as arcs.
+    Note:
+        This uses a face incidence heuristic (fast) which may not be valid for already disjoint diagrams.
+        For a robust (but slower) cut-set test, use `_is_arc_cut_set`.
     """
-    #return set(arc for arc in k.arcs if is_arc_cut_set(k, [arc]))
-    # testing faces is much faster than cut-sets, buy might not work for disjoint diagrams
-    return set(arc for r in k.faces for arc in k.arcs if arc.issubset(r))
+    return {arc for r in k.faces for arc in k.arcs if arc.issubset(r)}
 
 
 def is_bridge(k: PlanarDiagram, arc_or_endpoint) -> bool:
-    """
-    Determine whether the given arc or endpoint is a bridge in the planar diagram.
-
-    A bridge is an arc whose removal disconnects the diagram into two disjoint components.
-    This function checks if the provided `arc_or_endpoint` forms a cut set.
+    """Return True if the given arc/endpoint is a bridge (a size-1 arc cut-set).
 
     Args:
-        k (PlanarDiagram): The planar diagram.
-        arc_or_endpoint (Union[Endpoint, set[Endpoint], frozenset[Endpoint]]):
-            The arc (set of two endpoints) or a single endpoint to check.
-
-    Returns:
-        bool: True if the arc or endpoint is a bridge, False otherwise.
+        k: Diagram.
+        arc_or_endpoint: Either an `Endpoint` (we test the arc with its twin) or a 2-endpoint container.
 
     Raises:
-        TypeError: If `arc_or_endpoint` is not an `Endpoint` or a set of endpoints.
-
-    Notes:
-        - If an `Endpoint` is provided, its twin is included in the check.
-        - If a set of endpoints is provided, the function evaluates whether their removal disconnects the diagram.
+        TypeError: if input is neither an `Endpoint` nor a 2-endpoint container.
     """
-
     if isinstance(arc_or_endpoint, Endpoint):
         return _is_arc_cut_set(k, ((arc_or_endpoint, k.twin(arc_or_endpoint)),))
-
     elif isinstance(arc_or_endpoint, (set, frozenset, tuple, list)):
         return _is_arc_cut_set(k, (arc_or_endpoint,))
-
     else:
-        raise TypeError("arc_or_endpoint must be an Endpoint or an arc (set of two Endpoints).")
+        raise TypeError("arc_or_endpoint must be an Endpoint or an arc (set/tuple/list of two Endpoints).")
 
 
-def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
-    """
-    Return the path (sequence of endpoints) starting from the given endpoint in a planar diagram.
+def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list[Endpoint]:
+    """Follow a strand starting at `endpoint` until reaching a vertex (or a cycle closes).
 
-    The path continues until it reaches a vertex node or forms a closed component. It follows connections
-    through twin endpoints, treating crossings appropriately. If the diagram is oriented, the path should follow
-    the orientation (this is currently not implemented).
+    For crossings, the path alternates “twin” and “across” at the crossing (position + 2).
+    For vertices, the path stops after stepping to the twin.
 
     Args:
-        k (PlanarDiagram): The planar diagram in which the path is traced.
-        endpoint (Endpoint): The starting endpoint of the path.
+        k: Diagram.
+        endpoint: Starting endpoint (must be `Endpoint`).
 
     Returns:
-        list: A list of endpoints that form the continuous path until it reaches a vertex-like node or loops back.
-
-    Raises:
-        TypeError: If the input endpoint is not an instance of Endpoint.
+        Ordered list of endpoints along the strand (endpoint, twin, next, twin, ...).
     """
-
-    # TODO: in oriented diagrams
-
-    # if not k.is_oriented():
-    #     raise NotImplementedError("Path from endpoint is not implemented for unoriented diagrams")
-
     if not isinstance(endpoint, Endpoint):
         raise TypeError(f"Endpoint {endpoint} should be of type Endpoint")
 
-    path = []
-    ep = endpoint
+    path: list[Endpoint] = []
+    ep: Endpoint = endpoint
 
     while True:
         path.append(ep)
@@ -336,85 +204,90 @@ def path_from_endpoint(k: PlanarDiagram, endpoint: Endpoint) -> list:
             ep = k.endpoint_from_pair((twin_ep.node, (twin_ep.position + 2) % 4))
         else:
             break
-
         if ep is endpoint:
             break
 
     return path
 
-def edges(k: PlanarDiagram, **endpoint_attributes) -> list:
-    """
-    Return a list of ordered edges/strands of a knotted graph or a knot, or link.
-    An edge is a list of endpoints that starts at a vertex (not a crossing) and ends at a vertex.
-    In case there are closed components, the edges represent the closed component starting and ending at a crossing.
 
-    An edge is represented as an ordered list of endpoints, where the first two pairs are twin endpoints,
-    and the third element is an adjacent endpoint over a crossing.
+def edges(k: PlanarDiagram, **endpoint_attributes) -> list[list[Endpoint]]:
+    """Return ordered strands (“edges”) of the diagram.
+
+    Each edge is a list of endpoints starting at a vertex (or forming a closed component)
+    and proceeding through crossings as per `path_from_endpoint`. Endpoints can be
+    filtered by attributes via keyword arguments (e.g., `color="red"`).
 
     Args:
-        k (PlanarDiagram): The planar diagram.
-        endpoint_attributes (dict): A dictionary of attribute filters for endpoints.
+        k: Diagram.
+        **endpoint_attributes: Attribute filters that all endpoints in a strand must satisfy.
 
     Returns:
-        list: A list of ordered strands that represent the edges of the diagram.
+        List of strands, each a list of `Endpoint`.
     """
-
-    list_of_edges = []
+    list_of_edges: list[list[Endpoint]] = []
     unused_endpoints = set(k.endpoints)
 
-    # start edges with terminals
-    terminals = [node for node in k.nodes
-                 if isinstance(k.nodes[node], Vertex)]
+    # terminal nodes (vertices); prefer to start from Outgoing/Ingoing endpoints if oriented
+    terminals = [node for node in k.nodes if isinstance(k.nodes[node], Vertex)]
 
-    def _endpoints_have_attribute(eps, attr):
-        # TODO: make pythonic
-        if attr:
-            for ept in eps:
-                for key, value in attr.items():
-                    if key not in ept.attr:
-                        return False
-                    else:
-                        if ept.attr[key] != value:
-                            return False
+    def _endpoints_have_attribute(eps: list[Endpoint], attr: dict) -> bool:
+        if not attr:
+            return True
+        for ept in eps:
+            for key, value in attr.items():
+                if key not in ept.attr or ept.attr[key] != value:
+                    return False
         return True
 
     priority = {OutgoingEndpoint: 0, IngoingEndpoint: 1, Endpoint: 2}
-    start_endpoint_candidates = sorted([ep for node in terminals for ep in k.nodes[node]], key=lambda x: priority[type(x)])
+    start_candidates = sorted(
+        (ep for node in terminals for ep in k.nodes[node]),
+        key=lambda x: priority.get(type(x), 3),
+    )
 
-    # first follow strands from the terminals
-    for ep in start_endpoint_candidates:
-        #print(ep, type(ep))
-        if ep in unused_endpoints:  # skip ingoing to follow orientation
+    # Start with strands that originate at terminals
+    for ep in start_candidates:
+        if ep in unused_endpoints:
             strand = path_from_endpoint(k, k.twin(ep))
             strand_set = set(strand)
-            if not strand_set.issubset(unused_endpoints):  # sanity check
+            if not strand_set.issubset(unused_endpoints):
                 raise ValueError(f"Endpoints {strand} should be unused")
-            unused_endpoints -= strand_set  # remove them from unused
-
+            unused_endpoints -= strand_set
             if _endpoints_have_attribute(strand, endpoint_attributes):
                 list_of_edges.append(strand)
 
-    # if there are still endpoints available, they come from closed components
-
+    # Remaining strands correspond to closed components
     while unused_endpoints:
-        strand = path_from_endpoint(k, next(iter(unused_endpoints)))  # TODO: start from outgoing endpoint
+        start = next(iter(unused_endpoints))
+        strand = path_from_endpoint(k, start)
         strand_set = set(strand)
-        if not strand_set.issubset(unused_endpoints):  # sanity check
+        if not strand_set.issubset(unused_endpoints):
             raise ValueError(f"Endpoints {strand} should be unused")
-        unused_endpoints -= strand_set  # remove them from unused
+        unused_endpoints -= strand_set
         if _endpoints_have_attribute(strand, endpoint_attributes):
             list_of_edges.append(strand)
 
     return list_of_edges
 
 
-def overstrands(k: PlanarDiagram | OrientedPlanarDiagram):
-    # return sets of endpoints that are on the same overstrand
+def overstrands(k: Diagram):
+    """Return a partition of endpoints into sets that belong to the same overstrand.
+
+    Overstrand relation:
+      - At each crossing, pair the two over-passing endpoints.
+      - Along arcs, pair twins.
+
+    Returns:
+        A list of sets (each set is an overstrand’s endpoints).
+    """
     dsu = DisjointSetUnion(k.endpoints)
     for c in k.crossings:
         eps = k.endpoints[c]
-        #print(c, eps)
         dsu[eps[1]] = k.endpoint_from_pair(eps[3])
     for ep1, ep2 in k.arcs:
         dsu[ep1] = k.endpoint_from_pair(ep2)
     return dsu.classes()
+
+
+if __name__ == "__main__":
+    pass

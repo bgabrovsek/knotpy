@@ -1,5 +1,0 @@
-Alexamder
-HOMFLYPY
-plotting (?)
-Count diagrams invariant
-load culprit,...
