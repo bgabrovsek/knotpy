@@ -1,38 +1,51 @@
+"""
+High-level drawing utilities for KnotPy diagrams using Matplotlib.
+
+This module renders planar (and oriented) diagrams given a geometric layout.
+It draws arcs/segments, endpoints (with gaps at undercrossings), vertices,
+orientation arrows, and optional labels. When a diagram has multiple disjoint
+components, you can compute layouts per component and align them horizontally
+for a tidy final composition.
+
+To minimize import time for the package, heavy dependencies such as Matplotlib
+are imported locally inside the drawing functions.
+
+Notes
+-----
+- Layouts are expected to be produced by `knotpy.drawing.layout_circle_packing`.
+- Elements in the layout are instances of `CircularArc` or `Segment`.
+- A small gap is rendered at underpassing endpoints of crossings to visualize
+  over/under information.
+"""
+
 import math
-import matplotlib.pyplot as plt
-from matplotlib.patches import Arc, Polygon
-from matplotlib.lines import Line2D
 
 from knotpy.classes.endpoint import IngoingEndpoint
-from knotpy.algorithms.disjoint_union import disjoint_union, disjoint_union_decomposition
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.algorithms.disjoint_union import disjoint_union_decomposition
+from knotpy.classes.planardiagram import Diagram  # alias: PlanarDiagram | OrientedPlanarDiagram
 from knotpy.drawing.layout_circle_packing import layout_circle_packing
 from knotpy.utils.geometry import CircularArc, Segment, middle
 from knotpy.drawing.alignment import align_layouts
 from knotpy.drawing._support import _add_support_arcs
-from knotpy.algorithms.connected_sum import connected_sum
 
-"""
-TODO:
-- bridges
-- loops
-- nicer connected sums
-- with support labels are wrong
-- two adjacent leafs (a=V(b0) b=X(a0 c3 c0 d0) c=X(b2 e3 f0 b1) d=V(b3) e=X(f3 g3 h0 c1) f=X(c2 h3 g0 e0) g=X(f2 h2 h1 e1) h=X(e2 g2 g1 f1))
+__all__ = [
+    "draw",
+    "draw_from_layout",
+    "draw_arcs",
+    "draw_endpoints",
+    "draw_vertices",
+    "draw_arrows",
+    "draw_node_labels",
+    "draw_endpoint_labels",
+    "draw_arc_labels",
+    "autoscale_with_padding",
+]
+__version__ = "0.2"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-this case:
-    # s = kp.from_knotpy_notation("a → X(b3 b2 c3 c2), b → X(d3 e0 a1 a0), c → X(e3 d0 a3 a2), d → X(c1 f3 g0 b0), e → X(b1 g3 h0 c0), f → X(i0 j0 k0 d1), g → X(d2 k3 k2 e1), h → X(e2 l0 l3 j2), i → X(f0 i2 i1 j1), j → X(f1 i3 h3 l2), k → X(f2 l1 g2 g1), l → X(h1 k1 j3 h2)")
-
-"""
-
-
-__all__ = ['draw']
-__version__ = '0.1'
-__author__ = 'Boštjan Gabrovšek'
-
-_DEFAULT_ARC_COLOR = "tab:blue"  # knot strand color
-_DEFAULT_ARC_WIDTH = 4.0  # knot strand width
-_DEFAULT_GAP_WIDTH = 0.1   # arc break gap the under-passing
+_DEFAULT_ARC_COLOR = "tab:blue"   # knot strand color
+_DEFAULT_ARC_WIDTH = 4.0          # knot strand width
+_DEFAULT_GAP_WIDTH = 0.1          # arc break gap at the under-passing
 
 _DEFAULT_VERTEX_SIZE = 0.1
 _DEFAULT_VERTEX_COLOR = "black"
@@ -42,14 +55,14 @@ _DEFAULT_FONT_SIZE = 14
 
 _ARROW_LENGTH = 0.15
 _ARROW_WIDTH = 0.15
-#_ARROW_FLOW = 0.5  # arrow slant so it appears more natural, 0 = tangent
 _DEFAULT_ARROW_COLOR = _DEFAULT_ARC_COLOR
-_DEFAULT_ARROW_POSITION = "middle"  # options: "middle"
-_DEFAULT_ARROW_STYLE = "open"  # options: "open", "closed"
+_DEFAULT_ARROW_POSITION = "middle"  # currently only "middle" is supported
+_DEFAULT_ARROW_STYLE = "open"       # "open" or "closed"
 
-_PLOT_CIRCLES = True  # mostly for debugging
+# Debug helper to visualize circle packing regions.
+_PLOT_CIRCLES = True
 
-# Drawing order (stacking order) of plot elements, lower z-order values are drawn first.
+# Z-order (stacking) for plot elements; lower values are drawn first.
 _Z_CIRCLES = 0
 _Z_ARC = 1
 _Z_ENDPOINT = 1
@@ -58,18 +71,26 @@ _Z_VERTEX = 3
 _Z_TEXT = 4
 
 
-def draw_arcs(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, arcs_to_draw: None | list=None, ax=None):
-    """
-    Draws the circular arcs and segments of a diagram
+def _mpl_axes():
+    """Local Matplotlib imports to keep package import time low."""
+    import matplotlib.pyplot as plt
+    from matplotlib.axes import Axes  # noqa: F401  # type-only style import
+    return plt
+
+
+def draw_arcs(k: Diagram, layout: dict, arcs_to_draw: list | None = None, ax=None):
+    """Draw circular arcs and straight segments corresponding to diagram arcs.
+
     Args:
-        k (PlanarDiagram | OrientedPlanarDiagram): The diagram whose arcs are drawn.
-        layout (dict): A layout map where keys are arcs and values are the respective graphical
-            elements (e.g., `CircularArc` or `Segment`) describing the visualization.
-        arcs_to_draw (None | list, optional): List of arcs to be drawn. If None, defaults to all arcs in
-            the diagram `k`.
-        ax (matplotlib.axes.Axes, optional): The matplotlib axis to which the arcs and segments are
-            drawn. If None, the current axis is used.
+        k (Diagram): Diagram whose arcs will be drawn.
+        layout (dict): Mapping from each arc (frozenset of two endpoints) to a
+            `CircularArc` or `Segment`.
+        arcs_to_draw (list | None): Subset of arcs to draw. If None, draw all `k.arcs`.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
     """
+    plt = _mpl_axes()
+    from matplotlib.patches import Arc
+    from matplotlib.lines import Line2D
 
     if ax is None:
         ax = plt.gca()
@@ -80,55 +101,61 @@ def draw_arcs(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, arcs_to_dra
     for arc in arcs_to_draw:
         element = layout[arc]
         if isinstance(element, CircularArc):
-
             ax.add_patch(
-                Arc(xy=(element.center.real, element.center.imag),
+                Arc(
+                    xy=(element.center.real, element.center.imag),
                     width=2 * element.radius,
                     height=2 * element.radius,
                     theta1=math.degrees(element.theta1),
                     theta2=math.degrees(element.theta2),
                     color=_DEFAULT_ARC_COLOR,
                     linewidth=_DEFAULT_ARC_WIDTH,
-                    zorder=_Z_ARC
-                    )
+                    zorder=_Z_ARC,
+                )
             )
-
         elif isinstance(element, Segment):
             ax.add_line(
-                Line2D((element.A.real, element.B.real), (element.A.imag, element.B.imag),
-                       color=_DEFAULT_ARC_COLOR,
-                       linewidth=_DEFAULT_ARC_WIDTH,
-                       zorder=_Z_ARC)
+                Line2D(
+                    (element.A.real, element.B.real),
+                    (element.A.imag, element.B.imag),
+                    color=_DEFAULT_ARC_COLOR,
+                    linewidth=_DEFAULT_ARC_WIDTH,
+                    zorder=_Z_ARC,
+                )
             )
 
+
 def _is_start(element, point):
-    # On which side is the point (start or end of the element?)
+    """Return True if `point` is closer to the start of `element` than to its end."""
     if isinstance(element, CircularArc):
         return abs(element(element.theta1) - point) < abs(element(element.theta2) - point)
     if isinstance(element, Segment):
         return abs(element(element.A) - point) < abs(element(element.B) - point)
-
     raise ValueError(f"Unsupported element type: {type(element)}")
 
-def draw_endpoints(k: PlanarDiagram | OrientedPlanarDiagram,
-                   layout:dict,
-                   endpoints_to_draw: None | list=None,
-                   gap=_DEFAULT_GAP_WIDTH,
-                   ax=None):
-    """
-    Draws the circular arcs and segments of a diagram
-    Args:
-        k (PlanarDiagram | OrientedPlanarDiagram): The diagram whose arcs are drawn.
-        layout (dict): A layout map where keys are arcs and values are the respective graphical
-            elements (e.g., `CircularArc` or `Segment`) describing the visualization.
-        endpoints_to_draw (None | list, optional): List of arcs to be drawn. If None, defaults to all arcs in
-            the diagram `k`.
-        gap (float, optional): The width of the gap between the endpoints of the crossing.
-        ax (matplotlib.axes.Axes, optional): The matplotlib axis to which the arcs and segments are
-            drawn. If None, the current axis is used.
 
-    # TODO: Use LineCollection and PatchCollection for faster rendering (but this complicates the bounding box).
+def draw_endpoints(
+    k: Diagram,
+    layout: dict,
+    endpoints_to_draw: list | None = None,
+    gap: float = _DEFAULT_GAP_WIDTH,
+    ax=None,
+):
+    """Draw endpoint-adjacent sub-arcs for all endpoints, adding gaps under crossings.
+
+    Args:
+        k (Diagram): Diagram whose endpoint sub-arcs will be drawn.
+        layout (dict): Mapping from endpoint to `CircularArc` or `Segment` (or None).
+        endpoints_to_draw (list | None): Subset of endpoints to draw. If None, draw all endpoints.
+        gap (float): Width of the gap carved out at under-passing endpoints of crossings.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+
+    Notes:
+        Uses a small shortening near under-passing endpoints (even positions) to visualize over/under.
     """
+    plt = _mpl_axes()
+    from matplotlib.patches import Arc
+    from matplotlib.lines import Line2D
 
     if ax is None:
         ax = plt.gca()
@@ -139,115 +166,175 @@ def draw_endpoints(k: PlanarDiagram | OrientedPlanarDiagram,
     for ep in endpoints_to_draw:
         g_arc = layout[ep]
 
-        # do we need to make a gap?
+        # Shorten at under-passing endpoints of crossings (even positions).
         if ep.node in k.crossings and not ep.position % 2:
             if g_arc is not None:
-                g_arc = g_arc.shorten(_DEFAULT_GAP_WIDTH, side="A", inplace=False)
-
+                g_arc = g_arc.shorten(gap, side="A", inplace=False)
 
         if isinstance(g_arc, CircularArc):
             ax.add_patch(
-                Arc(xy=(g_arc.center.real, g_arc.center.imag),
+                Arc(
+                    xy=(g_arc.center.real, g_arc.center.imag),
                     width=2 * g_arc.radius,
                     height=2 * g_arc.radius,
                     theta1=math.degrees(g_arc.theta1),
                     theta2=math.degrees(g_arc.theta2),
                     color=_DEFAULT_ARC_COLOR,
                     linewidth=_DEFAULT_ARC_WIDTH,
-                    zorder=_Z_ENDPOINT
-                    )
+                    zorder=_Z_ENDPOINT,
                 )
-
+            )
         elif isinstance(g_arc, Segment):
             ax.add_line(
-                Line2D((g_arc.A.real, g_arc.B.real), (g_arc.A.imag, g_arc.B.imag),
-                       color=_DEFAULT_ARC_COLOR,
-                       linewidth=_DEFAULT_ARC_WIDTH,
-                       zorder=_Z_ENDPOINT)
+                Line2D(
+                    (g_arc.A.real, g_arc.B.real),
+                    (g_arc.A.imag, g_arc.B.imag),
+                    color=_DEFAULT_ARC_COLOR,
+                    linewidth=_DEFAULT_ARC_WIDTH,
+                    zorder=_Z_ENDPOINT,
+                )
             )
 
 
-def draw_vertices(
-        k: PlanarDiagram | OrientedPlanarDiagram,
-        layout:dict,
-        vertices_to_draw:None | list=None,
-        ax=None):
+def draw_vertices(k: Diagram, layout: dict, vertices_to_draw: list | None = None, ax=None):
+    """Draw solid disks for vertex nodes.
+
+    Args:
+        k (Diagram): Diagram whose vertices will be drawn.
+        layout (dict): Mapping from node -> complex center for vertices.
+        vertices_to_draw (list | None): Subset of vertices to draw. If None, draw all vertices.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+    """
+    plt = _mpl_axes()
 
     if ax is None:
         ax = plt.gca()
 
-    # if vertices to be drawn are not given, draw them all.
     if vertices_to_draw is None:
         vertices_to_draw = list(k.vertices)
 
-    # remove non-visible vertices
     vertices_to_draw = [v for v in vertices_to_draw if v in layout]
 
     for v in vertices_to_draw:
         xy = layout[v]
-
-        ax.add_patch(plt.Circle(
-            xy=(xy.real, xy.imag),
-            radius=_DEFAULT_VERTEX_SIZE / 2,
-            color=_DEFAULT_VERTEX_COLOR,
-            zorder=_Z_VERTEX)
+        ax.add_patch(
+            plt.Circle(
+                xy=(xy.real, xy.imag),
+                radius=_DEFAULT_VERTEX_SIZE / 2,
+                color=_DEFAULT_VERTEX_COLOR,
+                zorder=_Z_VERTEX,
+            )
         )
 
 
 def draw_arrows(
-        k: PlanarDiagram | OrientedPlanarDiagram,
-        layout:dict,
-        endpoint_to_draw: None | list=None,
-        position=_DEFAULT_ARROW_POSITION,
-        style=_DEFAULT_ARROW_STYLE,
-        ax=None):
+    k: Diagram,
+    layout: dict,
+    endpoint_to_draw: list | None = None,
+    position: str = _DEFAULT_ARROW_POSITION,
+    style: str = _DEFAULT_ARROW_STYLE,
+    ax=None,
+):
+    """Draw orientation arrows along arcs (for ingoing endpoints).
 
-        if ax is None:
-            ax = plt.gca()
+    Args:
+        k (Diagram): Diagram whose orientation will be drawn.
+        layout (dict): Mapping for arcs and endpoints to their geometric elements.
+        endpoint_to_draw (list | None): Optional subset of endpoints; if None, all endpoints are considered.
+        position (str): Where to place arrows. Currently only "middle" is supported.
+        style (str): "open" (V-shaped) or "closed" (filled triangle).
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+    """
+    plt = _mpl_axes()
+    from matplotlib.patches import Polygon
+    from matplotlib.lines import Line2D
 
-        if endpoint_to_draw is None:
-            endpoint_to_draw = list(k.endpoints)
-        endpoint_to_draw = [k.endpoint_from_pair(ep) for ep in endpoint_to_draw]
-        endpoint_to_draw = [ep for ep in endpoint_to_draw if type(ep) is IngoingEndpoint]  # filter only ingoing endpoints
+    if ax is None:
+        ax = plt.gca()
 
-        # Plot arrow on the arc
-        if position == "middle":
-            for arc in k.arcs:
-                ep1, ep2 = arc
-                if not (ep := ep1 if ep1 in endpoint_to_draw else (ep2 if ep2 in endpoint_to_draw else None)):
-                    continue
+    if endpoint_to_draw is None:
+        endpoint_to_draw = list(k.endpoints)
+    endpoint_to_draw = [k.endpoint_from_pair(ep) for ep in endpoint_to_draw]
+    endpoint_to_draw = [ep for ep in endpoint_to_draw if type(ep) is IngoingEndpoint]
 
-                sign = 1 if _is_start(layout[arc], layout[ep.node]) else -1 # the direction of the arrrow
+    if position == "middle":
+        for arc in k.arcs:
+            ep1, ep2 = arc
+            ep = ep1 if ep1 in endpoint_to_draw else (ep2 if ep2 in endpoint_to_draw else None)
+            if not ep:
+                continue
 
-                element = layout[arc]
-                arrow_angle = _ARROW_LENGTH / element.radius  # circular arc length is s = theta * radius
-                # compute arrow points
-                a = element(element.theta1)  # arrow head
-                b = element(element.theta1 + sign * arrow_angle)  # arrow tail
-                d = b - a  # distance vector
-                p = 1j * d / abs(d)  # unit perpendicular vector
-                points = [b + p * _ARROW_WIDTH * 0.5, a, b - p * _ARROW_WIDTH * 0.5]
-                points = [(p.real, p.imag) for p in points]
+            element = layout[arc]
+            sign = 1 if _is_start(element, layout[ep.node]) else -1
 
-                if style == "open":
-                    x, y = zip(*points)
-                    ax.add_line(Line2D(x[:2], y[:2], color=_DEFAULT_ARROW_COLOR, linewidth=_DEFAULT_ARC_WIDTH, zorder=_Z_ARROW, solid_capstyle='round'))
-                    ax.add_line(Line2D(x[1:], y[1:], color=_DEFAULT_ARROW_COLOR, linewidth=_DEFAULT_ARC_WIDTH, zorder=_Z_ARROW, solid_capstyle='round'))
-                elif style == "closed":
-                    ax.add_patch(Polygon(points, closed=True, edgecolor='none', facecolor=_DEFAULT_ARROW_COLOR, linewidth=0))
-                else:
-                    raise ValueError(f"Unsupported arrow style: {style}")
+            # Arrow geometry on circular arcs/segments.
+            arrow_angle = _ARROW_LENGTH / element.radius
+            a = element(element.theta1)  # arrow head
+            b = element(element.theta1 + sign * arrow_angle)  # arrow tail
+            d = b - a
+            p = 1j * d / abs(d)  # unit perpendicular
+            pts = [b + p * (_ARROW_WIDTH * 0.5), a, b - p * (_ARROW_WIDTH * 0.5)]
+            pts_xy = [(w.real, w.imag) for w in pts]
+
+            if style == "open":
+                x, y = zip(*pts_xy)
+                ax.add_line(
+                    Line2D(
+                        x[:2],
+                        y[:2],
+                        color=_DEFAULT_ARROW_COLOR,
+                        linewidth=_DEFAULT_ARC_WIDTH,
+                        zorder=_Z_ARROW,
+                        solid_capstyle="round",
+                    )
+                )
+                ax.add_line(
+                    Line2D(
+                        x[1:],
+                        y[1:],
+                        color=_DEFAULT_ARROW_COLOR,
+                        linewidth=_DEFAULT_ARC_WIDTH,
+                        zorder=_Z_ARROW,
+                        solid_capstyle="round",
+                    )
+                )
+            elif style == "closed":
+                ax.add_patch(
+                    Polygon(
+                        pts_xy,
+                        closed=True,
+                        edgecolor="none",
+                        facecolor=_DEFAULT_ARROW_COLOR,
+                        linewidth=0,
+                    )
+                )
+            else:
+                raise ValueError(f"Unsupported arrow style: {style}")
 
 
 def draw_node_labels(
-        k: PlanarDiagram | OrientedPlanarDiagram,
-        layout:dict,
-        nodes_to_draw: None | list=None,
-        font_size=_DEFAULT_FONT_SIZE,
-        font_color=_DEFAULT_TEXT_COLOR,
-        verticalalignment='bottom',
-        horizontalalignment='left',
-        ax=None):
+    k: Diagram,
+    layout: dict,
+    nodes_to_draw: list | None = None,
+    font_size: int = _DEFAULT_FONT_SIZE,
+    font_color: str = _DEFAULT_TEXT_COLOR,
+    verticalalignment: str = "bottom",
+    horizontalalignment: str = "left",
+    ax=None,
+):
+    """Annotate nodes (crossings/vertices) with their identifiers.
+
+    Args:
+        k (Diagram): Diagram whose node labels will be drawn.
+        layout (dict): Mapping node -> complex position for label placement.
+        nodes_to_draw (list | None): Subset of nodes; if None, label all nodes in layout.
+        font_size (int): Font size.
+        font_color (str): Text color.
+        verticalalignment (str): Matplotlib text vertical alignment.
+        horizontalalignment (str): Matplotlib text horizontal alignment.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+    """
+    plt = _mpl_axes()
 
     if ax is None:
         ax = plt.gca()
@@ -255,7 +342,6 @@ def draw_node_labels(
     if nodes_to_draw is None:
         nodes_to_draw = list(k.nodes)
 
-    # remove non-visible vertices
     nodes_to_draw = [v for v in nodes_to_draw if v in layout]
 
     for v in nodes_to_draw:
@@ -270,26 +356,40 @@ def draw_node_labels(
             color=font_color,
             verticalalignment=verticalalignment,
             horizontalalignment=horizontalalignment,
-            zorder=_Z_TEXT
+            zorder=_Z_TEXT,
         )
 
 
 def draw_endpoint_labels(
-        k: PlanarDiagram | OrientedPlanarDiagram,
-        layout:dict,
-        endpoints_to_draw:None | list=None,
-        font_size=_DEFAULT_FONT_SIZE,
-        font_color=_DEFAULT_TEXT_COLOR,
-        verticalalignment='bottom',
-        horizontalalignment='left',
-        ax=None):
+    k: Diagram,
+    layout: dict,
+    endpoints_to_draw: list | None = None,
+    font_size: int = _DEFAULT_FONT_SIZE,
+    font_color: str = _DEFAULT_TEXT_COLOR,
+    verticalalignment: str = "bottom",
+    horizontalalignment: str = "left",
+    ax=None,
+):
+    """Annotate endpoints with their (node, position) labels near the middle of their sub-arc.
+
+    Args:
+        k (Diagram): Diagram whose endpoint labels will be drawn.
+        layout (dict): Mapping endpoint -> `CircularArc` or `Segment`.
+        endpoints_to_draw (list | None): Subset of endpoints; if None, label all.
+        font_size (int): Font size.
+        font_color (str): Text color.
+        verticalalignment (str): Matplotlib text vertical alignment.
+        horizontalalignment (str): Matplotlib text horizontal alignment.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+    """
+    plt = _mpl_axes()
 
     if ax is None:
         ax = plt.gca()
 
-    endpoints_to_draw = list(k.endpoints) if endpoints_to_draw is None else [k.endpoint_from_pair(ep) for ep in endpoints_to_draw]
+    endpoints = list(k.endpoints) if endpoints_to_draw is None else [k.endpoint_from_pair(ep) for ep in endpoints_to_draw]
 
-    for ep in endpoints_to_draw:
+    for ep in endpoints:
         garc = layout[ep]
         if garc is None:
             continue
@@ -302,26 +402,43 @@ def draw_endpoint_labels(
             color=font_color,
             verticalalignment=verticalalignment,
             horizontalalignment=horizontalalignment,
-            zorder=_Z_TEXT
+            zorder=_Z_TEXT,
         )
 
 
 def draw_arc_labels(
-        k: PlanarDiagram | OrientedPlanarDiagram,
-        layout:dict,
-        arcs_to_draw:None | list=None,
-        font_size=_DEFAULT_FONT_SIZE,
-        font_color=_DEFAULT_TEXT_COLOR,
-        verticalalignment='bottom',
-        horizontalalignment='left',
-        ax=None):
+    k: Diagram,
+    layout: dict,
+    arcs_to_draw: list | None = None,
+    font_size: int = _DEFAULT_FONT_SIZE,
+    font_color: str = _DEFAULT_TEXT_COLOR,
+    verticalalignment: str = "bottom",
+    horizontalalignment: str = "left",
+    ax=None,
+):
+    """Annotate arcs by listing their two endpoint labels near the middle of the arc.
+
+    Args:
+        k (Diagram): Diagram whose arc labels will be drawn.
+        layout (dict): Mapping arc -> `CircularArc` or `Segment`.
+        arcs_to_draw (list | None): Subset of arcs; if None, label all `k.arcs`.
+        font_size (int): Font size.
+        font_color (str): Text color.
+        verticalalignment (str): Matplotlib text vertical alignment.
+        horizontalalignment (str): Matplotlib text horizontal alignment.
+        ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
+    """
+    plt = _mpl_axes()
+
     if ax is None:
         ax = plt.gca()
+
     if arcs_to_draw is None:
         arcs_to_draw = list(k.arcs)
 
     for arc in arcs_to_draw:
-        if (garc := layout[arc]) is None:
+        garc = layout[arc]
+        if garc is None:
             continue
         xy = middle(garc)
         ax.text(
@@ -334,25 +451,38 @@ def draw_arc_labels(
             horizontalalignment=horizontalalignment,
         )
 
-def autoscale_with_padding(ax, pad_frac=0.05):
-    # Get bounding box from all elements in the Axes
-    ax.relim()             # Recompute limits based on current artists
-    ax.autoscale_view()    # Update view based on relim
+
+def autoscale_with_padding(ax, pad_frac: float = 0.05):
+    """Autoscale the axes to fit current artists, apply padding, and set equal aspect.
+
+    Args:
+        ax: Matplotlib axes.
+        pad_frac (float): Fractional padding to apply to both x and y ranges.
+    """
+    ax.relim()
+    ax.autoscale_view()
+
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
 
-    # Apply padding
     xpad = (xlim[1] - xlim[0]) * pad_frac
     ypad = (ylim[1] - ylim[0]) * pad_frac
 
     ax.set_xlim(xlim[0] - xpad, xlim[1] + xpad)
     ax.set_ylim(ylim[0] - ypad, ylim[1] + ypad)
 
-    # Ensure equal aspect ratio
-    ax.set_aspect('equal', adjustable='box')
+    ax.set_aspect("equal", adjustable="box")
 
 
-def draw_from_layout(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, ax, with_labels):
+def draw_from_layout(k: Diagram, layout: dict, ax, with_labels: bool):
+    """Render a diagram from a precomputed layout onto given axes.
+
+    Args:
+        k (Diagram): Diagram to draw.
+        layout (dict): Mapping of arcs/endpoints/nodes to geometric elements or positions.
+        ax: Matplotlib axes to draw on.
+        with_labels (bool): If True, draw node/endpoint/arc labels.
+    """
     draw_arcs(k, layout, ax=ax)
     draw_endpoints(k, layout, ax=ax)
     draw_arrows(k, layout, ax=ax)
@@ -362,58 +492,75 @@ def draw_from_layout(k: PlanarDiagram | OrientedPlanarDiagram, layout:dict, ax, 
         draw_node_labels(k, layout, ax=ax)
         draw_endpoint_labels(k, layout, ax=ax)
         draw_arc_labels(k, layout, ax=ax)
+
     autoscale_with_padding(ax)
     ax.set_axis_off()
 
 
-def draw(k: PlanarDiagram | OrientedPlanarDiagram, **kwds):
+def draw(k: Diagram, **kwds):
+    """High-level convenience function to draw a diagram.
 
-    #print(k)
-    # TODO: analyse keywords (title,...)
+    This function:
+      1) Adds support arcs (to eliminate bridges etc.) for robust drawing,
+      2) Decomposes the diagram into disjoint components,
+      3) Computes a circle-packing layout for each component,
+      4) Aligns components horizontally,
+      5) Renders the composed result to Matplotlib.
 
-    # add bridge and loop support arcs
+    Args:
+        k (Diagram): The diagram to draw.
+        **kwds: Optional keyword arguments:
+            - ax: Matplotlib axes to draw on. If omitted, a new figure/axes is created.
+            - with_labels (bool): If True, draw node/endpoint/arc labels. Default False.
+            - show (bool): If True, call `plt.show()` at the end. Default False.
+    """
+    plt = _mpl_axes()
+
+    # 1) Add support arcs (bridges/cut-vertices handling for reliable plotting).
     supported_k = _add_support_arcs(k)
 
-    # Split the knot into disjoint components (which will be aligned)
+    # 2) Decompose into disjoint components.
     components = disjoint_union_decomposition(supported_k)
 
+    # 3) Compute layout per component (and keep the circle packing for alignment).
+    layout_circles_pairs = [layout_circle_packing(comp, return_circles=True) for comp in components]
 
-    # Compute the layout for each component separately.
-    layout_circles_pairs = [layout_circle_packing(_, return_circles=True) for _ in components]
-
-    # Align the components.
+    # 4) Align components horizontally.
     align_layouts(layout_circles_pairs)
 
     with_labels = kwds.get("with_labels", False)
     show = kwds.get("show", False)
 
-    # Join the layout to a common one.
+    # Merge per-component layouts into a joint layout.
     joint_layout, joint_circles = {}, {}
     for layout, circles in layout_circles_pairs:
         joint_layout.update(layout)
         joint_circles.update(circles)
 
-    # Plot the joint layout.
-    if "ax" in kwds:
-        ax = kwds['ax']
-    else:
-        fig, ax = plt.subplots()
+    # Prepare axes.
+    ax = kwds.get("ax", None)
+    if ax is None:
+        _, ax = plt.subplots()
         ax = plt.gca()
 
-
-    align_layouts(layout_circles_pairs)  # TODO: do we need this?
+    # (Optional) visualize circle regions used in packing.
+    align_layouts(layout_circles_pairs)  # keeps relative spacing if recomputed upstream
     if _PLOT_CIRCLES:
         _plot_circles(supported_k, joint_circles, ax=ax)
+
+    # 5) Render.
     draw_from_layout(supported_k, joint_layout, ax=ax, with_labels=with_labels)
 
     if show:
         plt.show()
 
 
-def _plot_circles(k: PlanarDiagram | OrientedPlanarDiagram, circles:dict, ax=None):
+def _plot_circles(k: Diagram, circles: dict, ax=None):
+    """Lightweight visualization of circle-packing regions (useful for debugging/alignment)."""
+    plt = _mpl_axes()
+
     if ax is None:
         ax = plt.gca()
-    colors = ['#ffeecc', '#ccf2ff', '#e6ffcc']
 
     for key, circle in circles.items():
         if key in k.nodes:
@@ -422,15 +569,17 @@ def _plot_circles(k: PlanarDiagram | OrientedPlanarDiagram, circles:dict, ax=Non
             color = "r"
         else:
             color = "g"
-        ax.add_patch(plt.Circle((circle.center.real, circle.center.imag), circle.radius,
-                                  alpha=0.05,
-                                  facecolor=color,
-                                  ls="none",
-                                  zorder=_Z_CIRCLES))
+        ax.add_patch(
+            plt.Circle(
+                (circle.center.real, circle.center.imag),
+                circle.radius,
+                alpha=0.05,
+                facecolor=color,
+                ls="none",
+                zorder=_Z_CIRCLES,
+            )
+        )
 
 
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

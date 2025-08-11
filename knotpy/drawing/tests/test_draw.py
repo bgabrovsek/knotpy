@@ -1,8 +1,9 @@
 import os
 
+import matplotlib.pyplot as plt
 from knotpy import to_knotpy_notation
 from knotpy.drawing.export import export_pdf
-from knotpy.drawing.draw import draw, plt
+from knotpy.drawing.draw import draw
 from knotpy.notation.pd import from_pd_notation
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.canonical import canonical

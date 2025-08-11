@@ -15,7 +15,7 @@ from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.drawing._support import _visible
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
                                    tangent_line, middle, bisector, bisect, split, angle_between,
-                                   perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean, orient_arc, arc_from_circle_and_points, arc_from_diamater)
+                                   perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean, orient_arc, arc_from_circle_and_points, arc_from_diameter)
 from knotpy.drawing.alignment import canonically_rotate_circles
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.drawing._support import drawable, _add_support_arcs
