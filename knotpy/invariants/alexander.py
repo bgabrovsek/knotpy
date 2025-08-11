@@ -6,7 +6,7 @@ Alexander polynomials (one-variable and multivariable).
 from __future__ import annotations
 
 __all__ = ["alexander", "multivariable_alexander", "alexander_multivariable"]
-__version__ = "0.1"
+__version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 import sympy as sp

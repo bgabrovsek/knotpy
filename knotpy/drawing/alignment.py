@@ -53,28 +53,9 @@ def canonically_rotate_circles(circles:dict, degree=0):
 
     # rotate centers
     return {key: Circle(center, radius) for key, center, radius in zip(circles, centers, radii)}
- 
+
 
 def align_layouts(layout_circles_pairs):
-    # # center all layouts
-    # for layout, circles in zip(layouts, circellae):
-    #     bb = bounding_box(layout.values())
-    #     displacement = - (bb[1] - bb[0]) / 2
-    #     for key, val in layout.items():
-    #         layout[key] = translate(val, displacement)
-    #     for key, val in circles.items():
-    #         circles[key] = translate(val, displacement)
-    #
-    # # translate the layout for multiple components so they lie next to each other
-    # for index in range(1, len(layouts)):
-    #     bb_left = bounding_box(layouts[index - 1].values())
-    #     bb_right = bounding_box(layouts[index].values())
-    #     distance = 0.5 * mean(circle.radius for circle in circellae[index - 1].values()) + 0.5 * mean(circle.radius for circle in circellae[index].values())
-    #     displacement = bb_left[1].real - bb_right[0].real + distance
-    #     for key, val in layouts[index].items():
-    #         layouts[index][key] = translate(val, displacement)
-    #     for key, val in circellae[index].items():
-    #         circellae[index][key] = translate(val, displacement)
 
     mean_radius = mean(
         mean(circle.radius for circle in circles.values() if isinstance(circle, Circle))

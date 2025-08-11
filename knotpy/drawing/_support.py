@@ -1,49 +1,77 @@
+"""
+Invisible support primitives for drawing.
+
+This module augments a diagram with temporary, hidden structure so
+circle-packing (or other layout methods) can draw it robustly. We never change
+the topology of the input diagram; instead we add auxiliary nodes/arcs marked
+with the attribute ``_support=True`` so the renderer can route around bridges,
+cut-vertices, etc.
+
+Notes
+-----
+- Support nodes/arcs are **invisible** to the end user: anything with
+  ``attr['_support'] is True`` should be treated as hidden while drawing.
+"""
+
+from __future__ import annotations
+
 import warnings
 
-#from knotpy.algorithms.sanity import sanity_check
-from knotpy.algorithms.insert import insert_endpoint
+from knotpy.algorithms.insert import insert_endpoint, insert_arc
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import bridges, leafs, kinks, loops
 from knotpy.algorithms.cut_set import cut_nodes
-from knotpy.algorithms.insert import insert_arc
 from knotpy.algorithms.subdivide import subdivide_endpoint
 from knotpy.notation.native import to_knotpy_notation
 
-_DEBUG_SUPPORT = False
+__all__ = ["non_leaf_bridges", "_add_support_arcs", "drawable"]
+__version__ = "0.2"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-def non_leaf_bridges(k:PlanarDiagram):
-    """Returns a list of bridges that are not leafs."""
+
+def non_leaf_bridges(k: PlanarDiagram) -> list:
+    """Return bridges that are not incident to leaves.
+
+    Args:
+        k: Planar diagram.
+
+    Return:
+        list: Bridges (as frozensets of two endpoints) whose endpoints are not at
+        degree-1 vertices.
+    """
     return [b for b in bridges(k) if all(k.degree(ep.node) > 1 for ep in b)]
 
-def _visible(__obj):
-    """Should object (node, endpoint, ...) be shown in diagram?
-    :param __obj:
-    :return:
+
+def _visible(__obj) -> bool:
+    """Check if a diagram object should be shown (i.e., is not a support helper).
+
+    Args:
+        __obj: Node/endpoint-like object with an ``attr`` mapping.
+
+    Return:
+        bool: False iff ``__obj.attr['_support']`` is True; True otherwise.
     """
     if not hasattr(__obj, "attr"):
         return True
-    if "_support" in __obj.attr and __obj.attr["_support"]:
-        return False
-    return True
+    return not (__obj.attr.get("_support", False))
 
-def _subdivide_two_adjacent_arcs(k:PlanarDiagram, endpoint):
+
+def _subdivide_two_adjacent_arcs(k: PlanarDiagram, endpoint) -> tuple:
+    """Subdivide the two arcs adjacent to an endpoint and mark helpers as support.
+
+    For an endpoint (node, position), split the counter-clockwise and clockwise
+    adjacent arcs by inserting bivalent vertices. The new vertices are marked
+    with ``_support=True``.
+
+    Args:
+        k: Planar diagram.
+        endpoint: Tuple ``(node, position)`` identifying the base endpoint.
+
+    Return:
+        tuple: ``(node_left, node_right, left_ep, right_ep)`` where
+        ``node_left``/``node_right`` are the new bivalent vertices and
+        ``left_ep``/``right_ep`` are their ``(node, 0)`` endpoints.
     """
-        Subdivide the two adjacent arcs in a planar diagram at a given endpoint.
-
-        If the specified endpoint is oriented upwards, this function subdivides the
-        adjacent left and right endpoints (CCW and CW respectively),
-        creating new nodes and marking them with a "_support" attribute.
-
-        Args:
-            k (PlanarDiagram): The planar diagram in which the subdivision occurs.
-            endpoint (tuple): A tuple representing the target endpoint.
-
-        Returns:
-            tuple: A tuple containing the newly created left and right nodes, and the
-            corresponding new endpoints (endpoints of the left and right nodes, respectively).
-
-    """
-
     node, pos = endpoint
     degree = k.degree(node)
     left_endpoint = k.endpoint_from_pair((node, (pos - 1) % degree))
@@ -57,105 +85,100 @@ def _subdivide_two_adjacent_arcs(k:PlanarDiagram, endpoint):
     return node_left, node_right, k.endpoint_from_pair((node_left, 0)), k.endpoint_from_pair((node_right, 0))
 
 
-def _add_support_arcs_for_cut_vertices(k:PlanarDiagram):
+def _add_support_arcs_for_cut_vertices(k: PlanarDiagram) -> None:
+    """Add invisible support arcs around cut-vertices (excluding leaf/kink adjacencies).
 
-    # TODO: do not include kinks as cut-vertices
+    Repeatedly:
+      1) Identify cut-vertices not adjacent to leaves and not themselves kink crossings.
+      2) Subdivide each incident arc by a bivalent vertex (marked ``_support=True``).
+      3) Stitch consecutive bivalent vertices with a tiny arc on both directions to
+         keep the local embedding connected for packing.
+
+    Args:
+        k: Planar diagram (modified in place).
+    """
 
     def _cut_nodes_not_leaf_adjacent_or_kink():
-        # return cut nodes that are not adjacent to a leaf
         cn = cut_nodes(k)
         leaf_adj = [k.twin((l, 0)).node for l in leafs(k)]
         kink_crossings = [ep.node for ep in kinks(k)]
         return set(cn) - set(leaf_adj) - set(kink_crossings)
 
     while nodes := _cut_nodes_not_leaf_adjacent_or_kink():
-
         node = nodes.pop()
         degree = k.degree(node)
         bivertices = [subdivide_endpoint(k, (node, pos)) for pos in range(degree)]
 
         for v in bivertices:
-
-            if _DEBUG_SUPPORT:
-                print("Adding support for cut vertices {}".format(v))
-
             k.nodes[v].attr["_support"] = True
 
         for i in range(degree):
             adj_vert_a, adj_vert_b = bivertices[i], bivertices[(i + 1) % degree]
             adj_pos_a = k.degree(adj_vert_a)
             adj_pos_b = 1
+            insert_endpoint(
+                k,
+                target_endpoint=(adj_vert_a, adj_pos_a),
+                adjacent_endpoint=(adj_vert_b, adj_pos_b),
+                _support=True,
+            )
+            insert_endpoint(
+                k,
+                target_endpoint=(adj_vert_b, adj_pos_b),
+                adjacent_endpoint=(adj_vert_a, adj_pos_a),
+                _support=True,
+            )
 
-            insert_endpoint(k, target_endpoint=(adj_vert_a, adj_pos_a), adjacent_endpoint=(adj_vert_b, adj_pos_b), _support=True)
-            insert_endpoint(k, target_endpoint=(adj_vert_b, adj_pos_b), adjacent_endpoint=(adj_vert_a, adj_pos_a), _support=True)
 
-        #assert sanity_check(k)
+def _long_bridges(k: PlanarDiagram):
+    """Merge bridges chained through a degree-2 vertex into a single “long” bridge.
 
-# def _add_support_for_bivalent_vertices(k:PlanarDiagram):
-#
-#     while bivertices := [v for v in k.vertices if k.degree(v) == 2]:
-#         v = bivertices[0]
-#         assert sanity_check(k)
-#         #parallelize_arc(k, ((v ,0), k.twin((v, 0))), _support=True)
-#         parallelize_arc(k, ((v ,0), k.twin((v, 0))), color="green")
-#         assert sanity_check(k)
+    Args:
+        k: Planar diagram.
 
-def _long_bridges(k:PlanarDiagram):
-    """If multiple bridges are connected via a 2-valent node, we call this a long bridge and treat it as one."""
-
-    #_bridges = bridges(k)
+    Return:
+        set | list: Set (or empty list) of bridges, where each element is a
+        frozenset of the two “outer” endpoints after collapsing degree-2 joints.
+    """
     _bridges = non_leaf_bridges(k)
-
     if not _bridges:
         return []
 
-
     while bivertices := [v for ep1, ep2 in _bridges for v in [ep1.node, ep2.node] if k.degree(v) == 2]:
-        # join bi-vertices
         v = bivertices[0]
         endpoints = []
-
         for b in _bridges:
             ep1, ep2 = b
             if ep1.node == v or ep2.node == v:
                 endpoints.append([ep1, ep2, b] if ep2.node == v else [ep2, ep1, b])
-
         if len(endpoints) != 2:
             raise ValueError(f"bivalent bridges error, endpoints: {endpoints}")
-
         _bridges.remove(endpoints[0][2])
         _bridges.remove(endpoints[1][2])
-        _bridges.add(frozenset( [endpoints[0][0], endpoints[1][0] ] ))
+        _bridges.add(frozenset([endpoints[0][0], endpoints[1][0]]))
 
     return _bridges
 
 
+def _add_support_arcs_for_bridges(k: PlanarDiagram) -> None:
+    """Add invisible parallel/adjacent arcs along bridges so layout can route strands.
 
-def _add_support_arcs_for_bridges(k:PlanarDiagram):
-    """
-    Adds support arcs for bridges in the given diagram.
-
-
-    Raises:
-        NotImplementedError: If an unsupported configuration involving degree-2
-            vertices is encountered.
+    For each (possibly long) bridge:
+      * If both endpoints are leaves, connect the two leaf neighborhoods with a
+        pair of small parallel arcs.
+      * Otherwise, create two “parallel” helper arcs on each side of the bridge
+        by subdividing the adjacent positions and marking the helper vertices
+        as ``_support=True``.
 
     Args:
-        k (PlanarDiagram): The planar diagram object for which support arcs need to be added.
+        k: Planar diagram (modified in place).
 
-    Returns:
-        PlanarDiagram: The processed planar diagram without bridges.
+    Raises:
+        NotImplementedError: If a degree-2 vertex is encountered on an endpoint.
     """
-
-    # Support for bridges
-    while all_bridges := _long_bridges(k):#bridges(k):
+    while all_bridges := _long_bridges(k):
         bridge = all_bridges.pop()
 
-        if _DEBUG_SUPPORT:
-            print("Adding support for (long) bridges {}".format(bridge))
-
-
-        # the bridge from node a to node b
         endpoint_a, endpoint_b = bridge
         node_a, pos_a = endpoint_a
         node_b, pos_b = endpoint_b
@@ -164,115 +187,76 @@ def _add_support_arcs_for_bridges(k:PlanarDiagram):
         if deg_a == 2 or deg_b == 2:
             raise NotImplementedError("Support arcs for degree-2 vertices not supported")
 
-        # Are we plotting just a segment (path graph on two vertices)?
+        # Segment case (both endpoints are leaves)
         if deg_a == 1 and deg_b == 1:
-
-            if _DEBUG_SUPPORT:
-                print("degs: 1 & 1")
-
-            # just a segment
             k.set_endpoint((node_a, 1), (node_b, 2), _support=True)
             k.set_endpoint((node_a, 2), (node_b, 1), _support=True)
             k.set_endpoint((node_b, 1), (node_a, 2), _support=True)
             k.set_endpoint((node_b, 2), (node_a, 1), _support=True)
             continue
 
-        # Looking from node a, one parallel arc if considered "right" and the other one "left.
-
+        # Build helper endpoints around node_a
         if k.degree(node_a) == 1:
-
-            if _DEBUG_SUPPORT:
-                print("degs: a=1")
-
-            # we have a leaf/knotoid terminal at node a, do not create a parallel arc to the bridge, but two adjacent arcs
             node_a_right = node_a_left = node_a
             pos_a_right, pos_a_left = 1, 2
         else:
-
-
-            if _DEBUG_SUPPORT:
-                print("degs: a!1")
-
-
-            # add two parallel endpoints (right and left)
-            node_a_right = subdivide_endpoint(k, (node_a, (pos_a + 1) % deg_a))  # HERE ADD SUPPORT
+            node_a_right = subdivide_endpoint(k, (node_a, (pos_a + 1) % deg_a))
             node_a_left = subdivide_endpoint(k, (node_a, (pos_a - 1) % deg_a))
             pos_a_right = 1 if k.nodes[node_a_right][0].node == node_a else 2
             pos_a_left = 2 if k.nodes[node_a_right][0].node == node_a else 1
-
             k.nodes[node_a_right].attr["_support"] = True
             k.nodes[node_a_left].attr["_support"] = True
 
+        # Build helper endpoints around node_b
         if k.degree(node_b) == 1:
-
-            if _DEBUG_SUPPORT:
-                print("degs: b=1")
-
-
-            # we have a leaf/knotoid terminal at node a
             node_b_right = node_b_left = node_b
             pos_b_right, pos_b_left = 2, 1
         else:
-
-            if _DEBUG_SUPPORT:
-                print("degs: b!1")
-
-
-            node_b_right = subdivide_endpoint(k, (node_b, (pos_b - 1) % deg_b))  # HERE ADD SUPPORT
+            node_b_right = subdivide_endpoint(k, (node_b, (pos_b - 1) % deg_b))
             node_b_left = subdivide_endpoint(k, (node_b, (pos_b + 1) % deg_b))
             pos_b_right = 2 if k.nodes[node_b_right][0].node == node_b else 1
             pos_b_left = 1 if k.nodes[node_b_right][0].node == node_b else 2
-
             k.nodes[node_b_right].attr["_support"] = True
             k.nodes[node_b_left].attr["_support"] = True
 
+        # Add the support arcs
         if k.degree(node_a) == 1:
-            if _DEBUG_SUPPORT:
-                print("degs: a1")
-
-            # if pos_a_right <  pos_a_left, first insert the smaller one, otherwise indices will not make sense
             insert_arc(k, ((node_a_right, pos_a_right), (node_b_right, pos_b_right)), _support=True)
             insert_arc(k, ((node_a_left, pos_a_left), (node_b_left, pos_b_left)), _support=True)
         else:
-
-            if _DEBUG_SUPPORT:
-                print("degs: a1!")
-
             insert_arc(k, ((node_a_left, pos_a_left), (node_b_left, pos_b_left)), _support=True)
             insert_arc(k, ((node_a_right, pos_a_right), (node_b_right, pos_b_right)), _support=True)
 
 
 def _add_support_arcs(k: PlanarDiagram):
-    """Add support arcs so there are no bridges/loops/,,, in the diagram. For every bridge, add two parallel arcs. In the case
-    the bridge is a leaf, add two adjacent arcs to the leaf.
+    """Return a copy of the diagram with support arcs inserted.
 
-    :param k:
-    :return:
+    For every bridge, add two parallel arcs (or adjacent arcs at leaf endpoints).
+    Then add local support around cut-vertices so circle-packing can embed the
+    diagram without creating overlaps.
+
+    Args:
+        k: Planar diagram.
+
+    Return:
+        PlanarDiagram: A copy of ``k`` with invisible support elements added.
+
+    Raises:
+        ValueError: If bridges remain after bridge-support insertion.
     """
-
     k = k.copy()
     if k.name:
         name = k.name
         del k.attr["name"]
     else:
         name = None
-    #
-    # if not sanity_check(k):
-    #     raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (before support)")
 
     _add_support_arcs_for_bridges(k)
 
-    #if bridges(k):
     if non_leaf_bridges(k):
-        raise ValueError(f"Diagram has bridges after adding bridge-support arcs.")
-
-    # if not sanity_check(k):
-    #     raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (after bridges)")
+        raise ValueError("Diagram has bridges after adding bridge-support arcs.")
 
     _add_support_arcs_for_cut_vertices(k)
-
-    # if not sanity_check(k):
-    #     raise ValueError(f"The diagram is not planar: {to_knotpy_notation(k)} (after cut vertices)")
 
     if name:
         k.name = name
@@ -280,12 +264,23 @@ def _add_support_arcs(k: PlanarDiagram):
     return k
 
 
-def drawable(k:PlanarDiagram):
+def drawable(k: PlanarDiagram) -> tuple[bool, list]:
+    """Check whether a diagram can be safely drawn without adding support.
 
+    Args:
+        k: Planar diagram.
+
+    Return:
+        tuple:
+            - bool: False if the diagram contains non-leaf bridges, loops, or cut-nodes.
+            - list[str]: Reasons detected (subset of ``{"bridge", "loop", "cut-node"}``).
+
+    Side effects:
+        Emits warnings describing the issues found (using concise native notation).
+    """
     diagram_drawable = True
     error_text = []
 
-    #if bridges(k):
     if non_leaf_bridges(k):
         warnings.warn(f"Diagram {to_knotpy_notation(k)} contains bridges (skipping)", UserWarning)
         error_text.append("bridge")
@@ -296,30 +291,9 @@ def drawable(k:PlanarDiagram):
         error_text.append("loop")
         diagram_drawable = False
 
-    # if kinks(k):
-    #     warnings.warn(f"Diagram {to_knotpy_notation(k)} contains kinks (skipping)", UserWarning)
-    #     error_text.append("kink")
-    #     diagram_drawable = False
-
-    # if leafs(k):
-    #     warnings.warn(f"Diagram {to_knotpy_notation(k)} contains leafs (skipping)", UserWarning)
-    #     error_text.append("leaf")
-    #     diagram_drawable = False
-
     if cut_nodes(k):
         warnings.warn(f"Diagram {to_knotpy_notation(k)} contains cut-nodes (skipping)", UserWarning)
         error_text.append("cut-node")
         diagram_drawable = False
 
     return diagram_drawable, error_text
-
-# def drawable(k):
-#     if bridges(k):
-#         print("bridges:", bridges(k))
-#         return False
-#
-#     return True
-
-
-if __name__ == "__main__":
-    pass
