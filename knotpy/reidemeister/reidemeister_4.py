@@ -1,15 +1,25 @@
+# knotpy/reidemeister/reidemeister_4.py
+from __future__ import annotations
+
+from typing import Iterable, Iterator, Optional, Sequence, Tuple, List, Hashable
+
 from random import choice
 import warnings
 
-from knotpy.algorithms.sanity import sanity_check
+from knotpy.classes.planardiagram import Diagram  # PlanarDiagram | OrientedPlanarDiagram
 from knotpy.classes.node import Crossing, Vertex
-from knotpy.classes.planardiagram import PlanarDiagram
-from knotpy.algorithms.subdivide import subdivide_endpoint_by_crossing, subdivide_endpoint
+from knotpy.algorithms.subdivide import (
+    subdivide_endpoint_by_crossing,
+    subdivide_endpoint,
+)
 from knotpy.utils.dict_utils import common_dict
 from knotpy.algorithms.remove import remove_bivalent_vertex
 from knotpy._settings import settings
 
-def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_position:int):
+
+def _expand_over_under_adjacent_positions(
+    k: Diagram, v: Hashable, start_position: int
+) -> list[int]:
     """
     For a vertex and position, it checks next positions, CCW and CW, for the vertex, so that all of them form a
     non-alternating triangle, which means there is an over- or under-strand between them.
@@ -17,23 +27,30 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
     performed, meaning, we can slide the strand from return positions to new on the "other side" of the vertex.
     it finds only such positions, where "start position" is included.
 
-    """
+    Args:
+        k (Diagram): The (oriented or unoriented) diagram.
+        v (Hashable): The vertex node identifier.
+        start_position (int): Index of the incident endpoint at which to start.
 
+    Return:
+        list[int]: A CCW-to-CW list of valid incident positions (including `start_position`)
+        along which a single over/under strand continues.
+    """
     v_inst = k.nodes[v]  # instance of the vertex
 
     if not isinstance(v_inst, Vertex):
         raise TypeError("Variable v must be of a vertex")
 
     deg = k.degree(v)
-    good_positions = [start_position]  # here we store "good" positions of v, where R4 move can be made
+    good_positions: list[int] = [start_position]  # positions at v where an R4 can be made
 
     # There should be a crossing adjacent to v at the position.
     start_ep = v_inst[start_position]
     if not isinstance(k.nodes[start_ep.node], Crossing):
         return []
 
-    good_neighbour_crossings = [start_ep.node]  # get the crossing adjacent to v
-    good_parity = start_ep.position % 2  # all other positions should be of the same parity (all over or all under)
+    good_neighbour_crossings = [start_ep.node]  # crossing adjacent to v
+    good_parity = start_ep.position % 2  # all other positions should match this parity
 
     # expand the positions CCW
     for _ in range(deg - 1):
@@ -47,7 +64,7 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
         # check if next position meets all requirements so it forms a strand continuing from position to the next
         if not isinstance(next_adj_crossing_inst, Crossing):  # is not a crossing
             break
-        if next_adj_ep.node in good_neighbour_crossings:  # the crossing is not already used
+        if next_adj_ep.node in good_neighbour_crossings:  # the crossing is already used
             break
         if next_adj_ep.position % 2 != good_parity:  # over/under is wrong
             break
@@ -55,14 +72,13 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
         turn_ep = adj_crossing_inst[(adj_ep.position - 1) % 4]
         next_turn_ep = next_adj_crossing_inst[(next_adj_ep.position + 1) % 4]
 
-        if k.twin(turn_ep) != next_turn_ep or k.twin(next_turn_ep) != turn_ep:  # strand continues from position to the nexy (cna only check one)
+        # strand continues from position to the next (can only check one)
+        if k.twin(turn_ep) != next_turn_ep or k.twin(next_turn_ep) != turn_ep:
             break
 
         # all conditions are met, so we can continue extending
         good_positions.append(next_position)
         good_neighbour_crossings.append(next_adj_ep.node)
-
-        #print("ccw", next_position, next_adj_ep.node, adj_ep.node, good_neighbour_crossings)
 
     # expand the positions CW
     for _ in range(deg - 1):
@@ -76,7 +92,7 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
         # check if next position meets all requirements so it forms a strand continuing from position to the next
         if not isinstance(next_adj_crossing_inst, Crossing):  # is not a crossing
             break
-        if next_adj_ep.node in good_neighbour_crossings:  # the crossing is not already used
+        if next_adj_ep.node in good_neighbour_crossings:  # the crossing is already used
             break
         if next_adj_ep.position % 2 != good_parity:  # over/under is wrong
             break
@@ -84,20 +100,20 @@ def _expand_over_under_adjacent_positions(k:PlanarDiagram, v:Vertex, start_posit
         turn_ep = adj_crossing_inst[(adj_ep.position + 1) % 4]
         next_turn_ep = next_adj_crossing_inst[(next_adj_ep.position - 1) % 4]
 
-        if k.twin(turn_ep) != next_turn_ep or k.twin(next_turn_ep) != turn_ep:  # strand continues from position to the nexy (cna only check one)
+        # strand continues from position to the next (can only check one)
+        if k.twin(turn_ep) != next_turn_ep or k.twin(next_turn_ep) != turn_ep:
             break
 
         # all conditions are met, so we can continue extending
         good_positions.insert(0, next_position)
         good_neighbour_crossings.insert(0, next_adj_ep.node)
 
-        #print(" cw", next_position, next_adj_ep.node, good_neighbour_crossings)
-
-
     return good_positions
 
 
-def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
+def find_reidemeister_4_slide(
+    k: Diagram, change: str = "any"
+) -> Iterator[tuple[Hashable, list[int]]]:
     """
         Find and yield all possible Reidemeister 4 "slide" moves on a given PlanarDiagram.
         A slide move is given by a vertex and the set of incident positions of the vertex's arcs.
@@ -122,28 +138,44 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
             Each yielded value is a tuple containing:
             - A vertex from the PlanarDiagram where the move is found.
             - A set of positions representing valid Reidemeister 4 slide adjustments.
-
     """
-
     if "R4" not in settings.allowed_moves:
         return
 
-    def _satisfied(loc):
-        if change == "any": return True
+    def _satisfied(loc: tuple[Hashable, list[int]]) -> bool:
+        if change == "any":
+            return True
         ci = _crossing_increase_reidemeister_4_slide(k, loc)
-        if change == "decrease" or change == "reduce": return ci < 0
-        if change == "constant": return ci == 0
-        if change == "preserve" or change == "preserve": return ci == 0
-        if change == "nonincreasing": return ci <= 0
-        if change == "nondecreasing": return ci >= 0
+        if change == "decrease" or change == "reduce":
+            return ci < 0
+        if change == "constant":
+            return ci == 0
+        if change == "preserve" or change == "preserve":
+            return ci == 0
+        if change == "nonincreasing":
+            return ci <= 0
+        if change == "nondecreasing":
+            return ci >= 0
+        return False
 
-    change = change.lower().strip()
+    # normalize and validate change flag
+    change = (change or "any").lower().strip()
     if change.endswith("ing"):
         change = change[:-3] + "e"
-    if change not in ["any", "decrease", "reduce", "preserve", "increase", "nonincrease", "nondecrease", "constant"]:
-        raise ValueError(f"change parameter is '{change}', but it must be one of the following: "
-                         f"any, decrease, preserve, increase, nonincrease, or nondecrease")
-
+    if change not in [
+        "any",
+        "decrease",
+        "reduce",
+        "preserve",
+        "increase",
+        "nonincrease",
+        "nondecrease",
+        "constant",
+    ]:
+        raise ValueError(
+            f"change parameter is '{change}', but it must be one of the following: "
+            f"any, decrease, preserve, increase, nonincrease, or nondecrease"
+        )
 
     for v in k.vertices:
         unused_positions = set(range(k.degree(v)))
@@ -157,13 +189,19 @@ def find_reidemeister_4_slide(k:PlanarDiagram, change: str = "any"):
                 yield v, good_positions
             unused_positions.difference_update(set(good_positions))
 
-def _crossing_increase_reidemeister_4_slide(k:PlanarDiagram, node_positions_pair: tuple):
+
+def _crossing_increase_reidemeister_4_slide(
+    k: Diagram, node_positions_pair: tuple[Hashable, list[int]]
+) -> int:
     """ Number of additional crossings after performing a R4 slide (can be negative if the number decreases or zero
     if the number stays the same)."""
     v, positions = node_positions_pair
     return k.degree(v) - 2 * len(positions)
 
-def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=False):
+
+def choose_reidemeister_4_slide(
+    k: Diagram, change: str = "any", random: bool = False
+) -> Optional[tuple[Hashable, list[int]]]:
     """
     Selects a Reidemeister 4 slide move on a planar diagram.
 
@@ -192,16 +230,15 @@ def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=Fa
             is randomly selected. If False, the first valid move is selected.
             Default is False.
 
-    Returns:
-        Optional[Any]: The selected location representing a Reidemeister 4 slide
-            move if a valid move is found; otherwise, returns `None`.
+    Return:
+        Optional[tuple[Hashable, list[int]]]: The selected (vertex, positions) location
+        for an R4 slide if available; otherwise `None`.
 
     Raises:
         ValueError: If the `change` parameter value is not one of the accepted
             strings: "any", "decrease", "constant", "increase", "nonincreasing",
             or "nondecreasing".
     """
-
     if "R4" not in settings.allowed_moves:
         return None
 
@@ -215,12 +252,16 @@ def choose_reidemeister_4_slide(k: PlanarDiagram, change: str = "any", random=Fa
         return next(find_reidemeister_4_slide(k, change), None)
 
 
-def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
+def _crossing_to_arc(k: Diagram, crossing: Hashable, parity: int) -> None:
     """
     Remove a crossing and join two of its arcs into one (remove it and connect the adjacent endpoints).
     This ignores the non-parity endpoints and connect the parity endpoints.
-    """
 
+    Args:
+        k (Diagram): Diagram to modify.
+        crossing (Hashable): Crossing node identifier.
+        parity (int): Use 0 (even) or 1 (odd) side to connect.
+    """
     if not isinstance(k.nodes[crossing], Crossing):
         raise TypeError("Variable crossing must be of a crossing")
     parity %= 2
@@ -235,41 +276,43 @@ def _crossing_to_arc(k: PlanarDiagram, crossing, parity):
     k.remove_node(crossing, remove_incident_endpoints=False)
 
 
-def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
+def reidemeister_4_slide(
+    k: Diagram, vertex_positions_pair: tuple[Hashable, list[int]], inplace: bool = False
+) -> Diagram:
+    """
+    Perform a Reidemeister IV "slide" move.
 
+    The move slides a contiguous bundle of same-parity strands incident to a vertex
+    across that vertex to the opposite side, introducing a chain of new crossings
+    (or none, in the full slide-off case) and reconnecting the outside strands.
+
+    Args:
+        k (Diagram): The diagram to operate on.
+        vertex_positions_pair (tuple[Hashable, list[int]]): A pair (v, positions),
+            where `v` is a vertex node id and `positions` is a contiguous list of
+            incident positions at `v` all meeting the over/under continuation test.
+        inplace (bool): If True modify `k` in place, otherwise return a modified copy.
+
+    Return:
+        Diagram: The diagram with the slide applied.
+    """
     # TODO: there is a _temp parameter on
 
     if "R4" not in settings.allowed_moves:
-        warnings.warn("An R4 move is being performed, although it is disabled in the global KnotPy settings.")
+        warnings.warn(
+            "An R4 move is being performed, although it is disabled in the global KnotPy settings."
+        )
 
     if not inplace:
         k = k.copy()
-
-
-    #print("sliding", vertex_positions_pair)
-
-    # assert sanity_check(k)
 
     v, positions = vertex_positions_pair
     deg = k.degree(v)
     parity = k.nodes[v][positions[0]].position % 2
 
-
     # get common attributes of old crossings
     crossings = [k.nodes[v][pos].node for pos in positions]
-    common_node_attr = common_dict( *(k.nodes[c].attr for c in crossings )  )
-
-    # # is there a full circle (disjoint unknot) around the vertex?
-    # if len(positions) == deg:
-    #     # remove the unknot
-    #     for c in crossings:
-    #         _crossing_to_arc(k, c, parity)
-    #     add_unknot(k, 1, inplace=True)  # TODO: attributes
-    #     # backtrack Reidemeister moves
-    #     if settings.trace_moves:
-    #         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4"
-    #
-    #     return k
+    common_node_attr = common_dict(*(k.nodes[c].attr for c in crossings))
 
     # Get endpoint type (in the case we have an orientation)
     ep_first = k.nodes[v][positions[0]]
@@ -282,29 +325,41 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     ep_side_first_type = type(ep_side_first)
     ep_side_last_type = type(ep_side_last)
 
-    # subdivide side endpoints
+    # subdivide side endpoints (temporary bi-vertices)
     temp_node_first = subdivide_endpoint(k, ep_side_first, _temp=True)
     temp_node_last = subdivide_endpoint(k, ep_side_last, _temp=True)
-
 
     # Get positions on the other side of the vertex in CCW order.
     new_positions = [(_ + positions[-1] + 1) % deg for _ in range(deg - len(positions))]
 
     # put crossings to the other side
-    new_crossings = [subdivide_endpoint_by_crossing(k, endpoint=(v, pos), crossing_position=parity) for pos in new_positions]
+    new_crossings = [
+        subdivide_endpoint_by_crossing(
+            k, endpoint=(v, pos), crossing_position=parity
+        )
+        for pos in new_positions
+    ]
     for c in new_crossings:
         k.nodes[c].attr = common_node_attr
 
     # put arcs between crossings
     for index in range(len(new_positions) - 1):
-        # position = new_positions[index]
-        # next_position = new_positions[index + 1]
         crossing = new_crossings[index]
         next_crossing = new_crossings[index + 1]
 
         # set arc
-        k.set_endpoint(endpoint_for_setting=(crossing, (parity - 1) % 4), adjacent_endpoint=(next_crossing, (parity + 1) % 4), create_using=ep_side_first_type, **common_ep_side_attr)
-        k.set_endpoint(endpoint_for_setting=(next_crossing, (parity + 1) % 4), adjacent_endpoint=(crossing, (parity - 1) % 4), create_using=ep_side_last_type, **common_ep_side_attr)
+        k.set_endpoint(
+            endpoint_for_setting=(crossing, (parity - 1) % 4),
+            adjacent_endpoint=(next_crossing, (parity + 1) % 4),
+            create_using=ep_side_first_type,
+            **common_ep_side_attr,
+        )
+        k.set_endpoint(
+            endpoint_for_setting=(next_crossing, (parity + 1) % 4),
+            adjacent_endpoint=(crossing, (parity - 1) % 4),
+            create_using=ep_side_last_type,
+            **common_ep_side_attr,
+        )
 
     # get destination side arcs
     ep_side_first_twin = k.twin(ep_side_first)
@@ -312,14 +367,13 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
 
     # are there new crossings (there was not a full slide-off)
     if new_crossings:
-        k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin) # TODO: attributes
-        k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4)) # TODO: attributes
+        k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin)  # TODO: attributes
+        k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4))  # TODO: attributes
         k.set_endpoint((new_crossings[-1], (parity - 1) % 4), ep_side_first_twin)  # TODO: attributes
         k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4))  # TODO: attributes
     else:
         k.set_endpoint(ep_side_last_twin, ep_side_first_twin)  # TODO: attributes
         k.set_endpoint(ep_side_first_twin, ep_side_last_twin)
-
 
     remove_bivalent_vertex(k, temp_node_first, keep_if_unknot=True)
     remove_bivalent_vertex(k, temp_node_last, keep_if_unknot=True)
@@ -327,91 +381,12 @@ def reidemeister_4_slide(k:PlanarDiagram, vertex_positions_pair, inplace=False):
     for c in crossings:
         _crossing_to_arc(k, c, parity)
 
-    # remove bivalent vertices
-
-    #k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side)
-    # redirect endpoints # TODO: orientation
-    #pull_and_plug_endpoint(k, source_endpoint=ep_side_last, destination_endpoint=(new_crossings[0], (parity + 1) % 4))
-    #pull_and_plug_endpoint(k, source_endpoint=ep_side_first, destination_endpoint=(new_crossings[-1], (parity - 1) % 4))
-
     # backtrack Reidemeister moves
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4 "
 
-    # assert sanity_check(k), "oh no"
-    # print("R4", k)
-
     return k
 
+
 if __name__ == "__main__":
-
-    """
-    MRRM 0 Diagram named +t3_1 a → V(b0 c0 d3), b → V(a0 e0 f3), c → X(a1 f0 e3 d0), d → X(c3 e2 e1 a2), e → X(b1 d2 d1 c2), f → X(c1 f2 f1 b2) (_sequence=R1)    A**11 + A**10 + A**9 - A**8 - 2*A**7 - 4*A**6 - 3*A**5 - 2*A**4 + A**2 + A + 1 ['R1kink', 'R2poke', 'R4increase', 'R5twist']
-R4 ('a', [1])
-MRRM 1 Diagram named +t3_1 a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e1 i2), e → X(b1 d2 d1 a1), f → X(j3 f2 f1 b2), i → X(a2 d0 d3 j1), j → X(a0 i3 b0 f0) (_sequence=R1R4)    -A**10 - 2*A**9 - 4*A**8 - 3*A**7 - 3*A**6 + A**4 + 2*A**3 + 2*A**2 + A + 1
-    
-    """
-
-
-    from knotpy import from_knotpy_notation, yamada
-    t1 = "a → V(b0 c0 d3), b → V(a0 e0 f3), c → X(a1 f0 e3 d0), d → X(c3 e2 e1 a2), e → X(b1 d2 d1 c2), f → X(c1 f2 f1 b2)"
-    t1 = from_knotpy_notation(t1)
-    print(t1, sanity_check(t1), yamada(t1))
-    t2 = reidemeister_4_slide(t1, ('a', [1]), inplace=False)
-    print(t2, sanity_check(t2), yamada(t2))
-    print("       a → V(j0 e3 i0), b → V(j2 e0 f3), d → X(i1 e2 e1 i2), e → X(b1 d2 d1 a1), f → X(j3 f2 f1 b2), i → X(a2 d0 d3 j1), j → X(a0 i3 b0 f0)")
-    exit()
-    #R4 ('b', [1])"
-    """
-    
-    Diagram a → V(i0 e1 h0), b → V(i2 d2 e3), d → X(h1 e0 b1 h2), e → X(d1 a1 i3 b2), h → X(a2 d0 d3 i1), i → X(a0 h3 b0 e2) (_sequence=R4) True -A**12 - A**11 - A**10 - A**9 - A**8 - A**6 - A**4 + 1
-            a → V(i0 e1 h0), b → V(i2 d2 e3), d → X(h1 e0 b1 h2), e → X(d1 a1 i3 b2), h → X(a2 d0 d3 i1), i → X(a0 h3 b0 e2)
-    """
-
-
-    # from R4 examples
-    h1 = "a=V(b1 e0 f0) b=V(e1 a0 f3) c=V(e2 d0) d=V(c1 f2) e=X(a1 b0 c0 f1) f=X(a2 e3 d1 b2)"
-    h1 = from_knotpy_notation(h1)
-    print(h1, sanity_check(h1))
-
-    r4 = ("a", [1, 2])
-
-    k1 = reidemeister_4_slide(h1, r4)
-    print(k1, sanity_check(k1))
-
-    print(yamada(h1))
-    print(yamada(k1))
-
-    from knotpy.tables.theta import thetas
-
-    for t in thetas():
-        locations = list(find_reidemeister_4_slide(t))
-        if locations:
-            location = choice(locations)
-            tt = reidemeister_4_slide(t, location)
-            s = sanity_check(tt)
-            if not s:
-                print(t, "->", tt)
-
-            y1 = yamada(t)
-            y2 = yamada(tt)
-
-            if y1 != y2:
-                print(t, "->", tt, "(yamada)")
-
-    # for v, good_pos in find_reidemeister_4_slides(h1):
-    #     print(v, good_pos)
-
-    # s = "a=V(c0 b0 d2) b=V(a1 c3 d3) c=X(a0 d1 d0 b1) d=X(c2 c1 a2 b2)"
-    # t = "a=V(c3 b0 e3 d3) b=X(a1 c2 c1 e0) c=X(d2 b2 b1 a0) d=X(e2 e1 c0 a3) e=X(b3 d1 d0 a2)"
-    # k = from_knotpy_notation(s)
-    # print(k, sanity_check(k))
-    # for v, good_positions in find_reidemeister_4_slides(k):
-    #     print(v, good_positions)
-    #     k_ = reidemeister_4_slide(k, (v, good_positions), inplace=False)
-    #     print(k_, sanity_check(k_))
-    #
-    # k = from_knotpy_notation(t)
-    # print(k, sanity_check(k))
-    # for v, good_positions in find_reidemeister_4_slides(k):
-    #     print(v, good_positions)
+    pass

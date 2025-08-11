@@ -1,4 +1,3 @@
-
 from .simplify import *
 from .reidemeister_1 import *
 from .reidemeister_2 import *
@@ -7,5 +6,4 @@ from .reidemeister import *
 from .space import *
 from .detour import *
 from .reidemeister import *
-from .equivalence import *
 from .flype import *

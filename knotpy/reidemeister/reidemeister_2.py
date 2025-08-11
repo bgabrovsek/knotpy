@@ -1,150 +1,140 @@
+# knotpy/reidemeister/reidemeister_2.py
+"""
+Reidemeister move II (R2): poke / unpoke.
+
+Provides functions for detecting and performing R2 moves on diagrams.
+Supports both unoriented and oriented diagrams via the Diagram alias.
+"""
 from itertools import combinations
 from random import choice
 import warnings
 
-from knotpy.classes import PlanarDiagram
+from knotpy.classes.planardiagram import Diagram  # PlanarDiagram | OrientedPlanarDiagram
 from knotpy.algorithms.disjoint_union import add_unknot
 from knotpy.classes.node import Crossing
 from knotpy.classes.endpoint import Endpoint, OutgoingEndpoint, IngoingEndpoint
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy._settings import settings
 
-def find_reidemeister_2_unpoke(k: PlanarDiagram):
+
+def find_reidemeister_2_unpoke(k: Diagram):
     """
-    Iterates through the planar diagram to identify bigon regions that allow unpoking via a
-    Reidemeister II move, reducing the number of crossings by two.
+    Yield bigon faces (2-gons) where an R2 *unpoke* can be applied.
+
+    A valid bigon here is two endpoints from two crossings with opposite parity
+    (positions differ mod 2). These are the locations that reduce crossings by 2.
 
     Args:
-        k (PlanarDiagram): The planar diagram to evaluate for Reidemeister II faces to unpoke.
+        k (Diagram): Diagram to scan.
 
     Yields:
-        ReidemeisterLocationUnpoke: An object representing the location of a
-            Reidemeister II unpoke in the planar diagram.
-    """
+        tuple[Endpoint, Endpoint]: The 2-face (as endpoints) forming a removable bigon.
 
+    Notes:
+        Respects ``settings.allowed_moves``; yields nothing if "R2" is disabled.
+    """
     if "R2" not in settings.allowed_moves:
         return
 
-    # Loop through all faces and yield 2-faces (bigons) with same position parity.
+    # Loop through faces; keep 2-gons formed by two crossings with opposite parity.
     for face in k.faces:
-        if (len(face) == 2 and
-                isinstance(k.nodes[face[0].node], Crossing) and
-                isinstance(k.nodes[face[1].node], Crossing) and
-                face[0].position % 2 != face[1].position % 2):
+        if (
+            len(face) == 2
+            and isinstance(k.nodes[face[0].node], Crossing)
+            and isinstance(k.nodes[face[1].node], Crossing)
+            and (face[0].position % 2) != (face[1].position % 2)
+        ):
             yield face
 
 
-def find_reidemeister_2_poke(k: PlanarDiagram):
+def find_reidemeister_2_poke(k: Diagram):
     """
-    Identifies and generates all possible Reidemeister 2 poke positions within a given planar diagram. A Reidemeister
-    poke position denotes a distinct pair of endpoints (over endpoint, under endpoint), both of which reside in the
-    same face of the planar diagram. These poke positions are used for Reidemeister 2 transformations.
+    Yield all possible R2 *poke* positions as ordered pairs (under, over)
+    from endpoints in a common face.
 
     Args:
-        k (PlanarDiagram): A planar diagram object representing the knot or link.
+        k (Diagram): Diagram to scan.
 
-    Returns:
-        Generator[Tuple[Any, Any], None, None]: A generator yielding tuples, where each tuple represents a pair
-        of endpoints (over endpoint, under endpoint) for Reidemeister 2 poke positions.
+    Yields:
+        tuple[Endpoint, Endpoint]: ``(ep_under, ep_over)``. Both orders are yielded.
     """
-
     if "R2" not in settings.allowed_moves:
         return
 
     for face in k.faces:
         for ep_under, ep_over in combinations(face, 2):
             yield ep_under, ep_over
-            yield ep_over, ep_under   # switch over/under
+            yield ep_over, ep_under  # also the swapped order
 
 
-
-def choose_reidemeister_2_unpoke(k: PlanarDiagram, random=False):
+def choose_reidemeister_2_unpoke(k: Diagram, random: bool = False):
     """
-    Chooses a Reidemeister 2 unpoke move that can be applied to a planar diagram. The function searches
-    for possible moves and either selects a random one if specified or returns the first move it
-    finds. If no moves are applicable, the function returns None.
+    Choose one R2 *unpoke* location (a 2-gon face).
 
     Args:
-        k (PlanarDiagram): The planar diagram on which the Reidemeister 2 unpoke move is to be
-            applied.
-        random (bool): If True, selects a random valid move from the available options. If False,
-            returns the first move found.
+        k (Diagram): Diagram to analyze.
+        random (bool): If True, pick randomly; otherwise return the first.
 
     Returns:
-        Optional[ReidemeisterMove]: A valid Reidemeister 2 unpoke move if available, otherwise None.
+        tuple[Endpoint, Endpoint] | None: The chosen bigon as a pair of endpoints, or None.
     """
-
     if "R2" not in settings.allowed_moves:
         return None
 
     if random:
         locations = tuple(find_reidemeister_2_unpoke(k))
         return choice(locations) if locations else None
-    else:
-        return next(find_reidemeister_2_unpoke(k), None)
+    return next(find_reidemeister_2_unpoke(k), None)
 
 
-
-def choose_reidemeister_2_poke(k: PlanarDiagram, random=False):
+def choose_reidemeister_2_poke(k: Diagram, random: bool = False):
     """
-    Selects a Reidemeister 2 poke from a given planar diagram, either the first
-    available or a random one based on the specified parameter.
+    Choose one R2 *poke* pair (under, over) from a common face.
 
     Args:
-        k (PlanarDiagram): The planar diagram to be analyzed for possible
-            Reidemeister 2 pokes.
-        random (bool): If True, the function will return a random Reidemeister 2
-            poke. If False, the function will return the first Reidemeister 2 poke
-            found. Defaults to False.
+        k (Diagram): Diagram to analyze.
+        random (bool): If True, pick randomly; otherwise return the first.
 
     Returns:
-        Optional[Any]: Returns the selected Reidemeister 2 poke, either random or
-        the first available one. Returns None if no Reidemeister 2 poke is found.
+        tuple[Endpoint, Endpoint] | None: The chosen (under, over) pair, or None.
     """
-
     if "R2" not in settings.allowed_moves:
         return None
 
     if random:
         choices = tuple(find_reidemeister_2_poke(k))
-
-
         if not choices:
+            # Keeping your diagnostic; raising keeps behavior explicit.
             print("aa", k)
             raise ValueError("Can't find Reidemeister 2 poke")
-
-        return choice(choices) if choices else None
-    else:
-        return next(find_reidemeister_2_poke(k), None)  # select 1st item
+        return choice(choices)
+    return next(find_reidemeister_2_poke(k), None)  # select 1st item
 
 
-def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
+def reidemeister_2_unpoke(k: Diagram, face, inplace: bool = False) -> Diagram:
     """
-    Perform a Reidemeister type II "unpoke" operation on a planar diagram.
+    Perform an R2 *unpoke* on a removable bigon (2-face).
 
-    This function modifies a planar diagram by unpoking the endpoints that form
-    a bigon poke region. The operation reduces the number of crossings in the
-    diagram by two and adjusts the corresponding endpoints and arcs. This function
-    can either modify the diagram in place or return a modified copy of the diagram,
-    depending on the arguments provided.
+    Reduces crossings by 2 by removing the two crossings bordering the bigon,
+    then reconnecting external endpoints. Special cases (double kinks / unknots)
+    are handled as in your original logic.
 
     Args:
-        k (PlanarDiagram): The planar diagram object representing the knot to be
-            modified.
-        face: The face of the planar diagram where the unpoke operation is to be
-            performed.
-        inplace (bool, optional): If True, the operation modifies the original diagram.
-            If False, a new diagram is returned with the unpoke applied.
+        k (Diagram): Diagram to modify (or copy if ``inplace=False``).
+        face (tuple[Endpoint, Endpoint]): The 2-gon endpoints.
+        inplace (bool): Modify in place if True; otherwise return a modified copy.
 
     Returns:
-        PlanarDiagram: The planar diagram after applying the Reidemeister type II
-            unpoke operation.
+        Diagram: The diagram after applying the move.
+
+    Notes:
+        If move tracing is enabled, appends ``"R2-"`` to ``k.attr["_sequence"]``.
     """
-
-    # TODO: the code below is cumbersome, replace by inserting phantom temporary bi-vertices
-
+    # TODO: the code below is cumbersome; consider phantom temporary bi-vertices.
     if "R2" not in settings.allowed_moves:
-        warnings.warn("An R2 move is being performed, although it is disabled in the global KnotPy settings.")
+        warnings.warn(
+            "An R2 move is being performed, although it is disabled in the global KnotPy settings."
+        )
 
     if not inplace:
         k = k.copy()
@@ -152,34 +142,42 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
     ep_a, ep_b = face
     twin_a, twin_b = k.twin(ep_a), k.twin(ep_b)
 
-
-    # were instances or tuples provided?
+    # If tuple pairs were passed, normalize to instances.
     if not isinstance(ep_a, Endpoint) or not isinstance(ep_b, Endpoint):
         ep_a, ep_b = k.twin(twin_a), k.twin(twin_b)
 
-    # a "jump" is the endpoint on the other side of the crossing (on the same edge/strand)
+    # "Jump" is the opposite endpoint across the crossing (same strand).
     jump_a = k.endpoint_from_pair((ep_a.node, (ep_a.position + 2) % 4))
     jump_b = k.endpoint_from_pair((ep_b.node, (ep_b.position + 2) % 4))
     jump_twin_a = k.endpoint_from_pair((twin_a.node, (twin_a.position + 2) % 4))
     jump_twin_b = k.endpoint_from_pair((twin_b.node, (twin_b.position + 2) % 4))
 
-    twin_jump_a = k.twin(jump_a)  # twin jump a
-    twin_jump_b = k.twin(jump_b)  # twin jump b
-    twin_jump_twin_a = k.twin(jump_twin_a)  # twin jump twin a
-    twin_jump_twin_b = k.twin(jump_twin_b)  # twin jump twin b
+    twin_jump_a = k.twin(jump_a)
+    twin_jump_b = k.twin(jump_b)
+    twin_jump_twin_a = k.twin(jump_twin_a)
+    twin_jump_twin_b = k.twin(jump_twin_b)
 
+    # Remove the two crossings that bound the bigon.
     k.remove_node(ep_a.node, remove_incident_endpoints=False)
     k.remove_node(ep_b.node, remove_incident_endpoints=False)
 
-    # print("a", ep_a, "b", ep_b, "ta", twin_a, "tb",twin_b, "ja", jump_a, "jb", jump_b,  "tja",twin_jump_a, "tjb", twin_jump_b, "jta", jump_twin_a, "jtb", jump_twin_b, "tjta", twin_jump_twin_a, "tjtb", twin_jump_twin_b)
+    def _set_arc(a: Endpoint, b: Endpoint):
+        """Wire endpoints (a <-> b) with copied types/attrs preserved."""
+        k.set_endpoint(
+            endpoint_for_setting=a,
+            adjacent_endpoint=(b.node, b.position),
+            create_using=type(b),
+            **b.attr,
+        )
+        k.set_endpoint(
+            endpoint_for_setting=b,
+            adjacent_endpoint=(a.node, a.position),
+            create_using=type(a),
+            **a.attr,
+        )
 
-
-    def _set_arc(a:Endpoint, b:Endpoint):
-        """ set endpoint with copied type and attributes"""
-        k.set_endpoint(endpoint_for_setting=a, adjacent_endpoint=(b.node, b.position), create_using=type(b), **b.attr)
-        k.set_endpoint(endpoint_for_setting=b, adjacent_endpoint=(a.node, a.position), create_using=type(a), **a.attr)
-
-    if twin_jump_twin_a is jump_b and twin_jump_twin_b is jump_a:  # double kink?
+    # Match original case analysis exactly.
+    if twin_jump_twin_a is jump_b and twin_jump_twin_b is jump_a:  # double kink
         add_unknot(k)
 
     elif twin_jump_twin_a is jump_b:  # single kink at ep_a
@@ -188,13 +186,13 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
     elif twin_jump_twin_b is jump_a:  # single kink at ep_b
         _set_arc(twin_jump_b, twin_jump_twin_a)
 
-    elif twin_jump_a is jump_twin_a and twin_jump_b is jump_twin_b:  # two unknots overlapping
+    elif twin_jump_a is jump_twin_a and twin_jump_b is jump_twin_b:  # two overlapping unknots
         add_unknot(k, number_of_unknots=2)
 
-    elif jump_a is twin_jump_b:  # "x"-type connected
+    elif twin_jump_b is jump_a:  # “x”-type connected
         _set_arc(twin_jump_twin_a, twin_jump_twin_b)
 
-    elif jump_twin_a is twin_jump_twin_b:  # "x"-type connected
+    elif twin_jump_twin_b is jump_twin_a:  # “x”-type connected
         _set_arc(twin_jump_a, twin_jump_b)
 
     elif twin_jump_a is jump_twin_a:  # one unknot overlapping on strand a
@@ -205,17 +203,18 @@ def reidemeister_2_unpoke(k: PlanarDiagram, face, inplace=False):
         _set_arc(twin_jump_twin_a, twin_jump_a)
         add_unknot(k)
 
-    else:  # "normal" R2 move, all four external endpoints are distinct
+    else:  # normal R2: all four external endpoints distinct
         _set_arc(twin_jump_twin_a, twin_jump_a)
         _set_arc(twin_jump_twin_b, twin_jump_b)
 
-    # backtrack Reidemeister moves
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2-"
 
     return k
 
+
 def _reversed_endpoint_type(ep):
+    """Return the opposite endpoint class (Endpoint <-> itself; Outgoing <-> Ingoing)."""
     if type(ep) is Endpoint or ep is Endpoint:
         return Endpoint
     if type(ep) is OutgoingEndpoint or ep is OutgoingEndpoint:
@@ -225,91 +224,102 @@ def _reversed_endpoint_type(ep):
     raise TypeError()
 
 
-def reidemeister_2_poke(k: PlanarDiagram, under_over_endpoints, inplace=False):
+def reidemeister_2_poke(k: Diagram, under_over_endpoints, inplace: bool = False) -> Diagram:
     """
-    Performs a Reidemeister type II poke operation on a given planar diagram, updating the
-    diagram with new crossings and endpoints according to the operation.
+    Perform an R2 *poke* at a given ordered pair (under, over).
 
-    This function modifies a planar diagram by introducing two crossings and reconnecting
-    endpoints as specified by the over-under relationship of the endpoints provided.
-    The `inplace` flag determines whether the operation modifies the original diagram object
-    or works on a copied version.
+    Creates two new crossings and reconnects endpoints to realize the local
+    “poke” configuration. Handles the same-arc edge case as in your original.
 
     Args:
-        k (PlanarDiagram): The planar diagram on which the poke operation will be performed.
-        under_over_endpoints (tuple): A tuple containing two endpoints (one "under" and one "over"),
-            which determine the nature of the Reidemeister II poke.
-        inplace (bool, optional): If True, the operation modifies the original diagram `k`. If
-            False, a modified copy of `k` is returned. Defaults to False.
+        k (Diagram): Diagram to modify (or copy if ``inplace=False``).
+        under_over_endpoints (tuple[Endpoint, Endpoint]): ``(under, over)``.
+        inplace (bool): Modify in place if True; otherwise return a modified copy.
 
     Returns:
-        PlanarDiagram: The modified planar diagram after performing the Reidemeister II poke.
-
-    Raises:
-        TypeError: If `k` is not an instance of `PlanarDiagram`.
-        TypeError: If `over_under_endpoints` does not contain valid `Endpoint` instances.
+        Diagram: The diagram after applying the move.
     """
-
     endpoint_under, endpoint_over = under_over_endpoints
-
 
     if not inplace:
         k = k.copy()
 
-    if not isinstance(k, PlanarDiagram):
-        raise TypeError(f"Cannot add poke in instance of type {type(k)}")
-
     if not isinstance(endpoint_over, Endpoint) or not isinstance(endpoint_under, Endpoint):
-        raise TypeError(f"Cannot add poke in endpoints of type {type(endpoint_over)} and {type(endpoint_under)}.")
+        raise TypeError(
+            f"Cannot add poke in endpoints of type {type(endpoint_over)} and {type(endpoint_under)}."
+        )
 
-
-
-    # get endpoint instances and their twins
+    # Endpoint instances and their twins.
     twin_o_node, twin_o_pos = twin_o = k.twin(endpoint_over)
     twin_u_node, twin_u_pos = twin_u = k.twin(endpoint_under)
-    ep_o_node, ep_o_pos = ep_o = k.twin(twin_o)  # get instance of endpoint_over
-    ep_u_node, ep_u_pos = ep_u = k.twin(twin_u)  # get instance of endpoint_under
+    ep_o_node, ep_o_pos = ep_o = k.twin(twin_o)  # instance of endpoint_over
+    ep_u_node, ep_u_pos = ep_u = k.twin(twin_u)  # instance of endpoint_under
 
-    # get types (endpoint or ingoing/outgoing endpoint)
+    # Endpoint classes (plain vs. oriented).
     type_o, rev_o = type(ep_o), _reversed_endpoint_type(ep_o)
     type_u, rev_u = type(ep_u), _reversed_endpoint_type(ep_u)
 
-    # create two new crossings
+    # Create two new crossings.
     node_e = unique_new_node_name(k)
     k.add_crossing(node_e)
     node_f = unique_new_node_name(k)
     k.add_crossing(node_f)
 
-
-    # a poke on one arc
+    # Poke on a single arc?
     same_arc = (twin_u == ep_o and twin_o == ep_u)
 
-
-    # set endpoints for node "e"
+    # Wiring for node "e"
     if not same_arc:
-        k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(twin_u_node, twin_u_pos), create_using=rev_u, **twin_u.attr)
+        k.set_endpoint(
+            endpoint_for_setting=(node_e, 0),
+            adjacent_endpoint=(twin_u_node, twin_u_pos),
+            create_using=rev_u,
+            **twin_u.attr,
+        )
     k.set_endpoint(endpoint_for_setting=(node_e, 1), adjacent_endpoint=(node_f, 1), create_using=rev_o)
     k.set_endpoint(endpoint_for_setting=(node_e, 2), adjacent_endpoint=(node_f, 0), create_using=type_u)
-    k.set_endpoint(endpoint_for_setting=(node_e, 3), adjacent_endpoint=(ep_o_node, ep_o_pos), create_using=type_o, **ep_o.attr)
+    k.set_endpoint(
+        endpoint_for_setting=(node_e, 3),
+        adjacent_endpoint=(ep_o_node, ep_o_pos),
+        create_using=type_o,
+        **ep_o.attr,
+    )
 
-    # set endpoints for node "f"
+    # Wiring for node "f"
     k.set_endpoint(endpoint_for_setting=(node_f, 0), adjacent_endpoint=(node_e, 2), create_using=rev_u)
     k.set_endpoint(endpoint_for_setting=(node_f, 1), adjacent_endpoint=(node_e, 1), create_using=type_o)
-    k.set_endpoint(endpoint_for_setting=(node_f, 2), adjacent_endpoint=(ep_u_node, ep_u_pos), create_using=type_u, **ep_u.attr)
+    k.set_endpoint(
+        endpoint_for_setting=(node_f, 2),
+        adjacent_endpoint=(ep_u_node, ep_u_pos),
+        create_using=type_u,
+        **ep_u.attr,
+    )
     if not same_arc:
-        k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(twin_o_node, twin_o_pos), create_using=rev_o, **twin_o.attr)
+        k.set_endpoint(
+            endpoint_for_setting=(node_f, 3),
+            adjacent_endpoint=(twin_o_node, twin_o_pos),
+            create_using=rev_o,
+            **twin_o.attr,
+        )
 
-    # set endpoints for outside nodes
+    # Outside nodes
     k.set_endpoint(endpoint_for_setting=(ep_o_node, ep_o_pos), adjacent_endpoint=(node_e, 3), create_using=rev_o)
     k.set_endpoint(endpoint_for_setting=(ep_u_node, ep_u_pos), adjacent_endpoint=(node_f, 2), create_using=rev_u)
     if not same_arc:
-        k.set_endpoint(endpoint_for_setting=(twin_o_node, twin_o_pos), adjacent_endpoint=(node_f, 3), create_using=type_o)
-        k.set_endpoint(endpoint_for_setting=(twin_u_node, twin_u_pos), adjacent_endpoint=(node_e, 0), create_using=type_u)
+        k.set_endpoint(
+            endpoint_for_setting=(twin_o_node, twin_o_pos),
+            adjacent_endpoint=(node_f, 3),
+            create_using=type_o,
+        )
+        k.set_endpoint(
+            endpoint_for_setting=(twin_u_node, twin_u_pos),
+            adjacent_endpoint=(node_e, 0),
+            create_using=type_u,
+        )
     else:
         k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(node_f, 3), create_using=rev_u)
         k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(node_e, 0), create_using=rev_o)
 
-    # backtrack Reidemeister moves
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2+"
 

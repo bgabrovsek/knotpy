@@ -1,32 +1,30 @@
+# knotpy/reidemeister/reidemeister_3.py
+
 from itertools import chain
 from random import choice
 import warnings
 
 from knotpy.classes.node import Crossing
+from knotpy.classes.planardiagram import Diagram  # alias: PlanarDiagram | OrientedPlanarDiagram
 from knotpy._settings import settings
 
 
-def find_reidemeister_3_triangle(k):
+def find_reidemeister_3_triangle(k: Diagram):
     """
-    Finds all faces in the given knot diagram `k` that represent a valid
-    Reidemeister III triangle.
+    Find all faces in the diagram `k` that represent a valid Reidemeister III triangle.
 
-    This function iterates over all faces of the knot diagram `k` and identifies
-    those triangular faces that satisfy criteria for being valid Reidemeister III
-    configurations. The validity is determined by checking the face's structure
-    and the associated properties of the crossings in the knot diagram.
+    Iterate over all faces of `k` and yield those triangular faces that satisfy the
+    R3 criteria. A face is yielded only if:
+      - It contains exactly three endpoints (a triangle),
+      - The three endpoints touch three distinct nodes,
+      - All three nodes are crossings,
+      - The positional parity is not the same for all three endpoints.
 
     Args:
-        k: The knot diagram object containing faces and nodes. Each face is a
-           sequence of endpoints, and endpoints reference nodes within the diagram.
-           Nodes can either be crossings or other entities relevant in the knot diagram.
+        k (Diagram): Diagram whose faces are examined.
 
     Yields:
-        list of Endpoint: The triangular face endpoints representing a valid
-        Reidemeister III triangle. A face is yielded only if:
-            - It contains exactly three nodes.
-            - All three nodes are crossings.
-            - The positional parity of the nodes does not all match.
+        list: A length-3 list of endpoints forming an R3-eligible triangle.
     """
     # TODO: make faster by not iterating over all regions
 
@@ -41,24 +39,18 @@ def find_reidemeister_3_triangle(k):
                 not (face[0].position % 2 == face[1].position % 2 == face[2].position % 2):
             yield face
 
-def choose_reidemeister_3_triangle(k, random=False):
-    """
-    Returns a (random) face where a Reidemeister 3 move can be performed.
 
-    This function identifies a face in a planar diagram `k` where a Reidemeister 3
-    move can be executed. If `random` is set to `True`, the function selects a
-    random triangular face from the potential candidates. Otherwise, it returns
-    the first triangular face found.
+def choose_reidemeister_3_triangle(k: Diagram, random: bool = False):
+    """
+    Return a (random) face where a Reidemeister 3 move can be performed.
 
     Args:
-        k: The planar diagram on which to find a triangular face for
-            performing a Reidemeister 3 move.
-        random: Specifies whether to select a random face (True) or the first
-            face found (False).
+        k (Diagram): Diagram to inspect.
+        random (bool): If True, choose randomly among candidates; otherwise
+            return the first found.
 
     Returns:
-        The selected triangular face where a Reidemeister 3 move can be
-        performed, or None if no such face exists.
+        list | None: A triangular face (length-3 list of endpoints) or None if none exists.
     """
 
     if "R3" not in settings.allowed_moves:
@@ -71,37 +63,24 @@ def choose_reidemeister_3_triangle(k, random=False):
         return next(find_reidemeister_3_triangle(k), None)  # select 1st item
 
 
-def reidemeister_3(k, face, inplace=False):
+def reidemeister_3(k: Diagram, face: list, inplace: bool = False) -> Diagram:
     """
-    Perform a Reidemeister III move on a non-alternating triangular region of a
-    planar diagram. This function modifies the topology of the triangular region
-    by updating endpoints of arcs and crossings accordingly. The operation can
-    either be performed in place or on a copied instance of the planar diagram.
+    Perform a Reidemeister III move on a non-alternating triangular region.
+
+    Modify the topology of the triangular region by updating endpoints of arcs and
+    crossings accordingly. Can operate in place or on a copy.
 
     Args:
-        k: The planar diagram object representing the knot or link diagram.
-        face: A ReidemeisterLocationThree object representing a non-alternating
-            triangular region to apply the move. This is a tuple of three endpoints,
-            where each endpoint is represented as a tuple containing the node and
-            the position within that node.
-        inplace: Whether to perform the operation in place on the current instance
-            of the planar diagram (True) or to create and modify a copied instance
-            (False). Defaults to False.
+        k (Diagram): Knot/link/graph diagram.
+        face (list): A length-3 list of endpoints forming a non-alternating triangle.
+        inplace (bool): If True, modify `k` in place; otherwise operate on a copy.
 
-    Raises:
-        ValueError: If the planar diagram is oriented since oriented Reidemeister
-            III moves are not supported.
-
-    Returns:
-        The planar diagram after performing the Reidemeister III move. If `inplace`
-        is False, a new planar diagram instance with the modification is returned;
-        otherwise, the modified diagram is returned.
+    Return:
+        Diagram: The diagram with the R3 move applied.
     """
 
     if "R3" not in settings.allowed_moves:
         warnings.warn("An R3 move is being performed, although it is disabled in the global KnotPy settings.")
-
-
 
     if not inplace:
         k = k.copy()
@@ -112,61 +91,61 @@ def reidemeister_3(k, face, inplace=False):
     node_c, pos_c = ep_c
     area_nodes = {node_a, node_b, node_c}
 
-    # redirect endpoints on arcs inside the area
+    # Redirect endpoints on arcs inside the triangle.
+    # (node, pos+1) goes forward around the triangle; (node, pos+2) goes backward.
     new_inner_endpoints = {
-        (node_a, (pos_a + 1) % 4): (node_b, (pos_b + 2) % 4),  # (node, position + 1) -> (next node, next position + 2)
-        (node_a, (pos_a + 2) % 4): (node_c, (pos_c + 1) % 4),  # (node, position + 2) -> (previous node, previous position + 1)
+        (node_a, (pos_a + 1) % 4): (node_b, (pos_b + 2) % 4),
+        (node_a, (pos_a + 2) % 4): (node_c, (pos_c + 1) % 4),
         (node_b, (pos_b + 1) % 4): (node_c, (pos_c + 2) % 4),
         (node_b, (pos_b + 2) % 4): (node_a, (pos_a + 1) % 4),
         (node_c, (pos_c + 1) % 4): (node_a, (pos_a + 2) % 4),
         (node_c, (pos_c + 2) % 4): (node_b, (pos_b + 1) % 4),
     }
-    #print("new inner", new_inner_endpoints)
-
-    # redirect the endpoints of the crossings on to the triangle face, directed outside (away from the triangle)
+    # Redirect endpoints on the triangle that point outward (away from the triangle).
     new_outer_endpoints = {
-        (node_a, pos_a): tuple(k.nodes[node_c][(pos_c + 1) % 4]),  # (node, position) -> k.nodes[previous node][previous position - 1]
-        (node_a, (pos_a - 1) % 4): tuple(k.nodes[node_b][(pos_b + 2) % 4]),  # (node, position - 1) -> k.nodes[next node][next position + 2]
+        (node_a, pos_a): tuple(k.nodes[node_c][(pos_c + 1) % 4]),
+        (node_a, (pos_a - 1) % 4): tuple(k.nodes[node_b][(pos_b + 2) % 4]),
         (node_b, pos_b): tuple(k.nodes[node_a][(pos_a + 1) % 4]),
         (node_b, (pos_b - 1) % 4): tuple(k.nodes[node_c][(pos_c + 2) % 4]),
         (node_c, pos_c): tuple(k.nodes[node_b][(pos_b + 1) % 4]),
         (node_c, (pos_c - 1) % 4): tuple(k.nodes[node_a][(pos_a + 2) % 4]),
     }
-    #print("new outer", new_outer_endpoints)
 
-    # "outer" endpoints change if they point to a crossing of the triangle face
+    # “Outer” endpoints that point to a triangle crossing must be redirected via the new inner mapping.
     new_outer_endpoints.update(
-        {src_ep: (new_inner_endpoints[dst_ep][0], (new_inner_endpoints[dst_ep][1] + 2) % 4)
-         for src_ep, dst_ep in new_outer_endpoints.items() if dst_ep[0] in area_nodes}
+        {
+            src_ep: (new_inner_endpoints[dst_ep][0], (new_inner_endpoints[dst_ep][1] + 2) % 4)
+            for src_ep, dst_ep in new_outer_endpoints.items()
+            if dst_ep[0] in area_nodes
+        }
     )
 
-    # redirect endpoints that do not lie on the triangle (are incident to it)
+    # Endpoints outside the triangle that used to point to it must be updated to point back into it.
     new_external_endpoints = {
-        dst_ep: src_ep for src_ep, dst_ep in new_outer_endpoints.items() if dst_ep[0] not in area_nodes
+        dst_ep: src_ep
+        for src_ep, dst_ep in new_outer_endpoints.items()
+        if dst_ep[0] not in area_nodes
     }
 
-
-
-    # actually make the endpoint changes
-    for src_ep, dst_ep in chain(new_inner_endpoints.items(), new_outer_endpoints.items(), new_external_endpoints.items()):
+    # Apply all endpoint rewires.
+    for src_ep, dst_ep in chain(
+        new_inner_endpoints.items(),
+        new_outer_endpoints.items(),
+        new_external_endpoints.items(),
+    ):
         k.set_endpoint(
             endpoint_for_setting=src_ep,
             adjacent_endpoint=dst_ep,
-            create_using=type(k.nodes[src_ep[0]][src_ep[1]]),  # use old type of endpoint
-            **k.nodes[dst_ep[0]][dst_ep[1]].attr  # use old type of attributes
+            create_using=type(k.nodes[src_ep[0]][src_ep[1]]),  # preserve endpoint class
+            **k.nodes[dst_ep[0]][dst_ep[1]].attr,              # preserve attributes
         )
 
-    # mark the nodes where the R3 was made to the planar diagram (optional)
-    # this is needed when performing multiple R3 moves, so we do not repeat (undo) the moves
-
+    # Mark nodes touched by R3 so repeated passes can avoid undoing it (optional).
     for r_node in area_nodes:
         k.nodes[r_node].attr["_r3"] = True
 
-    # backtrack Reidemeister moves
+    # Backtrack Reidemeister moves.
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R3 "
-
-
-
 
     return k

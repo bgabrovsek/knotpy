@@ -1,6 +1,6 @@
 from knotpy.tables.theta import theta
 from knotpy.reidemeister.reidemeister import randomize_diagram
-from knotpy.reidemeister.equivalence import reduce_equivalent_diagrams
+from knotpy.reidemeister.simplify import reduce_equivalent_diagrams
 from knotpy.classes.planardiagram import PlanarDiagram
 
 def test_equivalence_knots():
