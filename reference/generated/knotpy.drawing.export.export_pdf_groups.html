@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1178,33 +1181,32 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.export.export_pdf_groups">
 <span class="sig-name descname"><span class="pre">export_pdf_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.export.export_pdf_groups" title="Link to this definition">#</a></dt>
-<dd><p>Draw the planar diagram(s) using Matplotlib and save to a PDF file.</p>
-<p>This function takes a planar diagram or a list of planar diagrams, draws
-them using Matplotlib, and exports the resulting visualizations to a PDF
-file. The drawing behavior can be customized using the optional parameters.
-If the diagrams contain unsupported features such as loops or bridges,
-they will be skipped, and a warning message will be generated. Progress
-indicators can be displayed if the export involves multiple diagrams.</p>
-<p>Parameters:
-diagrams: PlanarDiagram | list[PlanarDiagram]</p>
-<blockquote>
-<div><p>A planar diagram or a list of planar diagrams to be drawn.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>filename: str</dt><dd><p>The name of the output PDF file where the drawings will be saved.</p>
+<dd><p>Render groups of diagrams in grids; one grid per PDF page.</p>
+<p>Each item in <cite>groups</cite> is a sequence (list/tuple/set) of diagrams. For each
+group, a near-square grid (rows × cols) is chosen and the diagrams are drawn
+into that grid on a single page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>groups</strong> – Iterable of diagram groups, where each group is an iterable of
+<cite>PlanarDiagram</cite> objects.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – Output PDF path.</p></li>
+<li><p><strong>draw_circles</strong> (<em>bool</em>) – If True, also draws auxiliary packing circles (debugging).</p></li>
+<li><p><strong>with_labels</strong> (<em>bool</em>) – If True, draw node/endpoint/arc labels.</p></li>
+<li><p><strong>with_title</strong> (<em>bool</em>) – If True, add per-diagram titles as in <cite>export_pdf</cite>.</p></li>
+<li><p><strong>show_progress</strong> (<em>bool</em>) – If True and total diagrams across all groups ≥ 10, show a progress bar.</p></li>
+</ul>
 </dd>
-<dt>draw_circles: bool, optional</dt><dd><p>If True, circles will be drawn around the diagrams. Defaults to False.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
-<dt>with_labels: bool, optional</dt><dd><p>If True, labels will be displayed on the diagrams. Defaults to False.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>TypeError</strong> – If <cite>groups</cite> is not a sequence of sequences.</p>
 </dd>
-<dt>with_title: bool, optional</dt><dd><p>If True, titles will be added to the diagrams. Defaults to False.</p>
-</dd>
-<dt>show_progress: bool, optional</dt><dd><p>If True, progress indicators will be displayed if the number of diagrams
-is 10 or more. Defaults to True.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-<p>Returns:
-None</p>
 </dd></dl>
 
 </section>

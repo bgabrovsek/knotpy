@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1178,15 +1181,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.bisect">
 <span class="sig-name descname"><span class="pre">bisect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.bisect" title="Link to this definition">#</a></dt>
-<dd><p>Split a Segment or CircularArc into two equal halves.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Tuple</em>[<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>, <a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a> | <a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a>]</p>
-</dd>
-</dl>
+<dd><p>Split a <cite>Segment</cite>/<cite>CircularArc</cite> into two equal halves.</p>
 </dd></dl>
 
 </section>

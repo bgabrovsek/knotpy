@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.drawing.draw';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="draw_matplotlib" href="knotpy.drawing.draw_matplotlib.html" />
+    <link rel="next" title="draw_tangle" href="knotpy.drawing.draw_tangle.html" />
     <link rel="prev" title="canonically_rotate_circles" href="knotpy.drawing.alignment.canonically_rotate_circles.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1172,12 +1175,206 @@
                   
   <section id="module-knotpy.drawing.draw">
 <span id="draw"></span><h1>draw<a class="headerlink" href="#module-knotpy.drawing.draw" title="Link to this heading">#</a></h1>
+<p>High-level drawing utilities for KnotPy diagrams using Matplotlib.</p>
+<p>This module renders planar (and oriented) diagrams given a geometric layout.
+It draws arcs/segments, endpoints (with gaps at undercrossings), vertices,
+orientation arrows, and optional labels. When a diagram has multiple disjoint
+components, you can compute layouts per component and align them horizontally
+for a tidy final composition.</p>
+<p>To minimize import time for the package, heavy dependencies such as Matplotlib
+are imported locally inside the drawing functions.</p>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Layouts are expected to be produced by <cite>knotpy.drawing.layout_circle_packing</cite>.</p></li>
+<li><p>Elements in the layout are instances of <cite>CircularArc</cite> or <cite>Segment</cite>.</p></li>
+<li><p>A small gap is rendered at underpassing endpoints of crossings to visualize
+over/under information.</p></li>
+</ul>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw.draw">
 <span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>High-level convenience function to draw a diagram.</p>
+<dl class="simple">
+<dt>This function:</dt><dd><ol class="arabic simple">
+<li><p>Adds support arcs (to eliminate bridges etc.) for robust drawing,</p></li>
+<li><p>Decomposes the diagram into disjoint components,</p></li>
+<li><p>Computes a circle-packing layout for each component,</p></li>
+<li><p>Aligns components horizontally,</p></li>
+<li><p>Renders the composed result to Matplotlib.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – The diagram to draw.</p></li>
+<li><p><strong>**kwds</strong> – Optional keyword arguments:
+- ax: Matplotlib axes to draw on. If omitted, a new figure/axes is created.
+- with_labels (bool): If True, draw node/endpoint/arc labels. Default False.
+- show (bool): If True, call <cite>plt.show()</cite> at the end. Default False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_from_layout">
+<span class="sig-name descname"><span class="pre">draw_from_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_from_layout" title="Link to this definition">#</a></dt>
+<dd><p>Render a diagram from a precomputed layout onto given axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram to draw.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping of arcs/endpoints/nodes to geometric elements or positions.</p></li>
+<li><p><strong>ax</strong> – Matplotlib axes to draw on.</p></li>
+<li><p><strong>with_labels</strong> (<em>bool</em>) – If True, draw node/endpoint/arc labels.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_arcs">
+<span class="sig-name descname"><span class="pre">draw_arcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arcs_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_arcs" title="Link to this definition">#</a></dt>
+<dd><p>Draw circular arcs and straight segments corresponding to diagram arcs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose arcs will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping from each arc (frozenset of two endpoints) to a
+<cite>CircularArc</cite> or <cite>Segment</cite>.</p></li>
+<li><p><strong>arcs_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of arcs to draw. If None, draw all <cite>k.arcs</cite>.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_endpoints">
+<span class="sig-name descname"><span class="pre">draw_endpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoints_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_endpoints" title="Link to this definition">#</a></dt>
+<dd><p>Draw endpoint-adjacent sub-arcs for all endpoints, adding gaps under crossings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose endpoint sub-arcs will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping from endpoint to <cite>CircularArc</cite> or <cite>Segment</cite> (or None).</p></li>
+<li><p><strong>endpoints_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of endpoints to draw. If None, draw all endpoints.</p></li>
+<li><p><strong>gap</strong> (<em>float</em>) – Width of the gap carved out at under-passing endpoints of crossings.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Uses a small shortening near under-passing endpoints (even positions) to visualize over/under.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_vertices">
+<span class="sig-name descname"><span class="pre">draw_vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_vertices" title="Link to this definition">#</a></dt>
+<dd><p>Draw solid disks for vertex nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose vertices will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping from node -&gt; complex center for vertices.</p></li>
+<li><p><strong>vertices_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of vertices to draw. If None, draw all vertices.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_arrows">
+<span class="sig-name descname"><span class="pre">draw_arrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'middle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'open'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_arrows" title="Link to this definition">#</a></dt>
+<dd><p>Draw orientation arrows along arcs (for ingoing endpoints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose orientation will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping for arcs and endpoints to their geometric elements.</p></li>
+<li><p><strong>endpoint_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Optional subset of endpoints; if None, all endpoints are considered.</p></li>
+<li><p><strong>position</strong> (<em>str</em>) – Where to place arrows. Currently only “middle” is supported.</p></li>
+<li><p><strong>style</strong> (<em>str</em>) – “open” (V-shaped) or “closed” (filled triangle).</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_node_labels">
+<span class="sig-name descname"><span class="pre">draw_node_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verticalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bottom'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_node_labels" title="Link to this definition">#</a></dt>
+<dd><p>Annotate nodes (crossings/vertices) with their identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose node labels will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping node -&gt; complex position for label placement.</p></li>
+<li><p><strong>nodes_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of nodes; if None, label all nodes in layout.</p></li>
+<li><p><strong>font_size</strong> (<em>int</em>) – Font size.</p></li>
+<li><p><strong>font_color</strong> (<em>str</em>) – Text color.</p></li>
+<li><p><strong>verticalalignment</strong> (<em>str</em>) – Matplotlib text vertical alignment.</p></li>
+<li><p><strong>horizontalalignment</strong> (<em>str</em>) – Matplotlib text horizontal alignment.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_endpoint_labels">
+<span class="sig-name descname"><span class="pre">draw_endpoint_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoints_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verticalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bottom'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_endpoint_labels" title="Link to this definition">#</a></dt>
+<dd><p>Annotate endpoints with their (node, position) labels near the middle of their sub-arc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose endpoint labels will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping endpoint -&gt; <cite>CircularArc</cite> or <cite>Segment</cite>.</p></li>
+<li><p><strong>endpoints_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of endpoints; if None, label all.</p></li>
+<li><p><strong>font_size</strong> (<em>int</em>) – Font size.</p></li>
+<li><p><strong>font_color</strong> (<em>str</em>) – Text color.</p></li>
+<li><p><strong>verticalalignment</strong> (<em>str</em>) – Matplotlib text vertical alignment.</p></li>
+<li><p><strong>horizontalalignment</strong> (<em>str</em>) – Matplotlib text horizontal alignment.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.draw_arc_labels">
+<span class="sig-name descname"><span class="pre">draw_arc_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arcs_to_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verticalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bottom'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontalalignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.draw_arc_labels" title="Link to this definition">#</a></dt>
+<dd><p>Annotate arcs by listing their two endpoint labels near the middle of the arc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>Diagram</em>) – Diagram whose arc labels will be drawn.</p></li>
+<li><p><strong>layout</strong> (<em>dict</em>) – Mapping arc -&gt; <cite>CircularArc</cite> or <cite>Segment</cite>.</p></li>
+<li><p><strong>arcs_to_draw</strong> (<em>list</em><em> | </em><em>None</em>) – Subset of arcs; if None, label all <cite>k.arcs</cite>.</p></li>
+<li><p><strong>font_size</strong> (<em>int</em>) – Font size.</p></li>
+<li><p><strong>font_color</strong> (<em>str</em>) – Text color.</p></li>
+<li><p><strong>verticalalignment</strong> (<em>str</em>) – Matplotlib text vertical alignment.</p></li>
+<li><p><strong>horizontalalignment</strong> (<em>str</em>) – Matplotlib text horizontal alignment.</p></li>
+<li><p><strong>ax</strong> – Optional Matplotlib axes. If None, uses <cite>plt.gca()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.drawing.draw.autoscale_with_padding">
+<span class="sig-name descname"><span class="pre">autoscale_with_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw.autoscale_with_padding" title="Link to this definition">#</a></dt>
+<dd><p>Autoscale the axes to fit current artists, apply padding, and set equal aspect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – Matplotlib axes.</p></li>
+<li><p><strong>pad_frac</strong> (<em>float</em>) – Fractional padding to apply to both x and y ranges.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1207,7 +1404,17 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_from_layout"><code class="docutils literal notranslate"><span class="pre">draw_from_layout()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_arcs"><code class="docutils literal notranslate"><span class="pre">draw_arcs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_endpoints"><code class="docutils literal notranslate"><span class="pre">draw_endpoints()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_vertices"><code class="docutils literal notranslate"><span class="pre">draw_vertices()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_arrows"><code class="docutils literal notranslate"><span class="pre">draw_arrows()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_node_labels"><code class="docutils literal notranslate"><span class="pre">draw_node_labels()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_endpoint_labels"><code class="docutils literal notranslate"><span class="pre">draw_endpoint_labels()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.draw_arc_labels"><code class="docutils literal notranslate"><span class="pre">draw_arc_labels()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.draw.autoscale_with_padding"><code class="docutils literal notranslate"><span class="pre">autoscale_with_padding()</span></code></a></li>
 </ul>
   </nav></div>
 

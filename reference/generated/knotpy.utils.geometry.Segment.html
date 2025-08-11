@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1179,30 +1182,11 @@
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><code class="xref py py-class docutils literal notranslate"><span class="pre">Line</span></code></a></p>
-<p>A line segment between A and B.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>complex</em>)</p></li>
-<li><p><strong>B</strong> (<em>complex</em>)</p></li>
-</ul>
-</dd>
-</dl>
+<p>A finite line segment from A to B.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>complex</em>)</p></li>
-<li><p><strong>B</strong> (<em>complex</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
@@ -1211,19 +1195,19 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.geometry.Segment.length" title="knotpy.utils.geometry.Segment.length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Length of the segment (<a href="#id1"><span class="problematic" id="id2">|B - A|</span></a>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.geometry.Segment.parameter_from_point" title="knotpy.utils.geometry.Segment.parameter_from_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameter_from_point</span></code></a>(point)</p></td>
-<td><p>Parameter t for which A + t(B-A) = point, or None if not on the line.</p></td>
+<td><p>For the line <cite>T = A + t(B-A)</cite>, return <cite>t</cite> such that <cite>T = point</cite> (if on the line).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.geometry.Segment.sample" title="knotpy.utils.geometry.Segment.sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code></a>(n)</p></td>
-<td><p>Return n evenly spaced points on the segment (including endpoints).</p></td>
+<td><p>Split the segment into <cite>n</cite> evenly spaced complex points (inclusive).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.geometry.Segment.set_orientation" title="knotpy.utils.geometry.Segment.set_orientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_orientation</span></code></a>(start_point, end_point)</p></td>
-<td><p>Orient so A is closer to start_point and B closer to end_point (heuristic).</p></td>
+<td><p>Set orientation so that A is closer to <cite>start_point</cite> and B closer to <cite>end_point</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.geometry.Segment.shorten" title="knotpy.utils.geometry.Segment.shorten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shorten</span></code></a>(length, side[, inplace])</p></td>
-<td><p>Shorten by <cite>length</cite> from side 'A' or 'B'.</p></td>
+<td><p>Shorten by <cite>length</cite> on side 'A' or 'B'.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1231,77 +1215,31 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.length">
 <span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.length" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dd><p>Length of the segment (<a href="#id3"><span class="problematic" id="id4">|B - A|</span></a>).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.set_orientation">
 <span class="sig-name descname"><span class="pre">set_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.set_orientation" title="Link to this definition">#</a></dt>
-<dd><p>Orient so A is closer to start_point and B closer to end_point (heuristic).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>end_point</strong> (<em>complex</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
+<dd><p>Set orientation so that A is closer to <cite>start_point</cite> and B closer to <cite>end_point</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.shorten">
 <span class="sig-name descname"><span class="pre">shorten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.shorten" title="Link to this definition">#</a></dt>
-<dd><p>Shorten by <cite>length</cite> from side ‘A’ or ‘B’.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The modified/new segment or None if fully consumed.</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>length</strong> (<em>float</em>)</p></li>
-<li><p><strong>side</strong> (<em>str</em>)</p></li>
-<li><p><strong>inplace</strong> (<em>bool</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a> | None</p>
-</dd>
-</dl>
+<dd><p>Shorten by <cite>length</cite> on side ‘A’ or ‘B’.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.sample">
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.sample" title="Link to this definition">#</a></dt>
-<dd><p>Return n evenly spaced points on the segment (including endpoints).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>List</em>[complex]</p>
-</dd>
-</dl>
+<dd><p>Split the segment into <cite>n</cite> evenly spaced complex points (inclusive).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.Segment.parameter_from_point">
 <span class="sig-name descname"><span class="pre">parameter_from_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.Segment.parameter_from_point" title="Link to this definition">#</a></dt>
-<dd><p>Parameter t for which A + t(B-A) = point, or None if not on the line.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>point</strong> (<em>complex</em>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float | None</p>
-</dd>
-</dl>
+<dd><p>For the line <cite>T = A + t(B-A)</cite>, return <cite>t</cite> such that <cite>T = point</cite> (if on the line).</p>
 </dd></dl>
 
 </dd></dl>

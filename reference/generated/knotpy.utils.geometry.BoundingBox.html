@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1179,24 +1182,11 @@
 <dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BoundingBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Axis-aligned bounding box for basic primitives.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>g</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em>, </em><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a><em>, </em><em>complex</em><em>]</em><em>]</em>)</p>
-</dd>
-</dl>
+<p>Axis-aligned bounding box (legacy/limited use).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>g</strong> (<a class="reference internal" href="knotpy.utils.geometry.CircularArc.html#knotpy.utils.geometry.CircularArc" title="knotpy.utils.geometry.CircularArc"><em>CircularArc</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><em>Circle</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Segment.html#knotpy.utils.geometry.Segment" title="knotpy.utils.geometry.Segment"><em>Segment</em></a><em> | </em><a class="reference internal" href="knotpy.utils.geometry.Line.html#knotpy.utils.geometry.Line" title="knotpy.utils.geometry.Line"><em>Line</em></a><em> | </em><em>complex</em><em> | </em><em>None</em>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
@@ -1205,10 +1195,10 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.geometry.BoundingBox.add_padding" title="knotpy.utils.geometry.BoundingBox.add_padding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_padding</span></code></a>([units, fraction])</p></td>
-<td><p>Pad the box by absolute units and/or by a fraction of its size.</p></td>
+<td><p>Add absolute (<cite>units</cite>) or proportional (<cite>fraction</cite>) padding to the box.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.geometry.BoundingBox.make_square" title="knotpy.utils.geometry.BoundingBox.make_square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_square</span></code></a>()</p></td>
-<td><p>Expand to the smallest square that contains the current box.</p></td>
+<td><p>Expand to the larger side to make the box square (centered).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1216,29 +1206,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox.make_square">
 <span class="sig-name descname"><span class="pre">make_square</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox.make_square" title="Link to this definition">#</a></dt>
-<dd><p>Expand to the smallest square that contains the current box.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
+<dd><p>Expand to the larger side to make the box square (centered).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.BoundingBox.add_padding">
 <span class="sig-name descname"><span class="pre">add_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.BoundingBox.add_padding" title="Link to this definition">#</a></dt>
-<dd><p>Pad the box by absolute units and/or by a fraction of its size.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>units</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>fraction</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
+<dd><p>Add absolute (<cite>units</cite>) or proportional (<cite>fraction</cite>) padding to the box.</p>
 </dd></dl>
 
 </dd></dl>

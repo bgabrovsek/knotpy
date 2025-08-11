@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1179,31 +1182,17 @@
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CircularArc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="knotpy.utils.geometry.Circle.html#knotpy.utils.geometry.Circle" title="knotpy.utils.geometry.Circle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code></a></p>
-<p>An unoriented circular arc on a circle.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>center</strong> (<em>complex</em>)</p></li>
-<li><p><strong>radius</strong> (<em>float</em>)</p></li>
-<li><p><strong>theta1</strong> (<em>float</em>)</p></li>
-<li><p><strong>theta2</strong> (<em>float</em>)</p></li>
-</ul>
-</dd>
-</dl>
+<p>A circular arc defined by a center, radius, and two angles (theta1 → theta2).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Create a circle characterized by a center point and a radius.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>center</strong> (<em>complex</em>) – Circle center (complex).</p></li>
-<li><p><strong>radius</strong> (<em>float</em>) – Circle radius (non-negative).</p></li>
-<li><p><strong>theta1</strong> (<em>float</em>)</p></li>
-<li><p><strong>theta2</strong> (<em>float</em>)</p></li>
+<li><p><strong>center</strong> – Complex number representing the circle’s center.</p></li>
+<li><p><strong>radius</strong> – Radius of the circle.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1212,13 +1201,13 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.geometry.CircularArc.__init__" title="knotpy.utils.geometry.CircularArc.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(center, radius, theta1, theta2)</p></td>
-<td><p></p></td>
+<td><p>Create a circle characterized by a center point and a radius.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#knotpy.utils.geometry.CircularArc.angle" title="knotpy.utils.geometry.CircularArc.angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle</span></code></a>()</p></td>
-<td><p>Arc angle length (radians) in [0, 2π).</p></td>
+<td><p>Angular span of the arc in radians (in [0, 2π)).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.utils.geometry.CircularArc.length" title="knotpy.utils.geometry.CircularArc.length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code></a>()</p></td>
-<td><p>Arc length = radius * angle.</p></td>
+<td><p>Arc length (radius × angle).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1238,34 +1227,24 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.angle">
 <span class="sig-name descname"><span class="pre">angle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.angle" title="Link to this definition">#</a></dt>
-<dd><p>Arc angle length (radians) in [0, 2π).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dd><p>Angular span of the arc in radians (in [0, 2π)).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.length">
 <span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.length" title="Link to this definition">#</a></dt>
-<dd><p>Arc length = radius * angle.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dd><p>Arc length (radius × angle).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.A">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.A" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.A" title="Link to this definition">#</a></dt>
 <dd><p>Start point of the arc.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.utils.geometry.CircularArc.B">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.B" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#knotpy.utils.geometry.CircularArc.B" title="Link to this definition">#</a></dt>
 <dd><p>End point of the arc.</p>
 </dd></dl>
 

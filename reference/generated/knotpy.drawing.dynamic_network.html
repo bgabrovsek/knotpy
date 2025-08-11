@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1172,23 +1175,36 @@
                   
   <section id="module-knotpy.drawing.dynamic_network">
 <span id="dynamic-network"></span><h1>dynamic_network<a class="headerlink" href="#module-knotpy.drawing.dynamic_network" title="Link to this heading">#</a></h1>
+<p>Dynamic bead–spring network for layout relaxation and visualization.</p>
+<p>This module implements a simple 2D dynamic system over complex coordinates:
+nodes (beads) connected by springs (bonds), with optional angular constraints,
+chain stiffness, and short-range repulsion. It can be used to iteratively
+relax a layout and (optionally) visualize the evolution.</p>
+<section id="design-notes">
+<h2>Design notes<a class="headerlink" href="#design-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Geometry is represented with complex numbers for concise vector math.</p></li>
+<li><p>To keep <cite>import knotpy</cite> fast, <cite>matplotlib</cite> is imported locally inside
+functions that actually plot or animate.</p></li>
+</ul>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.animate_simulation.html#knotpy.drawing.dynamic_network.animate_simulation" title="knotpy.drawing.dynamic_network.animate_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">animate_simulation</span></code></a>(network[, dt, show])</p></td>
-<td><p></p></td>
+<td><p>Animate the network dynamics with a two-panel view (geometry + force).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.plot_bead_frame.html#knotpy.drawing.dynamic_network.plot_bead_frame" title="knotpy.drawing.dynamic_network.plot_bead_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_bead_frame</span></code></a>(ax, network[, show_indices])</p></td>
-<td><p></p></td>
+<td><p>Plot a single frame of the bead network onto the provided Axes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.plot_force_history.html#knotpy.drawing.dynamic_network.plot_force_history" title="knotpy.drawing.dynamic_network.plot_force_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_force_history</span></code></a>(ax, network)</p></td>
-<td><p></p></td>
+<td><p>Plot the history of the mean net force magnitude over time.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.plot_static_frame.html#knotpy.drawing.dynamic_network.plot_static_frame" title="knotpy.drawing.dynamic_network.plot_static_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_static_frame</span></code></a>(network[, show_indices])</p></td>
-<td><p>Plot a single static frame of the bead network using plot_bead_frame().</p></td>
+<td><p>Plot a single static frame of the bead network.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.simulation.html#knotpy.drawing.dynamic_network.simulation" title="knotpy.drawing.dynamic_network.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a>(network[, dt, force_constants, show])</p></td>
-<td><p></p></td>
+<td><p>Run a fixed number of steps and return the stability series.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1197,7 +1213,7 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Network</span></code></a>(ideal_bond_length[, force_constants])</p></td>
-<td><p></p></td>
+<td><p>Dynamic bead–spring network in 2D (complex plane).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1206,32 +1222,99 @@
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ideal_bond_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dynamic bead–spring network in 2D (complex plane).</p>
+<dl class="simple">
+<dt>The network stores:</dt><dd><ul class="simple">
+<li><p><cite>positions</cite>: bead positions (complex).</p></li>
+<li><p><cite>connections</cite>: pairs of indices (bonds).</p></li>
+<li><p><cite>angled_triplets</cite>: dict mapping (i, j, k) → ideal angle at j.</p></li>
+<li><p><cite>stiff_triplets</cite>: list of (i, j, k) for chain stiffness.</p></li>
+<li><p><cite>forces</cite>: current force on each bead (complex).</p></li>
+<li><p><cite>names</cite>: mapping from external names (e.g., knotpy nodes/endpoints) to indices.</p></li>
+</ul>
+</dd>
+<dt>Forces:</dt><dd><ul class="simple">
+<li><p>Bond stretching to an ideal length.</p></li>
+<li><p>Angular force toward an ideal angle.</p></li>
+<li><p>Stiffness (prefers straight lines, i.e., ideal π).</p></li>
+<li><p>Short-range repulsion with a cutoff.</p></li>
+<li><p>Global damping.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ideal_bond_length</strong> (<em>float</em>) – Equilibrium length of a bond (spring).</p></li>
+<li><p><strong>force_constants</strong> (<em>dict</em><em> | </em><em>None</em>) – <p>Optional override:
+{</p>
+<blockquote>
+<div><p>”bond”: float,
+“angle”: float,
+“stiffness”: float,
+“repulsion”: float,
+“repulsion_cutoff”: float,
+“damping”: float,</p>
+</div></blockquote>
+<p>}</p>
+</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.compute_repulsive_ignore">
 <span class="sig-name descname"><span class="pre">compute_repulsive_ignore</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.compute_repulsive_ignore" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Precompute which bead pairs should be repelled.</p>
+<p>Repulsion skips immediate neighbors along bonds, stiff triplets,
+and angled triplets to avoid fighting primary constraints.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_point">
 <span class="sig-name descname"><span class="pre">add_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_point" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Add a bead if <cite>name</cite> is new; otherwise reuse the index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>complex</em>) – Position of the bead.</p></li>
+<li><p><strong>name</strong> (<em>Any</em>) – External identifier to map to this bead.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_angled_triplet">
 <span class="sig-name descname"><span class="pre">add_angled_triplet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triplet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_angled_triplet" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Register an angular constraint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triplet</strong> (<em>tuple</em>) – Indices or external names (i, j, k) with angle at j.</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – Ideal angle in radians.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_connections_from">
 <span class="sig-name descname"><span class="pre">add_connections_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connections</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_connections_from" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Add multiple connections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connections</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>[</em><em>(</em><em>complex</em><em>, </em><em>name</em><em>)</em><em>, </em><em>(</em><em>complex</em><em>, </em><em>name</em><em>)</em><em>]</em><em>]</em>) – Each connection includes (point, name) pairs for its endpoints.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_connection">
 <span class="sig-name descname"><span class="pre">add_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_connection" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Add a single bond.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>connection</strong> (<em>tuple</em>)</p>
+<dd class="field-odd"><p><strong>connection</strong> (<em>tuple</em>) – ((point_a, name_a), (point_b, name_b)).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1239,74 +1322,136 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_stiff_triplets_from">
 <span class="sig-name descname"><span class="pre">add_stiff_triplets_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triplets</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_stiff_triplets_from" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Add multiple stiffness triplets (i, j, k).</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.add_stiff_triplet">
 <span class="sig-name descname"><span class="pre">add_stiff_triplet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triplet</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.add_stiff_triplet" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Add a single stiffness triplet (i, j, k).</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.average_connection_length">
 <span class="sig-name descname"><span class="pre">average_connection_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.average_connection_length" title="Link to this definition">#</a></dt>
-<dd><p>Compute the average distance between connected beads.</p>
+<dd><p>Average bond length across all connections.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.distances">
 <span class="sig-name descname"><span class="pre">distances</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.distances" title="Link to this definition">#</a></dt>
-<dd><p>Compute the average distance between connected beads.</p>
+<dd><p>List of bond lengths across all connections.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.scale">
 <span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.scale" title="Link to this definition">#</a></dt>
-<dd><p>Scale all bead positions by a given factor.</p>
+<dd><p>Uniformly scale all bead positions by <cite>factor</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.compute_forces">
 <span class="sig-name descname"><span class="pre">compute_forces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.compute_forces" title="Link to this definition">#</a></dt>
-<dd><p>Compute the forces on each bead based on the force function.</p>
+<dd><p>Compute all forces for the current configuration.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.net_force_magnitude">
 <span class="sig-name descname"><span class="pre">net_force_magnitude</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.net_force_magnitude" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Mean magnitude of forces across beads (a stability indicator).</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.Network.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.Network.step" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Advance the simulation by a single time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<em>float</em>) – Time step multiplier applied to the velocity (force proxy).</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.plot_bead_frame">
 <span class="sig-name descname"><span class="pre">plot_bead_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.plot_bead_frame" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Plot a single frame of the bead network onto the provided Axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – Target axes.</p></li>
+<li><p><strong>network</strong> (<a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><em>Network</em></a>) – Network to draw.</p></li>
+<li><p><strong>show_indices</strong> (<em>bool</em>) – If True, annotate bead indices and names.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.plot_force_history">
 <span class="sig-name descname"><span class="pre">plot_force_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.plot_force_history" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Plot the history of the mean net force magnitude over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – Target axes.</p></li>
+<li><p><strong>network</strong> (<a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><em>Network</em></a>) – Source of <cite>stability_history</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.plot_static_frame">
 <span class="sig-name descname"><span class="pre">plot_static_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.plot_static_frame" title="Link to this definition">#</a></dt>
-<dd><p>Plot a single static frame of the bead network using plot_bead_frame().</p>
+<dd><p>Plot a single static frame of the bead network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><em>Network</em></a>) – The network to draw.</p></li>
+<li><p><strong>show_indices</strong> (<em>bool</em>) – If True, annotate bead indices and names.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.animate_simulation">
 <span class="sig-name descname"><span class="pre">animate_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.animate_simulation" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Animate the network dynamics with a two-panel view (geometry + force).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><em>Network</em></a>) – The network to simulate.</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – Time step used in <cite>Network.step</cite>.</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – If True, call <cite>plt.show()</cite> at the end.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.dynamic_network.simulation">
 <span class="sig-name descname"><span class="pre">simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.dynamic_network.simulation" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Run a fixed number of steps and return the stability series.</p>
+<p>This helper runs the dynamics for 100 steps and returns the list of mean
+net force magnitudes at each step. It does <strong>not</strong> plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html#knotpy.drawing.dynamic_network.Network" title="knotpy.drawing.dynamic_network.Network"><em>Network</em></a>) – The network to simulate.</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – Time step used in <cite>Network.step</cite>.</p></li>
+<li><p><strong>force_constants</strong> – Unused (reserved for future).</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Unused (reserved for future).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list[float]</em> – Mean net force magnitude per step.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -1333,6 +1478,7 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-notes">Design notes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.dynamic_network.Network"><code class="docutils literal notranslate"><span class="pre">Network</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.dynamic_network.Network.compute_repulsive_ignore"><code class="docutils literal notranslate"><span class="pre">Network.compute_repulsive_ignore()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.drawing.dynamic_network.Network.add_point"><code class="docutils literal notranslate"><span class="pre">Network.add_point()</span></code></a></li>

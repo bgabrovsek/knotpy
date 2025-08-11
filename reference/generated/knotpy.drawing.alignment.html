@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1172,14 +1175,20 @@
                   
   <section id="module-knotpy.drawing.alignment">
 <span id="alignment"></span><h1>alignment<a class="headerlink" href="#module-knotpy.drawing.alignment" title="Link to this heading">#</a></h1>
+<p>Geometric alignment utilities for diagram layouts.</p>
+<p>This module provides helpers to:
+- Rotate a set of circles to a canonical orientation using PCA on their centers.
+- Place multiple (layout, circles) pairs side by side with a consistent gap.</p>
+<p>Heavy dependencies (e.g., scikit-learn) are imported <strong>locally</strong> inside the
+functions that need them, so importing <cite>knotpy.drawing</cite> remains fast.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.alignment.align_layouts.html#knotpy.drawing.alignment.align_layouts" title="knotpy.drawing.alignment.align_layouts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align_layouts</span></code></a>(layout_circles_pairs)</p></td>
-<td><p></p></td>
+<td><p>Place multiple layouts side-by-side with a uniform horizontal gap.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.alignment.canonically_rotate_circles.html#knotpy.drawing.alignment.canonically_rotate_circles" title="knotpy.drawing.alignment.canonically_rotate_circles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">canonically_rotate_circles</span></code></a>(circles[, degree])</p></td>
-<td><p>Given a dictionary where values are circles, canonically rotate the system of circles so that they are aligned along an axis with 'degree' degrees.</p></td>
+<td><p>Rotate a system of circles to a canonical orientation via PCA.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1187,11 +1196,30 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.alignment.canonically_rotate_circles">
 <span class="sig-name descname"><span class="pre">canonically_rotate_circles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.alignment.canonically_rotate_circles" title="Link to this definition">#</a></dt>
-<dd><p>Given a dictionary where values are circles, canonically rotate the system of circles so that they are aligned
-along an axis with ‘degree’ degrees. If degree = 0, the circles will be vertically aligned.</p>
+<dd><p>Rotate a system of circles to a canonical orientation via PCA.</p>
+<p>Given a mapping where values are <code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code> instances, compute the
+PCA of their centers (weighted by radius for the mass center), translate to
+the center of mass, align with the first principal component, optionally
+rotate by <code class="docutils literal notranslate"><span class="pre">degree</span></code> (degrees), and (if needed) flip so more mass lies to
+the right (positive real axis).</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">0</span></code>, the primary axis aligns horizontally (i.e., circles are
+visually “laid out” left–right).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>circles</strong> (<em>dict</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circles</strong> (<em>dict</em>) – A dict whose values are <code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code> objects.</p></li>
+<li><p><strong>degree</strong> (<em>int</em>) – Additional rotation in degrees applied after PCA alignment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A new dict with the same keys, where each value is a rotated
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code> (centers transformed; radii preserved).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If any value in <code class="docutils literal notranslate"><span class="pre">circles</span></code> is not a <code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1199,7 +1227,34 @@ along an axis with ‘degree’ degrees. If degree = 0, the circles will be vert
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.alignment.align_layouts">
 <span class="sig-name descname"><span class="pre">align_layouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_circles_pairs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.alignment.align_layouts" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Place multiple layouts side-by-side with a uniform horizontal gap.</p>
+<p>This function translates each subsequent layout (and its companion circles)
+so that their bounding boxes are laid out left-to-right with a fixed gap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_circles_pairs</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>dict</em><em>, </em><em>dict</em><em>]</em><em>]</em>) – <dl class="simple">
+<dt>A list of pairs <code class="docutils literal notranslate"><span class="pre">(layout,</span> <span class="pre">circles)</span></code>:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">layout</span></code>: dict mapping identifiers to complex points (positions).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">circles</span></code>: dict mapping identifiers to <code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code> objects.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Both dicts are modified <em>in place</em>.</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. The input dictionaries are translated in place.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The horizontal gap equals twice the mean radius across all provided
+<code class="docutils literal notranslate"><span class="pre">circles</span></code> (averaged per pair, then across pairs).</p></li>
+</ul>
+</dd></dl>
 
 </section>
 

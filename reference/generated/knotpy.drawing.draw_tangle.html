@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="add_corners_and_smoothen" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html" />
-    <link rel="prev" title="draw_matplotlib" href="knotpy.drawing.draw_matplotlib.html" />
+    <link rel="prev" title="draw" href="knotpy.drawing.draw.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -638,7 +638,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">draw_tangle</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -664,6 +663,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -680,16 +683,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -915,7 +919,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1172,35 +1175,49 @@
                   
   <section id="module-knotpy.drawing.draw_tangle">
 <span id="draw-tangle"></span><h1>draw_tangle<a class="headerlink" href="#module-knotpy.drawing.draw_tangle" title="Link to this heading">#</a></h1>
+<p>Drawing utilities for algebraic tangles.</p>
+<p>This module provides a lightweight way to render “algebraic” tangles built
+from the formal sum/product of elementary pieces (-1, 0, 1). It converts
+symbolic tangle expressions into geometric zig-zag polylines and offers two
+renderers:</p>
+<ul class="simple">
+<li><p><cite>draw(expr)</cite>: quick polyline rendering</p></li>
+<li><p><cite>draw_smooth(expr)</cite>: smooth rendering using B-splines</p></li>
+</ul>
+<p>Notes:
+- Heavy dependencies (matplotlib, numpy, scipy) are imported locally inside</p>
+<blockquote>
+<div><p>the functions that require them to keep <cite>import knotpy</cite> fast.</p>
+</div></blockquote>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html#knotpy.drawing.draw_tangle.add_corners_and_smoothen" title="knotpy.drawing.draw_tangle.add_corners_and_smoothen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_corners_and_smoothen</span></code></a>(zz)</p></td>
-<td><p>add corners to the zig-zag line, so it starts and ends in a rectangle (the bounding box)</p></td>
+<td><p>Add bounding-box corners so the zig-zag starts/ends on the rectangle.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html#knotpy.drawing.draw_tangle.angle_between_points" title="knotpy.drawing.draw_tangle.angle_between_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_between_points</span></code></a>(z1, z2, z3)</p></td>
-<td><p>return angle between three complex points, 0 if parallel</p></td>
+<td><p>Return signed angle (degrees) at z2 determined by points z1–z2–z3.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.are_continuation.html#knotpy.drawing.draw_tangle.are_continuation" title="knotpy.drawing.draw_tangle.are_continuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">are_continuation</span></code></a>(a, b, radius)</p></td>
-<td><p></p></td>
+<td><p>Heuristic test if polyline <cite>b</cite> is a continuation of polyline <cite>a</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.connect.html#knotpy.drawing.draw_tangle.connect" title="knotpy.drawing.draw_tangle.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(z, w, pos)</p></td>
-<td><p>Make a connection line with vertical, horizontal or diagonal lines between points z (left) and w (right) pos can be &quot;N&quot; or &quot;S&quot;</p></td>
+<td><p>Return a short polyline connecting z (left) to w (right) by H/V/diag segments.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.crossings.html#knotpy.drawing.draw_tangle.crossings" title="knotpy.drawing.draw_tangle.crossings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crossings</span></code></a>(expr)</p></td>
-<td><p>return the number of crossings</p></td>
+<td><p>Return the number of crossings contributed by an expression.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.draw.html#knotpy.drawing.draw_tangle.draw" title="knotpy.drawing.draw_tangle.draw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw</span></code></a>(expr[, translate])</p></td>
-<td><p>Convert the tangle expr, convert it to a zig-zag line and plot it.</p></td>
+<td><p>Quick polyline drawing of an algebraic tangle.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.draw_smooth.html#knotpy.drawing.draw_tangle.draw_smooth" title="knotpy.drawing.draw_tangle.draw_smooth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_smooth</span></code></a>(expr)</p></td>
-<td><p></p></td>
+<td><p>Smooth B-spline rendering of an algebraic tangle.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.integral.html#knotpy.drawing.draw_tangle.integral" title="knotpy.drawing.draw_tangle.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integral</span></code></a>(n)</p></td>
-<td><p>Integral tangle, return a sum of 1's or -1's</p></td>
+<td><p>Build an integral tangle as a nested sum of ±1 and 0.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.to_zigzag.html#knotpy.drawing.draw_tangle.to_zigzag" title="knotpy.drawing.draw_tangle.to_zigzag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_zigzag</span></code></a>(expr)</p></td>
-<td><p>Convert a algebraic tangle into a geometric zig-zag line</p></td>
+<td><p>Convert an algebraic tangle expression to a geometric zig-zag.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1209,16 +1226,16 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleExpr.html#knotpy.drawing.draw_tangle.TangleExpr" title="knotpy.drawing.draw_tangle.TangleExpr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TangleExpr</span></code></a>(term1, term2)</p></td>
-<td><p>General expression for a tangle, either Sum or Product of tangles stored in an array</p></td>
+<td><p>General expression for a tangle; a binary tree of sums/products.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleProduct.html#knotpy.drawing.draw_tangle.TangleProduct" title="knotpy.drawing.draw_tangle.TangleProduct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TangleProduct</span></code></a>(term1, term2)</p></td>
-<td><p>Formal product of tangles</p></td>
+<td><p>Formal product of tangles.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.TangleSum.html#knotpy.drawing.draw_tangle.TangleSum" title="knotpy.drawing.draw_tangle.TangleSum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TangleSum</span></code></a>(term1, term2)</p></td>
-<td><p>Formal sum of tangles</p></td>
+<td><p>Formal sum of tangles.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html#knotpy.drawing.draw_tangle.ZigZag" title="knotpy.drawing.draw_tangle.ZigZag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZigZag</span></code></a>()</p></td>
-<td><p>Class to draw a zig-zag line.</p></td>
+<td><p>A zig-zag polyline representation of a tangle.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1227,81 +1244,129 @@
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.TangleExpr">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TangleExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.TangleExpr" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>General expression for a tangle, either Sum or Product of tangles stored in an array</p>
+<p>General expression for a tangle; a binary tree of sums/products.</p>
+<p>The expression nodes hold two terms. Leaf values are integers in {-1, 0, 1}.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>term1</strong> – Left term.</p></li>
+<li><p><strong>term2</strong> – Right term.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.TangleSum">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TangleSum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.TangleSum" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="knotpy.drawing.draw_tangle.TangleExpr.html#knotpy.drawing.draw_tangle.TangleExpr" title="knotpy.drawing.draw_tangle.TangleExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">TangleExpr</span></code></a></p>
-<p>Formal sum of tangles</p>
+<p>Formal sum of tangles.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.TangleProduct">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TangleProduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.TangleProduct" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="knotpy.drawing.draw_tangle.TangleExpr.html#knotpy.drawing.draw_tangle.TangleExpr" title="knotpy.drawing.draw_tangle.TangleExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">TangleExpr</span></code></a></p>
-<p>Formal product of tangles</p>
+<p>Formal product of tangles.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.integral">
 <span class="sig-name descname"><span class="pre">integral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.integral" title="Link to this definition">#</a></dt>
-<dd><p>Integral tangle, return a sum of 1’s or -1’s</p>
+<dd><p>Build an integral tangle as a nested sum of ±1 and 0.</p>
+<p>For <a href="#id1"><span class="problematic" id="id2">|n|</span></a> ≤ 1 returns the integer directly. Otherwise returns
+TangleSum(±1, integral(n∓1)) recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Integer tangle value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int | TangleExpr</em> – The expression representing the integral tangle.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.angle_between_points">
 <span class="sig-name descname"><span class="pre">angle_between_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.angle_between_points" title="Link to this definition">#</a></dt>
-<dd><p>return angle between three complex points, 0 if parallel</p>
+<dd><p>Return signed angle (degrees) at z2 determined by points z1–z2–z3.</p>
+<p>Positive means left turn, negative right turn; 0 means collinear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z1</strong> (<em>complex</em>) – First point.</p></li>
+<li><p><strong>z2</strong> (<em>complex</em>) – Vertex point.</p></li>
+<li><p><strong>z3</strong> (<em>complex</em>) – Third point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Angle in degrees in range (-180, 180].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ZigZag</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to draw a zig-zag line. A zig-zag line is a collection of lines, which are sequences of points.</p>
+<p>A zig-zag polyline representation of a tangle.</p>
+<p>The geometry is a list of polyline segments, each a list of complex points.
+We also store a “compass” rectangle (NW, SW, SE, NE) that indicates the
+bounding endpoints for the left/right/top/bottom boundary of the tangle.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.N">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.N" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">N</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.N" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.S">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.S" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">S</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">complex</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.S" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.W">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">W</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.W" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">W</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.W" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.E">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">E</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.E" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">E</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.E" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.height">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.height" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.height" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.width">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.width" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.width" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.bounding_box">
 <span class="sig-name descname"><span class="pre">bounding_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compass</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.bounding_box" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Return tight bounding coordinate for a given compass letter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>compass</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex | float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.add_line">
 <span class="sig-name descname"><span class="pre">add_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.add_line" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Append a non-degenerate polyline to the zig-zag.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>line</strong> (<em>list</em>)</p>
+<dd class="field-odd"><p><strong>line</strong> (<em>list</em><em>[</em><em>complex</em><em>]</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1309,29 +1374,42 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.set_compass">
 <span class="sig-name descname"><span class="pre">set_compass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.set_compass" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Set the compass rectangle of the zig-zag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NW</strong> (<em>complex</em>)</p></li>
+<li><p><strong>SW</strong> (<em>complex</em>)</p></li>
+<li><p><strong>SE</strong> (<em>complex</em>)</p></li>
+<li><p><strong>NE</strong> (<em>complex</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.mirror">
 <span class="sig-name descname"><span class="pre">mirror</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.mirror" title="Link to this definition">#</a></dt>
-<dd><p>Mirror through y-axis</p>
+<dd><p>Mirror through the y-axis.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.rotate">
 <span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.rotate" title="Link to this definition">#</a></dt>
-<dd><p>Rotate once CCW</p>
+<dd><p>Rotate once CCW (multiply coordinates by 1j).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.reflect">
 <span class="sig-name descname"><span class="pre">reflect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.reflect" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Reflect (mirror then rotate).</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.move">
 <span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.move" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Translate the entire zig-zag by complex offset <cite>dz</cite>.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dz</strong> (<em>complex</em>)</p>
 </dd>
@@ -1341,19 +1419,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.join">
 <span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.join" title="Link to this definition">#</a></dt>
-<dd><p>If there are zig-zag lines that share an endpoint point, join them together into one zig-zag,</p>
+<dd><p>Join polyline segments that share endpoints into longer polylines.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.smoothen">
 <span class="sig-name descname"><span class="pre">smoothen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.smoothen" title="Link to this definition">#</a></dt>
-<dd><p>remove points that continue in the same direction</p>
+<dd><p>Placeholder for point simplification (kept for compatibility).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.ZigZag.split">
 <span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.ZigZag.split" title="Link to this definition">#</a></dt>
-<dd><p>if zig-zag lines are too long, split them</p>
+<dd><p>Split long nearly straight segments (used for smoothing heuristics).</p>
 </dd></dl>
 
 </dd></dl>
@@ -1361,29 +1439,69 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.connect">
 <span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.connect" title="Link to this definition">#</a></dt>
-<dd><p>Make a connection line with vertical, horizontal or diagonal lines between points z (left) and w (right)
-pos can be “N” or “S”</p>
+<dd><p>Return a short polyline connecting z (left) to w (right) by H/V/diag segments.</p>
+<p>Heuristic that prefers diagonal+horizontal or diagonal+vertical depending on
+geometry and whether we connect along the “north” or “south” side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>complex</em>) – Left endpoint (complex).</p></li>
+<li><p><strong>w</strong> (<em>complex</em>) – Right endpoint (complex).</p></li>
+<li><p><strong>pos</strong> (<em>str</em>) – “N” or “S” — the side we are connecting across.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list[complex]</em> – 2 or 3 points forming the connection polyline.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[complex]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.crossings">
 <span class="sig-name descname"><span class="pre">crossings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.crossings" title="Link to this definition">#</a></dt>
-<dd><p>return the number of crossings</p>
+<dd><p>Return the number of crossings contributed by an expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expr</strong> – int or TangleExpr.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em> – Sum of absolute values at integer leaves.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.to_zigzag">
 <span class="sig-name descname"><span class="pre">to_zigzag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.to_zigzag" title="Link to this definition">#</a></dt>
-<dd><p>Convert a algebraic tangle into a geometric zig-zag line</p>
+<dd><p>Convert an algebraic tangle expression to a geometric zig-zag.</p>
+<p>Supports leaf tangles −1, 0, 1 and compositions via TangleSum/TangleProduct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expr</strong> – int in {-1, 0, 1} or a TangleExpr.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ZigZag</em> – Polyline representation with compass endpoints.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html#knotpy.drawing.draw_tangle.ZigZag" title="knotpy.drawing.draw_tangle.ZigZag"><em>ZigZag</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.add_corners_and_smoothen">
 <span class="sig-name descname"><span class="pre">add_corners_and_smoothen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.add_corners_and_smoothen" title="Link to this definition">#</a></dt>
-<dd><p>add corners to the zig-zag line, so it starts and ends in a rectangle (the bounding box)</p>
+<dd><p>Add bounding-box corners so the zig-zag starts/ends on the rectangle.</p>
+<p>If <cite>FIT_INTO_SQUARE</cite> is True, the compass rectangle is padded to become a square.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>zz</strong> (<a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html#knotpy.drawing.draw_tangle.ZigZag" title="knotpy.drawing.draw_tangle.ZigZag"><em>ZigZag</em></a>)</p>
+<dd class="field-odd"><p><strong>zz</strong> (<a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html#knotpy.drawing.draw_tangle.ZigZag" title="knotpy.drawing.draw_tangle.ZigZag"><em>ZigZag</em></a>) – A ZigZag to modify in place.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1391,18 +1509,51 @@ pos can be “N” or “S”</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.draw">
 <span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.draw" title="Link to this definition">#</a></dt>
-<dd><p>Convert the tangle expr, convert it to a zig-zag line and plot it.</p>
+<dd><p>Quick polyline drawing of an algebraic tangle.</p>
+<p>Heavy imports are local to keep module import time low.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> – Tangle expression (int | TangleExpr).</p></li>
+<li><p><strong>translate</strong> (<em>complex</em>) – Complex offset applied to all points before plotting.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.are_continuation">
 <span class="sig-name descname"><span class="pre">are_continuation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.are_continuation" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Heuristic test if polyline <cite>b</cite> is a continuation of polyline <cite>a</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>list</em><em>[</em><em>complex</em><em>]</em>) – First polyline points.</p></li>
+<li><p><strong>b</strong> (<em>list</em><em>[</em><em>complex</em><em>]</em>) – Second polyline points.</p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – Unused but kept for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – True if endpoints are close in one of four adjacency checks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.drawing.draw_tangle.draw_smooth">
 <span class="sig-name descname"><span class="pre">draw_smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.drawing.draw_tangle.draw_smooth" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Smooth B-spline rendering of an algebraic tangle.</p>
+<p>Uses SciPy BSplines and NumPy for sampling. Imports are done locally to
+keep the library import fast when drawing is not used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expr</strong> – Tangle expression (int | TangleExpr).</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

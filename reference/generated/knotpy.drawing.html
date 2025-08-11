@@ -634,7 +634,6 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw.html">draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html">draw_matplotlib</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.draw_tangle.html">draw_tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.add_corners_and_smoothen.html">add_corners_and_smoothen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.angle_between_points.html">angle_between_points</a></li>
@@ -660,6 +659,10 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.Network.html">Network</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html">dynamic_simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_simulation.init_network.html">init_network</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.export.html">export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf.html">export_pdf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.export.export_pdf_groups.html">export_pdf_groups</a></li>
@@ -676,16 +679,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_export.test_export.html">test_export</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.html">test_knotoids_strange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_knotoids_strange.test_draw_all.html">test_draw_all</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.tutte_layout.tutte_layout.html">tutte_layout</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -911,7 +915,6 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.angle_between.html">angle_between</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.antipode.html">antipode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_circle_and_points.html">arc_from_circle_and_points</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diamater.html">arc_from_diamater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.arc_from_diameter.html">arc_from_diameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisect.html">bisect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.bisector.html">bisector</a></li>
@@ -1169,22 +1172,22 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.alignment.html#module-knotpy.drawing.alignment" title="knotpy.drawing.alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alignment</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Geometric alignment utilities for diagram layouts.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw.html#module-knotpy.drawing.draw" title="knotpy.drawing.draw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw</span></code></a>(k, **kwds)</p></td>
-<td><p></p></td>
+<td><p>High-level convenience function to draw a diagram.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_matplotlib.html#module-knotpy.drawing.draw_matplotlib" title="knotpy.drawing.draw_matplotlib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_matplotlib</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.html#module-knotpy.drawing.draw_tangle" title="knotpy.drawing.draw_tangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_tangle</span></code></a></p></td>
+<td><p>Drawing utilities for algebraic tangles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.draw_tangle.html#module-knotpy.drawing.draw_tangle" title="knotpy.drawing.draw_tangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_tangle</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.html#module-knotpy.drawing.dynamic_network" title="knotpy.drawing.dynamic_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic_network</span></code></a></p></td>
+<td><p>Dynamic bead–spring network for layout relaxation and visualization.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_network.html#module-knotpy.drawing.dynamic_network" title="knotpy.drawing.dynamic_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic_network</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.dynamic_simulation.html#module-knotpy.drawing.dynamic_simulation" title="knotpy.drawing.dynamic_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic_simulation</span></code></a></p></td>
+<td><p>Dynamic simulation scaffolding for knot/graph layouts.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.drawing.export.html#module-knotpy.drawing.export" title="knotpy.drawing.export"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Export utilities for rendering planar diagrams to PDF.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.drawing.layout_circle_packing.html#module-knotpy.drawing.layout_circle_packing" title="knotpy.drawing.layout_circle_packing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_circle_packing</span></code></a>(k[, return_circles])</p></td>
 <td><p>Computes the layout using circle packing for a given planar or oriented planar diagram.</p></td>
