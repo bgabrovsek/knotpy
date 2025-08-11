@@ -53,7 +53,7 @@ def canonically_rotate_circles(circles:dict, degree=0):
 
     # rotate centers
     return {key: Circle(center, radius) for key, center, radius in zip(circles, centers, radii)}
-
+ 
 
 def align_layouts(layout_circles_pairs):
     # # center all layouts
