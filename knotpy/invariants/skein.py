@@ -10,7 +10,7 @@ __author__ = 'Boštjan Gabrovšek'
 
 
 from knotpy.algorithms.topology import kinks
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import Diagram, PlanarDiagram
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.naming import unique_new_node_name
 
@@ -119,7 +119,7 @@ def crossing_to_vertex(k: PlanarDiagram, crossing, inplace=False):
 #     return k
 
 
-def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inplace=False, **attr) -> PlanarDiagram | OrientedPlanarDiagram:
+def smoothen_crossing(k: Diagram, crossing_for_smoothing, method: str, inplace=False, **attr) -> Diagram:
     """
     Smoothens a specified crossing in a planar diagram using type "A", "B", or oriented ("O") smoothing,
     depending on the method specified. The function modifies the connectivity of the crossing to achieve
@@ -130,7 +130,7 @@ def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inp
 
     Args:
         k (PlanarDiagram): The planar diagram representing the knot or link.
-        crossing_for_smoothing (int): The index or identifier of the crossing in the diagram to smoothen.
+        crossing_for_smoothing: The index or identifier of the crossing in the diagram to smoothen.
         method (str): Specifies the type of smoothing to perform. Can be:
             - "A": Type-A smoothing.
             - "B": Type-B smoothing.
@@ -152,7 +152,7 @@ def smoothen_crossing(k: PlanarDiagram, crossing_for_smoothing, method: str, inp
     is_oriented = k.is_oriented()
 
     if is_oriented and method != "O":
-        return ValueError(f"Cannot smoothen a crossing by type {method} of an non-oriented diagram")
+        raise ValueError(f"Cannot smoothen a crossing by type {method} of an non-oriented diagram")
     if not is_oriented and method != "A" and method != "B":
         raise ValueError(f"Type {method} is an unknown smoothening type (should be 'A' or 'B')")
 

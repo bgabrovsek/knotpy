@@ -59,7 +59,7 @@ def test_canonical_degenerate():
 
 def test_canonical_degenerate_oriented():
     a = kp.orient(kp.from_knotpy_notation("a=V(a1 a0 a3 a2)"))
-    b = kp.all_orientations(kp.from_knotpy_notation("a=V(a3 a2 a1 a0)"))
+    b = kp.orientations(kp.from_knotpy_notation("a=V(a3 a2 a1 a0)"))
     ka = kp.canonical(a)
     kb = [kp.canonical(_) for _ in b]
     assert kp.sanity_check(ka)

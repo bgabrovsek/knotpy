@@ -11,8 +11,6 @@ __all__ = ["Circle", "CircularArc", "Line", "Segment", "BoundingBox", "PolySegme
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
 
-from mpmath import kfrom
-
 DIAMETER_ERROR = 0.0001  # error for a point that is still considered that lies on the circle
 MIN_SEGMENT_SIZE = 1E-8  # what distance do we still consider to be a segment?
 MIN_DETERMINANT = 1E-8  # what distance do we still consider to be a segment?

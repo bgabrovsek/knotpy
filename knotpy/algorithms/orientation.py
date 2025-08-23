@@ -4,7 +4,7 @@
 Algorithms that deal with orientation.
 """
 
-__all__ = ["orient", "unorient", "all_orientations"]
+__all__ = ["orient", "unorient", "orientations"]
 __version__ = "1.0"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
@@ -69,7 +69,7 @@ def orient_edges(k: PlanarDiagram, edge_paths: list[list[Endpoint]]) -> Oriented
     return new_k
 
 
-def all_orientations(k: PlanarDiagram, up_to_reversal: bool = False) -> list[OrientedPlanarDiagram]:
+def orientations(k: PlanarDiagram, up_to_reversal: bool = False) -> list[OrientedPlanarDiagram]:
     """Generate all orientations of an unoriented diagram.
 
     If ``up_to_reversal`` is True, the first edge is always oriented “forward”
@@ -89,8 +89,11 @@ def all_orientations(k: PlanarDiagram, up_to_reversal: bool = False) -> list[Ori
           “+”/“–” per-edge choices (useful for debugging).
 
     Example:
-        >>> diagrams = all_orientations(k, up_to_reversal=True)
-        >>> len(diagrams)  # number depends on number of edges
+        >>> import knotpy as kp
+        >>> k = kp.knot("3_1")
+        >>> k1, k2 = kp.orientations(k)
+        >>> print(f'Oriented trefoils: {k1} and {k2}')
+        Oriented diagrams: Diagram named 3_1+ a → X(b3o c0i c3i b0o), b → X(a3i c2o c1o a0i), c → X(a1o b2i b1i a2o) and Diagram named 3_1- a → X(b3i c0o c3o b0i), b → X(a3o c2i c1i a0o), c → X(a1i b2o b1o a2i)
     """
     if k.is_oriented():
         k = unorient(k)
@@ -130,7 +133,10 @@ def orient(k: PlanarDiagram) -> OrientedPlanarDiagram:
         Oriented diagram.
 
     Example:
-        >>> ok = orient(k)
+        >>> import knotpy as kp
+        >>> k = kp.knot("3_1")
+        >>> kp.orient(k)
+        Diagram named 3_1 a → X(b3o c0i c3i b0o), b → X(a3i c2o c1o a0i), c → X(a1o b2i b1i a2o)
     """
     return orient_edges(k, compute_edges(k))
 

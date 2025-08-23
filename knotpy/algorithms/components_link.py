@@ -13,12 +13,12 @@ __author__ = "Boštjan Gabrovšek"
 
 from itertools import combinations
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import Diagram
 from knotpy.classes.node import Crossing
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
 
 
-def number_of_link_components(k: PlanarDiagram) -> int:
+def number_of_link_components(k: Diagram) -> int:
     """Return the number of link components in a planar diagram.
 
     For example, a trefoil knot has 1 component, while the Hopf link
@@ -27,7 +27,7 @@ def number_of_link_components(k: PlanarDiagram) -> int:
     return len(list(link_components_endpoints(k)))
 
 
-def link_components_endpoints(k: PlanarDiagram) -> list[set]:
+def link_components_endpoints(k: Diagram) -> list[set]:
     """Return sets of endpoints belonging to the same link component.
 
     Endpoints are grouped into the same component if they are connected
@@ -49,6 +49,21 @@ def link_components_endpoints(k: PlanarDiagram) -> list[set]:
                 dsu[ep0] = ep1
 
     return list(dsu)
+
+def enumerate_link_components(k: Diagram, keyword="component", start=0, inplace=False) -> Diagram:
+    """Mark link components in a diagram."""
+
+    if not inplace:
+        k = k.copy()
+
+    # canonically sort components
+    lce = [tuple(sorted(s)) for s in link_components_endpoints(k)]
+    lce = sorted(lce, key=lambda seq: (-len(seq), seq))
+    for i, component in enumerate(lce, start=start):
+        for ep in component:
+            k.nodes[ep].attr[keyword] = i
+
+    return k
 
 
 if __name__ == "__main__":

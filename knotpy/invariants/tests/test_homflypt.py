@@ -31,7 +31,7 @@ def test_cache():
 
     t2 = time()
 
-    h2 = kp.homflypt_lm(k)
+    h2 = kp.homflypt(k, variables="lm")
 
     t3 = time()
 
@@ -49,6 +49,6 @@ def test_cache():
 
 if __name__ == '__main__':
     import knotpy as kp
-    test_homflypt()
+    #test_homflypt()
 
     test_cache()

@@ -1,7 +1,7 @@
 # knotpy/algorithms/attributes.py
 
 """
-Utilities for clearing attributes on diagrams (nodes, endpoints, diagram-level).
+Utilities for clearing attributes on diagrams (node, endpoint, and diagram-level attributes).
 
 These helpers work both on a single diagram and on collections (list, set, tuple)
 of diagrams. Attribute selection can be a single string or an iterable of strings.
@@ -17,7 +17,7 @@ __all__ = [
     "clear_temporary_diagram_attributes",
     "clear_temporary_attributes",
 ]
-__version__ = "1.0"
+__version__ = "0.3"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from knotpy.classes.planardiagram import (

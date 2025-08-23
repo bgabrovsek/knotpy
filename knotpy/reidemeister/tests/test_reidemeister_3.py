@@ -1,6 +1,6 @@
 from sympy import sympify
 
-from knotpy import homflypt, homflypt_xyz
+from knotpy import homflypt, homflypt
 from knotpy.reidemeister.reidemeister_3 import find_reidemeister_3_triangle, reidemeister_3
 from knotpy.notation.native import from_knotpy_notation, to_knotpy_notation
 from knotpy.notation.pd import from_pd_notation
@@ -79,7 +79,7 @@ def test_strange_case():
     a = kp.from_knotpy_notation(a)
     b = kp.from_knotpy_notation(b)
 
-    o = kp.all_orientations(b)
+    o = kp.orientations(b)
     for _ in o:
         print(kp.writhe(_))
 

@@ -79,7 +79,8 @@ def init_network(k: PlanarDiagram) -> Network:
         ep1, ep2 = arc
 
         # Build a simple polyline through node center – arc center – node center
-        ps = PolySegment([layout[ep1.node].center, layout[arc].center, layout[ep2.node].center])
+
+        ps = PolySegment([layout[ep1.node], layout[arc].center, layout[ep2.node]])
         points = ps.sample(samples_per_arc)
 
         # Name samples: endpoints by node name, internal samples by (arc, i)

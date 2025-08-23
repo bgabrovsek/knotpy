@@ -57,7 +57,7 @@ frozenset({d1, e2})
     g = from_knotpy_notation("d=V(d6 e2 d3 d2 e1 e0 d0) e=V(d5 d4 d1) ['framing'=0,'A'=0,'B'=0,'X'=3,'_deletions'=1,'_contractions'=7,'name'=None; ; d2:{'color'=1} d3:{'color'=1}]")
     c = contract_arc(g, (('d', 1), ("e", 2)))
 
-# tests/test_contract.py
+# tests/test_contract_.py
 
 def test_contract_arc():
     # 1) Contract where the removed vertex has a loop

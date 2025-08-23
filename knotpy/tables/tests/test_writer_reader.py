@@ -1,5 +1,3 @@
-from IPython.external.qt_loaders import loaded_api
-
 import knotpy as kp
 
 def test_writer_table_diagram():

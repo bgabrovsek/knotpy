@@ -10,22 +10,23 @@ __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 import sympy as sp
+from collections import deque
 from itertools import combinations
 from functools import reduce
 
+from knotpy.notation.native import to_knotpy_notation
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.invariants.homflypt import homflypt_xyz
+from knotpy.invariants.homflypt import homflypt
 from knotpy.algorithms.orientation import orient
 from knotpy.algorithms.components_link import link_components_endpoints
 from knotpy.invariants.fundamental_group import fundamental_group, alexander_fox_matrix
 from knotpy.invariants._symbols import _t, _x, _y, _z
-from knotpy.utils.laurent import (
-    normalize_symmetric,
-    normalize_laurent_polynomial,
-    canonicalize_under_variable_permutation,
-    normalize_polynomial,
-)
-
+from knotpy.utils.laurent import normalize_symmetric,  canonicalize_under_variable_permutation, normalize_laurent
+from knotpy.reidemeister.simplify import simplify_decreasing
+from knotpy.algorithms.components_link import enumerate_link_components
+from knotpy.invariants.homflypt import _choose_crossing_for_switching
+from knotpy.invariants.skein import smoothen_crossing
+from knotpy.algorithms.symmetry import mirror
 
 def alexander(k: PlanarDiagram | OrientedPlanarDiagram, symmetric: bool = False) -> sp.Expr:
     """Compute the one-variable Alexander polynomial via HOMFLY-PT specialization.
@@ -45,7 +46,7 @@ def alexander(k: PlanarDiagram | OrientedPlanarDiagram, symmetric: bool = False)
         >>> # alexander(K)
         t**2 - t + 1
     """
-    polynomial = homflypt_xyz(k)
+    polynomial = homflypt(k, variables="xyz")
     polynomial = sp.expand(
         polynomial.subs(
             {
@@ -57,7 +58,47 @@ def alexander(k: PlanarDiagram | OrientedPlanarDiagram, symmetric: bool = False)
     )
     if symmetric:
         return normalize_symmetric(polynomial)
-    return normalize_laurent_polynomial(polynomial, variables=[_t])
+    return normalize_laurentl(polynomial, variables=[_t])
+
+
+def _multivariate_alexander_skein(k: OrientedPlanarDiagram) -> sp.Expr:
+    """Compute the multivariate Alexander polynomial via skein relations algorithm."""
+    k = enumerate_link_components(k, inplace=False)
+
+    k.attr["_coefficient"] = sp.Integer(1)
+    stack: deque[OrientedPlanarDiagram] = deque([k])
+    polynomial = sp.Integer(0)
+
+    while stack:
+        k = stack.pop()
+        print(k)
+        #k = simplify_decreasing(k, inplace=True)
+
+        k, crossing = _choose_crossing_for_switching(k, sum_coefficient=sp.Integer(0))
+
+        if crossing is not None:
+            print("crossing", crossing)
+            crossing_enums = [k.nodes[crossing][i].attr["component"] for i in range(4)]
+            if crossing_enums[0] != crossing_enums[2] or crossing_enums[1] != crossing_enums[3]:
+                raise ValueError(f"Crossing {crossing} is not a symmetry point")
+
+            k_switch = mirror(k, [crossing], inplace=False)
+            k_smooth = smoothen_crossing(k, crossing, method="O", inplace=False)
+
+            # in the smoothened state, we have to join enumeration to either t_i or t_j
+            lce = link_components_endpoints(k_smooth)
+            for component in lce:
+                enums = {ep.attr["component"] for ep in component}
+                if len(enums) == 2:
+                    new_index = min(enums)
+                    for ep in component:
+                        ep.attr["component"] = new_index
+                elif len(enums) != 1:
+                    raise ValueError(f"Cannot join link components: {len(enums)} distinct enumerations found")
+
+
+        else:
+            pass
 
 
 def collapse_generators_by_components(
@@ -97,6 +138,80 @@ def collapse_generators_by_components(
     return M, variables
 
 
+
+def _monomial_power_in_den(expr, v):
+    """Exponent of variable v appearing in the denominator of expr."""
+    den = sp.together(expr).as_numer_denom()[1]
+    return int(den.as_powers_dict().get(v, 0))
+
+def clear_denominators_by_columns(M, variables):
+    """
+    Multiply each column j by a monomial in `variables` so all entries
+    become polynomials in those variables.
+    """
+    ncols = M.cols
+    colmons = []
+    for j in range(ncols):
+        exps = []
+        for v in variables:
+            emax = 0
+            for i in range(M.rows):
+                emax = max(emax, _monomial_power_in_den(M[i, j], v))
+            exps.append((v, emax))
+        mon = sp.Integer(1)
+        for v, e in exps:
+            if e:
+                mon *= v**e
+        colmons.append(sp.simplify(mon))
+
+    D = sp.diag(*colmons)             # right-multiply → scales columns
+    M_poly = (M * D).applyfunc(sp.together).applyfunc(sp.cancel)
+    return M_poly, colmons
+
+def normalize_up_to_monomial(expr, variables):
+    """
+    Remove a global monomial factor in `variables` from a (Laurent) polynomial.
+    Expressions differing by t1^a * t2^b * ... normalize to the same form.
+    """
+    if expr == 0:
+        return sp.Integer(0)
+    poly = sp.Poly(expr, *variables, domain=sp.QQ)
+    mins = [min(e[i] for e in poly.monoms()) for i in range(len(variables))]
+    mon = sp.Integer(1)
+    for v, m in zip(variables, mins):
+        if m:
+            mon *= v**m
+    return sp.simplify(expr / mon)
+
+def all_n_minus_1_minors_up_to_monomial(M, variables, method="bareiss"):
+    """
+    Compute all (n-1)x(n-1) minors of a square matrix M, after clearing
+    denominators ONCE by column scaling, and return the set of unique
+    determinants normalized up to monomials in `variables`.
+    """
+    n, m = M.shape
+    if n != m:
+        raise ValueError("Matrix must be square to compute (n-1)x(n-1) minors.")
+    if n <= 1:
+        return set()
+
+    # 1) Clear denominators once
+    M_poly, _ = clear_denominators_by_columns(M, variables)
+
+    # 2) Compute all (n-1)x(n-1) minors
+    unique_minors = set()
+    for i in range(n):
+        rows = [r for r in range(n) if r != i]
+        for j in range(n):
+            cols = [c for c in range(n) if c != j]
+            sub = M_poly.extract(rows, cols)
+            det = sub.det(method=method)
+            det_norm = normalize_up_to_monomial(det, variables)
+            unique_minors.add(sp.simplify(det_norm))
+
+    return unique_minors
+
+
 def alexander_multivariable(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
     """Compute the multivariable Alexander polynomial from the abelianized Alexander matrix.
 
@@ -112,6 +227,8 @@ def alexander_multivariable(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr
     Raises:
         ValueError: If minors cannot be computed due to matrix shape.
     """
+    print("alexander multivariable 5")
+    print(to_knotpy_notation(k))
     k = k.copy() if k.is_oriented() else orient(k)
 
     G, eps_gen_dict = fundamental_group(k, return_dict=True)
@@ -119,21 +236,117 @@ def alexander_multivariable(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr
 
     component_endpoints = link_components_endpoints(k)
     matrix, variables = collapse_generators_by_components(A, eps_gen_dict, component_endpoints)
+    all_minors = all_n_minus_1_minors_up_to_monomial(matrix, variables)
 
-    all_minors = minors(matrix, variables)
-
+    # all_minors should be a non-empty iterable of Poly (in the same ring)
     if not all_minors:
         return sp.Integer(0)
 
-    # Polynomial gcd over Poly objects
-    poly_gcd = reduce(sp.polys.polytools.gcd, all_minors)
-    poly_gcd = normalize_polynomial(poly_gcd)
+    # Coerce all minors to the same polynomial ring (QQ is safer than ZZ if fractions appear)
+    all_minors = [sp.Poly(p, *variables, domain=sp.QQ) for p in all_minors]
 
-    # Convert to Expr for canonicalization under variable permutations
+    # all_minors is a non-empty iterable of Polys or Exprs
+    all_minors = [sp.Poly(p, *variables, domain=sp.QQ) for p in all_minors]
+
+    # Multivariate polynomial gcd (stays a Poly)
+    poly_gcd = reduce(sp.polys.polytools.gcd, all_minors)
+
+    print(poly_gcd)
+    # If the gcd is over QQ, clear denominators robustly (multivariate-safe)
+    if poly_gcd.is_zero:
+        return sp.Integer(0)  # or Poly(0, *variables, domain=sp.ZZ)
+    if poly_gcd.domain != sp.ZZ:
+        poly_gcd, _den = poly_gcd.clear_denoms()  # now in ZZ
+    # Remove integer content/sign to get a primitive polynomial
+    _content, poly_gcd = poly_gcd.primitive()  # returns (content, primitive Poly over ZZ)
+
+    # If your normalize_polynomial expects a Poly, call it now (still a Poly):
+    poly_gcd = normalize_laurent(poly_gcd)
+
+
+    # Convert to Expr for variable-permutation canonicalization
     expr = sp.expand(poly_gcd.as_expr())
+
     expr = canonicalize_under_variable_permutation(expr, variables, allow_sign_change=True)
+
     return sp.expand(expr)
 
+def all_unique_n_minus_1_minors(matrix, variables, normalize=True, debug=False):
+    """
+    Compute all unique (n-1)x(n-1) minors of `matrix`, up to multiplication by a monomial
+    in `variables` (if `normalize=True`). Returns a set of `sympy.Poly` objects.
+
+    Parameters
+    ----------
+    matrix : sympy.Matrix | array-like
+        Input matrix (possibly with rational functions in `variables`).
+    variables : sequence of sympy.Symbol
+        The variables used for normalization / domain.
+    normalize : bool
+        If True, normalize each determinant up to a monomial factor in variables.
+    debug : bool
+        If True, prints minimal progress info.
+
+    Returns
+    -------
+    set[sympy.Poly]
+        Set of unique minors as Polys in the given `variables`.
+    """
+    from sympy.polys.matrices import DomainMatrix
+    from sympy.polys.domains import QQ
+
+    M = matrix if isinstance(matrix, sp.Matrix) else sp.Matrix(matrix)
+
+    # 1) Clear denominators once (by columns) to get polynomial entries
+    M, _ = clear_denominators_by_columns(M, variables)
+    if debug:
+        print("Denominators cleared.")
+
+    n, m = M.rows, M.cols
+    if m < n - 1:
+        raise ValueError("Cannot compute matrix minors (too few columns).")
+
+    # polynomial ring QQ[variables]
+    R = QQ.poly_ring(*variables)
+
+    # Pre-bind for speed
+    extract = M.extract
+    result: set[sp.Poly] = set()
+
+    row_combinations = list(combinations(range(n), n - 1))
+    col_combinations = list(combinations(range(m), n - 1))
+
+    for row_idx in row_combinations:
+        for col_idx in col_combinations:
+            sub = extract(row_idx, col_idx)
+
+            # 2) determinant over the polynomial ring via DomainMatrix
+            try:
+                DM = DomainMatrix.from_Matrix(sub, domain=R)
+                det_dom = DM.det()                 # element of the ring
+                det = det_dom.to_sympy()
+            except Exception:
+                # Fallback to fraction-free Bareiss on the polynomial matrix
+                det = sp.Matrix(sub).det(method="bareiss")
+
+            if det == 0:
+                continue
+
+            # 3) optional normalization "up to monomial"
+            if normalize:
+                det = normalize_laurent(det, variables)
+
+            if det == 0:
+                continue
+
+            # 4) store as Poly with fixed generators for consistent hashing
+            poly = sp.Poly(det, *variables, domain=QQ)
+            result.add(poly)
+
+            if debug:
+                print("minor ok")
+
+    return result
 
 def minors(
     matrix: sp.Matrix | list[list[sp.Expr]],
@@ -155,7 +368,8 @@ def minors(
         ValueError: If some determinant is not a polynomial in ``variables``.
     """
     M = matrix if isinstance(matrix, sp.Matrix) else sp.Matrix(matrix)
-
+    M, _ = clear_denominators_by_columns(M, variables)
+    print("clear denoms")
     n = M.rows
     m = M.cols
     if m < n - 1:
@@ -166,18 +380,21 @@ def minors(
     row_combinations = list(combinations(range(n), n - 1))
     col_combinations = list(combinations(range(m), n - 1))
     extract = M.extract
-
     for row_idx in row_combinations:
         for col_idx in col_combinations:
             submatrix = extract(row_idx, col_idx)
-            det = submatrix.det(method="berkowitz")
+            print("det...")
+            print("*submatrix")
+            print(submatrix)
+            det = submatrix.det(method="berkowitz") # test berkowitz and bareiss
+            print("* det", det)
             det = sp.simplify(det)
+            print("* simplify", det)
             if det:
-                poly_expr = normalize_laurent_polynomial(det, variables) if normalize else det
+                poly_expr = normalize_laurent(det, variables) if normalize else det
                 if poly_expr:
                     poly = sp.Poly(poly_expr)
                     result.add(poly)
-
     variables_set = set(variables)
     for det_poly in result:
         if not variables_set.issuperset(det_poly.gens):
@@ -192,4 +409,9 @@ def multivariable_alexander(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr
 
 
 if __name__ == "__main__":
+    from knotpy import from_pd_notation, draw, orient
+    k = from_pd_notation("PD[X[6, 1, 7, 2], X[12, 7, 13, 8], X[4, 13, 1, 14], X[9, 18, 10, 15], X[8, 4, 9, 3], X[5, 17, 6, 16], X[17, 5, 18, 14], X[15, 10, 16, 11], X[2, 12, 3, 11]]")
+    k = orient(k)
+    #draw(k, label_endpoints=True, label_nodes=True)
+    _multivariate_alexander_skein(k)
     pass

@@ -47,6 +47,12 @@ def jones(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
     Notes:
         Alternative (equivalent) substitution in the \(l\)–\(m\) variables:
         :math:`l = i \, t^{-1}`, :math:`m = i \, (t^{-1/2} - t^{1/2})`.
+
+    Examples:
+        >>> import knotpy as kp
+        >>> k = kp.knot("3_1")
+        >>> kp.jones(k)
+        -t**4 + t**3 + t
     """
     polynomial = bracket(k, normalize=True)
 

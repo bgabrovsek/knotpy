@@ -686,7 +686,7 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             pass
 
 
-def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circles: bool = False):
+def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0, return_circles: bool = False):
     """
     Computes the layout using circle packing for a given planar or oriented planar diagram. A layout is a dictionary,
     where keys are diagram elements (nodes, arcs, endpoints, faces) and values are the corresponding geometric objects
@@ -694,6 +694,7 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circl
 
     Args:
         k (PlanarDiagram | OrientedPlanarDiagram): The input planar or oriented planar diagram representing the knot or link for which the layout is calculated.
+        rotation (float): The rotation angle in degrees by which the layout should be rotated.
         return_circles (bool): If True, the function also returns the computed circles for the circle packing. Defaults to False.
 
     Returns:
@@ -705,12 +706,13 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, return_circl
 
     original_k = k
     preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs
+    print('preprocessed_k = {}'.format(preprocessed_k))
 
     assert sanity_check(original_k)
     assert sanity_check(preprocessed_k)
 
     circles = circle_packing(preprocessed_k)
-    circles = canonically_rotate_circles(circles)
+    circles = canonically_rotate_circles(circles, degree=rotation)
 
     layout = {node: None for node in preprocessed_k.nodes}
     layout |= {ep: None for ep in preprocessed_k.endpoints}

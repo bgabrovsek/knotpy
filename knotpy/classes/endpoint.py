@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from knotpy.utils.decorators import total_ordering_from_compare
 from knotpy.utils.dict_utils import compare_dicts
 
-__all__ = ["Endpoint", "IngoingEndpoint", "OutgoingEndpoint"]
+__all__ = ["Endpoint", "IngoingEndpoint", "OutgoingEndpoint", "Arc"]
 __version__ = "0.1"
 
 def _dict2str(d: dict[str, Any] | dict[Any, Any]) -> str:
@@ -299,6 +299,10 @@ def ensure_arc(k, arc_like) -> frozenset[Endpoint]:
 
     ep1, ep2 = (ensure_endpoint(k, ep) for ep in arc_like)
     return frozenset({ep1, ep2})
+
+
+Arc = frozenset[Endpoint]
+EndpointLike = Endpoint | tuple
 
 if __name__ == "__main__":
     pass

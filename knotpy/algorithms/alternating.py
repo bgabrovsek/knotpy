@@ -1,12 +1,14 @@
+# knotpy/algorithms/alternating.py
+
 """
 Algorithms for detecting whether a planar diagram is alternating.
 """
 
-__all__ = ["is_alternating", "alternating_crossings", "is_face_alternating"]
-__version__ = "1.0"
+__all__ = ["is_alternating", "is_face_alternating"]
+__version__ = "0.3"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import Diagram
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.topology import edges
 
@@ -21,11 +23,6 @@ def _parity_diff(values: list[int], cyclic: bool = False) -> list[int]:
     Returns:
         List of differences modulo 2.
 
-    Examples:
-        >>> _parity_diff([0, 1, 0, 1])
-        [1, 1, 1]
-        >>> _parity_diff([0, 2, 4], cyclic=True)
-        [0, 0, 0]
     """
     if not values:
         return []
@@ -33,11 +30,10 @@ def _parity_diff(values: list[int], cyclic: bool = False) -> list[int]:
     return [(b - a) % 2 for a, b in zip(data, data[1:])]
 
 
-def is_alternating(k: PlanarDiagram) -> bool:
+def is_alternating(k: Diagram) -> bool:
     """Check if a diagram is alternating.
 
-    A diagram is alternating if each edge meets consecutive endpoints of alternating
-    parity around crossings.
+    A diagram is alternating if each edge meets consecutive endpoints of alternating parity around crossings.
 
     Args:
         k: Planar diagram.
@@ -45,11 +41,11 @@ def is_alternating(k: PlanarDiagram) -> bool:
     Returns:
         True if `k` is alternating, False otherwise.
 
-    Examples:
-        >>> from knotpy.notation.pd import from_pd_notation
-        >>> K = from_pd_notation("X[1,3,2,4]")
-        >>> is_alternating(K)
-        True
+    Example:
+        >>> import knotpy as kp
+        >>> k = kp.knot("8_19")
+        >>> kp.is_alternating(k)
+        False
     """
 
     def _edge_is_alternating(edge: list) -> bool:
@@ -71,27 +67,27 @@ def is_alternating(k: PlanarDiagram) -> bool:
     return all(_edge_is_alternating(edge) for edge in edges(k))
 
 
-def alternating_crossings(k: PlanarDiagram) -> list:
-    """Return crossings that have at least two alternating neighbours.
+# def alternating_crossings(k: Diagram) -> list:
+#     """Return crossings that have at least two alternating neighbours.
+#
+#     Args:
+#         k: Planar diagram.
+#
+#     Returns:
+#         List of crossing identifiers that satisfy the alternation criterion.
+#     """
+#     result = []
+#     for c in k.crossings:
+#         inc = k.nodes[c]
+#         cond_over = (inc[0].position % 2 == 1) and (inc[2].position % 2 == 1) and inc[0].node != c and inc[2].node != c
+#         cond_under = (inc[1].position % 2 == 0) and (inc[3].position % 2 == 0) and inc[1].node != c and inc[3].node != c
+#         if cond_over or cond_under:
+#             result.append(c)
+#     return result
 
-    Args:
-        k: Planar diagram.
 
-    Returns:
-        List of crossing identifiers that satisfy the alternation criterion.
-    """
-    result = []
-    for c in k.crossings:
-        inc = k.nodes[c]
-        cond_over = (inc[0].position % 2 == 1) and (inc[2].position % 2 == 1) and inc[0].node != c and inc[2].node != c
-        cond_under = (inc[1].position % 2 == 0) and (inc[3].position % 2 == 0) and inc[1].node != c and inc[3].node != c
-        if cond_over or cond_under:
-            result.append(c)
-    return result
-
-
-def is_face_alternating(face: list) -> bool:
-    """Check if all endpoints around a face have the same parity as the first.
+def is_face_alternating(face: tuple) -> bool:
+    """Check if the arcs of the bounding the face are alternating. Used e.g. by detecting a Reidemeister 3-face.
 
     Args:
         face: A list of endpoints forming a face boundary in CCW order.

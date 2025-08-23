@@ -16,7 +16,7 @@ References:
 
 from __future__ import annotations
 
-__all__ = ["homflypt", "homflypt_lm", "homflypt_vz", "homflypt_az", "homflypt_xyz"]
+__all__ = ["homflypt"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
@@ -56,7 +56,7 @@ _USE_HOMFLYPT_PRECACHE = False
 _homflypt_xyz_precache: "OrderedDict[object, sp.Expr]" = OrderedDict()
 
 
-def simplify_to_2_face(k: PlanarDiagram) -> PlanarDiagram | None:
+def _simplify_to_2_face(k: PlanarDiagram) -> PlanarDiagram | None:
     """Perform R3 moves until there is a 2-face available; return the resulting diagram or ``None``."""
     if "R3" not in settings.allowed_moves:
         return k
@@ -170,7 +170,7 @@ def _compute_homflypt(k: OrientedPlanarDiagram) -> sp.Expr:
     return polynomial
 
 
-def homflypt_xyz(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
+def _homflypt_xyz(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
     """Return the HOMFLY-PT polynomial in variables ``x, y, z``, satisfying ``xP(L+) + yP(L−) + zP(L₀) = 0``."""
     if _USE_HOMFLYPT_PRECACHE and k in _homflypt_xyz_precache:
         return _homflypt_xyz_precache[k]
@@ -190,38 +190,71 @@ def homflypt_xyz(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
 
     return polynomial
 
+def homflypt(k: PlanarDiagram | OrientedPlanarDiagram, variables: str="vz") -> sp.Expr:
+    r"""Compute the HOMFLY–PT polynomial.
+
+    This version satisfies the skein relation
+
+    .. math::
+
+        x\,P(L_+) + y\,P(L_-) + z\,P(L_0) \;=\; 0.
+ .. math::
+
+        \ell\,P(L_+) + \ell^{-1}\,P(L_-) + m\,P(L_0) \;=\; 0.
+
+    .. math::
+
+        v^{-1}\,P(L_+) - v\,P(L_-) - z\,P(L_0) \;=\; 0.
+
+
+    .. math::
+
+        A\,P(L_+) - A^{-1}\,P(L_-) - z\,P(L_0) \;=\; 0.
+
+    If the diagram is not oriented, it is oriented automatically.
+
+    Args:
+        k: The input knot or link diagram (oriented or unoriented).
+
+    Returns:
+        sympy.Expr: The HOMFLY–PT polynomial \(P\) in variables \(x, y, z\).
+
+    Raises:
+        ValueError: If a reduced terminal state contains unexpected vertices/crossings.
+
+    Examples:
+        >>> import knotpy as kp
+        >>> k = kp.knot("3_1")
+        >>> kp.homflypt(k)
+        -v**4 + v**2*z**2 + 2*v**2
+        >>> kp.homflypt(k, variables="lm")
+        m**2/l**2 - 2/l**2 - 1/l**4
+        >>> kp.homflypt(k, variables="az")
+        z**2/A**2 + 2/A**2 - 1/A**4
+        >>> kp.homflypt(k, variables="xyz")
+        -2*y/x - y**2/x**2 + z**2/x**2
+    """
+    variables = str(variables).lower()
+    polynomial = _homflypt_xyz(k)
+    if "x" in variables and "y" in variables and "z" in variables:
+        return polynomial
+    if "v" in variables and "z" in variables:
+        return _xyz_to_vz(polynomial)
+    if "l" in variables and "m" in variables:
+        return _xyz_to_lm(polynomial)
+    if "a" in variables and "z" in variables:
+        return _xyz_to_az(polynomial)
+    raise ValueError(f"Invalid variable choice: {variables}")
+
 
 def _xyz_to_lm(polynomial: sp.Expr) -> sp.Expr:
     return sp.expand(polynomial.subs({_x: _l, _y: _l ** -1, _z: _m}))
 
-
 def _xyz_to_vz(polynomial: sp.Expr) -> sp.Expr:
     return sp.expand(polynomial.subs({_x: _v ** -1, _y: -_v, _z: -_z}))
 
-
 def _xyz_to_az(polynomial: sp.Expr) -> sp.Expr:
     return sp.expand(polynomial.subs({_x: _A, _y: -_A ** -1, _z: -_z}))
-
-
-def homflypt_lm(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
-    """Return the l–m form of HOMFLY-PT: ``l·P(L+) + l⁻¹·P(L−) + m·P(L₀) = 0``."""
-    return _xyz_to_lm(homflypt_xyz(k))
-
-
-def homflypt_vz(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
-    """Return the v–z form of HOMFLY-PT: ``v⁻¹·P(L+) − v·P(L−) − z·P(L₀) = 0``."""
-    return _xyz_to_vz(homflypt_xyz(k))
-
-
-def homflypt(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
-    """Alias for :func:`homflypt_vz` (v–z form)."""
-    return _xyz_to_vz(homflypt_xyz(k))
-
-
-def homflypt_az(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
-    """Return the A–z form of HOMFLY-PT: ``A·P(L+) − A⁻¹·P(L−) − z·P(L₀) = 0``."""
-    return _xyz_to_az(homflypt_xyz(k))
-
 
 if __name__ == "__main__":
     pass

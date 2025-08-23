@@ -7,10 +7,10 @@ __author__ = "Boštjan Gabrovšek"
 
 from collections import Counter
 
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram, DiagramCollection
 
 
-def sanity_check(k: Diagram | list[Diagram] | set[Diagram] | tuple[Diagram, ...]) -> bool:
+def sanity_check(k: Diagram | DiagramCollection) -> bool:
     """
     Run structural sanity checks on a planar (or oriented) diagram.
 

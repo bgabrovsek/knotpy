@@ -134,9 +134,7 @@ def disjoint_union_decomposition(k: PlanarDiagram) -> list[PlanarDiagram]:
     return components
 
 
-def disjoint_union(
-    *knots: PlanarDiagram | OrientedPlanarDiagram,
-    return_relabel_dicts: bool = False
+def disjoint_union(*knots: PlanarDiagram | OrientedPlanarDiagram, return_relabel_dicts: bool = False
 ):
     """
     Disjoint sum of multiple diagrams (all of the same type).
@@ -159,7 +157,7 @@ def disjoint_union(
     if len(knots) == 0:
         raise ValueError("No diagrams provided.")
     if len(knots) == 1:
-        return (knots[0].copy(), [{}]) if return_relabel_dictionaries else knots[0].copy()
+        return (knots[0].copy(), [{}]) if return_relabel_dicts else knots[0].copy()
 
     if len({type(k) for k in knots}) != 1:
         types = ", ".join(sorted({type(k).__name__ for k in knots}))

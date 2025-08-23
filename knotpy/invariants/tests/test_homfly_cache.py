@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-from pure_eval.utils import of_type
-
 import knotpy as kp
 def test():
     k = kp.knot("8_9")

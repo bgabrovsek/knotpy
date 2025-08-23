@@ -112,7 +112,8 @@ def export_pdf(
                 draw(k, draw_circles=draw_circles, with_labels=with_labels, with_title=with_title)
 
             # Save current figure to the PDF and close it to free memory.
-            pdf.savefig(bbox_inches="tight", pad_inches=0)
+            #pdf.savefig(bbox_inches="tight", pad_inches=0)
+            pdf.savefig(pad_inches=0)
             plt.close()
     finally:
         pdf.close()

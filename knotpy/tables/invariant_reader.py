@@ -1,130 +1,234 @@
+"""
+Utilities for loading knot/link invariant tables from CSV (optionally gzipped).
+
+Features
+--------
+- Skips blank lines and comments (`# ...`), including inline comments.
+- Accepts either a ``name`` column (names become keys) or a ``* notation`` column
+  (the parsed diagram becomes the key).
+- Optional evaluation of values:
+  * Diagram fields (``* notation``) are parsed via the appropriate dispatcher and
+    frozen for hashability.
+  * Other fields: try int → SymPy expression → fall back to raw string.
+- All SymPy imports are local to the functions that need them, so this module
+  imports quickly when SymPy is not used.
+"""
+
+from __future__ import annotations
+
 import csv
 import gzip
-from sympy import sympify
 from pathlib import Path
-from sympy.core.sympify import SympifyError
+from typing import Any, Iterable
 
+from knotpy.classes.planardiagram import Diagram
 from knotpy.notation.dispatcher import from_notation_dispatcher
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.classes.freezing import freeze
 from knotpy.invariants._symbols import SYMBOL_LOCALS
 
-def _clean_csv_lines(file):
+
+def _clean_csv_lines(file) -> Iterable[str]:
+    """
+    Yield CSV lines with comments and blank lines removed.
+
+    - Entire comment lines (starting with '#') are skipped.
+    - Inline comments after '#' are stripped.
+    - Trailing newlines are normalized so :class:`csv.DictReader` can consume them.
+    """
     for line in file:
+        # strip potential BOM only on the first chunk
+        if line.startswith("\ufeff"):
+            line = line.lstrip("\ufeff")
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
-            continue  # skip empty or commented-out lines
-        # remove inline comments
+            continue
         line_no_comment = line.split("#", 1)[0].rstrip()
         if line_no_comment:
-            yield line_no_comment + "\n"  # re-add newline for csv reader
+            yield line_no_comment + "\n"
 
 
 def _eval_diagram_symmetry_dict(uneval_dict: dict) -> dict:
-    return {"diagram": freeze(from_knotpy_notation(uneval_dict["native notation"])), "symmetry": uneval_dict["symmetry"]}
+    """Evaluate a row containing a native diagram string and a symmetry descriptor."""
+    return {
+        "diagram": freeze(from_knotpy_notation(uneval_dict["native notation"])),
+        "symmetry": uneval_dict["symmetry"],
+    }
+
 
 def _eval_diagram_dict(uneval_dict: dict) -> dict:
+    """Evaluate a row containing only a native diagram string."""
     return {"diagram": freeze(from_knotpy_notation(uneval_dict["native notation"]))}
 
+def _eval_diagram(uneval_diagram: str) -> Diagram:
+    """Evaluate a row containing only a native diagram string."""
+    return freeze(from_knotpy_notation(uneval_diagram))
+
 def _eval_homflypt_dict(uneval_dict: dict) -> dict:
+    """Evaluate a row containing a HOMFLYPT polynomial."""
+    from sympy import sympify  # local import for fast module load
     return {"homflypt": sympify(uneval_dict["homflypt"], locals=SYMBOL_LOCALS)}
 
+
 def _eval_kauffman_dict(uneval_dict: dict) -> dict:
+    """Evaluate a row containing a Kauffman polynomial."""
+    from sympy import sympify  # local import for fast module load
     return {"kauffman": sympify(uneval_dict["kauffman"], locals=SYMBOL_LOCALS)}
 
+
 def _eval_yamada_dict(uneval_dict: dict) -> dict:
+    """Evaluate a row containing a Yamada polynomial."""
+    from sympy import sympify  # local import for fast module load
     return {"yamada": sympify(uneval_dict["yamada"], locals=SYMBOL_LOCALS)}
 
+
 def _eval_multivariable_alexander_dict(uneval_dict: dict) -> dict:
-    return {"multivariable alexander": sympify(uneval_dict["multivariable alexander"], locals=SYMBOL_LOCALS)}
-
-def _eval_components_dict(uneval_dict: dict) -> dict:
-    return {"components": sympify(uneval_dict["components"], locals=SYMBOL_LOCALS)}
-
-def _evaluate_value(field_name: str | None, unevaluated_value: str):
-    """Evaluate the value 'unevaluated_value' as a planar diagram, a string, integer, or SymPy expression."""
-    unevaluated_value = unevaluated_value.strip()
-    # Do we have a diagram or an invariant value?
-    if field_name is not None and "notation" in field_name:
-        from_notation = from_notation_dispatcher(field_name.split(" ")[0])
-        return freeze(from_notation(unevaluated_value))  # freeze the diagram
-    else:
-        # Figure out how to evaluate 'unevaluated_value'.
-        # Case 1: Looks like a descriptive string (e.g. "chiral", "some label")
-        if unevaluated_value.replace(" ", "").isalpha() and len(unevaluated_value) > 1:
-            return unevaluated_value  # return as plain string, e.g. knot property "chiral"
-        try:
-            # Case 2: Try to interpret as integer
-            return int(unevaluated_value)
-        except ValueError:
-            pass
-        try:
-            # Case 3: Parse as SymPy expression
-            return sympify(unevaluated_value)
-        except SympifyError:
-            # Fall back to plain string
-            return unevaluated_value
-
-
-def _evaluate_dictionary(unevaluated_dict):
+    """Evaluate a row containing a multivariable Alexander polynomial."""
+    from sympy import sympify  # local import for fast module load
     return {
-        "diagram" if "notation" in key else key:  _evaluate_value(key, value)
+        "multivariable alexander": sympify(
+            uneval_dict["multivariable alexander"], locals=SYMBOL_LOCALS
+        )
+    }
+
+
+# def _eval_components_dict(uneval_dict: dict) -> dict:
+#     """Evaluate a row containing a symbolic or numeric component count."""
+#     from sympy import sympify  # local import for fast module load
+#     return {"components": sympify(uneval_dict["components"], locals=SYMBOL_LOCALS)}
+
+# def _eval_components_int(uneval) -> dict:
+#     """Evaluate a row containing a symbolic or numeric component count."""
+#     return int(uneval)
+
+def _evaluate_value(field_name: str | None, unevaluated_value: str) -> Any:
+    """
+    Evaluate a single CSV cell into a Python object.
+
+    Behavior:
+      - If ``field_name`` contains ``"notation"``, parse a diagram using the detected notation
+        and freeze it for hashability.
+      - Otherwise:
+          * if the value is purely alphabetic words (e.g. ``"chiral"``), return the raw string,
+          * else try ``int``,
+          * else try to parse as a SymPy expression,
+          * else fall back to the original string.
+    """
+    unevaluated_value = unevaluated_value.strip()
+
+    # Diagram fields: e.g. "native notation", "dowker notation", "gauss notation", ...
+    if field_name is not None and "notation" in field_name.lower():
+        from_notation = from_notation_dispatcher(field_name.split()[0].lower())
+        return freeze(from_notation(unevaluated_value))
+
+    # Otherwise, invariant / property value
+    if unevaluated_value.replace(" ", "").isalpha() and len(unevaluated_value) > 1:
+        return unevaluated_value  # plain descriptor like "chiral"
+
+    try:
+        return int(unevaluated_value)
+    except ValueError:
+        pass
+
+    try:
+        from sympy import sympify  # local import for fast module load
+        return sympify(unevaluated_value)
+    except Exception:
+        # Fall back to plain string (covers SympifyError and others)
+        return unevaluated_value
+
+
+def _evaluate_dictionary(unevaluated_dict: dict[str, str]) -> dict[str, Any]:
+    """
+    Evaluate a CSV row dict, converting any ``* notation`` column to key ``'diagram'``
+    and parsing other fields via :func:`_evaluate_value`.
+    """
+    return {
+        ("diagram" if "notation" in key else key): _evaluate_value(key, value)
         for key, value in unevaluated_dict.items()
     }
 
 
-def load_invariant_table(filename, evaluate: bool=True, only_field_name=None):
+def load_invariant_table(
+    filename: str | Path,
+    evaluate: bool = True,
+    only_field_name: str | None = None,
+) -> dict[Any, Any]:
     """
-    Loads an invariant table from a given file. The table is returned as a dictionary of dictionaries.
-    If a field name is specified, the function returns a dictionary of values corresponding to that field.
-    Handles both regular and gzipped files. The function supports "lazy non-evaluation" (keeps values as strings) when
-    specified.
+    Load an invariant table from CSV (optionally gzipped) into a dictionary.
+
+    The table must include either:
+      - a ``name`` column (keys are names), or
+      - a column whose header contains ``"notation"`` (keys are parsed diagrams).
+
+    Line handling:
+      - Lines beginning with ``#`` are ignored.
+      - Inline comments after ``#`` are stripped.
+      - Blank lines are skipped.
+
+    Evaluation:
+      - If ``evaluate=True`` (default), diagram/notational fields are parsed into frozen diagrams,
+        numeric fields are parsed into integers where possible, and other values are parsed
+        using SymPy (with a plain-string fallback).
+      - If ``evaluate=False``, raw strings are returned unchanged.
 
     Args:
-        filename: The path to the file containing the invariant table.
-        evaluate: Whether to enable lazy evaluation of the table contents. Default is False.
-        only_field_name: The field name to extract specific values from the table. If None, parses the full table.
+        filename: Path to the CSV or ``.gz`` file.
+        evaluate: Whether to evaluate/parse cell values (True) or keep raw strings (False).
+        only_field_name: If provided, return a dict keyed by name/diagram mapping to the value
+            from this single column.
 
     Returns:
-        dict: A dictionary containing the parsed invariant table. The structure depends on the presence of
-              the `field_name` argument, the table content, and the `lazy` flag.
+        A dictionary mapping keys (names or diagrams) to either:
+          - a single value (when ``only_field_name`` is provided), or
+          - a dictionary of evaluated fields for each row.
 
     Raises:
-        ValueError: If the input file format is invalid, if the required 'notation' column is missing, or if
-                    the given field name does not exist in the table.
+        ValueError: If the header contains neither ``name`` nor any ``* notation`` column,
+                    or if ``only_field_name`` is not present in the header.
     """
     filename = Path(filename)
 
-    print(f"Loading {filename}")
+    # choose opener based on extension
+    opener = gzip.open if filename.name.endswith(".gz") else open
 
-    f = gzip.open(filename, "rt") if filename.name.endswith(".gz") else open(filename, "rt")
-    reader = csv.DictReader(_clean_csv_lines(f))
 
-    # If there is a field named 'name', then dictionary keys are knot/diagram names, otherwise they are PlanarDiagram instances.
-    name_is_key = "name" in reader.fieldnames
+    with opener(filename, "rt", encoding="utf-8") as f:
 
-    if only_field_name is not None and only_field_name not in reader.fieldnames:
-        raise ValueError(f"Cannot find column '{only_field_name}'")
+        reader = csv.DictReader(_clean_csv_lines(f))
 
-    # Get the "* notation" field in the header and replace it with "diagram".
-    notation_column_name = next((field for field in reader.fieldnames if "notation" in field), None)
+        # Fail fast if no header row is present
+        if not reader.fieldnames:
+            return {}  # or raise ValueError("Empty or invalid CSV")
 
-    if not name_is_key and notation_column_name is None:
-        raise ValueError("The table does not contain a column named 'name' or a column containing the string 'notation'")
+        # If there is a 'name' field, dictionary keys are names; else they are (parsed) diagrams.
+        name_is_key = "name" in reader.fieldnames if reader.fieldnames else False
 
-    result = {}
+        if only_field_name is not None and (not reader.fieldnames or only_field_name not in reader.fieldnames):
+            raise ValueError(f"Cannot find column '{only_field_name}'")
 
-    # Load the dictionary.
-    for row in reader:
-        key = row.pop("name") if name_is_key else _evaluate_value(notation_column_name, row.pop(notation_column_name))
+        # Find the first header containing 'notation'
+        notation_column_name = next((field for field in (reader.fieldnames or []) if "notation" in field), None)
 
-        # Values are only a singular field name or the whole dictionary?
-        if only_field_name:
-            result[key] = _evaluate_value(row[only_field_name]) if evaluate else only_field_name
-        else:
-            result[key] = _evaluate_dictionary(row) if evaluate else row
+        if not name_is_key and notation_column_name is None:
+            raise ValueError(
+                "The table does not contain a column named 'name' or a column containing the string 'notation'"
+            )
 
-    f.close()
+        result: dict[Any, Any] = {}
+
+        # Load rows
+        for row in reader:
+            key = row.pop("name") if name_is_key else _evaluate_value(
+                notation_column_name, row.pop(notation_column_name)  # type: ignore[arg-type]
+            )
+
+            # Single field or full row?
+            if only_field_name:
+                result[key] = (
+                    _evaluate_value(only_field_name, row[only_field_name]) if evaluate else row[only_field_name]
+                )
+            else:
+                result[key] = _evaluate_dictionary(row) if evaluate else row
 
     return result
-

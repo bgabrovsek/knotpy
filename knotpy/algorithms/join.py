@@ -8,17 +8,13 @@ __all__ = ["bridge_join", "crossing_join"]
 __version__ = "1.0"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-from typing import Tuple
 
-from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
+from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint, Arc
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.classes.planardiagram import Diagram, PlanarDiagram, OrientedPlanarDiagram
 from knotpy.algorithms.disjoint_union import disjoint_union
 from knotpy.algorithms.naming import unique_new_node_name
 
-
-Arc = frozenset[Endpoint]  # arcs are frozensets of two endpoints
-TwoArcs = Tuple[Arc, Arc]
 
 
 def _unpack_arc(arc: Arc) -> tuple[Endpoint, Endpoint]:
@@ -27,7 +23,7 @@ def _unpack_arc(arc: Arc) -> tuple[Endpoint, Endpoint]:
     return ep1, ep2
 
 
-def bridge_join(a: Diagram, b: Diagram, arcs: TwoArcs | None) -> Diagram:
+def bridge_join(a: Diagram, b: Diagram, arcs: tuple | None) -> Diagram:
     """
     Join two diagrams by inserting a length-1 bridge (a degree-3 vertex on each side, linked together).
 
@@ -96,12 +92,13 @@ def bridge_join(a: Diagram, b: Diagram, arcs: TwoArcs | None) -> Diagram:
     return ab
 
 
-def crossing_join(a: Diagram, b: Diagram, arcs: TwoArcs | None) -> Diagram:
+def crossing_join(a: Diagram, b: Diagram, arcs: tuple | None) -> Diagram:
     """
     Join two diagrams by a *cut crossing* (twisted connected sum).
 
     Args:
-        a, b: Two diagrams of the same type.
+        a:
+        b:
         arcs: A pair of arcs (one from `a`, one from `b`) as frozensets of two endpoints.
               If None, the first available arc from each diagram is used.
 

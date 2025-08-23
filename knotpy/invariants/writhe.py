@@ -13,7 +13,7 @@ __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
-from knotpy.algorithms.orientation import all_orientations
+from knotpy.algorithms.orientation import orientations
 
 
 def writhe(k: PlanarDiagram | OrientedPlanarDiagram) -> int:
@@ -33,7 +33,7 @@ def writhe(k: PlanarDiagram | OrientedPlanarDiagram) -> int:
     if k.is_oriented():
         return sum(k.nodes[c].sign() for c in k.crossings)
     # TODO: optimize for multi-component links (avoid enumerating all orientations if possible)
-    return min(sum(o.nodes[c].sign() for c in o.crossings) for o in all_orientations(k))
+    return min(sum(o.nodes[c].sign() for c in o.crossings) for o in orientations(k))
 
 
 # def crossing_signs_dict(k: PlanarDiagram | OrientedPlanarDiagram) -> dict:

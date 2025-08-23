@@ -1,14 +1,10 @@
 """
-High-level drawing utilities for KnotPy diagrams using Matplotlib.
+Drawing planar diagrams using Matplotlib.
 
-This module renders planar (and oriented) diagrams given a geometric layout.
+This module renders planar diagrams given a geometric layout.
 It draws arcs/segments, endpoints (with gaps at undercrossings), vertices,
-orientation arrows, and optional labels. When a diagram has multiple disjoint
-components, you can compute layouts per component and align them horizontally
-for a tidy final composition.
+orientation arrows, and optional labels.
 
-To minimize import time for the package, heavy dependencies such as Matplotlib
-are imported locally inside the drawing functions.
 
 Notes
 -----
@@ -21,54 +17,80 @@ Notes
 import math
 
 from knotpy.classes.endpoint import IngoingEndpoint
+from knotpy.classes.node import Crossing
 from knotpy.algorithms.disjoint_union import disjoint_union_decomposition
 from knotpy.classes.planardiagram import Diagram  # alias: PlanarDiagram | OrientedPlanarDiagram
 from knotpy.drawing.layout_circle_packing import layout_circle_packing
 from knotpy.utils.geometry import CircularArc, Segment, middle
 from knotpy.drawing.alignment import align_layouts
 from knotpy.drawing._support import _add_support_arcs
+from knotpy.algorithms.topology import edges
 
 __all__ = [
     "draw",
     "draw_from_layout",
-    "draw_arcs",
-    "draw_endpoints",
-    "draw_vertices",
-    "draw_arrows",
-    "draw_node_labels",
-    "draw_endpoint_labels",
-    "draw_arc_labels",
-    "autoscale_with_padding",
 ]
 __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-_DEFAULT_ARC_COLOR = "tab:blue"   # knot strand color
-_DEFAULT_ARC_WIDTH = 4.0          # knot strand width
-_DEFAULT_GAP_WIDTH = 0.1          # arc break gap at the under-passing
-
-_DEFAULT_VERTEX_SIZE = 0.1
+# Arc
+_DEFAULT_ARC_COLOR = "tab:blue"
+_DEFAULT_ARC_WIDTH = 4.0  # strand width
+_DEFAULT_ARC_STYLE = "solid"  # 'dashed', 'dotted', 'dashdot'
+_DEFAULT_ARC_ALPHA = None  # transparency, None = fully opaque
+_DEFAULT_ARC_STROKE_WIDTH = None # stroke around the
+_DEFAULT_ARC_STROKE_COLOR = "white" # stroke around the
+_DEFAULT_ARC_STROKE_ALPHA = None # stroke transparnecy
+_DEFAULT_GAP = 0.1  # arc break gap at under-passing
+_DEFAULT_CMAP = None
+# Vertex
 _DEFAULT_VERTEX_COLOR = "black"
-
-_DEFAULT_TEXT_COLOR = "black"
-_DEFAULT_FONT_SIZE = 14
-
-_ARROW_LENGTH = 0.15
-_ARROW_WIDTH = 0.15
-_DEFAULT_ARROW_COLOR = _DEFAULT_ARC_COLOR
-_DEFAULT_ARROW_POSITION = "middle"  # currently only "middle" is supported
-_DEFAULT_ARROW_STYLE = "open"       # "open" or "closed"
-
-# Debug helper to visualize circle packing regions.
-_PLOT_CIRCLES = True
+_DEFAULT_VERTEX_SIZE = 0.15
+_DEFAULT_VERTEX_ALPHA = None
+_DEFAULT_VERTEX_STROKE_COLOR = "black"
+_DEFAULT_VERTEX_STROKE_WIDTH = 0
+_DEFAULT_VERTEX_STROKE_ALPHA = None
+# Arrow
+_DEFAULT_ARROW_COLOR = None # defaults to arc_color
+_DEFAULT_ARROW_WIDTH = 0.15
+_DEFAULT_ARROW_LENGTH = 0.12
+_DEFAULT_ARROW_STYLE = "open"  # "open" or "closed"
+_DEFAULT_ARROW_CAP_STYLE = "round"
+_DEFAULT_ARROW_POSITION = "middle"
+_DEFAULT_ARROW_ALPHA = None
+# Labels
+_DEFAULT_LABEL_ENDPOINTS = False
+_DEFAULT_LABEL_ARCS = False
+_DEFAULT_LABEL_NODES = False
+_DEFAULT_LABEL_COLOR = "black"
+_DEFAULT_LABEL_FONT_SIZE = 14
+_DEFAULT_LABEL_FONT_FAMILY = "serif"  # or 'sans-serif', 'monospace', etc.
+_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT = "left"
+_DEFAULT_LABEL_VERTICAL_ALIGNMENT = "top"
+_DEFAULT_LABEL_ALPHA = None
+# Title
+_DEFAULT_TITLE = False,  # or string
+_DEFAULT_TITLE_COLOR = "black"
+_DEFAULT_TITLE_FONT_SIZE = 16,
+_DEFAULT_TITLE_FONT_FAMILY = "serif"
+_DEFAULT_TITLE_ALPHA = None
+# Other
+_DEFAULT_SHOW_CIRCLE_PACKING = False  # visualize circle-packing circles
+_DEFAULT_PADDING_FRACTION = 0.05
+_DEFAULT_SHOW_AXIS = False
+_DEFAULT_SHOW = True
 
 # Z-order (stacking) for plot elements; lower values are drawn first.
 _Z_CIRCLES = 0
-_Z_ARC = 1
-_Z_ENDPOINT = 1
-_Z_ARROW = 2
-_Z_VERTEX = 3
-_Z_TEXT = 4
+_Z_ARC_STROKE = 1
+_Z_ARC = 2
+_Z_ENDPOINT_STROKE_UNDER = 1
+_Z_ENDPOINT_UNDER = 2
+_Z_ENDPOINT_STROKE_OVER = 3
+_Z_ENDPOINT_OVER = 4
+_Z_ARROW = 5
+_Z_VERTEX = 6
+_Z_TEXT = 7
 
 
 def _mpl_axes():
@@ -77,8 +99,36 @@ def _mpl_axes():
     from matplotlib.axes import Axes  # noqa: F401  # type-only style import
     return plt
 
+def _endpoint_and_arc_colors(k:Diagram, cmap):
+    """Return a dictionary where keys are elements (endpoints or arcs) and values are RGBA colors according to the cmap."""
+    from matplotlib.pyplot import get_cmap
+    if cmap is None:
+        return None
+    if isinstance(cmap, str):
+        cmap = get_cmap(cmap)
+    result = {}
+    all_edges = edges(k)
+    for edge in all_edges:
+        seq = [_ for i in range(len(edge) - 1) for _ in (edge[i], frozenset([edge[i], edge[i + 1]]))] + [edge[-1]]
+        for i, item in enumerate(seq):
+            result[item] = cmap(i / (len(seq) - 1))
+    return result
 
-def draw_arcs(k: Diagram, layout: dict, arcs_to_draw: list | None = None, ax=None):
+
+def draw_arcs(
+        k: Diagram,
+        layout: dict,
+        arcs_to_draw: list | None = None,
+        ax=None,
+        arc_color=_DEFAULT_ARC_COLOR,
+        arc_width=_DEFAULT_ARC_WIDTH,
+        arc_style=_DEFAULT_ARC_STYLE,
+        arc_alpha=_DEFAULT_ARC_ALPHA,
+        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
+        cmap=_DEFAULT_CMAP,
+    ):
     """Draw circular arcs and straight segments corresponding to diagram arcs.
 
     Args:
@@ -88,38 +138,83 @@ def draw_arcs(k: Diagram, layout: dict, arcs_to_draw: list | None = None, ax=Non
         arcs_to_draw (list | None): Subset of arcs to draw. If None, draw all `k.arcs`.
         ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
     """
-    plt = _mpl_axes()
     from matplotlib.patches import Arc
     from matplotlib.lines import Line2D
+    plt = _mpl_axes()
+    element_colors = None
 
     if ax is None:
         ax = plt.gca()
+
+    colors = _endpoint_and_arc_colors(k, cmap)
 
     if arcs_to_draw is None:
         arcs_to_draw = list(k.arcs)
 
     for arc in arcs_to_draw:
-        element = layout[arc]
-        if isinstance(element, CircularArc):
+        if arc not in layout:
+            continue
+        g_element = layout[arc]
+        color = arc_color if colors is None or arc not in colors else colors[arc]
+
+        if isinstance(g_element, CircularArc):
+
+            if arc_stroke_width:
+                # border around the arc
+                ax.add_patch(
+                    Arc(
+                        xy=(g_element.center.real, g_element.center.imag),
+                        width=2 * g_element.radius,
+                        height=2 * g_element.radius,
+                        theta1=math.degrees(g_element.theta1),
+                        theta2=math.degrees(g_element.theta2),
+                        color=arc_stroke_color,
+                        linewidth=arc_width + arc_stroke_width * 2,
+                        linestyle="solid",
+                        alpha=arc_stroke_alpha,
+                        zorder=_Z_ARC_STROKE,
+                    )
+                )
+
             ax.add_patch(
                 Arc(
-                    xy=(element.center.real, element.center.imag),
-                    width=2 * element.radius,
-                    height=2 * element.radius,
-                    theta1=math.degrees(element.theta1),
-                    theta2=math.degrees(element.theta2),
-                    color=_DEFAULT_ARC_COLOR,
-                    linewidth=_DEFAULT_ARC_WIDTH,
+                    xy=(g_element.center.real, g_element.center.imag),
+                    width=2 * g_element.radius,
+                    height=2 * g_element.radius,
+                    theta1=math.degrees(g_element.theta1),
+                    theta2=math.degrees(g_element.theta2),
+                    color=color,
+                    linewidth=arc_width,
+                    linestyle=arc_style,
+                    alpha=arc_alpha,
                     zorder=_Z_ARC,
                 )
             )
-        elif isinstance(element, Segment):
+
+        elif isinstance(g_element, Segment):
+
+            if arc_stroke_width:
+                # border around the arc
+                ax.add_line(
+                    Line2D(
+                        (g_element.A.real, g_element.B.real),
+                        (g_element.A.imag, g_element.B.imag),
+                        color=color,
+                        linewidth=arc_width + arc_stroke_width * 2,
+                        linestyle="solid",
+                        alpha=arc_stroke_alpha,
+                        zorder=_Z_ARC_STROKE,
+                    )
+                )
+
             ax.add_line(
                 Line2D(
-                    (element.A.real, element.B.real),
-                    (element.A.imag, element.B.imag),
-                    color=_DEFAULT_ARC_COLOR,
-                    linewidth=_DEFAULT_ARC_WIDTH,
+                    (g_element.A.real, g_element.B.real),
+                    (g_element.A.imag, g_element.B.imag),
+                    color=color,
+                    linewidth=arc_width,
+                    linestyle=arc_style,
+                    alpha=arc_alpha,
                     zorder=_Z_ARC,
                 )
             )
@@ -135,12 +230,20 @@ def _is_start(element, point):
 
 
 def draw_endpoints(
-    k: Diagram,
-    layout: dict,
-    endpoints_to_draw: list | None = None,
-    gap: float = _DEFAULT_GAP_WIDTH,
-    ax=None,
-):
+        k: Diagram,
+        layout: dict,
+        endpoints_to_draw: list | None = None,
+        ax=None,
+        arc_color=_DEFAULT_ARC_COLOR,
+        arc_width=_DEFAULT_ARC_WIDTH,
+        arc_style=_DEFAULT_ARC_STYLE,
+        arc_alpha=_DEFAULT_ARC_ALPHA,
+        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
+        gap=_DEFAULT_GAP,
+        cmap=_DEFAULT_CMAP,
+    ):
     """Draw endpoint-adjacent sub-arcs for all endpoints, adding gaps under crossings.
 
     Args:
@@ -160,18 +263,43 @@ def draw_endpoints(
     if ax is None:
         ax = plt.gca()
 
+    colors = _endpoint_and_arc_colors(k, cmap)  # TODO: do not call this again, somehow pass it
+
     if endpoints_to_draw is None:
         endpoints_to_draw = list(k.endpoints)
 
     for ep in endpoints_to_draw:
         g_arc = layout[ep]
+        color = arc_color if colors is None or ep not in colors else colors[ep]
 
+        z, z_stroke = _Z_ENDPOINT_UNDER, _Z_ENDPOINT_STROKE_UNDER
         # Shorten at under-passing endpoints of crossings (even positions).
-        if ep.node in k.crossings and not ep.position % 2:
-            if g_arc is not None:
+        if ep.node in k.crossings:
+            # make a gap for under-passing endpoints
+            if gap > 0 and not ep.position % 2 and g_arc is not None:
                 g_arc = g_arc.shorten(gap, side="A", inplace=False)
+            # increase z-value for over-passing endpoint
+            if ep.position % 2:
+                z, z_stroke = _Z_ENDPOINT_OVER, _Z_ENDPOINT_STROKE_OVER
 
         if isinstance(g_arc, CircularArc):
+
+            if arc_stroke_width:
+                ax.add_patch(
+                    Arc(
+                        xy=(g_arc.center.real, g_arc.center.imag),
+                        width=2 * g_arc.radius,
+                        height=2 * g_arc.radius,
+                        theta1=math.degrees(g_arc.theta1),
+                        theta2=math.degrees(g_arc.theta2),
+                        color=arc_stroke_color,
+                        linewidth=arc_width + arc_stroke_width * 2,
+                        linestyle="solid",
+                        alpha=arc_stroke_alpha,
+                        zorder=z_stroke,
+                    )
+                )
+
             ax.add_patch(
                 Arc(
                     xy=(g_arc.center.real, g_arc.center.imag),
@@ -179,24 +307,53 @@ def draw_endpoints(
                     height=2 * g_arc.radius,
                     theta1=math.degrees(g_arc.theta1),
                     theta2=math.degrees(g_arc.theta2),
-                    color=_DEFAULT_ARC_COLOR,
-                    linewidth=_DEFAULT_ARC_WIDTH,
-                    zorder=_Z_ENDPOINT,
+                    color=color,
+                    linewidth=arc_width,
+                    linestyle=arc_style,
+                    alpha=arc_alpha,
+                    zorder=z,
                 )
             )
         elif isinstance(g_arc, Segment):
+
+            if arc_stroke_width:
+                ax.add_line(
+                    Line2D(
+                        (g_arc.A.real, g_arc.B.real),
+                        (g_arc.A.imag, g_arc.B.imag),
+                        color=arc_stroke_color,
+                        linewidth=arc_width + arc_stroke_width * 2,
+                        linestyle="solid",
+                        alpha=arc_stroke_alpha,
+                        zorder=z_stroke,
+                    )
+                )
+
             ax.add_line(
                 Line2D(
                     (g_arc.A.real, g_arc.B.real),
                     (g_arc.A.imag, g_arc.B.imag),
-                    color=_DEFAULT_ARC_COLOR,
-                    linewidth=_DEFAULT_ARC_WIDTH,
-                    zorder=_Z_ENDPOINT,
+                    color=color,
+                    linewidth=arc_width,
+                    linestyle=arc_style,
+                    alpha=arc_alpha,
+                    zorder=z,
                 )
             )
 
 
-def draw_vertices(k: Diagram, layout: dict, vertices_to_draw: list | None = None, ax=None):
+def draw_vertices(
+        k: Diagram,
+        layout: dict,
+        vertices_to_draw: list | None = None,
+        ax=None,
+        vertex_color=_DEFAULT_VERTEX_COLOR,
+        vertex_size=_DEFAULT_VERTEX_SIZE,
+        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+    ):
     """Draw solid disks for vertex nodes.
 
     Args:
@@ -214,26 +371,52 @@ def draw_vertices(k: Diagram, layout: dict, vertices_to_draw: list | None = None
         vertices_to_draw = list(k.vertices)
 
     vertices_to_draw = [v for v in vertices_to_draw if v in layout]
+    """
+     edgecolor=None,
+                 facecolor=None,
+                 color=None,
+                 linewidth=None,
+                 linestyle=None,
+                 antialiased=None,
+                 hatch=None,
+                 fill=True,
+                 capstyle=None,
+                 joinstyle=None,
+                 """
 
+    print(vertex_stroke_width, vertex_stroke_color)
     for v in vertices_to_draw:
         xy = layout[v]
         ax.add_patch(
             plt.Circle(
                 xy=(xy.real, xy.imag),
-                radius=_DEFAULT_VERTEX_SIZE / 2,
-                color=_DEFAULT_VERTEX_COLOR,
+                radius=vertex_size / 2,
+                facecolor=vertex_color,
+                alpha=vertex_alpha,
+                edgecolor=vertex_stroke_color,
+                linewidth=vertex_stroke_width,
                 zorder=_Z_VERTEX,
             )
         )
 
 
 def draw_arrows(
-    k: Diagram,
-    layout: dict,
-    endpoint_to_draw: list | None = None,
-    position: str = _DEFAULT_ARROW_POSITION,
-    style: str = _DEFAULT_ARROW_STYLE,
-    ax=None,
+        k: Diagram,
+        layout: dict,
+        endpoint_to_draw: list | None = None,
+        ax=None,
+        arrow_line_width=_DEFAULT_ARC_WIDTH,
+        arrow_color=_DEFAULT_ARROW_COLOR,
+        arrow_width=_DEFAULT_ARROW_WIDTH,
+        arrow_length=_DEFAULT_ARROW_LENGTH,
+        arrow_style=_DEFAULT_ARROW_STYLE,
+        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=_DEFAULT_ARROW_POSITION,
+        arrow_alpha=_DEFAULT_ARROW_ALPHA,
+        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
+        cmap=_DEFAULT_CMAP,
 ):
     """Draw orientation arrows along arcs (for ingoing endpoints).
 
@@ -252,76 +435,83 @@ def draw_arrows(
     if ax is None:
         ax = plt.gca()
 
+    colors = _endpoint_and_arc_colors(k, cmap)  # TODO: do not call this again, somehow pass it
+
     if endpoint_to_draw is None:
         endpoint_to_draw = list(k.endpoints)
     endpoint_to_draw = [k.endpoint_from_pair(ep) for ep in endpoint_to_draw]
     endpoint_to_draw = [ep for ep in endpoint_to_draw if type(ep) is IngoingEndpoint]
 
-    if position == "middle":
+    if arrow_position == "middle":
         for arc in k.arcs:
+            if arc not in layout:
+                continue
             ep1, ep2 = arc
             ep = ep1 if ep1 in endpoint_to_draw else (ep2 if ep2 in endpoint_to_draw else None)
             if not ep:
                 continue
 
             element = layout[arc]
+            color = arrow_color if colors is None or ep not in colors else colors[ep]
             sign = 1 if _is_start(element, layout[ep.node]) else -1
 
             # Arrow geometry on circular arcs/segments.
-            arrow_angle = _ARROW_LENGTH / element.radius
+            arrow_angle = arrow_length / element.radius
             a = element(element.theta1)  # arrow head
             b = element(element.theta1 + sign * arrow_angle)  # arrow tail
             d = b - a
             p = 1j * d / abs(d)  # unit perpendicular
-            pts = [b + p * (_ARROW_WIDTH * 0.5), a, b - p * (_ARROW_WIDTH * 0.5)]
+            pts = [b + p * (arrow_width * 0.5), a, b - p * (arrow_width * 0.5)]
             pts_xy = [(w.real, w.imag) for w in pts]
 
-            if style == "open":
+            if arrow_style == "open":
                 x, y = zip(*pts_xy)
-                ax.add_line(
-                    Line2D(
-                        x[:2],
-                        y[:2],
-                        color=_DEFAULT_ARROW_COLOR,
-                        linewidth=_DEFAULT_ARC_WIDTH,
-                        zorder=_Z_ARROW,
-                        solid_capstyle="round",
+
+                if arc_stroke_width:
+                    print("llp")
+                    ax.add_line(
+                        Line2D(x[:2], y[:2],
+                               color=arc_stroke_color, linewidth=arrow_line_width + 2 * arc_stroke_width,
+                               zorder=_Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha,)
                     )
+                    ax.add_line(
+                        Line2D(x[1:], y[1:],
+                               color=arc_stroke_color, linewidth=arrow_line_width + 2 * arc_stroke_width,
+                               zorder=_Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha )
+                    )
+
+                ax.add_line(
+                    Line2D(x[:2], y[:2],
+                           color=color, linewidth=arrow_line_width,
+                           zorder=_Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
                 )
                 ax.add_line(
-                    Line2D(
-                        x[1:],
-                        y[1:],
-                        color=_DEFAULT_ARROW_COLOR,
-                        linewidth=_DEFAULT_ARC_WIDTH,
-                        zorder=_Z_ARROW,
-                        solid_capstyle="round",
-                    )
+                    Line2D(x[1:], y[1:],
+                           color=color, linewidth=arrow_line_width,
+                           zorder=_Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
                 )
-            elif style == "closed":
+
+            elif arrow_style == "closed":
+                # TODO: add stroke, add z-order
                 ax.add_patch(
-                    Polygon(
-                        pts_xy,
-                        closed=True,
-                        edgecolor="none",
-                        facecolor=_DEFAULT_ARROW_COLOR,
-                        linewidth=0,
-                    )
+                    Polygon(pts_xy, closed=True, edgecolor="none", facecolor=arrow_color, alpha=arrow_alpha, linewidth=0)
                 )
             else:
-                raise ValueError(f"Unsupported arrow style: {style}")
+                raise ValueError(f"Unsupported arrow style: {arrow_style}")
 
 
 def draw_node_labels(
-    k: Diagram,
-    layout: dict,
-    nodes_to_draw: list | None = None,
-    font_size: int = _DEFAULT_FONT_SIZE,
-    font_color: str = _DEFAULT_TEXT_COLOR,
-    verticalalignment: str = "bottom",
-    horizontalalignment: str = "left",
-    ax=None,
-):
+        k: Diagram,
+        layout: dict,
+        nodes_to_draw: list | None = None,
+        ax=None,
+        label_color=_DEFAULT_LABEL_COLOR,
+        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=_DEFAULT_LABEL_ALPHA,
+    ):
     """Annotate nodes (crossings/vertices) with their identifiers.
 
     Args:
@@ -352,24 +542,28 @@ def draw_node_labels(
             xy.real,
             xy.imag,
             str(v),
-            fontsize=font_size,
-            color=font_color,
-            verticalalignment=verticalalignment,
-            horizontalalignment=horizontalalignment,
+            fontsize=label_font_size,
+            color=label_color,
+            alpha=label_alpha,
+            verticalalignment=label_vertical_alignment,
+            horizontalalignment=label_horizontal_alignment,
             zorder=_Z_TEXT,
         )
+        #TODO font family
 
 
 def draw_endpoint_labels(
-    k: Diagram,
-    layout: dict,
-    endpoints_to_draw: list | None = None,
-    font_size: int = _DEFAULT_FONT_SIZE,
-    font_color: str = _DEFAULT_TEXT_COLOR,
-    verticalalignment: str = "bottom",
-    horizontalalignment: str = "left",
-    ax=None,
-):
+        k: Diagram,
+        layout: dict,
+        endpoints_to_draw: list | None = None,
+        ax=None,
+        label_color=_DEFAULT_LABEL_COLOR,
+        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=_DEFAULT_LABEL_ALPHA,
+    ):
     """Annotate endpoints with their (node, position) labels near the middle of their sub-arc.
 
     Args:
@@ -398,24 +592,28 @@ def draw_endpoint_labels(
             xy.real,
             xy.imag,
             str(ep),
-            fontsize=font_size,
-            color=font_color,
-            verticalalignment=verticalalignment,
-            horizontalalignment=horizontalalignment,
+            fontsize=label_font_size,
+            color=label_color,
+            verticalalignment=label_vertical_alignment,
+            horizontalalignment=label_horizontal_alignment,
+            alpha=label_alpha,
             zorder=_Z_TEXT,
         )
+        # TODO font family
 
 
 def draw_arc_labels(
-    k: Diagram,
-    layout: dict,
-    arcs_to_draw: list | None = None,
-    font_size: int = _DEFAULT_FONT_SIZE,
-    font_color: str = _DEFAULT_TEXT_COLOR,
-    verticalalignment: str = "bottom",
-    horizontalalignment: str = "left",
-    ax=None,
-):
+        k: Diagram,
+        layout: dict,
+        arcs_to_draw: list | None = None,
+        ax=None,
+        label_color=_DEFAULT_LABEL_COLOR,
+        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=_DEFAULT_LABEL_ALPHA,
+    ):
     """Annotate arcs by listing their two endpoint labels near the middle of the arc.
 
     Args:
@@ -445,12 +643,13 @@ def draw_arc_labels(
             xy.real,
             xy.imag,
             ",".join(str(ep) for ep in arc),
-            fontsize=font_size,
-            color=font_color,
-            verticalalignment=verticalalignment,
-            horizontalalignment=horizontalalignment,
+            fontsize=label_font_size,
+            color=label_color,
+            verticalalignment=label_vertical_alignment,
+            horizontalalignment=label_horizontal_alignment,
+            alpha=label_alpha,
         )
-
+        # TODO font family
 
 def autoscale_with_padding(ax, pad_frac: float = 0.05):
     """Autoscale the axes to fit current artists, apply padding, and set equal aspect.
@@ -474,7 +673,56 @@ def autoscale_with_padding(ax, pad_frac: float = 0.05):
     ax.set_aspect("equal", adjustable="box")
 
 
-def draw_from_layout(k: Diagram, layout: dict, ax, with_labels: bool):
+def draw_from_layout(
+        k: Diagram,
+        layout: dict,
+        ax=None,
+        # Arc
+        arc_color=_DEFAULT_ARC_COLOR,
+        arc_width=_DEFAULT_ARC_WIDTH,
+        arc_style=_DEFAULT_ARC_STYLE,
+        arc_alpha=_DEFAULT_ARC_ALPHA,
+        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
+        gap=_DEFAULT_GAP,
+        cmap=_DEFAULT_CMAP,
+        # Vertex
+        vertex_color=_DEFAULT_VERTEX_COLOR,
+        vertex_size=_DEFAULT_VERTEX_SIZE,
+        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+        # Arrow
+        arrow_color=_DEFAULT_ARROW_COLOR,
+        arrow_width=_DEFAULT_ARROW_WIDTH,
+        arrow_length=_DEFAULT_ARROW_LENGTH,
+        arrow_style=_DEFAULT_ARROW_STYLE,
+        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=_DEFAULT_ARROW_POSITION,
+        arrow_alpha=_DEFAULT_ARROW_ALPHA,
+        # Labels
+        label_endpoints=_DEFAULT_LABEL_ENDPOINTS,
+        label_arcs=_DEFAULT_LABEL_ARCS,
+        label_nodes=_DEFAULT_LABEL_NODES,
+        label_color=_DEFAULT_LABEL_COLOR,
+        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=_DEFAULT_LABEL_ALPHA,
+        # Title
+        title=_DEFAULT_TITLE,  # bool or string
+        title_color=_DEFAULT_TITLE_COLOR,
+        title_font_size=_DEFAULT_TITLE_FONT_SIZE,
+        title_font_family=_DEFAULT_TITLE_FONT_FAMILY,
+        title_alpha=_DEFAULT_TITLE_ALPHA,
+        # Other
+        padding_fraction=_DEFAULT_PADDING_FRACTION,
+        show_axis=_DEFAULT_SHOW_AXIS,
+        show=_DEFAULT_SHOW,
+        ):
     """Render a diagram from a precomputed layout onto given axes.
 
     Args:
@@ -483,21 +731,100 @@ def draw_from_layout(k: Diagram, layout: dict, ax, with_labels: bool):
         ax: Matplotlib axes to draw on.
         with_labels (bool): If True, draw node/endpoint/arc labels.
     """
-    draw_arcs(k, layout, ax=ax)
-    draw_endpoints(k, layout, ax=ax)
-    draw_arrows(k, layout, ax=ax)
-    draw_vertices(k, layout, ax=ax)
+    if arrow_color is None:
+        arrow_color = arc_color
+    args = dict(locals())
+    plt = _mpl_axes()
 
-    if with_labels:
-        draw_node_labels(k, layout, ax=ax)
-        draw_endpoint_labels(k, layout, ax=ax)
-        draw_arc_labels(k, layout, ax=ax)
+    # Prepare axes.
+    if ax is None:
+        _, ax = plt.subplots()
+        ax = plt.gca()
 
-    autoscale_with_padding(ax)
-    ax.set_axis_off()
+    args_arcs = {key: value for key, value in args.items() if key.startswith("arc")}
+    draw_arcs(k, layout, ax=ax, cmap=cmap, **args_arcs)
+    draw_endpoints(k, layout, ax=ax, gap=gap, cmap=cmap, **args_arcs)
+
+    args_arcs = {key: value for key, value in args.items() if key.startswith("arrow")}
+    draw_arrows(k, layout, ax=ax, cmap=cmap,
+                arc_stroke_color=arc_stroke_color, arc_stroke_width=arc_stroke_width, arc_stroke_alpha=arc_stroke_alpha,
+                **args_arcs)
+
+    args_vertex = {key: value for key, value in args.items() if key.startswith("vertex")}
+    draw_vertices(k, layout, ax=ax, **args_vertex)
+
+    args_label = {key: value for key, value in args.items() if key.startswith("label")}
+    for key in ("label_endpoints", "label_arcs", "label_nodes"):
+        del args_label[key]
+
+    if label_nodes:
+        draw_node_labels(k, layout, ax=ax, **args_label)
+    if label_endpoints:
+        draw_endpoint_labels(k, layout, ax=ax, **args_label)
+    if label_arcs:
+        draw_arc_labels(k, layout, ax=ax, **args_label)
+
+    autoscale_with_padding(ax, pad_frac=padding_fraction)
+
+    if not show_axis:
+        ax.set_axis_off()
+
+    if show:
+        plt.show()
 
 
-def draw(k: Diagram, **kwds):
+def draw(
+        k: Diagram,
+        ax=None,
+        rotation=0,  # degrees, counterclockwise
+        # Arc
+        arc_color=_DEFAULT_ARC_COLOR,
+        arc_width=_DEFAULT_ARC_WIDTH,
+        arc_style=_DEFAULT_ARC_STYLE,
+        arc_alpha=_DEFAULT_ARC_ALPHA,
+        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
+        gap=_DEFAULT_GAP,
+        cmap=_DEFAULT_CMAP,
+        # Vertex
+        vertex_color=_DEFAULT_VERTEX_COLOR,
+        vertex_size=_DEFAULT_VERTEX_SIZE,
+        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+        # Arrow
+        arrow_color=_DEFAULT_ARROW_COLOR,
+        arrow_width=_DEFAULT_ARROW_WIDTH,
+        arrow_length=_DEFAULT_ARROW_LENGTH,
+        arrow_style=_DEFAULT_ARROW_STYLE,
+        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=_DEFAULT_ARROW_POSITION,
+        arrow_alpha=_DEFAULT_ARROW_ALPHA,
+        # Labels
+        label_endpoints=_DEFAULT_LABEL_ENDPOINTS,
+        label_arcs=_DEFAULT_LABEL_ARCS,
+        label_nodes=_DEFAULT_LABEL_NODES,
+        label_color=_DEFAULT_LABEL_COLOR,
+        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=_DEFAULT_LABEL_ALPHA,
+        # Title
+        title=_DEFAULT_TITLE,  # bool or string
+        title_color=_DEFAULT_TITLE_COLOR,
+        title_font_size=_DEFAULT_TITLE_FONT_SIZE,
+        title_font_family=_DEFAULT_TITLE_FONT_FAMILY,
+        title_alpha=_DEFAULT_TITLE_ALPHA,
+        # Other
+        show_circle_packing=_DEFAULT_SHOW_CIRCLE_PACKING,
+        padding_fraction=_DEFAULT_PADDING_FRACTION,
+        show_axis=_DEFAULT_SHOW_AXIS,
+        show=_DEFAULT_SHOW,
+    ):
+
     """High-level convenience function to draw a diagram.
 
     This function:
@@ -514,45 +841,45 @@ def draw(k: Diagram, **kwds):
             - with_labels (bool): If True, draw node/endpoint/arc labels. Default False.
             - show (bool): If True, call `plt.show()` at the end. Default False.
     """
+    if arrow_color is None:
+        arrow_color = arc_color
+    args = dict(locals())
     plt = _mpl_axes()
 
-    # 1) Add support arcs (bridges/cut-vertices handling for reliable plotting).
+    # add support arcs (bridges/cut-vertices handling for reliable plotting)
     supported_k = _add_support_arcs(k)
 
-    # 2) Decompose into disjoint components.
+    # decompose into disjoint components
     components = disjoint_union_decomposition(supported_k)
 
-    # 3) Compute layout per component (and keep the circle packing for alignment).
-    layout_circles_pairs = [layout_circle_packing(comp, return_circles=True) for comp in components]
+    # compute layout per component (and keep the circle packing for alignment)
+    layout_circles_pairs = [layout_circle_packing(comp, rotation=rotation, return_circles=True) for comp in components]
 
-    # 4) Align components horizontally.
+    # align components horizontally
     align_layouts(layout_circles_pairs)
 
-    with_labels = kwds.get("with_labels", False)
-    show = kwds.get("show", False)
-
-    # Merge per-component layouts into a joint layout.
+    # merge per-component layouts into a joint layout
     joint_layout, joint_circles = {}, {}
     for layout, circles in layout_circles_pairs:
         joint_layout.update(layout)
         joint_circles.update(circles)
 
-    # Prepare axes.
-    ax = kwds.get("ax", None)
+    # prepare axes
     if ax is None:
         _, ax = plt.subplots()
         ax = plt.gca()
 
-    # (Optional) visualize circle regions used in packing.
     align_layouts(layout_circles_pairs)  # keeps relative spacing if recomputed upstream
-    if _PLOT_CIRCLES:
+
+    # optional: visualize circle regions used in packing
+    if show_circle_packing:
         _plot_circles(supported_k, joint_circles, ax=ax)
 
-    # 5) Render.
-    draw_from_layout(supported_k, joint_layout, ax=ax, with_labels=with_labels)
+    # render
+    for key in ("show_circle_packing", "rotation", "ax", "k") :
+        del args[key]
+    draw_from_layout(k=supported_k, layout=joint_layout, ax=ax, **args)
 
-    if show:
-        plt.show()
 
 
 def _plot_circles(k: Diagram, circles: dict, ax=None):
@@ -582,4 +909,19 @@ def _plot_circles(k: Diagram, circles: dict, ax=None):
 
 
 if __name__ == "__main__":
+    import knotpy as kp
+    k3 = kp.orient(kp.knot("3_1"))
+    #kp.draw(k3, show=True, gap=0, arc_stroke_width=6, arc_width=4, arc_stroke_color="white") #cmap="jet"
+    #kp.draw(k3, show=True, gap=0, arc_color="white", arc_stroke_width=6, arc_width=4, arc_stroke_color="black") #cmap="jet"
+    k = kp.theta("t3_1")
+    # kp.draw(k, show=True, gap=0, arc_stroke_width=6, arc_width=4, arc_stroke_color="white",
+    #         vertex_color="white", vertex_stroke_color="black", vertex_stroke_width=4)
+    a = kp.orient(kp.knot("3_1"))
+    b = kp.orient(kp.knot("4_1"))
+    k = kp.connected_sum(a, b )
+    #kp.add_unknot(k, inplace=True)
+    kk = kp.reidemeister_1_add_kink(k, kp.choose_reidemeister_1_add_kink(k))
+    print(kk)
+    kp.draw(kk, show=True) #cmap="jet"
+
     pass

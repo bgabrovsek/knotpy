@@ -1,7 +1,7 @@
 # knotpy/algorithms/canonical.py
 
 """
-Putting a diagram into its canonical form (unoriented diagrams only).
+Putting a diagram into its canonical form.
 
 Given a `PlanarDiagram`, this module computes a canonical representative by
 relabeling nodes via a CCW BFS strategy from carefully chosen starting endpoints
@@ -15,19 +15,13 @@ __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 from collections.abc import Iterable
 from queue import Queue
-import string
+from string import ascii_letters
 
-from knotpy.algorithms.degree_sequence import neighbour_sequence
-from knotpy.algorithms.disjoint_union import (
-    number_of_disjoint_components,
-    disjoint_union_decomposition,
-    disjoint_union,
-)
-from knotpy.algorithms.rewire import permute_node
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.node import Crossing
-
-_ascii_letters = string.ascii_lowercase + string.ascii_uppercase
+from knotpy.algorithms.degree_sequence import neighbour_sequence
+from knotpy.algorithms.disjoint_union import number_of_disjoint_components, disjoint_union_decomposition, disjoint_union
+from knotpy.algorithms.rewire import permute_node
 
 
 def _under_endpoints_of_node(k: PlanarDiagram, node):
@@ -70,9 +64,9 @@ def _ccw_expand_node_names(k: PlanarDiagram, endpoint, node_names: list[str]):
             node_relabel maps old node -> new name.
             node_first_position maps new name -> first position visited.
     """
-    node_relabel: dict = {}
+    node_relabel: dict = {}  # keys are old node names, values ar enew node names
     node_first_position: dict = {}
-    q: Queue = Queue()
+    q = Queue()
     q.put(endpoint)
 
     while not q.empty():
@@ -125,6 +119,17 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -
     Returns:
         The canonical `PlanarDiagram`, or a collection with each element canonicalized.
 
+    Example:
+        >>> import knotpy as kp
+        >>> k = kp.from_pd_notation("[1,4,2,5], [3,6,4,1], [5,2,6,3]")
+        >>> k
+        Diagram a → X(b3 b2 c1 c0), b → X(c3 c2 a1 a0), c → X(a3 a2 b1 b0)
+        >>> k_canonical = kp.canonical(k)
+        >>> k_canonical
+        Diagram a → X(b3 b2 c3 c2), b → X(c1 c0 a1 a0), c → X(b1 b0 a3 a2)
+        >>> k_canonical == kp.knot("3_1")
+        True
+
     Raises:
         TypeError: If a non-diagram is provided.
         ValueError: If the input diagram is not connected when expected.
@@ -144,8 +149,8 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -
         return k.copy()
 
     # Node name supply: a,b,...,z,A,...,Z,aa,ab,...
-    if len(k) <= len(_ascii_letters):
-        letters = list(_ascii_letters[: len(k)])
+    if len(k) <= len(ascii_letters):
+        letters = list(ascii_letters[: len(k)])
     else:
         letters = [number_to_alpha(i) for i in range(len(k))]
 

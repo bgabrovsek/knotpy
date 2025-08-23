@@ -32,7 +32,7 @@ def test_arrow_polynomial():
         #export_pdf([k, k_], "knotoids_moves.pdf")
         assert p == p_, f"{k} \n{p}\n{p_}"
 
-    for k_ in kp.all_orientations(k):
+    for k_ in kp.orientations(k):
         p_ = kp.arrow_polynomial(k_)
         assert p == p_, f"{k} \n{p}\n{p_} (orientation)"
 
@@ -49,7 +49,7 @@ def test_mock_polynomial():
         #export_pdf([k, k_], "knotoids_moves.pdf")
         assert p == p_, f"{k} \n{p}\n{p_}"
 
-    for k_ in kp.all_orientations(k):
+    for k_ in kp.orientations(k):
         p_ = kp.mock_alexander_polynomial(k_)
         assert p == p_, f"{k} \n{p}\n{p_} (orientation)"
 
@@ -67,7 +67,7 @@ def test_kauffman_polynomial():
         #export_pdf([k, k_], "knotoids_moves.pdf")
         assert p == p_, f"{k} \n{p}\n{p_}"
 
-    for o in kp.all_orientations(k):
+    for o in kp.orientations(k):
         p_ = kp.kauffman_bracket_skein_module(k_, normalize=True)
         assert p == p_, f"{k} \n{p}\n{p_} (orientation)"
 

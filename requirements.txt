@@ -4,3 +4,4 @@
 # Core runtime dependencies
 sympy>=1.12
 matplotlib>=3.8.3
+tqdm>=4.66.0
