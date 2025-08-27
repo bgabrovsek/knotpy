@@ -1,5 +1,5 @@
 from knotpy import bouquet
-from knotpy.tables.graphs import path_graph, cycle_graph
+from knotpy.tables.families import path_graph, cycle_graph
 from knotpy.algorithms.remove import remove_arc, remove_empty_nodes
 from knotpy.algorithms.canonical import canonical
 

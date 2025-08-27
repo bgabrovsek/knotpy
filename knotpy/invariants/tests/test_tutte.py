@@ -1,5 +1,5 @@
 from knotpy import from_knotpy_notation
-from knotpy.tables.graphs import parallel_edges, bouquet, path_graph, cycle_graph
+from knotpy.tables.families import parallel_edges, bouquet, path_graph, cycle_graph
 from knotpy.invariants.tutte import deletion_contraction
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.attributes import clear_attributes

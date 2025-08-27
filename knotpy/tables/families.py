@@ -1,52 +1,159 @@
 """
-Definitions and helpers for generating plane graphs and knot diagrams.
-
-The mirror image of a plane graph is obtained by reversing the cyclic order at
-each vertex; this corresponds to reflecting the plane about a line.
-
-A separating cycle in a plane graph is a cycle that contains at least one
-vertex in its interior and at least one vertex in its exterior.
-
-The length of the smallest separating cycle in a triangulation is the same as
-the (vertex) connectivity, and equals the cyclic connectivity of the cubic
-dual graph.
-
-An orientation-preserving isomorphism (OP-isomorphism) and an
-orientation-reversing isomorphism (OR-isomorphism) are standard notions for
-plane graphs. The automorphism group Aut(G) of a plane graph is the group of
-all isomorphisms from G to itself; the OP-automorphism group consists of the
-orientation-preserving automorphisms.
+Generation of graph and knot/link families fo diagrams.
 """
 
 from __future__ import annotations
 
-import string
-from typing import Iterable, Iterator, List, Sequence, Tuple
+__all__ = ["bouquet", "cycle_graph", "generate_knot_diagrams", "generate_simple_graphs", "path_graph", "star_graph",
+           "unknot", "unlink", "vertices_to_crossings", "wheel_graph"]
+__version__ = "0.1"
+__author__ = "Boštjan Gabrovšek"
+
+from string import ascii_letters
+from typing import Sequence
 
 from knotpy import PlanarDiagram, OrientedPlanarDiagram
-# from knotpy import export_pdf, sanity_check, from_knotpy_notation, insert_loop, number_of_link_components
 from knotpy.algorithms.degree_sequence import degree_sequence
 from knotpy.utils.set_utils import LeveledSet
 from knotpy.algorithms.canonical import canonical
-from knotpy.tables.graphs import path_graph, cycle_graph
 from knotpy.algorithms.insert import insert_arc
 from knotpy.classes.freezing import freeze
 from knotpy.algorithms.insert import parallelize_arc
 from knotpy.algorithms.topology import loops as get_loops
 from knotpy.algorithms.sanity import sanity_check
-
 from knotpy.algorithms.insert import insert_loop
 from knotpy.algorithms.topology import number_of_link_components
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
-
-from knotpy.classes.planardiagram import PlanarDiagram  # kept duplicate import to preserve environment assumptions
 from knotpy.classes.node.crossing import Crossing
 from knotpy.utils.set_utils import powerset
 from knotpy.algorithms.symmetry import mirror
 
 
-vertex_names = string.ascii_letters
+# graph generators
+
+def path_graph(number_of_vertices: int) -> PlanarDiagram:
+    """
+    Build a path graph with ``number_of_vertices`` vertices.
+    Vertices are named ``'a', 'b', 'c', ...`` and connected in a single edge.
+
+    Args:
+        number_of_vertices: Total number of vertices in the path (≥ 1).
+
+    Returns:
+        A planar diagram named ``"P_{n}"`` with a linear chain of arcs.
+    """
+    n = number_of_vertices
+    k = PlanarDiagram(name=f"P_{n}")
+    k.add_vertices_from(ascii_letters[:n])
+    for i in range(number_of_vertices - 1):
+        k.set_arc(
+            (
+                (ascii_letters[i], 0),
+                (ascii_letters[i + 1], 0 if i == number_of_vertices - 2 else 1),
+            )
+        )
+    return k
+
+
+def cycle_graph(number_of_vertices: int) -> PlanarDiagram:
+    """
+    Build a cycle graph with ``number_of_vertices`` vertices.
+    Vertices are named ``'a', 'b', 'c', ...`` and connected in a single cycle.
+
+    Args:
+        number_of_vertices: Size of the cycle (≥ 1).
+
+    Returns:
+        A planar diagram named ``"C_{n}"`` whose arcs form a cycle.
+    """
+    n = number_of_vertices
+    k = PlanarDiagram(name=f"C_{n}")
+    k.add_vertices_from(ascii_letters[:n])
+    for i in range(n):
+        k.set_arc(((ascii_letters[i], 0), (ascii_letters[(i + 1) % n], 1)))
+    return k
+
+
+def wheel_graph(number_of_vertices: int) -> PlanarDiagram:
+    """
+    Build a wheel graph as a ``PlanarDiagram`` with ``number_of_vertices`` vertices.
+
+    A wheel graph consists of a cycle on ``n`` outer vertices plus a central
+    vertex adjacent to all outer vertices (total vertices = ``n + 1``).
+
+    Args:
+        number_of_vertices: Total vertex count including the center (≥ 2).
+
+    Returns:
+        A planar diagram named ``"W_{n+1}"`` representing the wheel.
+    """
+    n = number_of_vertices - 1  # number of outer vertices
+    k = PlanarDiagram(name=f"W_{n + 1}")
+    k.add_vertices_from(ascii_letters[:n + 1])
+
+    for i in range(n):
+        # Spokes from the center to each outer vertex
+        k.set_arc(((ascii_letters[0], i), (ascii_letters[i + 1], 0)))
+        # Rim edges around the outer cycle
+        k.set_arc(((ascii_letters[i + 1], 2), (ascii_letters[(i + 1) % n + 1], 1)))
+    return k
+
+
+def star_graph(number_of_vertices: int) -> PlanarDiagram:
+    """
+    Build a star graph as a ``PlanarDiagram`` with ``number_of_vertices`` vertices.
+
+    One central vertex is connected to all others; ``(n-1)`` outer vertices are not
+    mutually adjacent.
+
+    Args:
+        number_of_vertices: Total vertex count including the center (≥ 2).
+
+    Returns:
+        A planar diagram named ``"S_{n}"`` representing the star.
+    """
+    n = number_of_vertices - 1  # number of leaves
+    k = PlanarDiagram(name=f"S_{n + 1}")
+    k.add_vertices_from(ascii_letters[:n + 1])
+
+    for i in range(n):
+        k.set_arc(((ascii_letters[0], i), (ascii_letters[i + 1], 0)))
+    return k
+
+
+def bouquet(number_of_arcs: int) -> PlanarDiagram:
+    """
+    Build a bouquet graph (one vertex with ``number_of_arcs`` loops).
+
+    Args:
+        number_of_arcs: Number of loops attached to the single vertex.
+
+    Returns:
+        A planar diagram named ``"B_{m}"`` with one vertex and ``m`` loops.
+    """
+    k = PlanarDiagram(name=f"B_{number_of_arcs}")
+    k.add_vertex("a")
+    for i in range(number_of_arcs):
+        k.set_arc((("a", 2 * i), ("a", 2 * i + 1)))
+    return k
+
+
+def parallel_edges(number_of_arcs: int) -> PlanarDiagram:
+    """
+    Build two vertices joined by ``number_of_arcs`` parallel arcs.
+
+    Args:
+        number_of_arcs: Number of parallel arcs between the two vertices.
+
+    Returns:
+        A planar diagram named ``"E_{m}"`` with two vertices and ``m`` parallel arcs.
+    """
+    k = PlanarDiagram(name=f"E_{number_of_arcs}")
+    k.add_vertices_from("ab")
+    for i in range(number_of_arcs):
+        k.set_arc((("a", i), ("b", number_of_arcs - i - 1)))
+    return k
 
 
 def vertices_to_crossings(
@@ -146,7 +253,7 @@ def unlink(number_of_components: int, oriented: bool = False):
     return k
 
 
-def non_adjacent_combinations(elements: tuple):
+def _non_adjacent_combinations(elements: tuple):
     """
     Yield cyclically non-adjacent endpoint pairs from a face boundary.
 
@@ -225,7 +332,7 @@ def generate_simple_graphs(
                             continue
 
                         g = graph.copy()
-                        v = vertex_names[l + 1]
+                        v = ascii_letters[l + 1]
                         g.add_vertex(vertex_for_adding=v)
                         insert_arc(g, (ep, (v, 0)))
                         assert sanity_check(g)
@@ -233,7 +340,7 @@ def generate_simple_graphs(
 
             # 2) Add a new arc inside a face between non-adjacent endpoints.
             for face in graph.faces:
-                for arc in non_adjacent_combinations(face):
+                for arc in _non_adjacent_combinations(face):
                     if any(graph.degree(ep.node) >= max_degree for ep in arc):
                         continue
 

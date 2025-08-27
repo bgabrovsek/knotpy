@@ -1,3 +1,7 @@
+"""
+Module for reading, parsing, and handling planar diagram(s) data from various file formats.
+"""
+
 from __future__ import annotations
 
 import gzip

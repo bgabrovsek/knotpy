@@ -1,3 +1,7 @@
+"""
+Module for writing planar diagram(s) data to files in various notations and formats.
+"""
+
 from __future__ import annotations
 
 from abc import ABC

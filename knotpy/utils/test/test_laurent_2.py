@@ -14,7 +14,7 @@ def test_normalize_laurent():
     expr2 = -7
     assert (expr1 - expr2) == 0
 
-    expr1 = kp.normalize_laurent(-7, normalize_sign=True)
+    expr1 = kp.normalize_laurent(-7, allow_polynomial_sign_change=True)
     expr2 = 7
     assert (expr1 - expr2) == 0
 
@@ -35,11 +35,11 @@ def test_normalize_laurent():
     expr2 = 4 * x ** 2 - 4
     assert (expr1 - expr2) == 0
 
-    expr1 = kp.normalize_laurent(-5 * x ** 3 + 2 * x, variables=[x], normalize_sign=False)
+    expr1 = kp.normalize_laurent(-5 * x ** 3 + 2 * x, variables=[x], allow_polynomial_sign_change=False)
     expr2 = -5 * x ** 2 + 2
     assert (expr1 - expr2) == 0
 
-    expr1 = kp.normalize_laurent(-5 * x ** 3 + 2 * x, variables=[x], normalize_sign=True)
+    expr1 = kp.normalize_laurent(-5 * x ** 3 + 2 * x, variables=[x], allow_polynomial_sign_change=True)
     expr2 = 5 * x ** 2 - 2
     assert (expr1 - expr2) == 0
 
@@ -79,7 +79,7 @@ def test_normalize_laurent():
     assert (expr1 - expr2) == 0
 
     # --- normalize_sign with multiple vars ---
-    expr1 = kp.normalize_laurent(-5 * x ** 2 * y ** 3 + 2 * x * y ** 3 + 7, variables=[x, y], normalize_sign=True)
+    expr1 = kp.normalize_laurent(-5 * x ** 2 * y ** 3 + 2 * x * y ** 3 + 7, variables=[x, y], allow_polynomial_sign_change=True)
     expr2 = 5 * x ** 2 * y ** 3 - 2 * x * y ** 3 - 7
     assert (expr1 - expr2) == 0
 

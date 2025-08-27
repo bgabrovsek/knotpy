@@ -12,11 +12,6 @@ def test_link():
     a = kp.multivariable_alexander(k)
     assert a == 0, f"got {a} instead of 0"
 
-def test_link_skein():
-    from knotpy.invariants.alexander import _multivariate_alexander_skein
-    k = kp.from_pd_notation("PD[X[6, 1, 7, 2], X[12, 7, 13, 8], X[4, 13, 1, 14], X[9, 18, 10, 15], X[8, 4, 9, 3], X[5, 17, 6, 16], X[17, 5, 18, 14], X[15, 10, 16, 11], X[2, 12, 3, 11]]")
-    #_multivariate_alexander_skein(k)
 
 if __name__ == "__main__":
-    #test_link()
-    test_link_skein()
+    test_link()

@@ -7,7 +7,8 @@ from knotpy.utils.laurent import (
     normalize_laurent,
     normalize_symmetric,
     extract_variables,
-    canonicalize_under_variable_permutation,
+    #canonicalize_under_variable_permutation,
+    # tuples_to_laurent,
 )
 
 
@@ -82,7 +83,7 @@ def test_canonicalize_under_variable_permutation_minimal_rep():
     expr = 3*t1**2 + 2*t1*t2 + t2  # asymmetric in t1, t2
     vars_ = (t1, t2)
 
-    canon = canonicalize_under_variable_permutation(expr, variables=vars_, allow_sign_change=False)
+    canon = normalize_laurent(expr, variables=vars_, allow_variable_permutation=True)
 
     # Compute both permutations (identity and swap), pick lexicographically minimal monomial representation
     expr_id = sp.expand(expr)
@@ -103,20 +104,9 @@ def test_canonicalize_under_permutation_with_sign_change():
     t1, t2 = sp.symbols("t1 t2")
     expr = t1 - 2*t2
     vars_ = (t1, t2)
+    canon = normalize_laurent(expr, variables=vars_, allow_variable_permutation=True, allow_polynomial_sign_change=True)
 
-    canon = canonicalize_under_variable_permutation(expr, variables=vars_, allow_sign_change=True)
-
-    # Consider {id, swap} × {±1}
-    candidates = [
-        expr,
-        -expr,
-        expr.subs({t1: t2, t2: t1}),
-        -expr.subs({t1: t2, t2: t1}),
-    ]
-    reps = [_poly_repr_for_compare(e, vars_) for e in candidates]
-    rep_best = min(reps)
-
-    assert _poly_repr_for_compare(canon, vars_) == rep_best
+    assert canon == 2*t1 - t2
 
 
 
@@ -159,7 +149,65 @@ def test_normalize_laurent_polynomial():
     expected7 = simplify("1 + x * y")
     assert simplify(normalize_laurent(expr7, [x, y])) == expected7
 
+
+def test_laurent_tuples():
+    p1 = sp.sympify("-t1*t2*(t3**-1) - t1 + 2*t2**2*t3 - t3 + 1")
+    p2 = sp.Integer(9)
+    p3 = sp.Rational(8,7)
+    p4 = -1
+    p5 = 0
+    p6 = sp.sympify("2*x")
+
+    from knotpy.utils.laurent import laurent_to_tuples, tuples_to_laurent
+
+
+
+    t1,_ = laurent_to_tuples(p1)
+    t2,_ = laurent_to_tuples(p2)
+    t3,_ = laurent_to_tuples(p3)
+    t4,_ = laurent_to_tuples(p4)
+    t5,_ = laurent_to_tuples(p5)
+    t6,_ = laurent_to_tuples(p6)
+
+
+    assert set(t1) == { ((1,1,-1), -1), ((1,0,0), -1), ((0,2,1), 2), ((0,0,1), -1),  ((0,0,0), 1)}
+    assert t2 == [((), 9)]
+    assert t3 == [((), sp.Rational(8,7))]
+    assert t4 == [((),-1)]
+    assert t5 == [((), 0)]
+    assert t6 == [((1,), 2)]
+
+    assert tuples_to_laurent(t1, sp.symbols('t1 t2 t3')) == p1
+    assert tuples_to_laurent(t2, ()) == p2
+    assert tuples_to_laurent(t3,()) == p3
+    assert tuples_to_laurent(t4,()) == p4
+    assert tuples_to_laurent(t5,()) == p5
+    assert tuples_to_laurent(t6,sp.symbols("x")) == p6
+
+
+def test_alexander_cases():
+    p1 = sp.sympify("-t1*t2*t3 + t1*t2 - t1 + t2*t3 - t3 + 1")
+    p2 = sp.sympify("-t1*t2*t3 + t1*t2 + t1*t3 - t2 - t3 + 1")
+    p3 = sp.sympify("-t1*t2*t3 + t1*t3 - t1 + t2*t3 - t2 + 1")
+    p4 = sp.sympify("-t1*t2 - t1*t3 + t1 - t2*t3 + t2 + t3")
+
+    q1 = normalize_laurent(p1, allow_variable_permutation=True, allow_variable_sign_change=True)
+    q2 = normalize_laurent(p2, allow_variable_permutation=True, allow_variable_sign_change=True)
+    q3 = normalize_laurent(p3, allow_variable_permutation=True, allow_variable_sign_change=True)
+    q4 = normalize_laurent(p4, allow_variable_permutation=True, allow_variable_sign_change=True)
+
+
+def test_laurent_div_2():
+    t1, t2 = sp.symbols("x y")
+    expr = 2*t1*t2 - 2*t1 - 2*t2 + 2
+    result = normalize_laurent(expr, [t1, t2])
+    assert result == expr
+
 if __name__ == "__main__":
+    test_laurent_tuples()
+    test_alexander_cases()
+    test_laurent_div_2()
+
     # Manual run support
     test_reciprocal_roundtrip()
     test_normalize_laurent_basic()

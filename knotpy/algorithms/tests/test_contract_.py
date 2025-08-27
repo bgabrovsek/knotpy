@@ -1,7 +1,7 @@
 
-from knotpy.tables.graphs import bouquet
+from knotpy.tables.families import bouquet
 from knotpy.notation.native import from_knotpy_notation
-from knotpy.tables.graphs import path_graph, cycle_graph
+from knotpy.tables.families import path_graph, cycle_graph
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.disjoint_union import disjoint_union
 

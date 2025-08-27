@@ -3,7 +3,7 @@ from .diagram_reader import *
 from .invariant_writer import *
 from .invariant_reader import *
 from .graphs import *
-from .generate import *
+from .families import *
 from .knot import *
 from .link import *
 from .theta import *
