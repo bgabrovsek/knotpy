@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="normalize_symmetric" href="knotpy.utils.laurent.normalize_symmetric.html" />
-    <link rel="prev" title="extract_variables" href="knotpy.utils.laurent.extract_variables.html" />
+    <link rel="prev" title="laurent_to_tuples" href="knotpy.utils.laurent.laurent_to_tuples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -784,7 +784,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.html">test_multivariable_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.test_link.html">test_link</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.test_link_skein.html">test_link_skein</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.html">test_tutte</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -949,11 +948,12 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.utils.laurent.html">laurent</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.canonicalize_under_variable_permutation.html">canonicalize_under_variable_permutation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.extract_variables.html">extract_variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.laurent_to_tuples.html">laurent_to_tuples</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">normalize_laurent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_symmetric.html">normalize_symmetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.reciprocal.html">reciprocal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.tuples_to_laurent.html">tuples_to_laurent</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1060,9 +1060,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_laurent.html">test_laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_alexander_cases.html">test_alexander_cases</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_permutation_with_sign_change.html">test_canonicalize_under_permutation_with_sign_change</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_variable_permutation_minimal_rep.html">test_canonicalize_under_variable_permutation_minimal_rep</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_extract_variables_with_and_without_prefix.html">test_extract_variables_with_and_without_prefix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_laurent_div_2.html">test_laurent_div_2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_laurent_tuples.html">test_laurent_tuples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_basic.html">test_normalize_laurent_basic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial.html">test_normalize_laurent_polynomial</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial_make_nonnegative.html">test_normalize_laurent_polynomial_make_nonnegative</a></li>
@@ -1187,18 +1190,16 @@
 <h1>normalize_laurent<a class="headerlink" href="#normalize-laurent" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="knotpy.utils.laurent.normalize_laurent">
-<span class="sig-name descname"><span class="pre">normalize_laurent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up_to_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.normalize_laurent" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">normalize_laurent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_variable_sign_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_variable_permutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_polynomial_sign_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.normalize_laurent" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expr</strong> (<em>Expr</em><em> | </em><em>Poly</em>)</p></li>
 <li><p><strong>variables</strong> (<em>Iterable</em><em>[</em><em>Symbol</em><em>] </em><em>| </em><em>Symbol</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>normalize_sign</strong> (<em>bool</em>)</p></li>
-<li><p><strong>up_to_factor</strong> (<em>Expr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>allow_variable_sign_change</strong> (<em>bool</em>)</p></li>
+<li><p><strong>allow_variable_permutation</strong> (<em>bool</em>)</p></li>
+<li><p><strong>allow_polynomial_sign_change</strong> (<em>bool</em>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Expr</em></p>
 </dd>
 </dl>
 </dd></dl>

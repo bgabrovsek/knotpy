@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>test_link_skein &#8212; KnotPy  documentation</title>
+    <title>laurent_to_tuples &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.invariants.tests.test_multivariable_alexander.test_link_skein';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.laurent.laurent_to_tuples';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="test_tutte" href="knotpy.invariants.tests.test_tutte.html" />
-    <link rel="prev" title="test_link" href="knotpy.invariants.tests.test_multivariable_alexander.test_link.html" />
+    <link rel="next" title="normalize_laurent" href="knotpy.utils.laurent.normalize_laurent.html" />
+    <link rel="prev" title="extract_variables" href="knotpy.utils.laurent.extract_variables.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -686,7 +686,7 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.affine_index.html">affine_index</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.affine_index.affine_index_polynomial.html">affine_index_polynomial</a></li>
 </ul>
@@ -732,7 +732,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.skein.smoothen_crossing.html">smoothen_crossing</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.html">test_alexander_minors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.test_alexander_minors_functions.html">test_alexander_minors_functions</a></li>
 </ul>
@@ -782,9 +782,8 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_knotoids_hard.test_mock.html">test_mock</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.html">test_multivariable_alexander</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.html">test_multivariable_alexander</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_multivariable_alexander.test_link.html">test_link</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">test_link_skein</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_tutte.html">test_tutte</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -883,7 +882,7 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.reidemeister.reidemeister_preserving_moves_generator.html">reidemeister_preserving_moves_generator</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.utils.html">utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="knotpy.utils.html">utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.cache.html">cache</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.cache.Cache.html">Cache</a></li>
 </ul>
@@ -948,12 +947,13 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.geometry.Segment.html">Segment</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.laurent.html">laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.canonicalize_under_variable_permutation.html">canonicalize_under_variable_permutation</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.utils.laurent.html">laurent</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.extract_variables.html">extract_variables</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">laurent_to_tuples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_laurent.html">normalize_laurent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.normalize_symmetric.html">normalize_symmetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.reciprocal.html">reciprocal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.laurent.tuples_to_laurent.html">tuples_to_laurent</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.module.html">module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1060,9 +1060,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_laurent.html">test_laurent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_alexander_cases.html">test_alexander_cases</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_permutation_with_sign_change.html">test_canonicalize_under_permutation_with_sign_change</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_canonicalize_under_variable_permutation_minimal_rep.html">test_canonicalize_under_variable_permutation_minimal_rep</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_extract_variables_with_and_without_prefix.html">test_extract_variables_with_and_without_prefix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_laurent_div_2.html">test_laurent_div_2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_laurent_tuples.html">test_laurent_tuples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_basic.html">test_normalize_laurent_basic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial.html">test_normalize_laurent_polynomial</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_laurent.test_normalize_laurent_polynomial_make_nonnegative.html">test_normalize_laurent_polynomial_make_nonnegative</a></li>
@@ -1161,15 +1164,12 @@
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference</a></li>
     
     
-    <li class="breadcrumb-item"><a href="knotpy.invariants.html" class="nav-link">invariants</a></li>
+    <li class="breadcrumb-item"><a href="knotpy.utils.html" class="nav-link">utils</a></li>
     
     
-    <li class="breadcrumb-item"><a href="knotpy.invariants.tests.html" class="nav-link">tests</a></li>
+    <li class="breadcrumb-item"><a href="knotpy.utils.laurent.html" class="nav-link">laurent</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="knotpy.invariants.tests.test_multivariable_alexander.html" class="nav-link">test_multivariable_alexander</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">test_link_skein</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">laurent_to_tuples</span></li>
   </ul>
 </nav>
 </div>
@@ -1186,12 +1186,31 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="test-link-skein">
-<h1>test_link_skein<a class="headerlink" href="#test-link-skein" title="Link to this heading">#</a></h1>
+  <section id="laurent-to-tuples">
+<h1>laurent_to_tuples<a class="headerlink" href="#laurent-to-tuples" title="Link to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="knotpy.invariants.tests.test_multivariable_alexander.test_link_skein">
-<span class="sig-name descname"><span class="pre">test_link_skein</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.tests.test_multivariable_alexander.test_link_skein" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="knotpy.utils.laurent.laurent_to_tuples">
+<span class="sig-name descname"><span class="pre">laurent_to_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.utils.laurent.laurent_to_tuples" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Return a list of (exponents, coefficient) where:</dt><dd><ul class="simple">
+<li><p>exponents is a tuple of Rational exponents (one per variable),</p></li>
+<li><p>coefficient is the remaining factor (may be symbolic),</p></li>
+</ul>
+</dd>
+</dl>
+<p>assuming all true variables are included in <cite>variables</cite> if given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>Expr</em><em> | </em><em>Poly</em>)</p></li>
+<li><p><strong>variables</strong> (<em>Iterable</em><em>[</em><em>Symbol</em><em>] </em><em>| </em><em>Symbol</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -1218,7 +1237,7 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.tests.test_multivariable_alexander.test_link_skein"><code class="docutils literal notranslate"><span class="pre">test_link_skein()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.utils.laurent.laurent_to_tuples"><code class="docutils literal notranslate"><span class="pre">laurent_to_tuples()</span></code></a></li>
 </ul>
   </nav></div>
 
