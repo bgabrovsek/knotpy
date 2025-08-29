@@ -34,23 +34,13 @@ from knotpy.invariants.skein import smoothen_crossing
 from knotpy.algorithms.symmetry import mirror
 from knotpy.classes.freezing import freeze
 from knotpy.classes.planardiagram import OrientedPlanarDiagram, PlanarDiagram
-from knotpy.reidemeister.reidemeister_3 import (
-    find_reidemeister_3_triangle,
-    reidemeister_3,
-)
+from knotpy.reidemeister.reidemeister_3 import find_reidemeister_3_triangle, reidemeister_3
 from knotpy.reidemeister.simplify import simplify_decreasing, simplify_non_increasing
 from knotpy.utils.set_utils import LeveledSet
+#from knotpy.tables.knot import knot_precomputed_homflypt
 
-from knotpy.invariants._symbols import (
-    _A,
-    _HOMFLYPT_SUM_XYZ,
-    _l,
-    _m,
-    _v,
-    _x,
-    _y,
-    _z,
-)
+from knotpy.invariants._symbols import _A, _l, _m, _v, _x, _y, _z, _HOMFLYPT_SUM_XYZ, _tmp
+
 
 _USE_HOMFLYPT_PRECACHE = False
 _homflypt_xyz_precache: "OrderedDict[object, sp.Expr]" = OrderedDict()
@@ -234,8 +224,17 @@ def homflypt(k: PlanarDiagram | OrientedPlanarDiagram, variables: str="vz") -> s
         >>> kp.homflypt(k, variables="xyz")
         -2*y/x - y**2/x**2 + z**2/x**2
     """
+
+    from knotpy.tables.knot import knot_precomputed_homflypt
+
     variables = str(variables).lower()
-    polynomial = _homflypt_xyz(k)
+
+    # try to get the HOMFLYPT polynomial from the precomputed data
+    polynomial = knot_precomputed_homflypt(k)
+    # otherwise, compute it
+    if polynomial is None:
+        polynomial = _homflypt_xyz(k)
+
     if "x" in variables and "y" in variables and "z" in variables:
         return polynomial
     if "v" in variables and "z" in variables:
@@ -246,6 +245,8 @@ def homflypt(k: PlanarDiagram | OrientedPlanarDiagram, variables: str="vz") -> s
         return _xyz_to_az(polynomial)
     raise ValueError(f"Invalid variable choice: {variables}")
 
+def _homflypt_xyz_mirror(polynomial: sp.Expr) -> sp.Expr:
+    return sp.expand(polynomial.xreplace({_x: _tmp, _y: _x}).xreplace({_tmp: _y}))
 
 def _xyz_to_lm(polynomial: sp.Expr) -> sp.Expr:
     return sp.expand(polynomial.subs({_x: _l, _y: _l ** -1, _z: _m}))

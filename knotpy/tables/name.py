@@ -14,6 +14,9 @@ Name normalization and parsing utilities for knots, links, theta-curves, and han
     based on the normalized name.
 """
 
+def _named(k, name:str):
+    k.name = name
+    return k
 
 def clean_name(name: str) -> str:
     """
@@ -44,6 +47,13 @@ def clean_name(name: str) -> str:
         "borromeanrings": "L6a_4", "borromeanlink": "L6a_4", "borromean": "L6a_4",
         "theta": "T0_1", "trivialtheta": "T0_1", "handcuff": "H0_1", "trivialhandcuff": "H0_1",
     }
+
+    if isinstance(name, int):
+        name = str(name)
+
+    if not isinstance(name, str):
+        raise ValueError(f"Expected str, got {type(name)}")
+
 
     if (simplified := "".join(c for c in name if c.isalnum()).lower()) in _knot_naming_synonyms:
         return _knot_naming_synonyms[simplified]
@@ -145,6 +155,11 @@ def parse_name(name: str):
     index = int("".join(c for c in index_str if c.isdigit()))
     return type_name, number_of_crossings, alt_type, index, mirror, orientation
 
+def safe_clean_and_parse_name(name):
+    try:
+        return parse_name(clean_name(name))
+    except ValueError:
+        return None
 
 def diagram_from_name(name):
     """

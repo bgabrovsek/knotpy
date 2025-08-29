@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from knotpy.classes.planardiagram import OrientedPlanarDiagram, PlanarDiagram
 
-__all__ = ["freeze", "unfreeze"]
+__all__ = ["freeze", "unfreeze", "lock"]
 
 
 def frozen(*_: object, **__: object) -> None:
@@ -38,6 +38,7 @@ _MUTATING_METHODS: tuple[str, ...] = (
     "remove_arc",
     "remove_arcs_from",
 )
+
 
 
 def freeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace: bool = True) -> PlanarDiagram:
@@ -83,6 +84,13 @@ def freeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace: bool = True) -> Pl
 
     return diag
 
+def lock(k: PlanarDiagram | OrientedPlanarDiagram, inplace: bool = True) -> PlanarDiagram:
+    """Lock a planar diagram so it cannot be modified. Unlike freezing, a diagram cannot be unlocked.
+    Used for knot tables, so the user cannot modify a knot in a precomputed knot table.
+    """
+    diag = freeze(k, inplace=inplace)
+    diag.frozen = "locked"  # used by is_frozen()
+    return diag
 
 def unfreeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace: bool = True) -> PlanarDiagram:
     """Unfreeze a planar diagram so it can be modified again.
@@ -112,6 +120,9 @@ def unfreeze(k: PlanarDiagram | OrientedPlanarDiagram, inplace: bool = True) -> 
 
     if not diag.is_frozen():
         return diag
+
+    if diag.frozen == "locked":
+        raise ValueError("Cannot unfreeze a locked diagram.")
 
     diag.frozen = False
 

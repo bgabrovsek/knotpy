@@ -1,54 +1,48 @@
 import knotpy as kp
-from knotpy import from_knotpy_notation
 from time import time
 
-def DO_NOT_test_homflypt():
+def test_homflypt():
 
-    # problem: 13a_3436
-    for knot, real_h in kp.knot_invariants(crossings=9,invariant="homflypt"):
-        h = kp.homflypt(knot)
-        h_ = kp.homflypt(kp.mirror(knot))
+    # unoriented
+    for k in kp.knots(range(0, 8), mirror=True, oriented=False):
+        kp.settings.use_precomputed_invariants = False
+        h = kp.homflypt(k, variables="xyz")
+        kp.settings.use_precomputed_invariants = True
+        h_p = kp.homflypt(k, variables="xyz")
+        assert h == h_p
 
-        if real_h == h or real_h == h_:
-            print(knot.name)
-            pass
-        else:
-            print(knot.name, real_h, "     ", h, "     ", h_)
-        assert real_h == h or real_h == h_, f"{knot.name} \n{real_h}\n{h}\n{h_}"
+    # oriented
+    for k in kp.knots(range(0, 8), mirror=True, oriented=True):
+        kp.settings.use_precomputed_invariants = False
+        h = kp.homflypt(k, variables="xyz")
+        kp.settings.use_precomputed_invariants = True
+        h_p = kp.homflypt(k, variables="xyz")
+        assert h == h_p
 
-
-        #assert real_h == h
-
-    pass
-
-def test_cache():
-
-    k = kp.knot("8_4")
-
-    t1 = time()
-
-    h1 = kp.homflypt(k)
-
-    t2 = time()
-
-    h2 = kp.homflypt(k, variables="lm")
-
-    t3 = time()
-
-    h3 = kp.homflypt(k)
-
-    t4 = time()
-
-    print(t2 - t1, t3 - t2, t4 - t3)
-
-    # assert (t2 - t1)  > (t3 - t2)
-    # assert (t2 - t1)  > (t4 - t3)
-    # assert h1 == h3
+    kp.settings.use_precomputed_invariants = True
 
 
+def test_precomputed_speed():
+
+    N = 12
+
+    kp.settings.use_precomputed_invariants = False
+
+    t = time()
+    for k in kp.knots(range(0, N), mirror=True, oriented=False):
+        kp.homflypt(k, variables="xyz")
+    t_non_precomputed = time() - t
+
+    kp.settings.use_precomputed_invariants = True
+
+    t = time()
+    for k in kp.knots(range(0, N), mirror=True, oriented=False):
+        kp.homflypt(k, variables="xyz")
+    t_precomputed = time() - t
+
+    print("Non-precomputed:", t_non_precomputed)
+    print("    Precomputed:", t_precomputed)
 
 if __name__ == '__main__':
-    import knotpy as kp
-    #test_homflypt()
-
-    test_cache()
+    test_homflypt()
+    test_precomputed_speed()

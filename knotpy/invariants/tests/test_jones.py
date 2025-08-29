@@ -1,12 +1,5 @@
-from sympy import Integer, sympify, expand, simplify, symbols, Rational
-
-from knotpy import jones
-from knotpy.algorithms.canonical import canonical
-
-from knotpy.notation.native import from_knotpy_notation
-from knotpy.notation.pd import from_pd_notation
-
-from knotpy.invariants.yamada import yamada
+import sympy as sp
+import knotpy as kp
 
 def test_jones():
     """ Test the Jones polynomial with examples from KnotInfo (https://knotinfo.math.indiana.edu/)
@@ -50,12 +43,12 @@ def test_jones():
 
     # TODO: does not work for links, we should convert them to oriented links as PD can also provide orientation
 
-    x, t = symbols('x t')
+    x, t = sp.symbols('x t')
 
     for name, (pd, expected_jones) in known_values.items():
-        k = from_pd_notation(pd)
-        jones_ = jones(k)
-        expected_jones = sympify(expected_jones)
+        k = kp.from_pd_notation(pd)
+        jones_ = kp.jones(k)
+        expected_jones = sp.sympify(expected_jones)
 
         # if name[0] == "L":
         #     expected_jones = expand(expected_jones.subs(x, t**Rational(-1, 2)))
@@ -67,14 +60,21 @@ def test_jones():
         assert jones_ == expected_jones, f"Jones polynomial for {name} is {jones_} instead of {expected_jones}"
 
 
-if __name__ == '__main__':
-    from time import time
-    t = time()
-    for i in range(100):
-        test_jones()
-    print(time() - t)
+def test_jones_vs_homflypt():
+    from knotpy.invariants.jones import jones_from_homflypt
+    kp.settings.use_precomputed_invariants = True
 
-    """
-    100: 2.8
-    200: 5.66 vs 7.69
-    """
+
+    for k in kp.knots(range(0, 8), mirror=True, oriented=True):
+        h = kp.homflypt(k, variables="xyz")
+        j = kp.jones(k)
+        assert h is not None
+        jh = jones_from_homflypt(h)
+        assert j == jh
+    kp.settings.use_precomputed_invariants = True
+
+if __name__ == '__main__':
+
+
+    test_jones_vs_homflypt()
+

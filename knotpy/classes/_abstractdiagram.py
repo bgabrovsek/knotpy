@@ -61,6 +61,17 @@ class _NodeDiagram(ABC):
             **attr: Additional attributes applied to created/updated nodes.
         """
 
+    def is_locked(self) -> bool:
+        """Return whether the diagram is frozen.
+
+        Returns:
+            bool: ``True`` if frozen; otherwise ``False``.
+        """
+        try:
+            return getattr(self, "frozen") == "locked"
+        except AttributeError:
+            return False
+
     def is_frozen(self) -> bool:
         """Return whether the diagram is frozen.
 

@@ -18,7 +18,16 @@ import sympy as sp
 
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.invariants.bracket import bracket
-from knotpy.invariants._symbols import _A, _t
+from knotpy.invariants._symbols import _A, _t, _x, _y, _z
+
+def jones_from_homflypt(polynomial_xyz) -> sp.Expr:
+    """Compute the Jones polynomial from the homflypt polynomial in variables xyz."""
+
+    polynomial_xyz = sp.expand(
+        polynomial_xyz.subs({_x: _t**-1, _y: -_t, _z: _t ** sp.Rational(1, 2) - _t ** sp.Rational(-1, 2)})
+    )
+    return polynomial_xyz
+
 
 
 def jones(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:

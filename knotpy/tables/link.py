@@ -14,20 +14,15 @@ from functools import partial
 
 from knotpy.utils.dict_utils import LazyDict
 from knotpy.tables.invariant_reader import load_invariant_table
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram
 from knotpy.classes.freezing import unfreeze
 from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.symmetry import mirror as mirror_diagram
-from knotpy.tables.invariant_reader import (
-    #_eval_diagram_dict,
-    _eval_diagram,
-    _eval_homflypt_dict,
-    _eval_kauffman_dict,
-    _eval_multivariable_alexander_dict,
-    #_eval_components_dict,
-)
-from knotpy.tables.name import clean_name, parse_name
+from knotpy.tables.invariant_reader import _eval_diagram, _eval_poly
+from knotpy.tables.name import safe_clean_and_parse_name, _named
 from knotpy.algorithms.orientation import unorient
+from knotpy.algorithms.orientation import reverse
+
 
 _DATA_DIR = Path(__file__).parent / "data"
 _LINK_TABLE_CROSSINGS = [2, 4, 5, 6, 7, 8]
@@ -40,7 +35,6 @@ _link_multivariable_alexander_table: list[dict] = [{} for _ in range(max(_LINK_T
 _link_components_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
 
 _loaded = False
-
 
 def _load_link_table() -> None:
     """Populate lazy tables for links and selected invariants."""
@@ -60,14 +54,14 @@ def _load_link_table() -> None:
             load_function=partial(
                 load_invariant_table, filename=_DATA_DIR / f"links_homflypt_{n}.csv.gz", evaluate=False, only_field_name="homflypt"
             ),
-            eval_function=_eval_homflypt_dict,
+            eval_function=_eval_poly,
         )
 
         _link_kauffman_table[n] = LazyDict(
             load_function=partial(
                 load_invariant_table, filename=_DATA_DIR / f"links_kauffman_{n}.csv.gz", evaluate=False, only_field_name="kauffman"
             ),
-            eval_function=_eval_kauffman_dict,
+            eval_function=_eval_poly,
         )
 
         _link_multivariable_alexander_table[n] = LazyDict(
@@ -75,7 +69,7 @@ def _load_link_table() -> None:
                 load_invariant_table,
                 filename=_DATA_DIR / f"links_multivariable_alexander_{n}.csv.gz", evaluate=False, only_field_name="alexander"
             ),
-            eval_function=_eval_multivariable_alexander_dict,
+            eval_function=_eval_poly,
         )
 
         _link_components_table[n] = LazyDict(
@@ -92,23 +86,31 @@ def link(name: str) -> PlanarDiagram | OrientedPlanarDiagram:
     """Return the (unfrozen) diagram for a link by name."""
     _load_link_table()  # lazy load
 
-    name = clean_name(name)
-    type_name, number_of_crossings, alt_type, index, mirror, orientation = parse_name(name)
+    if (res := safe_clean_and_parse_name(name)) is None:
+        raise ValueError(f"Invalid link name: {name}")
+
+    type_name, number_of_crossings, alt_type, index, mirror, orientation = res
     oriented = bool(orientation)
+
+    is_reversed = False
+    if oriented and (is_reversed := orientation.startswith("-")):
+        # reverse "+" in "-"
+        orientation = "".join(["-" if c == "+" else "+" for c in orientation])
 
     # sanity on type
     if type_name == "knot":
-        raise ValueError("Knots are not links")
+        from knotpy.tables.knot import knot
+        return knot(name)
     if type_name in {"theta", "handcuff"}:
-        raise ValueError("Theta curves or handcuff links are not links")
+        from knotpy.tables.theta import theta
+        return theta(name)
     if type_name != "link":
         raise ValueError(f"Invalid link type: {name}")
 
     if number_of_crossings > max(_LINK_TABLE_CROSSINGS):
-        raise ValueError(
-            f"Only links with up to {max(_LINK_TABLE_CROSSINGS)} crossings are supported (got: {name})"
-        )
+        raise ValueError(f"Only links with up to {max(_LINK_TABLE_CROSSINGS)} crossings are supported (got: {name})")
 
+    # reconstruct the link name and retrieve the link
     base_name = f"L{number_of_crossings}{'' if not alt_type else alt_type}_{index}"
 
     number_of_components = _link_components_table[number_of_crossings][base_name]  # TODO: let _link_components only be int, not dict
@@ -126,19 +128,22 @@ def link(name: str) -> PlanarDiagram | OrientedPlanarDiagram:
     result = _link_table[number_of_crossings][base_name_o]
 
     if oriented:
+
+        if is_reversed:
+            # reverse the orientation
+            result = canonical(reverse(result, inplace=False))
+            result.name = base_name[:-len(orientation)] + "".join(["-" if c == "+" else "+" for c in orientation])
+
         if mirror:
-            return canonical(mirror_diagram(result, inplace=False))  # todo: chexk * in name
+            return canonical(mirror_diagram(result, inplace=False))
         else:
             return unfreeze(result, inplace=False)
     else:
-        result = unorient(result)
+        result = canonical(unorient(result))
         result.name = base_name
-
         if mirror:
-            return canonical(mirror_diagram(result, inplace=True))
-        else:
-            return result
-
+            result = canonical(mirror_diagram(result, inplace=False))
+        return result
 
 
 def links_generator(
@@ -161,12 +166,32 @@ def links_generator(
     if any(n < 0 for n in crossings):
         raise ValueError("Links with negative number of crossings are not supported")
 
-    if not mirror and not oriented:
+    if not oriented:
+        # oriented = False
         for n in crossings:
-            for link_dict in _link_table[n].values():
-                yield unfreeze(link_dict["diagram"], inplace=False)
+            for k in _link_table[n].values():
+
+                k = canonical(unorient(k))
+
+                if "-" in k.name:  # for an "unoriented" link only take the orientation "+++...+++"
+                    continue
+                base_name = "".join(c for c in k.name if c != "+" and c != "-")
+
+                k.name = base_name
+                yield k
+
+                if mirror:
+                    k_mirror = _named(canonical(mirror_diagram(k, inplace=False)), base_name + "*")
+                    if k_mirror != k:
+                        yield k_mirror
+
     else:
-        raise NotImplementedError("Mirror and oriented link table not supported yet")
+        # oriented = True
+        for n in crossings:
+            for k in _link_table[n].values():
+                yield unfreeze(k, inplace=False)
+                if mirror:
+                    yield canonical(mirror_diagram(k, inplace=False))
 
 
 def links(crossings, mirror: bool = False, oriented: bool = False) -> list:

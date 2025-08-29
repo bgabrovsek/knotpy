@@ -4,7 +4,7 @@
 Algorithms that deal with orientation.
 """
 
-__all__ = ["orient", "unorient", "orientations"]
+__all__ = ["orient", "unorient", "orientations", "reverse"]
 __version__ = "1.0"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
@@ -139,6 +139,45 @@ def orient(k: PlanarDiagram) -> OrientedPlanarDiagram:
         Diagram named 3_1 a → X(b3o c0i c3i b0o), b → X(a3i c2o c1o a0i), c → X(a1o b2i b1i a2o)
     """
     return orient_edges(k, compute_edges(k))
+
+
+def reverse(k: OrientedPlanarDiagram, inplace: bool = False) -> OrientedPlanarDiagram:
+    """Reverse orientation of an oriented diagram.
+
+    Swaps each arc's endpoint types (ingoing/outgoing) accordingly.
+
+    Args:
+        k: Oriented planar diagram to reverse.
+        inplace: If ``True``, modify ``k`` in place, otherwise return a copy.
+
+    Returns:
+        The orientation-reversed diagram.
+
+    Raises:
+        TypeError: If ``k`` is an unoriented ``PlanarDiagram``.
+    """
+    if type(k) is PlanarDiagram:
+        raise TypeError("Cannot reverse an unoriented planar diagram")
+
+    if not inplace:
+        k = k.copy()
+
+    # Rewrite all arcs with reversed endpoint types.
+    for ep1, ep2 in list(k.arcs):
+        k.set_endpoint(
+            endpoint_for_setting=(ep1.node, ep1.position),
+            adjacent_endpoint=(ep2.node, ep2.position),
+            create_using=type(ep2).reverse_type(),
+            **k.nodes[ep2.node].attr,
+        )
+        k.set_endpoint(
+            endpoint_for_setting=(ep2.node, ep2.position),
+            adjacent_endpoint=(ep1.node, ep1.position),
+            create_using=type(ep1).reverse_type(),
+            **k.nodes[ep1.node].attr,
+        )
+
+    return k
 
 
 def unorient(k: OrientedPlanarDiagram | PlanarDiagram) -> PlanarDiagram:

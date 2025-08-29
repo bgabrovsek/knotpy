@@ -20,11 +20,12 @@ import csv
 import gzip
 from pathlib import Path
 from typing import Any, Iterable
+import sympy as sp
 
 from knotpy.classes.planardiagram import Diagram
 from knotpy.notation.dispatcher import from_notation_dispatcher
 from knotpy.notation.native import from_knotpy_notation
-from knotpy.classes.freezing import freeze
+from knotpy.classes.freezing import lock
 from knotpy.invariants._symbols import SYMBOL_LOCALS
 
 
@@ -51,42 +52,42 @@ def _clean_csv_lines(file) -> Iterable[str]:
 def _eval_diagram_symmetry_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing a native diagram string and a symmetry descriptor."""
     return {
-        "diagram": freeze(from_knotpy_notation(uneval_dict["native notation"])),
+        "diagram": lock(from_knotpy_notation(uneval_dict["native notation"])),
         "symmetry": uneval_dict["symmetry"],
     }
 
 
 def _eval_diagram_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing only a native diagram string."""
-    return {"diagram": freeze(from_knotpy_notation(uneval_dict["native notation"]))}
+    return {"diagram": lock(from_knotpy_notation(uneval_dict["native notation"]))}
 
 def _eval_diagram(uneval_diagram: str) -> Diagram:
     """Evaluate a row containing only a native diagram string."""
-    return freeze(from_knotpy_notation(uneval_diagram))
+    return lock(from_knotpy_notation(uneval_diagram))
+
+def _eval_poly(uneval_poly: str) -> sp.Expr:
+    """Evaluate a row containing only a SymPy polynomial string."""
+    return sp.sympify(uneval_poly, locals=SYMBOL_LOCALS)
 
 def _eval_homflypt_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing a HOMFLYPT polynomial."""
-    from sympy import sympify  # local import for fast module load
-    return {"homflypt": sympify(uneval_dict["homflypt"], locals=SYMBOL_LOCALS)}
+    return {"homflypt": sp.sympify(uneval_dict["homflypt"], locals=SYMBOL_LOCALS)}
 
 
 def _eval_kauffman_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing a Kauffman polynomial."""
-    from sympy import sympify  # local import for fast module load
-    return {"kauffman": sympify(uneval_dict["kauffman"], locals=SYMBOL_LOCALS)}
+    return {"kauffman": sp.sympify(uneval_dict["kauffman"], locals=SYMBOL_LOCALS)}
 
 
 def _eval_yamada_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing a Yamada polynomial."""
-    from sympy import sympify  # local import for fast module load
-    return {"yamada": sympify(uneval_dict["yamada"], locals=SYMBOL_LOCALS)}
+    return {"yamada": sp.sympify(uneval_dict["yamada"], locals=SYMBOL_LOCALS)}
 
 
 def _eval_multivariable_alexander_dict(uneval_dict: dict) -> dict:
     """Evaluate a row containing a multivariable Alexander polynomial."""
-    from sympy import sympify  # local import for fast module load
     return {
-        "multivariable alexander": sympify(
+        "multivariable alexander": sp.sympify(
             uneval_dict["multivariable alexander"], locals=SYMBOL_LOCALS
         )
     }
@@ -119,7 +120,7 @@ def _evaluate_value(field_name: str | None, unevaluated_value: str) -> Any:
     # Diagram fields: e.g. "native notation", "dowker notation", "gauss notation", ...
     if field_name is not None and "notation" in field_name.lower():
         from_notation = from_notation_dispatcher(field_name.split()[0].lower())
-        return freeze(from_notation(unevaluated_value))
+        return lock(from_notation(unevaluated_value))
 
     # Otherwise, invariant / property value
     if unevaluated_value.replace(" ", "").isalpha() and len(unevaluated_value) > 1:
@@ -131,8 +132,7 @@ def _evaluate_value(field_name: str | None, unevaluated_value: str) -> Any:
         pass
 
     try:
-        from sympy import sympify  # local import for fast module load
-        return sympify(unevaluated_value)
+        return sp.sympify(unevaluated_value)
     except Exception:
         # Fall back to plain string (covers SympifyError and others)
         return unevaluated_value

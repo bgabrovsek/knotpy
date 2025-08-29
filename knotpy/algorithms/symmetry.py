@@ -4,7 +4,7 @@
 Symmetry operations on planar knot diagrams.
 """
 
-__all__ = ["mirror", "flip", "reverse"]
+__all__ = ["mirror", "flip"]
 __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
@@ -33,12 +33,12 @@ __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 # 3. reverses R^3, preserces K,
 # 4. reverses R^4, reverses K
 
-from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
+from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram
 from knotpy.algorithms.rewire import permute_node
 
 
 def mirror(
-    k: PlanarDiagram | OrientedPlanarDiagram,
+    k: Diagram,
     crossings: set | list | tuple | None = None,
     inplace: bool = False,
 ):
@@ -67,11 +67,23 @@ def mirror(
     for c in crossings:
         permute_node(k, c, (1, 2, 3, 0))
 
+    if k.name and isinstance(k.name, str):
+        # if the link is oriented, add a '*' to the name before orientation signs
+        i = len(k.name)
+        while i > 0 and k.name[i - 1] in "+-":
+            i -= 1
+        orientation_str = k.name[i:]
+        base_str = k.name[:i]
+        if base_str.endswith("*"):
+            k.name = base_str[:-1] + orientation_str
+        else:
+            k.name = base_str + "*" +orientation_str
+
     return k
 
 
 def flip(
-    k: PlanarDiagram | OrientedPlanarDiagram,
+    k: Diagram,
     nodes: set | list | tuple | None = None,
     inplace: bool = False,
 ):
@@ -98,45 +110,6 @@ def flip(
         deg = k.degree(node)
         # Reverse order: [deg-1, deg-2, ..., 0]
         permute_node(k, node, list(range(deg - 1, -1, -1)))
-
-    return k
-
-
-def reverse(k: OrientedPlanarDiagram, inplace: bool = False) -> OrientedPlanarDiagram:
-    """Reverse orientation of an oriented diagram.
-
-    Swaps each arc's endpoint types (ingoing/outgoing) accordingly.
-
-    Args:
-        k: Oriented planar diagram to reverse.
-        inplace: If ``True``, modify ``k`` in place, otherwise return a copy.
-
-    Returns:
-        The orientation-reversed diagram.
-
-    Raises:
-        TypeError: If ``k`` is an unoriented ``PlanarDiagram``.
-    """
-    if type(k) is PlanarDiagram:
-        raise TypeError("Cannot reverse an unoriented planar diagram")
-
-    if not inplace:
-        k = k.copy()
-
-    # Rewrite all arcs with reversed endpoint types.
-    for ep1, ep2 in list(k.arcs):
-        k.set_endpoint(
-            endpoint_for_setting=(ep1.node, ep1.position),
-            adjacent_endpoint=(ep2.node, ep2.position),
-            create_using=type(ep2).reverse_type(),
-            **k.nodes[ep2.node].attr,
-        )
-        k.set_endpoint(
-            endpoint_for_setting=(ep2.node, ep2.position),
-            adjacent_endpoint=(ep1.node, ep1.position),
-            create_using=type(ep1).reverse_type(),
-            **k.nodes[ep1.node].attr,
-        )
 
     return k
 

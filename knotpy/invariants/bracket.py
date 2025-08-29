@@ -30,7 +30,7 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.reidemeister.simplify import simplify_decreasing
 from knotpy.invariants.cache import Cache
 from knotpy._settings import settings
-from knotpy.invariants._symbols import _A, _KAUFFMAN_TERM
+from knotpy.invariants._symbols import _A, _KAUFFMAN_TERM, _x, _y, _z
 
 _USE_JONES_CACHE = False
 _KBSM_cache = Cache(max_number_of_nodes=5, cache_size=10000)
@@ -116,6 +116,14 @@ def kauffman_bracket_skein_module(
     settings.load(settings_dump)
     return [(sp.expand(r), s) for r, s in expression.to_tuple()]
 
+def bracket_from_homflypt(polynomial_xyz) -> sp.Expr:
+    """Compute the normalized bracket polynomial from the homflypt polynomial in variables xyz."""
+
+    polynomial_xyz = sp.expand(
+        polynomial_xyz.subs({_x: _A**4, _y: -_A**-4, _z: _A**-2 - _A**2})
+    )
+    return polynomial_xyz
+
 
 def bracket(k: PlanarDiagram, normalize: bool = True) -> sp.Expr:
     """Compute the Kauffman bracket polynomial ⟨·⟩.
@@ -135,6 +143,20 @@ def bracket(k: PlanarDiagram, normalize: bool = True) -> sp.Expr:
     Raises:
         ValueError: If unknot removal yields a non-empty diagram.
     """
+
+    # try do compute the bracket polynomial from the precomputed homflypt polynomial
+    from knotpy.tables.knot import knot_precomputed_homflypt
+    polynomial = knot_precomputed_homflypt(k)
+    if polynomial is not None:
+        polynomial = bracket_from_homflypt(polynomial)
+        original_framing = k.framing if k.is_framed() else 0
+        if normalize:
+            polynomial *= (-_A ** -3) ** (-original_framing)  # reverse
+        else:
+            polynomial *= (-_A ** -3) ** (-original_framing - writhe(k))  # reverse
+        return sp.expand(polynomial)
+
+
     settings_dump = settings.dump()
     settings.update({"trace_moves": False, "r5_only_trivalent": True, "framed": True})
 

@@ -191,7 +191,7 @@ class LazyDict(dict[K, V], Generic[K, V]):
     def __init__(
         self,
         load_function: Callable[[], dict[K, V] | Iterable[tuple[K, V]]],
-        eval_function: Callable[[V], V] | None = None,
+        eval_function: Callable[[V], Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
