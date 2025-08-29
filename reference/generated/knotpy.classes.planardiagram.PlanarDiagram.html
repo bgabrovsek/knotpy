@@ -390,6 +390,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient.html">orient</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient_edges.html">orient_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orientations.html">orientations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.reverse.html">reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
@@ -423,7 +424,6 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.symmetry.html">symmetry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.flip.html">flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.mirror.html">mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.reverse.html">reverse</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.tangle.html">tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -555,6 +555,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.freezing.html">freezing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.freeze.html">freeze</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.frozen.html">frozen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.lock.html">lock</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html">unfreeze</a></li>
 </ul>
 </details></li>
@@ -739,6 +740,8 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.html">test_bracket</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket.html">test_bracket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_precomputed.html">test_bracket_precomputed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_vs_homflypt.html">test_bracket_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_classifier.html">test_classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -759,12 +762,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.html">test_homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.DO_NOT_test_homflypt.html">DO_NOT_test_homflypt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_cache.html">test_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_homflypt.html">test_homflypt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_precomputed_speed.html">test_precomputed_speed</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_jones.html">test_jones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt.html">test_jones_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_knotoids.html">test_knotoids</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1299,46 +1303,49 @@ is populated from the provided input.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.is_frozen" title="knotpy.classes.planardiagram.PlanarDiagram.is_frozen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_frozen</span></code></a>()</p></td>
 <td><p>Return whether the diagram is frozen.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.is_oriented" title="knotpy.classes.planardiagram.PlanarDiagram.is_oriented"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_oriented</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.is_locked" title="knotpy.classes.planardiagram.PlanarDiagram.is_locked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_locked</span></code></a>()</p></td>
+<td><p>Return whether the diagram is frozen.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.is_oriented" title="knotpy.classes.planardiagram.PlanarDiagram.is_oriented"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_oriented</span></code></a>()</p></td>
 <td><p>Return whether the diagram is oriented.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.permute_node" title="knotpy.classes.planardiagram.PlanarDiagram.permute_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permute_node</span></code></a>(node, permutation)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.permute_node" title="knotpy.classes.planardiagram.PlanarDiagram.permute_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permute_node</span></code></a>(node, permutation)</p></td>
 <td><p>Permute positions of a node's endpoints.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes" title="knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relabel_nodes</span></code></a>(mapping)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes" title="knotpy.classes.planardiagram.PlanarDiagram.relabel_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relabel_nodes</span></code></a>(mapping)</p></td>
 <td><p>Relabel nodes using a (possibly partial) mapping.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arc" title="knotpy.classes.planardiagram.PlanarDiagram.remove_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_arc</span></code></a>(arc_for_removing)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arc" title="knotpy.classes.planardiagram.PlanarDiagram.remove_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_arc</span></code></a>(arc_for_removing)</p></td>
 <td><p>Remove an arc by removing its two endpoints.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_arcs_from</span></code></a>(arcs_for_removing)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_arcs_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_arcs_from</span></code></a>(arcs_for_removing)</p></td>
 <td><p>Remove multiple arcs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint" title="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_endpoint</span></code></a>(endpoint_for_removal)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint" title="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_endpoint</span></code></a>(endpoint_for_removal)</p></td>
 <td><p>Remove a single endpoint and adjust neighbor positions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_endpoints_from</span></code></a>(endpoints_for_removal)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_endpoints_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_endpoints_from</span></code></a>(endpoints_for_removal)</p></td>
 <td><p>Remove multiple endpoints safely (order-aware).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_node" title="knotpy.classes.planardiagram.PlanarDiagram.remove_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_node</span></code></a>(node_for_removing[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_node" title="knotpy.classes.planardiagram.PlanarDiagram.remove_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_node</span></code></a>(node_for_removing[, ...])</p></td>
 <td><p>Remove a node (optionally removing incident endpoints).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_nodes_from</span></code></a>(nodes_for_removal[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from" title="knotpy.classes.planardiagram.PlanarDiagram.remove_nodes_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_nodes_from</span></code></a>(nodes_for_removal[, ...])</p></td>
 <td><p>Remove multiple nodes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arc" title="knotpy.classes.planardiagram.PlanarDiagram.set_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_arc</span></code></a>(arc_for_setting, **attr)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arc" title="knotpy.classes.planardiagram.PlanarDiagram.set_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_arc</span></code></a>(arc_for_setting, **attr)</p></td>
 <td><p>Set an arc (pair of endpoints), setting each endpoint to the other.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from" title="knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_arcs_from</span></code></a>(arcs_for_adding, **attr)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from" title="knotpy.classes.planardiagram.PlanarDiagram.set_arcs_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_arcs_from</span></code></a>(arcs_for_adding, **attr)</p></td>
 <td><p>Set multiple arcs, optionally parsing from a simple string syntax.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_endpoint" title="knotpy.classes.planardiagram.PlanarDiagram.set_endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_endpoint</span></code></a>(endpoint_for_setting, ...[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.set_endpoint" title="knotpy.classes.planardiagram.PlanarDiagram.set_endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_endpoint</span></code></a>(endpoint_for_setting, ...[, ...])</p></td>
 <td><p>Set an endpoint to the specified adjacent endpoint, updating attributes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.sign" title="knotpy.classes.planardiagram.PlanarDiagram.sign"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sign</span></code></a>(crossing)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.sign" title="knotpy.classes.planardiagram.PlanarDiagram.sign"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sign</span></code></a>(crossing)</p></td>
 <td><p>Return the sign of a crossing.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.twin" title="knotpy.classes.planardiagram.PlanarDiagram.twin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">twin</span></code></a>(endpoint)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#knotpy.classes.planardiagram.PlanarDiagram.twin" title="knotpy.classes.planardiagram.PlanarDiagram.twin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">twin</span></code></a>(endpoint)</p></td>
 <td><p>Return the opposite endpoint (twin) of an endpoint.</p></td>
 </tr>
 </tbody>
@@ -2040,6 +2047,20 @@ its concrete type is used and attributes copied.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.is_locked">
+<span class="sig-name descname"><span class="pre">is_locked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.is_locked" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the diagram is frozen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">True</span></code> if frozen; otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.PlanarDiagram.sign">
 <span class="sig-name descname"><span class="pre">sign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crossing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.PlanarDiagram.sign" title="Link to this definition">#</a></dt>
 <dd><p>Return the sign of a crossing.</p>
@@ -2151,6 +2172,7 @@ its concrete type is used and attributes copied.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.add_virtual_crossings_from"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.add_virtual_crossings_from()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.crossings"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.crossings</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.is_frozen"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.is_frozen()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.is_locked"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.is_locked()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.sign"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.sign()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.vertices"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.vertices</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.PlanarDiagram.virtual_crossings"><code class="docutils literal notranslate"><span class="pre">PlanarDiagram.virtual_crossings</span></code></a></li>

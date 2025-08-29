@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.classes.freezing.frozen';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="unfreeze" href="knotpy.classes.freezing.unfreeze.html" />
+    <link rel="next" title="lock" href="knotpy.classes.freezing.lock.html" />
     <link rel="prev" title="freeze" href="knotpy.classes.freezing.freeze.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -390,6 +390,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient.html">orient</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient_edges.html">orient_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orientations.html">orientations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.reverse.html">reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
@@ -423,7 +424,6 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.symmetry.html">symmetry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.flip.html">flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.mirror.html">mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.reverse.html">reverse</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.tangle.html">tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -555,6 +555,7 @@
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.classes.freezing.html">freezing</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.freeze.html">freeze</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">frozen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.lock.html">lock</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html">unfreeze</a></li>
 </ul>
 </details></li>
@@ -739,6 +740,8 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.html">test_bracket</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket.html">test_bracket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_precomputed.html">test_bracket_precomputed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_vs_homflypt.html">test_bracket_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_classifier.html">test_classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -759,12 +762,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.html">test_homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.DO_NOT_test_homflypt.html">DO_NOT_test_homflypt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_cache.html">test_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_homflypt.html">test_homflypt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_precomputed_speed.html">test_precomputed_speed</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_jones.html">test_jones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt.html">test_jones_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_knotoids.html">test_knotoids</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>

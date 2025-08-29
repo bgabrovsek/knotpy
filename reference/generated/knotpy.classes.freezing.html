@@ -390,6 +390,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient.html">orient</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient_edges.html">orient_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orientations.html">orientations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.reverse.html">reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
@@ -423,7 +424,6 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.symmetry.html">symmetry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.flip.html">flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.mirror.html">mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.reverse.html">reverse</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.tangle.html">tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -555,6 +555,7 @@
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">freezing</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.freeze.html">freeze</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.frozen.html">frozen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.lock.html">lock</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html">unfreeze</a></li>
 </ul>
 </details></li>
@@ -739,6 +740,8 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.html">test_bracket</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket.html">test_bracket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_precomputed.html">test_bracket_precomputed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_vs_homflypt.html">test_bracket_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_classifier.html">test_classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -759,12 +762,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.html">test_homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.DO_NOT_test_homflypt.html">DO_NOT_test_homflypt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_cache.html">test_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_homflypt.html">test_homflypt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_precomputed_speed.html">test_precomputed_speed</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_jones.html">test_jones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt.html">test_jones_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_knotoids.html">test_knotoids</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1194,7 +1198,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.classes.freezing.frozen.html#knotpy.classes.freezing.frozen" title="knotpy.classes.freezing.frozen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">frozen</span></code></a>(*_, **__)</p></td>
 <td><p>Dummy method used on frozen diagrams to block mutation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html#knotpy.classes.freezing.unfreeze" title="knotpy.classes.freezing.unfreeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfreeze</span></code></a>(k[, inplace])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.classes.freezing.lock.html#knotpy.classes.freezing.lock" title="knotpy.classes.freezing.lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lock</span></code></a>(k[, inplace])</p></td>
+<td><p>Lock a planar diagram so it cannot be modified.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html#knotpy.classes.freezing.unfreeze" title="knotpy.classes.freezing.unfreeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfreeze</span></code></a>(k[, inplace])</p></td>
 <td><p>Unfreeze a planar diagram so it can be modified again.</p></td>
 </tr>
 </tbody>
@@ -1270,6 +1277,24 @@ frozen diagram was used as a dict/set key and you want to mutate it again.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.classes.freezing.lock">
+<span class="sig-name descname"><span class="pre">lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.freezing.lock" title="Link to this definition">#</a></dt>
+<dd><p>Lock a planar diagram so it cannot be modified. Unlike freezing, a diagram cannot be unlocked.
+Used for knot tables, so the user cannot modify a knot in a precomputed knot table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a><em> | </em><a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>)</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1297,6 +1322,7 @@ frozen diagram was used as a dict/set key and you want to mutate it again.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.freezing.freeze"><code class="docutils literal notranslate"><span class="pre">freeze()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.freezing.unfreeze"><code class="docutils literal notranslate"><span class="pre">unfreeze()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.freezing.lock"><code class="docutils literal notranslate"><span class="pre">lock()</span></code></a></li>
 </ul>
   </nav></div>
 

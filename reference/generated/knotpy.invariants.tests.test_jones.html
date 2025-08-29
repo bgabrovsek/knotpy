@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="test_jones" href="knotpy.invariants.tests.test_jones.test_jones.html" />
-    <link rel="prev" title="test_cache" href="knotpy.invariants.tests.test_homflypt.test_cache.html" />
+    <link rel="prev" title="test_precomputed_speed" href="knotpy.invariants.tests.test_homflypt.test_precomputed_speed.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -390,6 +390,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient.html">orient</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orient_edges.html">orient_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.orientations.html">orientations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.reverse.html">reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.orientation.unorient.html">unorient</a></li>
 </ul>
 </details></li>
@@ -423,7 +424,6 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.symmetry.html">symmetry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.flip.html">flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.mirror.html">mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.symmetry.reverse.html">reverse</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.tangle.html">tangle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -555,6 +555,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.classes.freezing.html">freezing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.freeze.html">freeze</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.frozen.html">frozen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.lock.html">lock</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.classes.freezing.unfreeze.html">unfreeze</a></li>
 </ul>
 </details></li>
@@ -739,6 +740,8 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.html">test_bracket</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket.html">test_bracket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_precomputed.html">test_bracket_precomputed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_bracket.test_bracket_vs_homflypt.html">test_bracket_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_classifier.html">test_classifier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -759,12 +762,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.html">test_homflypt</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.DO_NOT_test_homflypt.html">DO_NOT_test_homflypt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_cache.html">test_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_homflypt.html">test_homflypt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_homflypt.test_precomputed_speed.html">test_precomputed_speed</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">test_jones</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html">test_jones</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt.html">test_jones_vs_homflypt</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_knotoids.html">test_knotoids</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1194,6 +1198,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones.html#knotpy.invariants.tests.test_jones.test_jones" title="knotpy.invariants.tests.test_jones.test_jones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_jones</span></code></a>()</p></td>
 <td><p>Test the Jones polynomial with examples from KnotInfo (<a class="reference external" href="https://knotinfo.math.indiana.edu/">https://knotinfo.math.indiana.edu/</a>) and LinkInfo (<a class="reference external" href="https://linkinfo.sitehost.iu.edu/">https://linkinfo.sitehost.iu.edu/</a>)</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt.html#knotpy.invariants.tests.test_jones.test_jones_vs_homflypt" title="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_jones_vs_homflypt</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1203,6 +1210,11 @@
 <dd><p>Test the Jones polynomial with examples from KnotInfo (<a class="reference external" href="https://knotinfo.math.indiana.edu/">https://knotinfo.math.indiana.edu/</a>)
 and LinkInfo (<a class="reference external" href="https://linkinfo.sitehost.iu.edu/">https://linkinfo.sitehost.iu.edu/</a>)</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.invariants.tests.test_jones.test_jones_vs_homflypt">
+<span class="sig-name descname"><span class="pre">test_jones_vs_homflypt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.tests.test_jones.test_jones_vs_homflypt" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 
@@ -1230,6 +1242,7 @@ and LinkInfo (<a class="reference external" href="https://linkinfo.sitehost.iu.e
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.tests.test_jones.test_jones"><code class="docutils literal notranslate"><span class="pre">test_jones()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.tests.test_jones.test_jones_vs_homflypt"><code class="docutils literal notranslate"><span class="pre">test_jones_vs_homflypt()</span></code></a></li>
 </ul>
   </nav></div>
 
