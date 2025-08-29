@@ -79,7 +79,7 @@ def connected_sum_decomposition(k: PlanarDiagram) -> list:
         for g in result[1:]:
             g.framing = 0
 
-    return result
+    return sorted(result)
 
 
 def is_connected_sum_third_order(g: PlanarDiagram) -> bool:

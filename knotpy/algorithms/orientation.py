@@ -177,6 +177,15 @@ def reverse(k: OrientedPlanarDiagram, inplace: bool = False) -> OrientedPlanarDi
             **k.nodes[ep1.node].attr,
         )
 
+    if k.name and isinstance(k.name, str):
+        if k.name[0] == "+":
+            k.name = "-" + k.name[1:]
+        elif k.name[0] == "-":
+            k.name = "+" + k.name[1:]
+        else:
+            k.name = "-" + k.name
+
+
     return k
 
 

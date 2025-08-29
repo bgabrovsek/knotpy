@@ -39,7 +39,7 @@ from knotpy.reidemeister.simplify import simplify_decreasing, simplify_non_incre
 from knotpy.utils.set_utils import LeveledSet
 #from knotpy.tables.knot import knot_precomputed_homflypt
 
-from knotpy.invariants._symbols import _A, _l, _m, _v, _x, _y, _z, _HOMFLYPT_SUM_XYZ, _tmp
+from knotpy.invariants._symbols import _A, _a, _l, _m, _v, _x, _y, _z, _HOMFLYPT_SUM_XYZ, _tmp
 
 
 _USE_HOMFLYPT_PRECACHE = False
@@ -255,7 +255,7 @@ def _xyz_to_vz(polynomial: sp.Expr) -> sp.Expr:
     return sp.expand(polynomial.subs({_x: _v ** -1, _y: -_v, _z: -_z}))
 
 def _xyz_to_az(polynomial: sp.Expr) -> sp.Expr:
-    return sp.expand(polynomial.subs({_x: _A, _y: -_A ** -1, _z: -_z}))
+    return sp.expand(polynomial.subs({_x: _a, _y: -_a ** -1, _z: -_z}))
 
 if __name__ == "__main__":
     pass

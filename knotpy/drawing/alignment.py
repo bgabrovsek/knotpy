@@ -82,6 +82,9 @@ def canonically_rotate_circles(circles: dict, degree: int = 0) -> dict:
     Raises:
         ValueError: If any value in ``circles`` is not a :class:`Circle`.
     """
+
+    #print("degree", degree)
+
     if any(not isinstance(value, Circle) for value in circles.values()):
         raise ValueError("Can only align along axis if all values are circles.")
 

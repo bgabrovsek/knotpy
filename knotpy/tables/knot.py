@@ -260,7 +260,7 @@ def knot_precomputed_homflypt(k: Diagram):
     try:
         k_candidate = knot(name)
         # the input PD diagram must be the same as in the knot table
-        if canonical(k) != k_candidate:
+        if canonical(k) != k_candidate:  # TODO: orientation error!
             return None
 
         # we have found the knot in the table, now retrieve the precomputed homflypt polynomial

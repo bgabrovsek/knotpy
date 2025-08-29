@@ -26,5 +26,6 @@ grant J1-4031.
 
    install
    tutorial
+   notation
    reference/index
    auto_examples/index

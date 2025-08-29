@@ -166,8 +166,19 @@ def test_same_polys():
         if len(name) > 1:
             print("Knots", " and ".join(name), "share the HOMFLY-PT polynomial:", poly)
 
+def test_unknot():
+    k = kp.knot("unknot")
+    assert kp.identify(k) == "0_1"
+
+def test_oriented():
+    K = kp.knot("+9_32")
+    K = kp.mirror(kp.reverse(K))
+    assert kp.identify(K) == "-9_32*"
+
 if __name__ == "__main__":
     # Run test
+    test_oriented()
+    test_unknot()
     test_clean_name()
     test_parse_name()
     test_knot_symmetry()

@@ -53,6 +53,9 @@ def number_of_unknots(k: PlanarDiagram) -> int:
 
 def is_knot(k: PlanarDiagram) -> bool:
     """Return True if all nodes are crossings and the diagram has a single link component."""
+
+    if is_unknot(k):
+        return True
     return all(type(k.nodes[node]) is Crossing for node in k.nodes) and number_of_link_components(k) == 1
 
 

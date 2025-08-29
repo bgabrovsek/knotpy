@@ -1,12 +1,381 @@
 Tutorial
 ========
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tempor aliquet convallis. Proin fermentum aliquet cursus. Fusce non turpis nibh. Nulla rhoncus eu sem at bibendum. Vestibulum non tempor lorem. Nunc rutrum leo sem, ut tristique massa accumsan sit amet. Morbi blandit sem vitae purus blandit, at fermentum arcu facilisis. Vestibulum in orci vitae nisi viverra varius. Nulla facilisi. Aliquam venenatis lectus non risus sollicitudin, sodales pulvinar orci posuere. Mauris mollis risus odio. Duis sagittis ultrices quam, vulputate dapibus risus.
+Step-by-step tutorial introducing KnotPy, from installation to
+constructing knots, links, and computing invariants.
 
-Maecenas nec tempus neque. Integer id lobortis tortor, ac vestibulum augue. Vivamus ultrices ac felis nec placerat. Aliquam facilisis ipsum ut ante blandit, eget molestie libero feugiat. Suspendisse eget magna condimentum, condimentum urna dictum, pretium ipsum. Quisque id risus eu justo egestas maximus. Duis vehicula a felis in interdum. Praesent ut tempus nisi, quis finibus est. Phasellus mi purus, pharetra nec erat sit amet, venenatis rhoncus metus.
+Basic operations
+----------------
 
-Nulla quis eleifend sapien. Phasellus eu ligula quis ex pretium maximus id id libero. Nam vitae diam porttitor, mattis elit ut, iaculis neque. Cras et lacinia dolor, vitae lacinia libero. Morbi nec elit nisl. Suspendisse potenti. Nulla facilisi. Pellentesque hendrerit eros mollis sem condimentum mattis. Pellentesque pellentesque sem quis pretium pellentesque. Suspendisse pretium nisl sed dui sagittis eleifend.
+Create the (unoriented) trefoil knot and compute the Jones polynomial.
 
-Proin at pulvinar lorem. Maecenas egestas viverra scelerisque. Duis at volutpat enim. Integer sed risus at neque tincidunt vestibulum. Donec imperdiet et sapien eu ornare. Vestibulum condimentum, nibh eget finibus viverra, libero felis vehicula felis, et dignissim dui felis eget mi. Cras tortor orci, aliquam id ultrices eget, placerat sit amet ex. Pellentesque at ullamcorper est. Fusce pellentesque vel nulla sed suscipit. Praesent lobortis luctus viverra. Suspendisse cursus urna nec metus congue, in rutrum tellus mattis. Aliquam ex urna, luctus id pretium quis, maximus quis sem. Donec dictum quam sed libero vulputate pellentesque. Nulla tempus purus id metus aliquet, sagittis pharetra ligula euismod. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+.. code:: ipython2
 
-Maecenas hendrerit, justo tincidunt pulvinar interdum, sem enim vulputate tellus, at ultricies sapien risus ut lorem. Donec maximus metus eu venenatis hendrerit. Duis egestas orci et ipsum commodo auctor. Integer sodales at magna a volutpat. Duis id magna nunc. Donec euismod odio purus. Quisque non sapien odio. Pellentesque ac nulla ex. Vestibulum tortor nulla, dictum venenatis diam ut, commodo finibus tortor. Etiam magna odio, porttitor sed ligula quis, aliquam malesuada est. Pellentesque tempus hendrerit felis ac sagittis. Mauris sapien purus, interdum non lorem ut, blandit pretium mi. Sed vel mi ac risus posuere feugiat. Vivamus ac odio lorem. Praesent finibus dolor vitae lacinia imperdiet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
+    import knotpy as kp
+    from knotpy import from_pd_notation, from_knotpy_notation
+    
+    K = kp.knot("3_1")
+    kp.jones(K)
+
+
+
+
+.. math::
+
+    \displaystyle - t^{4} + t^{3} + t
+
+
+
+.. code:: ipython2
+
+    kp.is_knot(K)
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython2
+
+    A = kp.knot("3_1")
+    B = kp.knot("4_1")
+    AB = kp.connected_sum(A, B)
+    kp.is_connected_sum(AB)
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython2
+
+    A_, B_ = kp.connected_sum_decomposition(AB)
+    kp.identify(A_), kp.identify(B_)
+
+
+
+
+.. parsed-literal::
+
+    ('3_1', '4_1')
+
+
+
+.. code:: ipython2
+
+    D = kp.disjoint_union(A, B)
+    kp.is_disjoint_union(D)
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython2
+
+    A_, B_ = kp.disjoint_union_decomposition(D)
+    kp.identify(A_), kp.identify(B_)
+
+
+
+
+.. parsed-literal::
+
+    ('3_1', '4_1')
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("trefoil")
+    K.name
+
+
+
+
+.. parsed-literal::
+
+    '3_1'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("miller institute knot")
+    K.name
+
+
+
+
+.. parsed-literal::
+
+    '6_2'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("unknot")
+    K.name
+
+
+
+
+.. parsed-literal::
+
+    '0_1'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("+3_1")
+    K.is_oriented()
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython2
+
+    K_ = kp.knot("-3_1")
+    kp.identify(kp.knot("-3_1"))
+
+
+
+
+.. parsed-literal::
+
+    '+3_1'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("3_1")
+    print("Knot:", K.name)
+    print("Jones polynomial:", kp.jones(K))
+    print("Alexander polynomial:", kp.alexander(K))
+    print("Bracket polynomial:", kp.bracket(K, normalize=True))
+    print("HOMFLYPT polynomial:", kp.homflypt(K))
+    print("HOMFLYPT polynomial (az):", kp.homflypt(K, variables="az"))
+    print("HOMFLYPT polynomial (lm):", kp.homflypt(K, variables="lm"))
+    print("HOMFLYPT polynomial (xyz):", kp.homflypt(K, variables="xyz"))
+    print("Kauffman 2-variable polynomial:", kp.kauffman(K))
+
+
+
+.. parsed-literal::
+
+    Knot: 3_1
+    Jones polynomial: -t**4 + t**3 + t
+    Alexander polynomial: t**2 - t + 1
+    Bracket polynomial: A**(-4) + A**(-12) - 1/A**16
+    HOMFLYPT polynomial: -v**4 + v**2*z**2 + 2*v**2
+    HOMFLYPT polynomial (az): z**2/a**2 + 2/a**2 - 1/a**4
+    HOMFLYPT polynomial (lm): m**2/l**2 - 2/l**2 - 1/l**4
+    HOMFLYPT polynomial (xyz): -2*y/x - y**2/x**2 + z**2/x**2
+    Kauffman 2-variable polynomial: a**5*z + a**4*z**2 - a**4 + a**3*z + a**2*z**2 - 2*a**2
+
+
+.. code:: ipython2
+
+    K = kp.knot("+3_1")
+    G = kp.fundamental_group(K)
+    G.generators, G.relators
+
+
+
+
+.. parsed-literal::
+
+    ((x0, x1, x2), [x0*x1*x2**-1*x1**-1, x2*x0*x1**-1*x0**-1, x1*x2*x0**-1*x2**-1])
+
+
+
+.. code:: ipython2
+
+    K = kp.from_pd_notation("[[1,5,2,4],[3,1,4,6],[5,3,6,2]]")
+    kp.identify(K)
+
+
+
+
+.. parsed-literal::
+
+    '3_1'
+
+
+
+.. code:: ipython2
+
+    K = kp.from_pd_notation("PD[X[1,9,2,8], X[3,10,4,11], X[5,3,6,2],X[7,1,8,12], X[9,4,10,5], X[11,7,12,6]]")
+    kp.identify(K)
+
+
+
+
+.. parsed-literal::
+
+    '6_2'
+
+
+
+.. code:: ipython2
+
+    kp.to_pd_notation(kp.knot("3_1"))
+
+
+
+
+.. parsed-literal::
+
+    'X[0,1,2,3],X[3,4,5,0],X[1,5,4,2]'
+
+
+
+.. code:: ipython2
+
+    # EM, CONDENSED EM,... PLANTRI
+
+.. code:: ipython2
+
+    K = kp.knot("3_1")
+    kp.identify(kp.orient(K))
+
+
+
+
+.. parsed-literal::
+
+    '+3_1'
+
+
+
+.. code:: ipython2
+
+    [kp.identify(K) for K in kp.orientations(kp.knot("9_32"))]
+
+
+
+
+.. parsed-literal::
+
+    ['+9_32', '-9_32']
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("3_1")
+    kp.identify(kp.mirror(K))
+
+
+
+
+.. parsed-literal::
+
+    '3_1*'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("+9_32")
+    kp.identify(kp.reverse(K))
+
+
+
+
+.. parsed-literal::
+
+    '-9_32'
+
+
+
+.. code:: ipython2
+
+    K = kp.knot("+9_32")
+    K = kp.mirror(kp.reverse(K))
+    kp.identify(K)
+
+
+::
+
+
+    ---------------------------------------------------------------------------
+
+    TypeError                                 Traceback (most recent call last)
+
+    Cell In[23], line 3
+          1 K = kp.knot("+9_32")
+          2 K = kp.mirror(kp.reverse(K))
+    ----> 3 kp.identify(K)
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:340, in identify(k)
+        337 def identify(k: Diagram) -> str | list | None:
+        339     if is_knot(k):
+    --> 340         return identify_knot(k)
+        341     elif is_link(k):
+        342         return None
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:317, in identify_knot(k)
+        315 # find by homflypt
+        316 result = []
+    --> 317 homflypt_polynomial = homflypt(k, "xyz")
+        319 # check knots
+        320 for n_ in range(0, n + 1):
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/invariants/homflypt.py:233, in homflypt(k, variables)
+        230 variables = str(variables).lower()
+        232 # try to get the HOMFLYPT polynomial from the precomputed data
+    --> 233 polynomial = knot_precomputed_homflypt(k)
+        234 # otherwise, compute it
+        235 if polynomial is None:
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:263, in knot_precomputed_homflypt(k)
+        261 k_candidate = knot(name)
+        262 # the input PD diagram must be the same as in the knot table
+    --> 263 if canonical(k) != k_candidate:
+        264     return None
+        266 # we have found the knot in the table, now retrieve the precomputed homflypt polynomial
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/utils/decorators.py:45, in total_ordering_from_compare.<locals>.__ne__(self, other)
+         44 def __ne__(self, other):
+    ---> 45     return self._compare(other) != 0
+
+
+    File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/classes/planardiagram.py:207, in PlanarDiagram._compare(self, other, compare_attributes)
+        204 # 1) type
+        205 if type(self) is not type(other):
+        206     # REVIEW: original returned a TypeError object, which breaks ordering.
+    --> 207     raise TypeError(f"Cannot compare {type(self)} with {type(other)}.")
+        209 # 2) number of nodes
+        210 s_nn, o_nn = len(self._nodes), len(other._nodes)
+
+
+    TypeError: Cannot compare <class 'knotpy.classes.planardiagram.OrientedPlanarDiagram'> with <class 'knotpy.classes.planardiagram.PlanarDiagram'>.
+
+

@@ -33,65 +33,7 @@ __all__ = [
 __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-# Arc
-_DEFAULT_ARC_COLOR = "tab:blue"
-_DEFAULT_ARC_WIDTH = 4.0  # strand width
-_DEFAULT_ARC_STYLE = "solid"  # 'dashed', 'dotted', 'dashdot'
-_DEFAULT_ARC_ALPHA = None  # transparency, None = fully opaque
-_DEFAULT_ARC_STROKE_WIDTH = None # stroke around the
-_DEFAULT_ARC_STROKE_COLOR = "white" # stroke around the
-_DEFAULT_ARC_STROKE_ALPHA = None # stroke transparnecy
-_DEFAULT_GAP = 0.1  # arc break gap at under-passing
-_DEFAULT_CMAP = None
-# Vertex
-_DEFAULT_VERTEX_COLOR = "black"
-_DEFAULT_VERTEX_SIZE = 0.15
-_DEFAULT_VERTEX_ALPHA = None
-_DEFAULT_VERTEX_STROKE_COLOR = "black"
-_DEFAULT_VERTEX_STROKE_WIDTH = 0
-_DEFAULT_VERTEX_STROKE_ALPHA = None
-# Arrow
-_DEFAULT_ARROW_COLOR = None # defaults to arc_color
-_DEFAULT_ARROW_WIDTH = 0.15
-_DEFAULT_ARROW_LENGTH = 0.12
-_DEFAULT_ARROW_STYLE = "open"  # "open" or "closed"
-_DEFAULT_ARROW_CAP_STYLE = "round"
-_DEFAULT_ARROW_POSITION = "middle"
-_DEFAULT_ARROW_ALPHA = None
-# Labels
-_DEFAULT_LABEL_ENDPOINTS = False
-_DEFAULT_LABEL_ARCS = False
-_DEFAULT_LABEL_NODES = False
-_DEFAULT_LABEL_COLOR = "black"
-_DEFAULT_LABEL_FONT_SIZE = 14
-_DEFAULT_LABEL_FONT_FAMILY = "serif"  # or 'sans-serif', 'monospace', etc.
-_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT = "left"
-_DEFAULT_LABEL_VERTICAL_ALIGNMENT = "top"
-_DEFAULT_LABEL_ALPHA = None
-# Title
-_DEFAULT_TITLE = False,  # or string
-_DEFAULT_TITLE_COLOR = "black"
-_DEFAULT_TITLE_FONT_SIZE = 16,
-_DEFAULT_TITLE_FONT_FAMILY = "serif"
-_DEFAULT_TITLE_ALPHA = None
-# Other
-_DEFAULT_SHOW_CIRCLE_PACKING = False  # visualize circle-packing circles
-_DEFAULT_PADDING_FRACTION = 0.05
-_DEFAULT_SHOW_AXIS = False
-_DEFAULT_SHOW = True
-
-# Z-order (stacking) for plot elements; lower values are drawn first.
-_Z_CIRCLES = 0
-_Z_ARC_STROKE = 1
-_Z_ARC = 2
-_Z_ENDPOINT_STROKE_UNDER = 1
-_Z_ENDPOINT_UNDER = 2
-_Z_ENDPOINT_STROKE_OVER = 3
-_Z_ENDPOINT_OVER = 4
-_Z_ARROW = 5
-_Z_VERTEX = 6
-_Z_TEXT = 7
-
+import knotpy.drawing.drawing_defaults as DEFAULTS
 
 def _mpl_axes():
     """Local Matplotlib imports to keep package import time low."""
@@ -120,14 +62,14 @@ def draw_arcs(
         layout: dict,
         arcs_to_draw: list | None = None,
         ax=None,
-        arc_color=_DEFAULT_ARC_COLOR,
-        arc_width=_DEFAULT_ARC_WIDTH,
-        arc_style=_DEFAULT_ARC_STYLE,
-        arc_alpha=_DEFAULT_ARC_ALPHA,
-        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
-        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
-        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
-        cmap=_DEFAULT_CMAP,
+        arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+        arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+        arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        cmap=DEFAULTS._DEFAULT_CMAP,
     ):
     """Draw circular arcs and straight segments corresponding to diagram arcs.
 
@@ -172,7 +114,7 @@ def draw_arcs(
                         linewidth=arc_width + arc_stroke_width * 2,
                         linestyle="solid",
                         alpha=arc_stroke_alpha,
-                        zorder=_Z_ARC_STROKE,
+                        zorder=DEFAULTS._Z_ARC_STROKE,
                     )
                 )
 
@@ -187,7 +129,7 @@ def draw_arcs(
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
-                    zorder=_Z_ARC,
+                    zorder=DEFAULTS._Z_ARC,
                 )
             )
 
@@ -203,7 +145,7 @@ def draw_arcs(
                         linewidth=arc_width + arc_stroke_width * 2,
                         linestyle="solid",
                         alpha=arc_stroke_alpha,
-                        zorder=_Z_ARC_STROKE,
+                        zorder=defaults.DEFAULTS._Z_ARC_STROKE,
                     )
                 )
 
@@ -215,7 +157,7 @@ def draw_arcs(
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
-                    zorder=_Z_ARC,
+                    zorder=defaults.DEFAULTS._Z_ARC,
                 )
             )
 
@@ -234,15 +176,15 @@ def draw_endpoints(
         layout: dict,
         endpoints_to_draw: list | None = None,
         ax=None,
-        arc_color=_DEFAULT_ARC_COLOR,
-        arc_width=_DEFAULT_ARC_WIDTH,
-        arc_style=_DEFAULT_ARC_STYLE,
-        arc_alpha=_DEFAULT_ARC_ALPHA,
-        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
-        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
-        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
-        gap=_DEFAULT_GAP,
-        cmap=_DEFAULT_CMAP,
+        arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+        arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+        arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        gap=DEFAULTS._DEFAULT_GAP,
+        cmap=DEFAULTS._DEFAULT_CMAP,
     ):
     """Draw endpoint-adjacent sub-arcs for all endpoints, adding gaps under crossings.
 
@@ -272,7 +214,7 @@ def draw_endpoints(
         g_arc = layout[ep]
         color = arc_color if colors is None or ep not in colors else colors[ep]
 
-        z, z_stroke = _Z_ENDPOINT_UNDER, _Z_ENDPOINT_STROKE_UNDER
+        z, z_stroke = DEFAULTS._Z_ENDPOINT_UNDER, DEFAULTS._Z_ENDPOINT_STROKE_UNDER
         # Shorten at under-passing endpoints of crossings (even positions).
         if ep.node in k.crossings:
             # make a gap for under-passing endpoints
@@ -280,7 +222,7 @@ def draw_endpoints(
                 g_arc = g_arc.shorten(gap, side="A", inplace=False)
             # increase z-value for over-passing endpoint
             if ep.position % 2:
-                z, z_stroke = _Z_ENDPOINT_OVER, _Z_ENDPOINT_STROKE_OVER
+                z, z_stroke = DEFAULTS._Z_ENDPOINT_OVER, DEFAULTS._Z_ENDPOINT_STROKE_OVER
 
         if isinstance(g_arc, CircularArc):
 
@@ -347,12 +289,12 @@ def draw_vertices(
         layout: dict,
         vertices_to_draw: list | None = None,
         ax=None,
-        vertex_color=_DEFAULT_VERTEX_COLOR,
-        vertex_size=_DEFAULT_VERTEX_SIZE,
-        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
-        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
-        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
-        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+        vertex_color=DEFAULTS._DEFAULT_VERTEX_COLOR,
+        vertex_size=DEFAULTS._DEFAULT_VERTEX_SIZE,
+        vertex_alpha=DEFAULTS._DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=DEFAULTS._DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
     ):
     """Draw solid disks for vertex nodes.
 
@@ -394,7 +336,7 @@ def draw_vertices(
                 alpha=vertex_alpha,
                 edgecolor=vertex_stroke_color,
                 linewidth=vertex_stroke_width,
-                zorder=_Z_VERTEX,
+                zorder=DEFAULTS._Z_VERTEX,
             )
         )
 
@@ -404,18 +346,18 @@ def draw_arrows(
         layout: dict,
         endpoint_to_draw: list | None = None,
         ax=None,
-        arrow_line_width=_DEFAULT_ARC_WIDTH,
-        arrow_color=_DEFAULT_ARROW_COLOR,
-        arrow_width=_DEFAULT_ARROW_WIDTH,
-        arrow_length=_DEFAULT_ARROW_LENGTH,
-        arrow_style=_DEFAULT_ARROW_STYLE,
-        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
-        arrow_position=_DEFAULT_ARROW_POSITION,
-        arrow_alpha=_DEFAULT_ARROW_ALPHA,
-        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
-        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
-        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
-        cmap=_DEFAULT_CMAP,
+        arrow_line_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arrow_color=DEFAULTS._DEFAULT_ARROW_COLOR,
+        arrow_width=DEFAULTS._DEFAULT_ARROW_WIDTH,
+        arrow_length=DEFAULTS._DEFAULT_ARROW_LENGTH,
+        arrow_style=DEFAULTS._DEFAULT_ARROW_STYLE,
+        arrow_cap_style=DEFAULTS._DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=DEFAULTS._DEFAULT_ARROW_POSITION,
+        arrow_alpha=DEFAULTS._DEFAULT_ARROW_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        cmap=DEFAULTS._DEFAULT_CMAP,
 ):
     """Draw orientation arrows along arcs (for ingoing endpoints).
 
@@ -467,27 +409,26 @@ def draw_arrows(
                 x, y = zip(*pts_xy)
 
                 if arc_stroke_width:
-                    print("llp")
                     ax.add_line(
                         Line2D(x[:2], y[:2],
                                color=arc_stroke_color, linewidth=arrow_line_width + 2 * arc_stroke_width,
-                               zorder=_Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha,)
+                               zorder=DEFAULTS._Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha,)
                     )
                     ax.add_line(
                         Line2D(x[1:], y[1:],
                                color=arc_stroke_color, linewidth=arrow_line_width + 2 * arc_stroke_width,
-                               zorder=_Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha )
+                               zorder=DEFAULTS._Z_ENDPOINT_STROKE_UNDER, solid_capstyle=arrow_cap_style, alpha=arc_stroke_alpha )
                     )
 
                 ax.add_line(
                     Line2D(x[:2], y[:2],
                            color=color, linewidth=arrow_line_width,
-                           zorder=_Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
+                           zorder=DEFAULTS._Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
                 )
                 ax.add_line(
                     Line2D(x[1:], y[1:],
                            color=color, linewidth=arrow_line_width,
-                           zorder=_Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
+                           zorder=DEFAULTS._Z_ARROW, solid_capstyle=arrow_cap_style, alpha=arrow_alpha,)
                 )
 
             elif arrow_style == "closed":
@@ -504,12 +445,12 @@ def draw_node_labels(
         layout: dict,
         nodes_to_draw: list | None = None,
         ax=None,
-        label_color=_DEFAULT_LABEL_COLOR,
-        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
-        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
-        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
-        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
-        label_alpha=_DEFAULT_LABEL_ALPHA,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
     ):
     """Annotate nodes (crossings/vertices) with their identifiers.
 
@@ -546,7 +487,7 @@ def draw_node_labels(
             alpha=label_alpha,
             verticalalignment=label_vertical_alignment,
             horizontalalignment=label_horizontal_alignment,
-            zorder=_Z_TEXT,
+            zorder=DEFAULTS._Z_TEXT,
         )
         #TODO font family
 
@@ -556,12 +497,12 @@ def draw_endpoint_labels(
         layout: dict,
         endpoints_to_draw: list | None = None,
         ax=None,
-        label_color=_DEFAULT_LABEL_COLOR,
-        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
-        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
-        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
-        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
-        label_alpha=_DEFAULT_LABEL_ALPHA,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
     ):
     """Annotate endpoints with their (node, position) labels near the middle of their sub-arc.
 
@@ -596,7 +537,7 @@ def draw_endpoint_labels(
             verticalalignment=label_vertical_alignment,
             horizontalalignment=label_horizontal_alignment,
             alpha=label_alpha,
-            zorder=_Z_TEXT,
+            zorder=DEFAULTS._Z_TEXT,
         )
         # TODO font family
 
@@ -606,12 +547,12 @@ def draw_arc_labels(
         layout: dict,
         arcs_to_draw: list | None = None,
         ax=None,
-        label_color=_DEFAULT_LABEL_COLOR,
-        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
-        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
-        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
-        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
-        label_alpha=_DEFAULT_LABEL_ALPHA,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
     ):
     """Annotate arcs by listing their two endpoint labels near the middle of the arc.
 
@@ -677,50 +618,50 @@ def draw_from_layout(
         layout: dict,
         ax=None,
         # Arc
-        arc_color=_DEFAULT_ARC_COLOR,
-        arc_width=_DEFAULT_ARC_WIDTH,
-        arc_style=_DEFAULT_ARC_STYLE,
-        arc_alpha=_DEFAULT_ARC_ALPHA,
-        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
-        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
-        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
-        gap=_DEFAULT_GAP,
-        cmap=_DEFAULT_CMAP,
+        arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+        arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+        arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        gap=DEFAULTS._DEFAULT_GAP,
+        cmap=DEFAULTS._DEFAULT_CMAP,
         # Vertex
-        vertex_color=_DEFAULT_VERTEX_COLOR,
-        vertex_size=_DEFAULT_VERTEX_SIZE,
-        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
-        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
-        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
-        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+        vertex_color=DEFAULTS._DEFAULT_VERTEX_COLOR,
+        vertex_size=DEFAULTS._DEFAULT_VERTEX_SIZE,
+        vertex_alpha=DEFAULTS._DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=DEFAULTS._DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
         # Arrow
-        arrow_color=_DEFAULT_ARROW_COLOR,
-        arrow_width=_DEFAULT_ARROW_WIDTH,
-        arrow_length=_DEFAULT_ARROW_LENGTH,
-        arrow_style=_DEFAULT_ARROW_STYLE,
-        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
-        arrow_position=_DEFAULT_ARROW_POSITION,
-        arrow_alpha=_DEFAULT_ARROW_ALPHA,
+        arrow_color=DEFAULTS._DEFAULT_ARROW_COLOR,
+        arrow_width=DEFAULTS._DEFAULT_ARROW_WIDTH,
+        arrow_length=DEFAULTS._DEFAULT_ARROW_LENGTH,
+        arrow_style=DEFAULTS._DEFAULT_ARROW_STYLE,
+        arrow_cap_style=DEFAULTS._DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=DEFAULTS._DEFAULT_ARROW_POSITION,
+        arrow_alpha=DEFAULTS._DEFAULT_ARROW_ALPHA,
         # Labels
-        label_endpoints=_DEFAULT_LABEL_ENDPOINTS,
-        label_arcs=_DEFAULT_LABEL_ARCS,
-        label_nodes=_DEFAULT_LABEL_NODES,
-        label_color=_DEFAULT_LABEL_COLOR,
-        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
-        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
-        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
-        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
-        label_alpha=_DEFAULT_LABEL_ALPHA,
+        label_endpoints=DEFAULTS._DEFAULT_LABEL_ENDPOINTS,
+        label_arcs=DEFAULTS._DEFAULT_LABEL_ARCS,
+        label_nodes=DEFAULTS._DEFAULT_LABEL_NODES,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
         # Title
-        title=_DEFAULT_TITLE,  # bool or string
-        title_color=_DEFAULT_TITLE_COLOR,
-        title_font_size=_DEFAULT_TITLE_FONT_SIZE,
-        title_font_family=_DEFAULT_TITLE_FONT_FAMILY,
-        title_alpha=_DEFAULT_TITLE_ALPHA,
+        title=DEFAULTS._DEFAULT_TITLE,  # bool or string
+        title_color=DEFAULTS._DEFAULT_TITLE_COLOR,
+        title_font_size=DEFAULTS._DEFAULT_TITLE_FONT_SIZE,
+        title_font_family=DEFAULTS._DEFAULT_TITLE_FONT_FAMILY,
+        title_alpha=DEFAULTS._DEFAULT_TITLE_ALPHA,
         # Other
-        padding_fraction=_DEFAULT_PADDING_FRACTION,
-        show_axis=_DEFAULT_SHOW_AXIS,
-        show=_DEFAULT_SHOW,
+        padding_fraction=DEFAULTS._DEFAULT_PADDING_FRACTION,
+        show_axis=DEFAULTS._DEFAULT_SHOW_AXIS,
+        show=DEFAULTS._DEFAULT_SHOW,
         ):
     """Render a diagram from a precomputed layout onto given axes.
 
@@ -775,53 +716,53 @@ def draw_from_layout(
 def draw(
         k: Diagram,
         ax=None,
-        rotation=0,  # degrees, counterclockwise
+        rotation=DEFAULTS._DEFAULT_ROTATION,  # degrees, counterclockwise
         # Arc
-        arc_color=_DEFAULT_ARC_COLOR,
-        arc_width=_DEFAULT_ARC_WIDTH,
-        arc_style=_DEFAULT_ARC_STYLE,
-        arc_alpha=_DEFAULT_ARC_ALPHA,
-        arc_stroke_color=_DEFAULT_ARC_STROKE_COLOR,
-        arc_stroke_width=_DEFAULT_ARC_STROKE_WIDTH,
-        arc_stroke_alpha=_DEFAULT_ARC_STROKE_ALPHA,
-        gap=_DEFAULT_GAP,
-        cmap=_DEFAULT_CMAP,
+        arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+        arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+        arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        gap=DEFAULTS._DEFAULT_GAP,
+        cmap=DEFAULTS._DEFAULT_CMAP,
         # Vertex
-        vertex_color=_DEFAULT_VERTEX_COLOR,
-        vertex_size=_DEFAULT_VERTEX_SIZE,
-        vertex_alpha=_DEFAULT_VERTEX_ALPHA,
-        vertex_stroke_color=_DEFAULT_VERTEX_STROKE_COLOR,
-        vertex_stroke_width=_DEFAULT_VERTEX_STROKE_WIDTH,
-        vertex_stroke_alpha=_DEFAULT_VERTEX_STROKE_ALPHA,
+        vertex_color=DEFAULTS._DEFAULT_VERTEX_COLOR,
+        vertex_size=DEFAULTS._DEFAULT_VERTEX_SIZE,
+        vertex_alpha=DEFAULTS._DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=DEFAULTS._DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
         # Arrow
-        arrow_color=_DEFAULT_ARROW_COLOR,
-        arrow_width=_DEFAULT_ARROW_WIDTH,
-        arrow_length=_DEFAULT_ARROW_LENGTH,
-        arrow_style=_DEFAULT_ARROW_STYLE,
-        arrow_cap_style=_DEFAULT_ARROW_CAP_STYLE,
-        arrow_position=_DEFAULT_ARROW_POSITION,
-        arrow_alpha=_DEFAULT_ARROW_ALPHA,
+        arrow_color=DEFAULTS._DEFAULT_ARROW_COLOR,
+        arrow_width=DEFAULTS._DEFAULT_ARROW_WIDTH,
+        arrow_length=DEFAULTS._DEFAULT_ARROW_LENGTH,
+        arrow_style=DEFAULTS._DEFAULT_ARROW_STYLE,
+        arrow_cap_style=DEFAULTS._DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=DEFAULTS._DEFAULT_ARROW_POSITION,
+        arrow_alpha=DEFAULTS._DEFAULT_ARROW_ALPHA,
         # Labels
-        label_endpoints=_DEFAULT_LABEL_ENDPOINTS,
-        label_arcs=_DEFAULT_LABEL_ARCS,
-        label_nodes=_DEFAULT_LABEL_NODES,
-        label_color=_DEFAULT_LABEL_COLOR,
-        label_font_size=_DEFAULT_LABEL_FONT_SIZE,
-        label_font_family=_DEFAULT_LABEL_FONT_FAMILY,
-        label_horizontal_alignment=_DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
-        label_vertical_alignment=_DEFAULT_LABEL_VERTICAL_ALIGNMENT,
-        label_alpha=_DEFAULT_LABEL_ALPHA,
+        label_endpoints=DEFAULTS._DEFAULT_LABEL_ENDPOINTS,
+        label_arcs=DEFAULTS._DEFAULT_LABEL_ARCS,
+        label_nodes=DEFAULTS._DEFAULT_LABEL_NODES,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
         # Title
-        title=_DEFAULT_TITLE,  # bool or string
-        title_color=_DEFAULT_TITLE_COLOR,
-        title_font_size=_DEFAULT_TITLE_FONT_SIZE,
-        title_font_family=_DEFAULT_TITLE_FONT_FAMILY,
-        title_alpha=_DEFAULT_TITLE_ALPHA,
+        title=DEFAULTS._DEFAULT_TITLE,  # bool or string
+        title_color=DEFAULTS._DEFAULT_TITLE_COLOR,
+        title_font_size=DEFAULTS._DEFAULT_TITLE_FONT_SIZE,
+        title_font_family=DEFAULTS._DEFAULT_TITLE_FONT_FAMILY,
+        title_alpha=DEFAULTS._DEFAULT_TITLE_ALPHA,
         # Other
-        show_circle_packing=_DEFAULT_SHOW_CIRCLE_PACKING,
-        padding_fraction=_DEFAULT_PADDING_FRACTION,
-        show_axis=_DEFAULT_SHOW_AXIS,
-        show=_DEFAULT_SHOW,
+        show_circle_packing=DEFAULTS._DEFAULT_SHOW_CIRCLE_PACKING,
+        padding_fraction=DEFAULTS._DEFAULT_PADDING_FRACTION,
+        show_axis=DEFAULTS._DEFAULT_SHOW_AXIS,
+        show=DEFAULTS._DEFAULT_SHOW,
     ):
 
     """High-level convenience function to draw a diagram.
@@ -843,6 +784,7 @@ def draw(
     if arrow_color is None:
         arrow_color = arc_color
     args = dict(locals())
+
     plt = _mpl_axes()
 
     # add support arcs (bridges/cut-vertices handling for reliable plotting)
@@ -902,7 +844,7 @@ def _plot_circles(k: Diagram, circles: dict, ax=None):
                 alpha=0.05,
                 facecolor=color,
                 ls="none",
-                zorder=_Z_CIRCLES,
+                zorder=DEFAULTS._Z_CIRCLES,
             )
         )
 
@@ -920,7 +862,6 @@ if __name__ == "__main__":
     k = kp.connected_sum(a, b )
     #kp.add_unknot(k, inplace=True)
     kk = kp.reidemeister_1_add_kink(k, kp.choose_reidemeister_1_add_kink(k))
-    print(kk)
     kp.draw(kk, show=True) #cmap="jet"
 
     pass

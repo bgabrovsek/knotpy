@@ -29,4 +29,5 @@ from .writhe import *
 from .kauffman import *
 from .alexander import *
 from .classifier import *
+from .fundamental_group import *
 from ._symbols import SYMBOL_LOCALS

@@ -17,13 +17,14 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.drawing.draw import draw
 from knotpy.notation.native import to_knotpy_notation
 from knotpy.utils.progressbar import bar
+import knotpy.drawing.drawing_defaults as DEFAULTS
 
 __all__ = ["export_pdf", "export_pdf_groups"]
 __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
-_IGNORE_DRAWING_ERRORS = True
-
+DEFAULTS._DEFAULT_IGNORE_DRAWING_ERRORS = False
+DEFAULTS._DEFAULT_SHOW_PROGRESS = True
 
 def _draw_error_diagram(k: PlanarDiagram, error_text, ax=None) -> None:
     """Draw a simple placeholder (“X”) and a short error note.
@@ -59,11 +60,55 @@ def _draw_error_diagram(k: PlanarDiagram, error_text, ax=None) -> None:
 def export_pdf(
     diagrams,
     filename: str,
-    draw_circles: bool = False,
-    with_labels: bool = False,
-    with_title: bool = False,
-    show_progress: bool = True,
-) -> None:
+    rotation=DEFAULTS._DEFAULT_ROTATION,  # degrees, counterclockwise
+    # Arc
+    arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+    arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+    arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+    arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+    arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+    arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+    arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+    gap=DEFAULTS._DEFAULT_GAP,
+    cmap=DEFAULTS._DEFAULT_CMAP,
+    # Vertex
+    vertex_color=DEFAULTS._DEFAULT_VERTEX_COLOR,
+    vertex_size=DEFAULTS._DEFAULT_VERTEX_SIZE,
+    vertex_alpha=DEFAULTS._DEFAULT_VERTEX_ALPHA,
+    vertex_stroke_color=DEFAULTS._DEFAULT_VERTEX_STROKE_COLOR,
+    vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
+    vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
+    # Arrow
+    arrow_color=DEFAULTS._DEFAULT_ARROW_COLOR,
+    arrow_width=DEFAULTS._DEFAULT_ARROW_WIDTH,
+    arrow_length=DEFAULTS._DEFAULT_ARROW_LENGTH,
+    arrow_style=DEFAULTS._DEFAULT_ARROW_STYLE,
+    arrow_cap_style=DEFAULTS._DEFAULT_ARROW_CAP_STYLE,
+    arrow_position=DEFAULTS._DEFAULT_ARROW_POSITION,
+    arrow_alpha=DEFAULTS._DEFAULT_ARROW_ALPHA,
+    # Labels
+    label_endpoints=DEFAULTS._DEFAULT_LABEL_ENDPOINTS,
+    label_arcs=DEFAULTS._DEFAULT_LABEL_ARCS,
+    label_nodes=DEFAULTS._DEFAULT_LABEL_NODES,
+    label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+    label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+    label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+    label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+    label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+    label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
+    # Title
+    title=DEFAULTS._DEFAULT_TITLE,  # bool or string
+    title_color=DEFAULTS._DEFAULT_TITLE_COLOR,
+    title_font_size=DEFAULTS._DEFAULT_TITLE_FONT_SIZE,
+    title_font_family=DEFAULTS._DEFAULT_TITLE_FONT_FAMILY,
+    title_alpha=DEFAULTS._DEFAULT_TITLE_ALPHA,
+    # Other
+    show_circle_packing=DEFAULTS._DEFAULT_SHOW_CIRCLE_PACKING,
+    padding_fraction=DEFAULTS._DEFAULT_PADDING_FRACTION,
+    show_axis=DEFAULTS._DEFAULT_SHOW_AXIS,
+    show_progress=DEFAULTS._DEFAULT_SHOW_PROGRESS,
+    ignore_errors=DEFAULTS._DEFAULT_IGNORE_DRAWING_ERRORS,
+    ) -> None:
     """Render planar diagram(s) to a multi-page PDF (one diagram per page).
 
     If any diagram cannot be drawn (e.g., contains unsupported features),
@@ -81,6 +126,8 @@ def export_pdf(
     Returns:
         None
     """
+    args = dict(locals())
+
     # Local imports to keep import time small.
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
@@ -88,39 +135,47 @@ def export_pdf(
     diagrams = [diagrams] if isinstance(diagrams, PlanarDiagram) else list(diagrams or [])
     show_progress = show_progress and len(diagrams) >= 10
 
-    if with_title:
-        for k in diagrams:
-            if k.name is None or len(str(k.name)) == 0:
-                k.attr["_title"] = to_knotpy_notation(k)
-            else:
-                k.attr["_title"] = str(k.name)
+    # if with_title:
+    #     for k in diagrams:
+    #         if k.name is None or len(str(k.name)) == 0:
+    #             k.attr["_title"] = to_knotpy_notation(k)
+    #         else:
+    #             k.attr["_title"] = str(k.name)
 
     if plt.get_fignums():  # close any open figures to avoid mixing content
         plt.close()
 
     pdf = PdfPages(filename)
 
+    draw_args = {k:v for k,v in args.items() if k not in ("diagrams", "filename", "show_progress", "ignore_errors")}
+
     try:
         iterator = bar(diagrams, comment="exporting to PDF") if show_progress else diagrams
         for k in iterator:
-            if _IGNORE_DRAWING_ERRORS:
+            fig, ax = plt.subplots()
+            if ignore_errors:
                 try:
-                    draw(k, draw_circles=draw_circles, with_labels=with_labels, with_title=with_title)
+
+                    draw(k, **draw_args, show=False, ax=ax)
+
                 except Exception as e:
-                    _draw_error_diagram(k, str(e))
+
+                    _draw_error_diagram(k, str(e), ax=ax)
+
             else:
-                draw(k, draw_circles=draw_circles, with_labels=with_labels, with_title=with_title)
+
+                draw(k, **draw_args, show=False, ax=ax)
 
             # Save current figure to the PDF and close it to free memory.
             #pdf.savefig(bbox_inches="tight", pad_inches=0)
-            pdf.savefig(pad_inches=0)
+            pdf.savefig(fig, pad_inches=0)
             plt.close()
     finally:
         pdf.close()
 
-    if with_title:
-        for k in diagrams:
-            k.attr.pop("_title", None)
+    # if with_title:
+    #     for k in diagrams:
+    #         k.attr.pop("_title", None)
 
 
 def _flatten_axes(axes):
