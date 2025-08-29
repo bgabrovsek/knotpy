@@ -45,10 +45,11 @@
     <script src="_static/documentation_options.js?v=7f41d439"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorial';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Reference" href="reference/index.html" />
+    <link rel="next" title="Notation (knot, links, and knotted graphs encoding via EM and PD codes)" href="notation.html" />
     <link rel="prev" title="Install" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -149,6 +150,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="reference/index.html">
     Reference
   </a>
@@ -220,6 +228,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -256,6 +268,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
   </a>
 </li>
 
@@ -365,11 +384,237 @@
                   
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading">#</a></h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tempor aliquet convallis. Proin fermentum aliquet cursus. Fusce non turpis nibh. Nulla rhoncus eu sem at bibendum. Vestibulum non tempor lorem. Nunc rutrum leo sem, ut tristique massa accumsan sit amet. Morbi blandit sem vitae purus blandit, at fermentum arcu facilisis. Vestibulum in orci vitae nisi viverra varius. Nulla facilisi. Aliquam venenatis lectus non risus sollicitudin, sodales pulvinar orci posuere. Mauris mollis risus odio. Duis sagittis ultrices quam, vulputate dapibus risus.</p>
-<p>Maecenas nec tempus neque. Integer id lobortis tortor, ac vestibulum augue. Vivamus ultrices ac felis nec placerat. Aliquam facilisis ipsum ut ante blandit, eget molestie libero feugiat. Suspendisse eget magna condimentum, condimentum urna dictum, pretium ipsum. Quisque id risus eu justo egestas maximus. Duis vehicula a felis in interdum. Praesent ut tempus nisi, quis finibus est. Phasellus mi purus, pharetra nec erat sit amet, venenatis rhoncus metus.</p>
-<p>Nulla quis eleifend sapien. Phasellus eu ligula quis ex pretium maximus id id libero. Nam vitae diam porttitor, mattis elit ut, iaculis neque. Cras et lacinia dolor, vitae lacinia libero. Morbi nec elit nisl. Suspendisse potenti. Nulla facilisi. Pellentesque hendrerit eros mollis sem condimentum mattis. Pellentesque pellentesque sem quis pretium pellentesque. Suspendisse pretium nisl sed dui sagittis eleifend.</p>
-<p>Proin at pulvinar lorem. Maecenas egestas viverra scelerisque. Duis at volutpat enim. Integer sed risus at neque tincidunt vestibulum. Donec imperdiet et sapien eu ornare. Vestibulum condimentum, nibh eget finibus viverra, libero felis vehicula felis, et dignissim dui felis eget mi. Cras tortor orci, aliquam id ultrices eget, placerat sit amet ex. Pellentesque at ullamcorper est. Fusce pellentesque vel nulla sed suscipit. Praesent lobortis luctus viverra. Suspendisse cursus urna nec metus congue, in rutrum tellus mattis. Aliquam ex urna, luctus id pretium quis, maximus quis sem. Donec dictum quam sed libero vulputate pellentesque. Nulla tempus purus id metus aliquet, sagittis pharetra ligula euismod. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-<p>Maecenas hendrerit, justo tincidunt pulvinar interdum, sem enim vulputate tellus, at ultricies sapien risus ut lorem. Donec maximus metus eu venenatis hendrerit. Duis egestas orci et ipsum commodo auctor. Integer sodales at magna a volutpat. Duis id magna nunc. Donec euismod odio purus. Quisque non sapien odio. Pellentesque ac nulla ex. Vestibulum tortor nulla, dictum venenatis diam ut, commodo finibus tortor. Etiam magna odio, porttitor sed ligula quis, aliquam malesuada est. Pellentesque tempus hendrerit felis ac sagittis. Mauris sapien purus, interdum non lorem ut, blandit pretium mi. Sed vel mi ac risus posuere feugiat. Vivamus ac odio lorem. Praesent finibus dolor vitae lacinia imperdiet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+<p>Step-by-step tutorial introducing KnotPy, from installation to
+constructing knots, links, and computing invariants.</p>
+<section id="basic-operations">
+<h2>Basic operations<a class="headerlink" href="#basic-operations" title="Link to this heading">#</a></h2>
+<p>Create the (unoriented) trefoil knot and compute the Jones polynomial.</p>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import knotpy as kp
+from knotpy import from_pd_notation, from_knotpy_notation
+
+K = kp.knot(&quot;3_1&quot;)
+kp.jones(K)
+</pre></div>
+</div>
+<div class="math notranslate nohighlight">
+\[\displaystyle - t^{4} + t^{3} + t\]</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.is_knot(K)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>A = kp.knot(&quot;3_1&quot;)
+B = kp.knot(&quot;4_1&quot;)
+AB = kp.connected_sum(A, B)
+kp.is_connected_sum(AB)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>A_, B_ = kp.connected_sum_decomposition(AB)
+kp.identify(A_), kp.identify(B_)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;3_1&#39;</span><span class="p">,</span> <span class="s1">&#39;4_1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>D = kp.disjoint_union(A, B)
+kp.is_disjoint_union(D)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>A_, B_ = kp.disjoint_union_decomposition(D)
+kp.identify(A_), kp.identify(B_)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;3_1&#39;</span><span class="p">,</span> <span class="s1">&#39;4_1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;trefoil&quot;)
+K.name
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;3_1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;miller institute knot&quot;)
+K.name
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;6_2&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;unknot&quot;)
+K.name
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0_1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+3_1&quot;)
+K.is_oriented()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K_ = kp.knot(&quot;-3_1&quot;)
+kp.identify(kp.knot(&quot;-3_1&quot;))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;+3_1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+print(&quot;Knot:&quot;, K.name)
+print(&quot;Jones polynomial:&quot;, kp.jones(K))
+print(&quot;Alexander polynomial:&quot;, kp.alexander(K))
+print(&quot;Bracket polynomial:&quot;, kp.bracket(K, normalize=True))
+print(&quot;HOMFLYPT polynomial:&quot;, kp.homflypt(K))
+print(&quot;HOMFLYPT polynomial (az):&quot;, kp.homflypt(K, variables=&quot;az&quot;))
+print(&quot;HOMFLYPT polynomial (lm):&quot;, kp.homflypt(K, variables=&quot;lm&quot;))
+print(&quot;HOMFLYPT polynomial (xyz):&quot;, kp.homflypt(K, variables=&quot;xyz&quot;))
+print(&quot;Kauffman 2-variable polynomial:&quot;, kp.kauffman(K))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Knot</span><span class="p">:</span> <span class="mi">3_1</span>
+<span class="n">Jones</span> <span class="n">polynomial</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="n">t</span>
+<span class="n">Alexander</span> <span class="n">polynomial</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">Bracket</span> <span class="n">polynomial</span><span class="p">:</span> <span class="n">A</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">A</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">A</span><span class="o">**</span><span class="mi">16</span>
+<span class="n">HOMFLYPT</span> <span class="n">polynomial</span><span class="p">:</span> <span class="o">-</span><span class="n">v</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">HOMFLYPT</span> <span class="n">polynomial</span> <span class="p">(</span><span class="n">az</span><span class="p">):</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">/</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">a</span><span class="o">**</span><span class="mi">4</span>
+<span class="n">HOMFLYPT</span> <span class="n">polynomial</span> <span class="p">(</span><span class="n">lm</span><span class="p">):</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">l</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">/</span><span class="n">l</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">l</span><span class="o">**</span><span class="mi">4</span>
+<span class="n">HOMFLYPT</span> <span class="n">polynomial</span> <span class="p">(</span><span class="n">xyz</span><span class="p">):</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">/</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">Kauffman</span> <span class="mi">2</span><span class="o">-</span><span class="n">variable</span> <span class="n">polynomial</span><span class="p">:</span> <span class="n">a</span><span class="o">**</span><span class="mi">5</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">a</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">a</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+3_1&quot;)
+G = kp.fundamental_group(K)
+G.generators, G.relators
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">),</span> <span class="p">[</span><span class="n">x0</span><span class="o">*</span><span class="n">x1</span><span class="o">*</span><span class="n">x2</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">x1</span><span class="o">**-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x2</span><span class="o">*</span><span class="n">x0</span><span class="o">*</span><span class="n">x1</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">x0</span><span class="o">**-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="n">x2</span><span class="o">*</span><span class="n">x0</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">x2</span><span class="o">**-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.from_pd_notation(&quot;[[1,5,2,4],[3,1,4,6],[5,3,6,2]]&quot;)
+kp.identify(K)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;3_1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.from_pd_notation(&quot;PD[X[1,9,2,8], X[3,10,4,11], X[5,3,6,2],X[7,1,8,12], X[9,4,10,5], X[11,7,12,6]]&quot;)
+kp.identify(K)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;6_2&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.to_pd_notation(kp.knot(&quot;3_1&quot;))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;X[0,1,2,3],X[3,4,5,0],X[1,5,4,2]&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span># EM, CONDENSED EM,... PLANTRI
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+kp.identify(kp.orient(K))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;+3_1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>[kp.identify(K) for K in kp.orientations(kp.knot(&quot;9_32&quot;))]
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;+9_32&#39;</span><span class="p">,</span> <span class="s1">&#39;-9_32&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+kp.identify(kp.mirror(K))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;3_1*&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+9_32&quot;)
+kp.identify(kp.reverse(K))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;-9_32&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+9_32&quot;)
+K = kp.mirror(kp.reverse(K))
+kp.identify(K)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+
+TypeError                                 Traceback (most recent call last)
+
+Cell In[23], line 3
+      1 K = kp.knot(&quot;+9_32&quot;)
+      2 K = kp.mirror(kp.reverse(K))
+----&gt; 3 kp.identify(K)
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:340, in identify(k)
+    337 def identify(k: Diagram) -&gt; str | list | None:
+    339     if is_knot(k):
+--&gt; 340         return identify_knot(k)
+    341     elif is_link(k):
+    342         return None
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:317, in identify_knot(k)
+    315 # find by homflypt
+    316 result = []
+--&gt; 317 homflypt_polynomial = homflypt(k, &quot;xyz&quot;)
+    319 # check knots
+    320 for n_ in range(0, n + 1):
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/invariants/homflypt.py:233, in homflypt(k, variables)
+    230 variables = str(variables).lower()
+    232 # try to get the HOMFLYPT polynomial from the precomputed data
+--&gt; 233 polynomial = knot_precomputed_homflypt(k)
+    234 # otherwise, compute it
+    235 if polynomial is None:
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:263, in knot_precomputed_homflypt(k)
+    261 k_candidate = knot(name)
+    262 # the input PD diagram must be the same as in the knot table
+--&gt; 263 if canonical(k) != k_candidate:
+    264     return None
+    266 # we have found the knot in the table, now retrieve the precomputed homflypt polynomial
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/utils/decorators.py:45, in total_ordering_from_compare.&lt;locals&gt;.__ne__(self, other)
+     44 def __ne__(self, other):
+---&gt; 45     return self._compare(other) != 0
+
+
+File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/classes/planardiagram.py:207, in PlanarDiagram._compare(self, other, compare_attributes)
+    204 # 1) type
+    205 if type(self) is not type(other):
+    206     # REVIEW: original returned a TypeError object, which breaks ordering.
+--&gt; 207     raise TypeError(f&quot;Cannot compare {type(self)} with {type(other)}.&quot;)
+    209 # 2) number of nodes
+    210 s_nn, o_nn = len(self._nodes), len(other._nodes)
+
+
+TypeError: Cannot compare &lt;class &#39;knotpy.classes.planardiagram.OrientedPlanarDiagram&#39;&gt; with &lt;class &#39;knotpy.classes.planardiagram.PlanarDiagram&#39;&gt;.
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -382,6 +627,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-operations">Basic operations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

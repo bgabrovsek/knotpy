@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>fundamental_group &#8212; KnotPy  documentation</title>
+    <title>drawing_defaults &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.invariants.fundamental_group.fundamental_group';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.drawing.drawing_defaults';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="homflypt" href="knotpy.invariants.homflypt.html" />
-    <link rel="prev" title="fox_derivative" href="knotpy.invariants.fundamental_group.fox_derivative.html" />
+    <link rel="next" title="dynamic_network" href="knotpy.drawing.dynamic_network.html" />
+    <link rel="prev" title="ZigZag" href="knotpy.drawing.draw_tangle.ZigZag.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -148,6 +148,13 @@
 </li>
 
 
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../notation.html">
+    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../index.html">
     Reference
@@ -220,10 +227,6 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
 </div>
 
     </header>
@@ -260,6 +263,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../tutorial.html">
     Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../notation.html">
+    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
   </a>
 </li>
 
@@ -622,7 +632,7 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.drawing.html">drawing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="knotpy.drawing.html">drawing</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.alignment.html">alignment</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.alignment.align_layouts.html">align_layouts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.alignment.canonically_rotate_circles.html">canonically_rotate_circles</a></li>
@@ -645,6 +655,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.draw_tangle.ZigZag.html">ZigZag</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">drawing_defaults</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.drawing.dynamic_network.html">dynamic_network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.animate_simulation.html">animate_simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.drawing.dynamic_network.plot_bead_frame.html">plot_bead_frame</a></li>
@@ -687,7 +698,7 @@
 <li class="toctree-l2"><a class="reference internal" href="knotpy.drawing.tutte_layout.html">tutte_layout</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="knotpy.invariants.html">invariants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.affine_index.html">affine_index</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.affine_index.affine_index_polynomial.html">affine_index_polynomial</a></li>
 </ul>
@@ -715,12 +726,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.conway.html">conway</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="knotpy.invariants.fundamental_group.html">fundamental_group</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.fundamental_group.alexander_fox_matrix.html">alexander_fox_matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.fundamental_group.fox_derivative.html">fox_derivative</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">fundamental_group</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.fundamental_group.html">fundamental_group</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.homflypt.html">homflypt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.jones.html">jones</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.kauffman.html">kauffman</a></li>
@@ -1168,12 +1174,9 @@
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference</a></li>
     
     
-    <li class="breadcrumb-item"><a href="knotpy.invariants.html" class="nav-link">invariants</a></li>
+    <li class="breadcrumb-item"><a href="knotpy.drawing.html" class="nav-link">drawing</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="knotpy.invariants.fundamental_group.html" class="nav-link">fundamental_group</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">fundamental_group</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">drawing_defaults</span></li>
   </ul>
 </nav>
 </div>
@@ -1190,47 +1193,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="fundamental-group">
-<h1>fundamental_group<a class="headerlink" href="#fundamental-group" title="Link to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="knotpy.invariants.fundamental_group.fundamental_group">
-<span class="sig-name descname"><span class="pre">fundamental_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.invariants.fundamental_group.fundamental_group" title="Link to this definition">#</a></dt>
-<dd><p>Return a presentation of the fundamental group of the complement of <code class="docutils literal notranslate"><span class="pre">k</span></code> in S³.</p>
-<dl class="simple">
-<dt><strong>Relations:</strong></dt><dd><ul class="simple">
-<li><p>Positive crossing:
-<code class="docutils literal notranslate"><span class="pre">x_i</span> <span class="pre">*</span> <span class="pre">x_j</span> <span class="pre">*</span> <span class="pre">x_{i+1}⁻¹</span> <span class="pre">*</span> <span class="pre">x_j⁻¹</span> <span class="pre">=</span> <span class="pre">1</span></code></p></li>
-<li><p>Negative crossing:
-<code class="docutils literal notranslate"><span class="pre">x_i</span> <span class="pre">*</span> <span class="pre">x_j⁻¹</span> <span class="pre">*</span> <span class="pre">x_{i+1}⁻¹</span> <span class="pre">*</span> <span class="pre">x_j</span> <span class="pre">=</span> <span class="pre">1</span></code></p></li>
-<li><p>Vertex:
-<code class="docutils literal notranslate"><span class="pre">x₁^{s₁}</span> <span class="pre">*</span> <span class="pre">x₂^{s₂}</span> <span class="pre">*</span> <span class="pre">...</span></code> where <code class="docutils literal notranslate"><span class="pre">sᵢ</span> <span class="pre">=</span> <span class="pre">1</span></code> if the arc is directed
-<strong>into</strong> the vertex, and <code class="docutils literal notranslate"><span class="pre">-1</span></code> if <strong>out</strong> of the vertex.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.OrientedPlanarDiagram.html#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="knotpy.classes.planardiagram.OrientedPlanarDiagram"><em>OrientedPlanarDiagram</em></a>) – Oriented planar diagram.</p></li>
-<li><p><strong>return_dict</strong> (<em>bool</em>) – If True, also return a dict mapping each overstrand endpoint to its generator.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">FpGroup</span></code> if <code class="docutils literal notranslate"><span class="pre">return_dict</span></code> is False.</p></li>
-<li><p>Tuple <code class="docutils literal notranslate"><span class="pre">(FpGroup,</span> <span class="pre">overstrand_generator_dict)</span></code> if True.</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">k</span></code> is not oriented.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>FpGroup</em> | tuple[<em>FpGroup</em>, dict]</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="module-knotpy.drawing.drawing_defaults">
+<span id="drawing-defaults"></span><h1>drawing_defaults<a class="headerlink" href="#module-knotpy.drawing.drawing_defaults" title="Link to this heading">#</a></h1>
 </section>
 
 
@@ -1243,24 +1207,6 @@
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.invariants.fundamental_group.fundamental_group"><code class="docutils literal notranslate"><span class="pre">fundamental_group()</span></code></a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
