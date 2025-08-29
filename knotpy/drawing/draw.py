@@ -384,7 +384,6 @@ def draw_vertices(
                  joinstyle=None,
                  """
 
-    print(vertex_stroke_width, vertex_stroke_color)
     for v in vertices_to_draw:
         xy = layout[v]
         ax.add_patch(

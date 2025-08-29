@@ -706,7 +706,7 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
 
     original_k = k
     preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs
-    print('preprocessed_k = {}'.format(preprocessed_k))
+    #print('preprocessed_k = {}'.format(preprocessed_k))
 
     assert sanity_check(original_k)
     assert sanity_check(preprocessed_k)
