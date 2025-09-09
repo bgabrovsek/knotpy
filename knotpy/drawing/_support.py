@@ -53,7 +53,7 @@ def _visible(__obj) -> bool:
     """
     if not hasattr(__obj, "attr"):
         return True
-    print(__obj, not (__obj.attr.get("_support", False)))
+    #print(__obj, not (__obj.attr.get("_support", False)))
     return not (__obj.attr.get("_support", False))
 
 

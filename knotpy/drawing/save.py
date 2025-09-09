@@ -13,20 +13,20 @@ error marker.
 
 import math
 
-from knotpy.classes.planardiagram import PlanarDiagram
+from knotpy.classes.planardiagram import Diagram
 from knotpy.drawing.draw import draw
 from knotpy.notation.native import to_knotpy_notation
 from knotpy.utils.progressbar import bar
 import knotpy.drawing.drawing_defaults as DEFAULTS
 
-__all__ = ["export_pdf", "export_pdf_groups"]
+__all__ = ["export_pdf", "export_pdf_groups", "save_drawing"]
 __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 DEFAULTS._DEFAULT_IGNORE_DRAWING_ERRORS = False
 DEFAULTS._DEFAULT_SHOW_PROGRESS = True
 
-def _draw_error_diagram(k: PlanarDiagram, error_text, ax=None) -> None:
+def _draw_error_diagram(k: Diagram, error_text, ax=None) -> None:
     """Draw a simple placeholder (“X”) and a short error note.
 
     Args:
@@ -131,7 +131,7 @@ def export_pdf(
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
 
-    diagrams = [diagrams] if isinstance(diagrams, PlanarDiagram) else list(diagrams or [])
+    diagrams = [diagrams] if isinstance(diagrams, Diagram) else list(diagrams or [])
     show_progress = show_progress and len(diagrams) >= 10
 
     if plt.get_fignums():  # close any open figures to avoid mixing content
@@ -324,3 +324,61 @@ def export_pdf_groups(
             plt.close()
     finally:
         pdf.close()
+
+
+def save_drawing(
+        k: Diagram,
+        filename: str,
+        ax=None,
+        rotation=DEFAULTS._DEFAULT_ROTATION,  # degrees, counterclockwise
+        # Arc
+        arc_color=DEFAULTS._DEFAULT_ARC_COLOR,
+        arc_width=DEFAULTS._DEFAULT_ARC_WIDTH,
+        arc_style=DEFAULTS._DEFAULT_ARC_STYLE,
+        arc_alpha=DEFAULTS._DEFAULT_ARC_ALPHA,
+        arc_stroke_color=DEFAULTS._DEFAULT_ARC_STROKE_COLOR,
+        arc_stroke_width=DEFAULTS._DEFAULT_ARC_STROKE_WIDTH,
+        arc_stroke_alpha=DEFAULTS._DEFAULT_ARC_STROKE_ALPHA,
+        gap=DEFAULTS._DEFAULT_GAP,
+        cmap=DEFAULTS._DEFAULT_CMAP,
+        # Vertex
+        vertex_color=DEFAULTS._DEFAULT_VERTEX_COLOR,
+        vertex_size=DEFAULTS._DEFAULT_VERTEX_SIZE,
+        vertex_alpha=DEFAULTS._DEFAULT_VERTEX_ALPHA,
+        vertex_stroke_color=DEFAULTS._DEFAULT_VERTEX_STROKE_COLOR,
+        vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
+        vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
+        # Arrow
+        arrow_color=DEFAULTS._DEFAULT_ARROW_COLOR,
+        arrow_width=DEFAULTS._DEFAULT_ARROW_WIDTH,
+        arrow_length=DEFAULTS._DEFAULT_ARROW_LENGTH,
+        arrow_style=DEFAULTS._DEFAULT_ARROW_STYLE,
+        arrow_cap_style=DEFAULTS._DEFAULT_ARROW_CAP_STYLE,
+        arrow_position=DEFAULTS._DEFAULT_ARROW_POSITION,
+        arrow_alpha=DEFAULTS._DEFAULT_ARROW_ALPHA,
+        # Labels
+        label_endpoints=DEFAULTS._DEFAULT_LABEL_ENDPOINTS,
+        label_arcs=DEFAULTS._DEFAULT_LABEL_ARCS,
+        label_nodes=DEFAULTS._DEFAULT_LABEL_NODES,
+        label_color=DEFAULTS._DEFAULT_LABEL_COLOR,
+        label_font_size=DEFAULTS._DEFAULT_LABEL_FONT_SIZE,
+        label_font_family=DEFAULTS._DEFAULT_LABEL_FONT_FAMILY,
+        label_horizontal_alignment=DEFAULTS._DEFAULT_LABEL_HORIZONTAL_ALIGNMENT,
+        label_vertical_alignment=DEFAULTS._DEFAULT_LABEL_VERTICAL_ALIGNMENT,
+        label_alpha=DEFAULTS._DEFAULT_LABEL_ALPHA,
+        # Title
+        title=DEFAULTS._DEFAULT_TITLE,  # bool or string
+        title_color=DEFAULTS._DEFAULT_TITLE_COLOR,
+        title_font_size=DEFAULTS._DEFAULT_TITLE_FONT_SIZE,
+        title_font_family=DEFAULTS._DEFAULT_TITLE_FONT_FAMILY,
+        title_alpha=DEFAULTS._DEFAULT_TITLE_ALPHA,
+        # Other
+        show_circle_packing=DEFAULTS._DEFAULT_SHOW_CIRCLE_PACKING,
+        padding_fraction=DEFAULTS._DEFAULT_PADDING_FRACTION,
+        show_axis=DEFAULTS._DEFAULT_SHOW_AXIS
+    ):
+    args = dict(locals())
+    from matplotlib import pyplot as plt
+    draw(k, **args, show=False)
+    plt.savefig(filename, bbox_inches="tight", pad_inches=0.05, dpi=plt.gcf().dpi)
+    plt.close()

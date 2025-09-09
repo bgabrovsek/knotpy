@@ -297,7 +297,7 @@ def draw_vertices(
         vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
     ):
 
-    print("draw v", k)
+    #print("draw v", k)
 
     """Draw solid disks for vertex nodes.
 
@@ -686,6 +686,7 @@ def draw_from_layout(
         _, ax = plt.subplots()
         ax = plt.gca()
 
+
     args_arcs = {key: value for key, value in args.items() if key.startswith("arc")}
     draw_arcs(k, layout, ax=ax, cmap=cmap, **args_arcs)
     draw_endpoints(k, layout, ax=ax, gap=gap, cmap=cmap, **args_arcs)
@@ -698,6 +699,7 @@ def draw_from_layout(
     args_vertex = {key: value for key, value in args.items() if key.startswith("vertex")}
     draw_vertices(k, layout, ax=ax, **args_vertex)
 
+
     args_label = {key: value for key, value in args.items() if key.startswith("label")}
     for key in ("label_endpoints", "label_arcs", "label_nodes"):
         del args_label[key]
@@ -708,6 +710,7 @@ def draw_from_layout(
         draw_endpoint_labels(k, layout, ax=ax, **args_label)
     if label_arcs:
         draw_arc_labels(k, layout, ax=ax, **args_label)
+
 
     autoscale_with_padding(ax, pad_frac=padding_fraction)
 
@@ -799,9 +802,9 @@ def draw(
     # decompose into disjoint components
     components = disjoint_union_decomposition(supported_k)
 
+
     # compute layout per component (and keep the circle packing for alignment)
     layout_circles_pairs = [layout_circle_packing(comp, rotation=rotation, return_circles=True) for comp in components]
-
     # align components horizontally
     align_layouts(layout_circles_pairs)
 
@@ -867,6 +870,10 @@ def _plot_circles(k: Diagram, circles: dict, ax=None):
 
 if __name__ == "__main__":
     import knotpy as kp
+    k = kp.knot("3_1")
+    kp.draw(k, show=True)
+    exit()
+
     k3 = kp.orient(kp.knot("3_1"))
     #kp.draw(k3, show=True, gap=0, arc_stroke_width=6, arc_width=4, arc_stroke_color="white") #cmap="jet"
     #kp.draw(k3, show=True, gap=0, arc_color="white", arc_stroke_width=6, arc_width=4, arc_stroke_color="black") #cmap="jet"

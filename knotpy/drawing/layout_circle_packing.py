@@ -730,9 +730,11 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
     if is_unknot(k):
         return unknot_packing(k)
 
+
     original_k = k
     preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs
     #print('preprocessed_k = {}'.format(preprocessed_k))
+
 
     assert sanity_check(original_k)
     assert sanity_check(preprocessed_k)
@@ -746,6 +748,7 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
     layout |= {face: None for face in preprocessed_k.faces}
 
     _layout_arcs(preprocessed_k, circles, layout)
+
     _layout_endpoints(preprocessed_k, circles, layout)
 
     _post_process_layout(original_k, preprocessed_k, layout, circles)
