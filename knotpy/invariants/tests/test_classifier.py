@@ -1,4 +1,5 @@
 from knotpy import group_by_invariants
+from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def first_letter(s):
     return s[0]
@@ -31,27 +32,21 @@ def test_group_by_invariants():
     groups1 = group_by_invariants(diagrams, inv_funcs_multi, parallel=False)
     actual_keys1 = set(groups1.keys())
     assert actual_keys1 == expected_keys_multi, "Mismatch in multi-func keys (parallel=False)"
-    print("ok")
 
     # --- Case 2: multi-invariant, parallel=True ---
     groups2 = group_by_invariants(diagrams, inv_funcs_multi, parallel=True)
     actual_keys2 = set(groups2.keys())
     assert actual_keys2 == expected_keys_multi, "Mismatch in multi-func keys (parallel=True)"
-    print("ok")
 
     # --- Case 3: single-invariant, parallel=False ---
     groups3 = group_by_invariants(diagrams, inv_func_single, parallel=False)
     actual_keys3 = set(groups3.keys())
     assert actual_keys3 == expected_keys_single, "Mismatch in single-func keys (parallel=False)"
-    print("ok")
 
     # --- Case 4: single-invariant, parallel=True ---
     groups4 = group_by_invariants(diagrams, inv_func_single, parallel=True)
     actual_keys4 = set(groups4.keys())
     assert actual_keys4 == expected_keys_single, "Mismatch in single-func keys (parallel=True)"
-    print("ok")
-
-    print("All test cases passed.")
 
 
 def test_saver():
@@ -69,7 +64,8 @@ def test_saver():
     for i, k in enumerate(diagrams):
         k.name = str(i)
 
-    kp.save_invariants(diagrams, invariant_funcs=kp.affine_index_polynomial, path="test_invariants.txt", parallel=False)
+    kp.save_invariants(diagrams, invariant_funcs=kp.affine_index_polynomial, path=_unique + "_invariants.txt", parallel=False)
+    _safe_delete_file(_unique + "_invariants.txt")
 
 if __name__ == "__main__":
     test_saver()

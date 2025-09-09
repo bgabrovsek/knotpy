@@ -20,7 +20,7 @@ def test_simplify_thetas():
 
         # simplify the modified theta curve
 
-        theta_simplified = kp.simplify_smart(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
+        theta_simplified = kp.simplify(theta_mod, depth=1)  # probably depth 0 is enough (no increasing moves)
 
         # the canonical forms should be the same
         #kp.export_pdf([theta, theta_mod, theta_simplified], f"test_simplify_thetas {i}.pdf", with_labels=True)
@@ -136,13 +136,8 @@ def test_theta_r4():
     #     print()
 
 if __name__ == '__main__':
-
-    from time import time
-
-    t = time()
-
+    test_reduce_groups_bonded()
     test_simplify_thetas()
-
 
     # a = kp.from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
     # b = kp.from_knotpy_notation("a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 e2 e1 a2), e → X(b1 d2 d1 b2)")
@@ -153,6 +148,3 @@ if __name__ == '__main__':
     test_simplify_thetas()
     test_reduce_thetas()
     test_wanda()
-    test_reduce_groups_bonded()
-
-    print(time()-t)

@@ -9,6 +9,7 @@ __all__ = [
     "is_kink", "kinks", "kink_region_iterator",
     "bridges", "is_bridge",
     "edges", "overstrands",
+    "is_adjacent", "is_incident"
 ]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
@@ -290,6 +291,27 @@ def overstrands(k: Diagram):
     for ep1, ep2 in k.arcs:
         dsu[ep1] = k.endpoint_from_pair(ep2)
     return dsu.classes()
+
+def is_adjacent(k, obj1, obj2):
+    """Return True if `obj1` and `obj2` are adjacent to each other in the diagram."""
+
+    # node-node
+    if obj1 in k.nodes and obj2 in k.nodes:
+        return any(ep.node == obj2 for ep in k.nodes[obj1])
+
+    # endpoint-endpoint
+    if obj1 in k.endpoints and obj2 in k.endpoints:
+        return obj1.node == obj2.node
+
+    # arc-arc
+    if obj1 in k.arcs and obj2 in k.arcs:
+        print("yay")
+
+    return False
+
+def is_incident(k, obj1, obj2):
+    """Return True if `obj1` and `obj2` are incident to each other in the diagram."""
+    pass
 
 
 if __name__ == "__main__":

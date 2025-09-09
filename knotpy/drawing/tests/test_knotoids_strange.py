@@ -1,5 +1,6 @@
 import knotpy as kp
 from knotpy import export_pdf
+from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 codes = """
 a=V(b0) b=X(a0 c0 c3 d0) c=X(b1 e0 d1 b2) d=X(b3 c2 f3 e1) e=X(c1 d3 g0 f0) f=X(e3 g3 h0 d2) g=X(e2 h3 h1 f1) h=X(f2 g2 i0 g1) i=V(h2)
@@ -322,7 +323,9 @@ a=V(b0) b=X(a0 c0 d0 c1) c=X(b1 b3 e0 f3) d=X(b2 g0 h3 f0) e=V(c2) f=X(d3 h2 g1 
 
 def test_draw_all():
     k = [kp.from_knotpy_notation(_) for _ in codes.split("\n") if _][::40]
-    export_pdf(k, "test.pdf")
+    export_pdf(k, _unique + "_export_strange.pdf")
+
+    _safe_delete_file(_unique + "_export_strange.pdf")
 
 # def test_one():
 #     k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c3 c0 d0) c=X(b2 e3 f0 b1) d=V(b3) e=X(f3 g3 h0 c1) f=X(c2 h3 g0 e0) g=X(f2 h2 h1 e1) h=X(e2 g2 g1 f1)")

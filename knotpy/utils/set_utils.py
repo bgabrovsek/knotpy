@@ -166,9 +166,12 @@ class LeveledSet(Generic[T, I]):
         """Return the union of contents (as external items) with another LeveledSet."""
         return {self._out(x) for x in (self._global_set | other._global_set)}
 
-    def intersection(self, other: "LeveledSet[T, I]") -> set[T]:
+    def intersection(self, other: "LeveledSet[T, I]", evaluate=True) -> set[T]:
         """Return the intersection of contents (as external items) with another LeveledSet."""
-        return {self._out(x) for x in (self._global_set & other._global_set)}
+        if evaluate:
+            return {self._out(x) for x in (self._global_set & other._global_set)}
+        else:
+            return {x for x in (self._global_set & other._global_set)}
 
     def difference(self, other: "LeveledSet[T, I]") -> set[T]:
         """Return the difference of contents (as external items) with another LeveledSet."""

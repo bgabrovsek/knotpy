@@ -172,6 +172,7 @@ class NodeView(Mapping, Set):
             str: Representation mapping node id → node.
         """
         return ", ".join([f"{v} \u2192 {u}" for v, u in sorted(self._nodes.items())])
+        #return str([str(v) for v in sorted(self)])
 
 
 class FilteredNodeView(NodeView):

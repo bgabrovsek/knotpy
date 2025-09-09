@@ -1,0 +1,146 @@
+Tutorial
+
+
+## Getting examples
+import knotpy as kp
+# unoriented
+k = kp.knot("3_1")
+k = kp.knot("4_1")
+k = kp.knot("3_1*")  # mirror
+
+# oriented
+k = kp.knot("+3_1")
+k = kp.knot("-4_1")
+
+# links
+l = kp.link("L2a1++")
+l = kp.link("L2a1+-")  # one component reversed
+l = kp.link("L5a_1*")  # unoriented mirror
+
+# theta curves
+k = kp.from_knotpy_notation("a=V(b0 b2 b1) b=V(a0 a2 a1) ['name'='t0_1']")
+k = kp.from_knotpy_notation("a=V(b0 c0 d3) b=V(a0 d2 e3) c=X(a1 e2 e1 d0) d=X(c3 e0 b1 a2) e=X(d1 c2 c1 b2) ['name'='+t3_1']")
+k = kp.from_knotpy_notation("a=V(b0 c0 d3) b=X(a0 d2 e3 c1) c=V(a1 b3 e2) d=X(e1 e0 b1 a2) e=X(d1 d0 c2 b2) ['name'='-t3_1']")
+k = kp.from_knotpy_notation("a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 e3 f0) d=X(f3 e0 b1 a2) e=X(d1 f2 f1 c2) f=X(c3 e2 e1 d0) ['name'='t4_1.1']")
+t = kp.from_knotpy_notation("a=V(b0 c0 d3) b=V(a0 e3 c1) c=X(a1 b2 e2 d0) d=X(c3 e1 e0 a2) e=X(d2 d1 c2 b1)")
+
+# knotoid examples
+k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 c3 d0) c=X(b1 d2 d1 b2) d=X(b3 c2 c1 e0) e=V(d3)")
+k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c3 d3 c0) c=X(b3 d2 e0 b1) d=X(f3 e1 c1 b2) e=X(c2 d1 g3 f0) f=X(e3 g2 g0 d0) g=X(f2 h0 f1 e2) h=V(g1)")
+k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 d2 e3 b2) d=X(e2 f0 c1 b3) e=X(f3 g3 d0 c2) f=X(d1 g2 h0 e0) g=X(h3 i0 f1 e1) h=X(f2 i3 i1 g0) i=X(g1 h2 j0 h1) j=V(i2)")
+
+# knotted graph
+k = kp.from_knotpy_notation("a=V(b0 c0 d0) b=V(a0 d3 e0) c=V(a1 e2 f0) d=X(a2 f2 g0 b1) e=V(b2 g2 c1) f=V(c2 g1 d1) g=V(d2 f1 e1)")
+
+
+
+## General functions
+# canonical
+# closure - for knotoids 3 cases
+# link_components_endpoints, number_of_link_components - for links, e.g. k = kp.link("L6a_4") # 3 component Borromean Rings
+# is_connected_sum, connected_sum_decomposition, connected_sum
+# cut_nodes, cut_decomposition, arc_cut_sets
+# cycles
+# degree_sequence
+# disjoint_union, disjoint_union_decomposition, is_disjoint_union, number_of_disjoint_components
+# dual_planar_diagram
+# orient, orientations, reverse, unorient
+# sanity_check
+# flip, mirror - flip for knotoids
+# bridges, edges, is_adjacent, is_bridge, is_empty_diagram, is_incident, is_kink, is_knot, is_knotoid, is_leaf, is_link, is_linkoid, is_loop, is_planar_graph, is_unknot, is_unlink, kinks, leafs, loops, overstrands
+# freeze
+
+## Drawing
+# draw, export_pdf, export_pdf_groups
+
+## Invariants - knotoids
+# affine_index_polynomial
+# arrow_polynomial
+# kauffman_bracket_skein_module
+# mock_alexander_polynomial
+
+## invariants - knots/links
+# alexander
+# multivariable_alexander
+# bracket
+# colorings
+# tricolorable
+# conway
+# fundamental_group
+# homflypt (all possibilies)
+# jones
+# kauffman
+# writhe
+
+## invariants spatial/knotted graphs
+# fundamental_group
+# unplugging
+# yamada
+
+## invariants - graphs
+# tutte
+
+## Notation
+# from_condensed_em_notation
+# from_em_notation
+# to_condensed_em_notation
+# to_em_notation
+# from_knotpy_notation
+# to_knotpy_notation
+# from_condensed_pd_notation
+# from_pd_notation
+# to_condensed_pd_notation
+# to_pd_notation
+# to_plantri_notation - graphs
+# from_plantri_notation - graphs
+
+## Reidemeister moves (specific)
+# detour_move, find_detour_moves
+# flype, find_flypes, choose_flype
+# find_reidemeister_1_add_kink, find_reidemeister_1_remove_kink, reidemeister_1_add_kink, reidemeister_1_remove_kink, choose_reidemeister_1_remove_kink, choose_reidemeister_1_add_kink
+# choose_reidemeister_2_poke, choose_reidemeister_2_unpoke, find_reidemeister_2_poke, find_reidemeister_2_unpoke, reidemeister_2_poke, reidemeister_2_unpoke
+# choose_reidemeister_3_triangle, find_reidemeister_3_triangle, reidemeister_3
+# choose_reidemeister_4_slide, find_reidemeister_4_slide, reidemeister_4_slide
+# choose_reidemeister_5_twist, choose_reidemeister_5_untwist, find_reidemeister_5_twists, reidemeister_5_twist, find_reidemeister_5_untwists, reidemeister_5_untwist
+
+## Reidemesiter moves/simplification
+# reduce_equivalent_diagrams
+# simplify_decreasing
+# simplify_non_increasing
+# simplify_smart
+# all_reidemeister_moves
+# detour_generator, flype_generator, r1_add_kink_generator,...
+# random_reidemeister_move
+# randomize_diagram
+# reidemeister_decreasing_moves_generator, reidemeister_increasing_moves_generator, reidemeister_moves_generator, reidemeister_preserving_moves_generator
+# all_reidemeister_moves_space, crossing_decreasing_space, crossing_non_increasing_space, crossing_preserving_space, detour_space
+
+# Tables/precomputed
+# load_diagram_sets, load_diagrams, load_diagrams_as_dict
+# diagram_reader, diagram_set_reader
+# save_diagram_sets, save_diagrams
+# knot
+# knots
+# identify
+# link
+# links
+# theta
+# thetas
+# handcuff
+# handcuffs
+
+## Families of knots/graphs
+# bouquet
+# cycle_graph
+# parallel_edges
+# path_graph
+# star_graph
+# unknot
+# unlink
+# wheel_graph
+# generate_knot_diagrams
+# generate_simple_graphs
+# vertices_to_crossings
+
+# saving, computing
+group_by_invariants

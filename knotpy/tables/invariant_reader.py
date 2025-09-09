@@ -16,6 +16,10 @@ Features
 
 from __future__ import annotations
 
+__all__ = ["load_invariant_table"]
+__version__ = "1.0"
+__author__ = "Boštjan Gabrovšek <bostjan.gabrovšek@pef.uni-lj.si>"
+
 import csv
 import gzip
 from pathlib import Path

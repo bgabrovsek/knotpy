@@ -2,7 +2,7 @@ from knotpy import canonical, find_reidemeister_1_remove_kink
 from knotpy.invariants.jones import jones
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
-from knotpy.reidemeister.simplify import simplify_non_increasing, simplify_decreasing, simplify_smart
+from knotpy.reidemeister.simplify import simplify_non_increasing, simplify_decreasing, simplify
 from knotpy.algorithms.topology import is_unknot
 from time import time
 
@@ -196,7 +196,7 @@ def test_simplify_hard_unknots_smart():
     j = jones(simple_unknot)
     t = time()
     print("..")
-    s = simplify_smart(simple_unknot)
+    s = simplify(simple_unknot)
     if _DISPLAY_TIME: print("Time (simple unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -204,7 +204,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones(reducible_unknot)
     t = time()
-    s = simplify_smart(reducible_unknot)
+    s = simplify(reducible_unknot)
     if _DISPLAY_TIME: print("Time (reducible unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -212,7 +212,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones(nasty_unknot)
     t = time()
-    s = simplify_smart(nasty_unknot)
+    s = simplify(nasty_unknot)
     if _DISPLAY_TIME: print("Time (nasty unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -220,7 +220,7 @@ def test_simplify_hard_unknots_smart():
 
     j = jones(culprit_unknot)
     t = time()
-    s = simplify_smart(culprit_unknot, depth=1)
+    s = simplify(culprit_unknot, depth=1)
     #from knotpy.reidemeister.simplify import _old_simplify_smart
     #s = OLD_simplify_smart(culprit_unknot,  depth=1)
     if _DISPLAY_TIME: print("Time (culprit knot):", time() - t)
@@ -241,7 +241,7 @@ def test_simplify_hard_unknots_smart_string():
     j = jones(simple_unknot)
     t = time()
     print("..")
-    s = simplify_smart(simple_unknot)
+    s = simplify(simple_unknot)
     if _DISPLAY_TIME: print("Time (simple unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -249,7 +249,7 @@ def test_simplify_hard_unknots_smart_string():
 
     j = jones(reducible_unknot)
     t = time()
-    s = simplify_smart(reducible_unknot)
+    s = simplify(reducible_unknot)
     if _DISPLAY_TIME: print("Time (reducible unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -257,7 +257,7 @@ def test_simplify_hard_unknots_smart_string():
 
     j = jones(nasty_unknot)
     t = time()
-    s = simplify_smart(nasty_unknot)
+    s = simplify(nasty_unknot)
     if _DISPLAY_TIME: print("Time (nasty unknot):", time() - t)
     assert is_unknot(s)
     assert jones(s) == j
@@ -265,7 +265,7 @@ def test_simplify_hard_unknots_smart_string():
 
     j = jones(culprit_unknot)
     t = time()
-    s = simplify_smart(culprit_unknot, depth=1)
+    s = simplify(culprit_unknot, depth=1)
     #from knotpy.reidemeister.simplify import _old_simplify_smart
     #s = OLD_simplify_smart(culprit_unknot,  depth=1)
     if _DISPLAY_TIME: print("Time (culprit knot):", time() - t)
@@ -298,32 +298,32 @@ def test_smart():
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 1, 0) for _ in k1}
+    k2 = {kp.simplify(_, 1, 0) for _ in k1}
     print("knotoids =", len(k2), "(depth=1, flype)", time()-t)
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 1, 1) for _ in k1}
+    k2 = {kp.simplify(_, 1, 1) for _ in k1}
     print("knotoids =", len(k2), "(depth=1, flype)", time()-t)
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 2, flype=False) for _ in k1}
+    k2 = {kp.simplify(_, 2, flype=False) for _ in k1}
     print("knotoids =", len(k2), "(depth=2,flype)", time()-t)
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 2, 1, flype=False) for _ in k1}
+    k2 = {kp.simplify(_, 2, 1, flype=False) for _ in k1}
     print("knotoids =", len(k2), "(depth=2,flype)", time()-t)
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 2, 0, flype=True) for _ in k1}
+    k2 = {kp.simplify(_, 2, 0, flype=True) for _ in k1}
     print("knotoids =", len(k2), "(depth=2,flype)", time()-t)
 
     t = time()
     kp.settings.allowed_moves = "r1,r2,r3,flype"
-    k2 = {kp.simplify_smart(_, 2, 1, flype=True) for _ in k1}
+    k2 = {kp.simplify(_, 2, 1, flype=True) for _ in k1}
     print("knotoids =", len(k2), "(depth=2,flype)", time()-t)
 
 

@@ -1,4 +1,5 @@
 import knotpy as kp
+from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def test_writer_table_diagram():
 
@@ -14,13 +15,15 @@ def test_writer_table_diagram():
         for k in diagrams
     ]
 
-    kp.save_invariant_table(filename="test_writer_reader_diagram.txt", table=table)
-    loaded = kp.load_invariant_table(filename="test_writer_reader_diagram.txt")
+    kp.save_invariant_table(filename=_unique + "_writer_reader_diagram.txt", table=table)
+    loaded = kp.load_invariant_table(filename=_unique + "_writer_reader_diagram.txt")
     load_should_be = {
         d["diagram"]: {"affine": d["affine"]}
         for d in table
     }
     assert loaded == load_should_be
+
+    _safe_delete_file(_unique + "_writer_reader_diagram.txt")
 
 
 
@@ -38,9 +41,11 @@ def test_writer_dict_diagram():
         for k in diagrams
     }
 
-    kp.save_invariant_table(filename="test_writer_reader_diagram.txt", table=table)
-    loaded = kp.load_invariant_table(filename="test_writer_reader_diagram.txt")
+    kp.save_invariant_table(filename=_unique + "_writer_reader_diagram2.txt", table=table)
+    loaded = kp.load_invariant_table(filename=_unique + "_writer_reader_diagram2.txt")
     assert loaded == table
+
+    _safe_delete_file(_unique + "_writer_reader_diagram2.txt")
 
 
 def test_writer_table_name():
@@ -57,13 +62,16 @@ def test_writer_table_name():
         for k in diagrams
     ]
 
-    kp.save_invariant_table(filename="test_writer_reader_name.txt", table=table)
-    loaded = kp.load_invariant_table(filename="test_writer_reader_name.txt")
+    kp.save_invariant_table(filename=_unique + "_writer_reader_name.txt", table=table)
+    loaded = kp.load_invariant_table(filename=_unique + "_writer_reader_name.txt")
     load_should_be = {
         str(d["name"]): {"diagram":d["diagram"], "affine": d["affine"]}
         for d in table
     }
     assert loaded == load_should_be
+
+
+    _safe_delete_file(_unique + "_writer_reader_name.txt")
 
 
 def test_writer_dict_name():
@@ -80,9 +88,11 @@ def test_writer_dict_name():
         for k in diagrams
     }
 
-    kp.save_invariant_table(filename="test_writer_reader_name.txt", table=table)
-    loaded = kp.load_invariant_table(filename="test_writer_reader_name.txt")
+    kp.save_invariant_table(filename=_unique + "_writer_reader_name2.txt", table=table)
+    loaded = kp.load_invariant_table(filename=_unique + "_writer_reader_name2.txt")
     assert loaded == table
+
+    _safe_delete_file(_unique + "_writer_reader_name2.txt")
 
 
 

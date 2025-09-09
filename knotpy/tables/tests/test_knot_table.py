@@ -162,22 +162,52 @@ def test_same_polys():
     for k in kp.knots(range(1, 11), mirror=True):
         groups[kp.homflypt(k)].append(k.name)
 
-    for poly, name in groups.items():
-        if len(name) > 1:
-            print("Knots", " and ".join(name), "share the HOMFLY-PT polynomial:", poly)
+
+    duplicate = {tuple(sorted(name)) for poly, name in groups.items() if len(name) > 1}
+    assert duplicate == {('10_25*', '10_56*'), ('10_48', '10_48*'), ('10_103', '10_40'), ('10_103*', '10_40*'),
+                         ('10_129*', '8_8'), ('10_132', '5_1*'), ('10_104', '10_104*'), ('10_156*', '8_16*'),
+                         ('10_129', '8_8*'), ('10_25', '10_56'), ('10_125', '10_125*'), ('10_91', '10_91*'),
+                         ('10_132*', '5_1'), ('9_42', '9_42*'), ('10_71', '10_71*'), ('10_156', '8_16')}
 
 def test_unknot():
     k = kp.knot("unknot")
     assert kp.identify(k) == "0_1"
 
+def test_unoriented():
+
+    K = kp.knot("9_32")
+    assert kp.identify(K) == "9_32"
+
+    K = kp.mirror(K)
+    assert kp.identify(K) == "9_32*"
+
 def test_oriented():
+
+
     K = kp.knot("+9_32")
-    K = kp.mirror(kp.reverse(K))
-    assert kp.identify(K) == "-9_32*"
+    assert kp.identify(K) == "+9_32"
+    K1 = kp.reverse(K, inplace=False)
+    assert kp.identify(K1) == "-9_32"
+    K2 = kp.mirror(K, inplace=False)
+    assert kp.identify(K2) == "+9_32*"
+    K3 = kp.mirror(kp.reverse(K, inplace=False))
+    assert kp.identify(K3) == "-9_32*"
+
+
+
+    K = kp.knot("+9_32")
+    K = kp.randomize_diagram(K, 1)
+    assert kp.identify(K) == "+9_32" or kp.identify(K) == ['+9_32', '-9_32']
+
+    K2 = kp.mirror(K, inplace=False)
+    assert kp.identify(K2) == "+9_32*" or kp.identify(K2) == ['+9_32*', '-9_32*']
+
 
 if __name__ == "__main__":
     # Run test
     test_oriented()
+    test_unoriented()
+
     test_unknot()
     test_clean_name()
     test_parse_name()

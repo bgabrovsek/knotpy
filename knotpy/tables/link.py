@@ -194,6 +194,6 @@ def links_generator(
                     yield canonical(mirror_diagram(k, inplace=False))
 
 
-def links(crossings, mirror: bool = False, oriented: bool = False) -> list:
+def links(crossings=None, mirror: bool = False, oriented: bool = False) -> list:
     """Return a list of links with the given number(s) of crossings."""
     return list(links_generator(crossings=crossings, mirror=mirror, oriented=oriented))

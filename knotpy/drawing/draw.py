@@ -145,7 +145,7 @@ def draw_arcs(
                         linewidth=arc_width + arc_stroke_width * 2,
                         linestyle="solid",
                         alpha=arc_stroke_alpha,
-                        zorder=defaults.DEFAULTS._Z_ARC_STROKE,
+                        zorder=DEFAULTS.DEFAULTS._Z_ARC_STROKE,
                     )
                 )
 
@@ -157,7 +157,7 @@ def draw_arcs(
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
-                    zorder=defaults.DEFAULTS._Z_ARC,
+                    zorder=DEFAULTS._Z_ARC,
                 )
             )
 
@@ -296,6 +296,9 @@ def draw_vertices(
         vertex_stroke_width=DEFAULTS._DEFAULT_VERTEX_STROKE_WIDTH,
         vertex_stroke_alpha=DEFAULTS._DEFAULT_VERTEX_STROKE_ALPHA,
     ):
+
+    print("draw v", k)
+
     """Draw solid disks for vertex nodes.
 
     Args:
@@ -328,6 +331,8 @@ def draw_vertices(
 
     for v in vertices_to_draw:
         xy = layout[v]
+        if xy is None:
+            continue
         ax.add_patch(
             plt.Circle(
                 xy=(xy.real, xy.imag),
@@ -781,6 +786,7 @@ def draw(
             - with_labels (bool): If True, draw node/endpoint/arc labels. Default False.
             - show (bool): If True, call `plt.show()` at the end. Default False.
     """
+    #TODO: minimize the number of arguments by adding **kwargs with non-essential arguments (alpha,...)
     if arrow_color is None:
         arrow_color = arc_color
     args = dict(locals())
@@ -799,6 +805,13 @@ def draw(
     # align components horizontally
     align_layouts(layout_circles_pairs)
 
+    # for l in layout_circles_pairs:
+    #     print(l)
+    #     for o in l:
+    #         print("   ", o)
+    #         for key, value in o.items():
+    #             print("      ", key, value)
+
     # merge per-component layouts into a joint layout
     joint_layout, joint_circles = {}, {}
     for layout, circles in layout_circles_pairs:
@@ -807,8 +820,9 @@ def draw(
 
     # prepare axes
     if ax is None:
-        _, ax = plt.subplots()
-        ax = plt.gca()
+        _, ax = plt.subplots(constrained_layout=True)
+        #plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9)
+        #ax = plt.gca()
 
     align_layouts(layout_circles_pairs)  # keeps relative spacing if recomputed upstream
 
@@ -820,6 +834,8 @@ def draw(
     for key in ("show_circle_packing", "rotation", "ax", "k") :
         del args[key]
     draw_from_layout(k=supported_k, layout=joint_layout, ax=ax, **args)
+
+
 
 
 

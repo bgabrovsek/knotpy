@@ -14,7 +14,7 @@ __author__ = "Boštjan Gabrovšek"
 from pathlib import Path
 from functools import partial
 
-from knotpy.classes.planardiagram import Diagram
+from knotpy.classes.planardiagram import Diagram, PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.dict_utils import LazyDict
 from knotpy.tables.invariant_reader import load_invariant_table
 from knotpy.classes.freezing import unfreeze
@@ -217,7 +217,7 @@ def knots_generator(
                 """
 
 
-def knots(crossings, mirror: bool = False, oriented: bool = False) -> list:
+def knots(crossings=None, mirror: bool = False, oriented: bool = False) -> list:
     """
     Return a list of knots with the given number(s) of crossings.
     """
@@ -274,70 +274,145 @@ def knot_precomputed_homflypt(k: Diagram):
     except ValueError:
         return None
 
-def identify_knot(k: Diagram) -> str | list | None:
-
+def _candidates(k: Diagram):
+    # generator for candidates in the knot table
     k = canonical(k)
-    n = k.number_of_crossings
+    #print("k", k)
+    yield k, ""
+    #print("k*", canonical(mirror_diagram(k, inplace=False)))
+    yield canonical(mirror_diagram(k, inplace=False)), "*"
+    k = canonical(simplify_decreasing(k, inplace=False))
+    #print("sk", k)
+    yield k, ""
+    #print("sk*", canonical(mirror_diagram(k, inplace=False)))
+    yield canonical(mirror_diagram(k, inplace=False)), "*"
 
-    # unorient the knot and save the original to k_oriented (None if unoriented)
-    if k.is_oriented():
-        k_oriented = k
-        k = canonical(unorient(k))
-    else:
-        k_oriented = None
+def _identify_unoriented_knot(k: PlanarDiagram) -> str | list:
+    """Try to get the knot name, e.g. '3_1' of 'k'."""
 
+    # find the exact knot (or the mirror) in the knot table
+    for k_, _ in _candidates(k):
+        if (knot_name := next((key for key, v in _knot_table[k.number_of_crossings].items() if v["diagram"] == k_), None)) is not None:
+            return knot_name + _
 
-
-    # search the knot table for k
-    if (result := next((key for key, v in _knot_table[n].items() if v["diagram"] == k), None)) is not None:
-
-
-        if k_oriented is None:
-            return result
-
-        if knot("+" + result) == k_oriented:
-            return "+" + result
-
-        if knot("-" + result) == k_oriented:
-            return "-" + result
-
-        return ["+" + result, "-" + result]
-
-
-
-    k = canonical(simplify_decreasing(k))
-
-    # search the knot table for k
-    if (result := next((key for key, v in _knot_table[n].items() if v["diagram"] == k), None)) is not None:
-        return result
-
-
-    # find by homflypt
-    result = []
+    # searching the knot table failed, find candidates by homflypt polynomial
+    knot_name_candidates = []
+    k = simplify_decreasing(k, inplace=False)
     homflypt_polynomial = homflypt(k, "xyz")
-
     # check knots
-    for n_ in range(0, n + 1):
-        result += [key for key, p in _knot_precomputed_homflypt[n_].items() if p == homflypt_polynomial]
-
+    for n_ in range(0, k.number_of_crossings + 1):
+        knot_name_candidates += [key for key, p in _knot_precomputed_homflypt[n_].items() if p == homflypt_polynomial]
     # check mirrors
-    for n_ in range(0, n + 1):
-        result += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
+    for n_ in range(0, k.number_of_crossings + 1):
+        knot_name_candidates += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
 
-    if not result:
-        return None
+    return knot_name_candidates[0] if len(knot_name_candidates) == 1 else knot_name_candidates
 
 
-    if len(result) == 1 and k_oriented is None:
-        return result[0]
-    else:
-        return [s + key for key in result for s in ["+", "-"]]
+def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
+    """Try to get the knot name, e.g. '3_1' of 'k'."""
+    #print("--", k)
+
+    # find the exact oriented knot (or the mirror) in the knot table
+    for k_, _ in _candidates(k):
+        u_ = canonical(unorient(k_))
+        #print("u", u_)
+        if (knot_name := next((key for key, v in _knot_table[k.number_of_crossings].items() if v["diagram"] == u_), None)) is not None:
+
+            if knot("+" + knot_name) == k_:
+                return "+" + knot_name + _
+            if knot("-" + knot_name) == k_:
+                return "-" + knot_name + _
+            return ["+" + knot_name + _, "-" + knot_name + _]
+
+    # searching the knot table failed, find candidates by homflypt polynomial
+    knot_name_candidates = []
+    k = simplify_decreasing(k, inplace=False)
+    homflypt_polynomial = homflypt(k, "xyz")
+    # check knots
+    for n_ in range(0, k.number_of_crossings + 1):
+        knot_name_candidates += [key for key, p in _knot_precomputed_homflypt[n_].items() if p == homflypt_polynomial]
+    # check mirrors
+    for n_ in range(0, k.number_of_crossings + 1):
+        knot_name_candidates += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
+
+    return [s + name for name in knot_name_candidates for s in "+-"]
+
+
+# def identify_knot(k: Diagram) -> str | list | None:
+#     return _identify_oriented_knot(k) if k.is_oriented() else _identify_unoriented_knot(k)
+    #
+    # n = k_original.number_of_crossings
+    #
+    #
+    # k_original = canonical(k)
+    #
+    # # find the unoriented knot
+    # k_unoriented = canonical(unorient(k)) if k.is_oriented() else k_original
+    #
+    # # search the knot table for k
+    # if (knot_name := next((key for key, v in _knot_table[n].items() if v["diagram"] == k_unoriented), None)) is not None:
+    #
+    #     print("found", knot_name)
+    #
+    #     if k_unoriented is k_original:  # we were searching for the unoriented in any case
+    #         return knot_name
+    #     if knot("+" + knot_name) == k_original:
+    #         return "+" + knot_name
+    #     if knot("-" + knot_name) == k_original:
+    #         return "-" + knot_name
+    #     return ["+" + knot_name, "-" + knot_name]
+    #
+    # # try the mirror
+    # k_original_mirror = canonical(mirror_diagram(k, inplace=False))
+    # k_unoriented_mirror = canonical(unorient(k)) if k.is_oriented() else k_original_mirror
+    # if (knot_name := next((key for key, v in _knot_table[n].items() if v["diagram"] == k_unoriented_mirror), None)) is not None:
+    #
+    #     print("found mirror", knot_name)
+    #
+    #     if k_unoriented_mirror is k_original:  # we were searching for the unoriented in any case
+    #         return knot_name + "*"
+    #     if knot("+" + knot_name) == k_original_mirror:
+    #         return "+" + knot_name + "*"
+    #     if knot("-" + knot_name) == k_original_mirror:
+    #         return "-" + knot_name + "*"
+    #     return ["+" + knot_name + "*", "-" + knot_name + "*"]
+    #
+    # # try do detect the knot using the homflypt polynomial
+    #
+    # k = canonical(simplify_decreasing(k))
+    #
+    # # search the knot table for k
+    # if (knot_name := next((key for key, v in _knot_table[n].items() if v["diagram"] == k), None)) is not None:
+    #     return knot_name
+    #
+    #
+    # # find by homflypt
+    # knot_name = []
+    # homflypt_polynomial = homflypt(k, "xyz")
+    #
+    # # check knots
+    # for n_ in range(0, n + 1):
+    #     knot_name += [key for key, p in _knot_precomputed_homflypt[n_].items() if p == homflypt_polynomial]
+    #
+    # # check mirrors
+    # for n_ in range(0, n + 1):
+    #     knot_name += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
+    #
+    # if not knot_name:
+    #     return None
+    #
+    #
+    # if len(knot_name) == 1 and k_oriented is None:
+    #     return knot_name[0]
+    # else:
+    #     return [s + key for key in knot_name for s in ["+", "-"]]
 
 
 def identify(k: Diagram) -> str | list | None:
 
     if is_knot(k):
-        return identify_knot(k)
+        return _identify_oriented_knot(k) if k.is_oriented() else _identify_unoriented_knot(k)
     elif is_link(k):
         return None
     else:

@@ -10,7 +10,7 @@ from knotpy.algorithms.topology import leafs
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.utils.circlepack import circle_pack
-from knotpy.algorithms.topology import loops, kinks, bridges
+from knotpy.algorithms.topology import loops, kinks, bridges, is_unknot
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.drawing._support import _visible
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
@@ -19,6 +19,7 @@ from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendic
 from knotpy.drawing.alignment import canonically_rotate_circles
 from knotpy.algorithms.sanity import sanity_check
 from knotpy.drawing._support import drawable, _add_support_arcs
+
 
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek'
@@ -685,6 +686,28 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
         else:
             pass
 
+def unknot_packing(k):
+    node, = k.nodes
+    ep1, ep2 = k.endpoints
+    arc, = k.arcs
+    face1, face2 = k.faces
+    layout = {
+        node: complex(1.0),
+        ep1: CircularArc(complex(0.0), 1, 0.0, math.pi / 2),
+        ep2: CircularArc(complex(0.0), 1, 3 * math.pi / 2, 0.0),
+        arc: CircularArc(complex(0.0), 1, math.pi / 2, 3 * math.pi / 2)
+    }
+    circles = {
+        node: Circle(complex(0.0), 0.25),
+        ep1: Circle(complex(math.sqrt(2) / 2, math.sqrt(2) / 2), 0.25),
+        ep2: Circle(complex(math.sqrt(2) / 2, -math.sqrt(2) / 2), 0.25),
+        arc: Circle(complex(-1), 0.5),
+        face1: Circle(complex(0.0), 0.25),
+    }
+    k.nodes[node].attr["_support"] = True
+    print(k)
+    return layout, circles
+
 
 def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0, return_circles: bool = False):
     """
@@ -703,6 +726,9 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
         If `return_circles` is True, it returns a tuple containing the layout dictionary
         and the computed circles.
     """
+
+    if is_unknot(k):
+        return unknot_packing(k)
 
     original_k = k
     preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs

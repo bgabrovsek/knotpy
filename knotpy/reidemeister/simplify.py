@@ -35,7 +35,7 @@ from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.algorithms.symmetry import flip
 from knotpy._settings import settings
 
-__all__ = ["simplify_decreasing", "simplify_smart", "simplify_non_increasing", "reduce_equivalent_diagrams"]
+__all__ = ["simplify_decreasing", "simplify", "simplify_non_increasing", "reduce_equivalent_diagrams"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
 
@@ -123,26 +123,29 @@ def simplify_non_increasing(k: Diagram | set | tuple | list, greediness: int = 1
     else:
         raise ValueError(f"Invalid greediness level {greediness}.")
 
-def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = False):
-    print("Simplifying", k)
+
+_DEBUG_SIMPLIFY = False
+
+def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = False):
 
     greediness = 1
 
     # If multiple diagrams are given, perform steps on each diagram first.
     if isinstance(k, (set, list, tuple)):
-        return [simplify_smart(_, depth, flype=flype) for _ in k]
+        return [simplify(_, depth, flype=flype) for _ in k]
 
     # From here on, k is a single diagram.
     memory_efficient = True if k.number_of_crossings + 2 * depth < 26 * 2 - 2 else False
-    print(memory_efficient)
+    if _DEBUG_SIMPLIFY: print("Memory efficient:", memory_efficient)
 
     settings_dump = settings.dump()
     if flype:
         settings.add_allowed_move("FLYPE")
 
-    # If multiple diagrams are given, perform steps on each diagram.
-    if isinstance(k, (set, list, tuple)):
-        return [simplify_smart(_, depth, flype=flype) for _ in k]
+    # # If multiple diagrams are given, perform steps on each diagram.
+    # if isinstance(k, (set, list, tuple)):
+    #     return [simplify(_, depth, flype=flype) for _ in k]
+
 
     # We start the search with both k and simplified k (since sometimes much reduction is already done via decreasing).
     k = {canonical(k), canonical(simplify_decreasing(k, inplace=True))}
@@ -153,6 +156,7 @@ def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool 
 
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in k):
+        settings.load(settings_dump)
         return min(k)
 
     # Start off by making non-increasing moves (R3 and similar).
@@ -168,14 +172,16 @@ def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool 
 
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in ls):
+        settings.load(settings_dump)
         return min(ls)
 
-    print("0", ls.number_of_items())
+    if _DEBUG_SIMPLIFY: print("Initial set:", ls.level_sizes())
 
     # Crossing-increasing loop
     start = ls.number_of_levels()
     for depth_index in range(depth):
-        print("a", ls.number_of_items())
+
+        if _DEBUG_SIMPLIFY: print(f"Depth {depth_index}", ls.level_sizes())
 
         # Increase crossings “smartly”.
         ls.new_level()
@@ -184,27 +190,31 @@ def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool 
                 for _ in detour_generator(k):
                     ls.add(canonical(_))
 
-        print("b", ls.number_of_items())
+        if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after detour)", ls.level_sizes())
+
         start = ls.number_of_levels()
 
         # Explore the new space and reduce the diagrams.
-        from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space
+        from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space  # TODO: push this to top
 
         ls.new_level()
         ls.extend(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))  # may be empty if R3 not allowed
-        print("c", ls.number_of_items())
+
+        if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after preserving)", ls.level_sizes())
 
         while True:
             if greediness == 0:
                 ls.new_level(crossing_decreasing_space(ls.iter_level(-1), assume_canonical=True))
+                if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after decreasing, greed={greediness})", ls.level_sizes())
             elif greediness == 1:
                 # The following loop was empirically much faster (≈16×) in practice.
                 while not ls.is_level_empty(-1):
                     ls.new_level()  # put reduced diagrams to the next level
                     ls.extend(canonical(set(reidemeister_decreasing_moves_generator(ls.iter_level(-2)))))
+                    if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after decreasing, greed={greediness})", ls.level_sizes())
+
             else:
                 raise ValueError(f"Invalid greediness level {greediness}.")
-            print("d", ls.number_of_items())
 
             if flype:
                 ls.new_level(canonical(flype_generator(ls.iter_level(-1))))
@@ -213,7 +223,7 @@ def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool 
             else:
                 ls.new_level(crossing_preserving_space(ls.iter_level(-1), assume_canonical=True))
 
-            print("e", ls.number_of_items())
+            if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after flype)", ls.level_sizes())
 
             if ls.is_level_empty(-1):
                 break
@@ -227,7 +237,11 @@ def simplify_smart(k: Diagram | set | list | tuple, depth: int = 1, flype: bool 
     return min(ls)
 
 
-def reduce_equivalent_diagrams(diagrams: set | list, depth: int = 1) -> dict:
+
+
+_DEBUG_RED = False
+
+def reduce_equivalent_diagrams(diagrams: set | list, depth: int = 1, flype: bool = False) -> dict:
     """
     Input: list of diagrams
     Output: dictionary of unique diagrams (keys are the original diagrams that are unique, values are list of diagrams equivalent to the key)
@@ -251,32 +265,49 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth: int = 1) -> dict:
 
     """
     # TODO: make some sort of progress bar
-    # TODO: implement greedy
+    # TODO: join leveled_sets, once we found an equality! This should really speed up the computations for many diagrams.
 
+    greediness = 1
+
+    # TODO: only compare strings.
     def join_if_equivalent_diagrams():
         """If any two leveled sets have non-empty intersection (Reidemeister equivalence found), we join the diagrams in the DSU."""
         for (key1, ls1), (key2, ls2) in combinations(leveled_sets.items(), 2):
             # is there a non-empty intersection?
-            if ls1.intersection(ls2):
+            if ls1.intersection(ls2, evaluate=False):
                 DSU[key1] = key2  # join the sets (we found a diagram equivalence)
 
-    # put the diagrams in a disjoint set union (equivalence relation)
-    DSU = DisjointSetUnion([k for k in diagrams])
+    # We default this to True
+    #memory_efficient = True if max(k.number_of_crossings for k in diagrams) + 2 * depth < 26 * 2 - 2 else False
+
+    settings_dump = settings.dump()
+    if flype:
+        settings.add_allowed_move("FLYPE")
+
+    # put the diagram strings in a disjoint set union (equivalence relation)
+    DSU = DisjointSetUnion([to_condensed_em_notation(k) for k in diagrams])
 
     # Store each diagram as a leveled set (levels are Reidemeister depths); keys are original diagrams and
     # values are the leveled sets. If flips are allowed, include flips at the beginning.
+
     if "FLIP" in settings.allowed_moves:
         leveled_sets = {
-            k: LeveledSet(
-                crossing_non_increasing_space({canonical(k), canonical(flip(k, inplace=False))}, assume_canonical=True)
+            k_str: LeveledSet(
+                items=crossing_non_increasing_space({canonical(from_condensed_em_notation(k_str)), canonical(flip(from_condensed_em_notation(k_str)))}, greediness=0, assume_canonical=True),
+                to_string=to_condensed_em_notation,
+                from_string=from_condensed_em_notation,
             )
-            for k in DSU.elements
+            for k_str in DSU.elements
         }
     else:
         # TODO: can we assume canonical? (check crossing_non_increasing_space)
         leveled_sets = {
-            k: LeveledSet(crossing_non_increasing_space(canonical(k), greediness=0, assume_canonical=True))
-            for k in DSU.elements
+            k_str: LeveledSet(
+                items=crossing_non_increasing_space(canonical(from_condensed_em_notation(k_str)), greediness=0, assume_canonical=True),
+                to_string=to_condensed_em_notation,
+                from_string=from_condensed_em_notation,
+            )
+            for k_str in DSU.elements
         }
 
     # If there are any two diagrams equivalent in different leveled sets, mark them as equivalent.
@@ -286,16 +317,100 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth: int = 1) -> dict:
     For all next levels, increase the number of crossings by 1 or 2 (via R1 and R2 moves),
     followed by all possible R3 moves and crossing-reducing R1 and R2 moves.
     """
+
+
+    # Crossing-increasing loop
+    starts = [ls.number_of_levels() for ls in leveled_sets.values()]
+    indices = list(range(len(leveled_sets)))
     for depth_index in range(depth):
-        # make Reidemeister moves (one depth-level)
-        for key, ls in leveled_sets.items():
-            # only make additional Reidemeister moves if any were found at a previous level
-            if all(_.number_of_crossings != 0 for _ in ls):
-                # increase number of crossings in a "smart" way
-                ls.new_level(detour_space(ls.iter_level(-1), assume_canonical=True))
-                # then do non-increasing exploration
-                ls.new_level(crossing_non_increasing_space(ls.iter_level(-1), greediness=1, assume_canonical=True))
+
+        if _DEBUG_RED: ls_index = 0
+
+        for ls_index, start, ls in zip(indices, starts, leveled_sets.values()):
+
+            if _DEBUG_RED: print(f"Depth {depth_index} [{ls_index}]:", ls.level_sizes())
+
+
+            # Increase crossings “smartly”.
+            ls.new_level()
+            for lvl in (ls.iter_level(start - 2), ls.iter_level(start - 1)):
+                for k in lvl:
+                    for _ in detour_generator(k):
+                        ls.add(canonical(_))
+
+            if _DEBUG_RED: print(f"Depth {depth_index} (after detour) [{ls_index}]:", ls.level_sizes())
+
+            starts[ls_index] = ls.number_of_levels()
+
+            # Explore the new space and reduce the diagrams.
+            from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space
+
+            ls.new_level()
+            ls.extend(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))  # may be empty if R3 not allowed
+
+            if _DEBUG_RED: print(f"Depth {depth_index} (after preserving) [{ls_index}]:", ls.level_sizes())
+
+            while True:
+                if greediness == 0:
+                    ls.new_level(crossing_decreasing_space(ls.iter_level(-1), assume_canonical=True))
+
+                    if _DEBUG_RED: print(f"Depth {depth_index} (after decreasing, greed={greediness}) [{ls_index}]:", ls.level_sizes())
+
+
+                elif greediness == 1:
+                    # The following loop was empirically much faster (≈16×) in practice.
+                    while not ls.is_level_empty(-1):
+                        ls.new_level()  # put reduced diagrams to the next level
+                        ls.extend(canonical(set(reidemeister_decreasing_moves_generator(ls.iter_level(-2)))))
+
+                        if _DEBUG_RED: print(f"Depth {depth_index} (after decreasing, greed={greediness}) [{ls_index}]", ls.level_sizes())
+
+                else:
+                    raise ValueError(f"Invalid greediness level {greediness}.")
+
+                if flype:
+                    ls.new_level(canonical(flype_generator(ls.iter_level(-1))))
+                    ls.new_level(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))
+                    ls.extend(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))
+                else:
+                    ls.new_level(crossing_preserving_space(ls.iter_level(-1), assume_canonical=True))
+
+                if _DEBUG_RED: print(f"Depth {depth_index} (after flype) [{ls_index}]", ls.level_sizes())
+
+                if ls.is_level_empty(-1):
+                    break
+
+            # # If there are no crossings to reduce, we are done.
+            # if any(_.number_of_crossings == 0 for _ in ls):
+            #     settings.load(settings_dump)
+            #     return min(ls)
+            if _DEBUG_RED: ls_index += 1
 
         join_if_equivalent_diagrams()
 
-    return DSU.to_dict()
+    settings.load(settings_dump)
+
+    # for depth_index in range(depth):
+    #     # make Reidemeister moves (one depth-level)
+    #     for key, ls in leveled_sets.items():
+    #         # only make additional Reidemeister moves if any were found at a previous level
+    #         if all(_.number_of_crossings != 0 for _ in ls):
+    #             # increase number of crossings in a "smart" way
+    #             ls.new_level(detour_space(ls.iter_level(-1), assume_canonical=True))
+    #             # then do non-increasing exploration
+    #             ls.new_level(crossing_non_increasing_space(ls.iter_level(-1), greediness=1, assume_canonical=True))
+    #
+    #     join_if_equivalent_diagrams()
+
+    DSU_dict = DSU.to_dict()
+    # print("keys", DSU_dict.keys())
+    # print("keys", DSU_dict.values())
+
+
+    # reconstruct the return dictionary
+    keys = [from_condensed_em_notation(_) for _ in DSU_dict.keys()]
+    values = [{from_condensed_em_notation(_) for _ in value} for value in DSU_dict.values()]
+
+    result = {k if not v else min(k, min(v)): v for k, v in zip(keys, values)}
+
+    return result

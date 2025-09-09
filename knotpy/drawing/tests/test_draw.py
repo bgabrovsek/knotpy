@@ -8,6 +8,8 @@ from knotpy.notation.pd import from_pd_notation
 from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.canonical import canonical
 
+from knotpy.tables.tests._helper import _safe_delete_file, _unique
+
 def test_draw_knot():
     knots_and_links = [
         "a=X(b1 c0 c3 b2) b=X(c1 a0 a3 c2) c=X(a1 b0 b3 a2) ['name'='3_1']",
@@ -46,7 +48,7 @@ def test_draw_knot():
         # "a=X(c3 e0 e3 f2) b=X(d3 f0 f3 e2) c=X(f1 d2 d1 a0) d=X(e1 c2 c1 b0) e=X(a1 d0 b3 a2) f=X(b1 c0 a3 b2) ['name'='L6a5{1,1}']",
     ]
 
-    filename = "_test_draw_knots.pdf"
+    filename = _unique + "_draw_knots.pdf"
 
     knots = [from_knotpy_notation(code) for code in knots_and_links]
 
@@ -64,6 +66,8 @@ def test_draw_knot():
     #os.remove(filename)  # Remove the file
 
     # batch draw to PNG
+
+    _safe_delete_file(filename)
 
 
 def test_draw_theta():
@@ -108,7 +112,7 @@ def test_draw_theta():
         # "a=V(b0 c0 d3) b=X(a0 d2 e3 e2) c=X(a1 f0 f3 g0) d=X(g2 h0 b1 a2) e=X(h3 f1 b3 b2) f=X(c1 e1 h2 c2) g=V(c3 h1 d0) h=X(d1 g1 f2 e0) ['name'='h6_2.1']",
         # "a=V(b0 c0 d3) b=X(a0 e0 f3 f2) c=X(a1 f1 g3 d0) d=X(c3 h0 e1 a2) e=V(b1 d2 h3) f=X(g0 c1 b3 b2) g=X(f0 h2 h1 c2) h=X(d1 g2 g1 e2) ['name'='h6_2.2']",
     ]
-    filename = "_test_draw_thetas.pdf"
+    filename = _unique + "_draw_thetas.pdf"
     thetas = [from_knotpy_notation(code) for code in theta_curves]
 
     # batch draw to PDF
@@ -121,12 +125,8 @@ def test_draw_theta():
     assert os.path.exists(filename), f"File does not exist: {filename}"  # Check if file exists
     file_size = os.path.getsize(filename)
     assert file_size > 10 * 1024, f"File is too small: {file_size} bytes"  # Check if file is larger than 10 KB (10 * 1024 bytes)
-    #os.remove(filename)   # Remove the file
 
-    # batch draw to PNG
-    # for k in thetas:
-    #     draw(k)
-    #     plt.savefig(f"./{k.name}.png")
+    _safe_delete_file(filename)
 
 
 
@@ -172,7 +172,7 @@ def test_draw_bonded():
     ]
 
     bonded = [from_knotpy_notation(code) for code in bonded_knots]
-    filename = "_test_draw_bonded.pdf"
+    filename = _unique + "_draw_bonded.pdf"
 
     try:
         export_pdf(bonded, filename)
@@ -182,7 +182,8 @@ def test_draw_bonded():
     assert os.path.exists(filename), f"File does not exist: {filename}"  # Check if file exists
     file_size = os.path.getsize(filename)
     assert file_size > 10 * 1024, f"File is too small: {file_size} bytes"  # Check if file is larger than 10 KB (10 * 1024 bytes)
-    #os.remove(filename)   # Remove the file
+
+    _safe_delete_file(filename)
 
 def test_thetas_sums():
     theta_codes = [
@@ -203,7 +204,7 @@ def test_thetas_sums():
     ]
 
     thetas = [from_knotpy_notation(code) for code in theta_codes]
-    filename = "_test_draw_thetas_complicated.pdf"
+    filename = _unique + "_draw_thetas_complicated.pdf"
 
     try:
         export_pdf(thetas, filename)
@@ -213,8 +214,8 @@ def test_thetas_sums():
     assert os.path.exists(filename), f"File does not exist: {filename}"  # Check if file exists
     file_size = os.path.getsize(filename)
     assert file_size > 10 * 1024, f"File is too small: {file_size} bytes"  # Check if file is larger than 10 KB (10 * 1024 bytes)
-    # os.remove(filename)   # Remove the file
 
+    _safe_delete_file(filename)
 
 def test_draw_knotoid():
     knotoid_codes = [
@@ -245,7 +246,7 @@ def test_draw_knotoid():
     ]
 
     knotoids = [from_knotpy_notation(code) for code in knotoid_codes]
-    filename = "_test_draw_knotoid.pdf"
+    filename = _unique + "_draw_knotoid.pdf"
 
     try:
         export_pdf(knotoids, filename)
@@ -256,7 +257,7 @@ def test_draw_knotoid():
     file_size = os.path.getsize(filename)
     assert file_size > 10 * 1024, f"File is too small: {file_size} bytes"  # Check if file is larger than 10 KB (10 * 1024 bytes)
     # os.remove(filename)   # Remove the file
-
+    _safe_delete_file(filename)
 
 if __name__ == "__main__":
 

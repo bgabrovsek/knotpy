@@ -1,5 +1,7 @@
 import knotpy as kp
 
+from knotpy.tables.tests._helper import _safe_delete_file, _unique
+
 def test_export():
     s = """
     a=V(b0) b=X(a0 c3 d3 c0) c=X(b3 d2 d1 b1) d=X(e0 c2 c1 b2) e=X(d0 f0 f3 g3) f=X(e1 g2 g0 e2) g=X(f2 h0 f1 e3) h=V(g1)
@@ -19,17 +21,17 @@ def test_export():
     a=V(b0) b=X(a0 c3 d0 c0) c=X(b3 e0 e3 b1) d=X(b2 f0 g3 h0) e=X(c1 h2 h1 c2) f=X(d1 g2 i3 i2) g=X(i1 i0 f1 d2) h=X(d3 e2 e1 j0) i=X(g1 g0 f3 f2) j=V(h3)
     a=V(b3) b=X(c3 d0 c0 a0) c=X(b2 e0 e3 b0) d=X(b1 f3 g0 h0) e=X(c1 i0 h3 c2) f=X(h2 g2 g1 d1) g=X(d2 f2 f1 h1) h=X(d3 g3 f0 e2) i=V(e1)
     """
+
     s = s.strip().splitlines()
     k = [kp.from_knotpy_notation(_) for _ in s]
-    for _ in k:
-        print(_)
-    print(k)
-    import matplotlib.pyplot as plt
 
-    kp.export_pdf(k, "test.pdf", draw_circles=True, with_labels=True, with_title=True)
-    kp.export_pdf_groups([[k[0], k[1], k[3]], [k[4], k[5], k[6]]], "test_group.pdf", draw_circles=True, with_labels=True,
-                      with_title=True)
-    #plt.show()
+    kp.export_pdf(k, _unique + "_export.pdf")
+    _safe_delete_file(_unique + "_export.pdf")
+
+    kp.export_pdf_groups([[k[0], k[1], k[3]], [k[4], k[5], k[6]]], _unique + "_export_group.pdf")
+    _safe_delete_file(_unique + "_export_group.pdf")
 
 
 
+if __name__ == "__main__":
+    test_export()
