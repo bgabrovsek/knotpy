@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.algorithms.tests.test_topology___';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="topology" href="knotpy.algorithms.topology.html" />
+    <link rel="next" title="test_adjacent" href="knotpy.algorithms.tests.test_topology___.test_adjacent.html" />
     <link rel="prev" title="test_tangle_63" href="knotpy.algorithms.tests.test_tangle_.test_tangle_63.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -150,7 +150,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -227,6 +227,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -269,7 +273,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -524,14 +528,19 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_tangle_.test_tangle_63.html">test_tangle_63</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">test_topology___</a></li>
+<li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">test_topology___</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_topology___.test_adjacent.html">test_adjacent</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.topology.html">topology</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.bridges.html">bridges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.edges.html">edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_adjacent.html">is_adjacent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_bridge.html">is_bridge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_empty_diagram.html">is_empty_diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_incident.html">is_incident</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html">is_kink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html">is_knot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html">is_knotoid</a></li>
@@ -683,6 +692,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_knotoid.html">test_draw_knotoid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_theta.html">test_draw_theta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.html">test_draw_cases</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_connected_sum.html">test_connected_sum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_disjoint_union.html">test_disjoint_union</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks.html">test_kinks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_same_arc.html">test_kinks_same_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_oriented.html">test_oriented</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial.html">test_trivial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_disjoint_union.html">test_trivial_disjoint_union</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_oriented.html">test_trivial_oriented</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1198,6 +1218,20 @@
                   
   <section id="module-knotpy.algorithms.tests.test_topology___">
 <span id="test-topology"></span><h1>test_topology___<a class="headerlink" href="#module-knotpy.algorithms.tests.test_topology___" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.tests.test_topology___.test_adjacent.html#knotpy.algorithms.tests.test_topology___.test_adjacent" title="knotpy.algorithms.tests.test_topology___.test_adjacent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_adjacent</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.tests.test_topology___.test_adjacent">
+<span class="sig-name descname"><span class="pre">test_adjacent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.tests.test_topology___.test_adjacent" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -1210,6 +1244,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.tests.test_topology___.test_adjacent"><code class="docutils literal notranslate"><span class="pre">test_adjacent()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

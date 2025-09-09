@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Notation (knot, links, and knotted graphs encoding via EM and PD codes) &#8212; KnotPy  documentation</title>
+    <title>Notation &#8212; KnotPy  documentation</title>
   
   
   
@@ -150,7 +150,7 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -273,7 +273,7 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -373,7 +373,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Notation (knot, links, and knotted graphs encoding via EM and PD codes)</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Notation</span></li>
   </ul>
 </nav>
 </div>
@@ -390,8 +390,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="notation-knot-links-and-knotted-graphs-encoding-via-em-and-pd-codes">
-<h1>Notation (knot, links, and knotted graphs encoding via EM and PD codes)<a class="headerlink" href="#notation-knot-links-and-knotted-graphs-encoding-via-em-and-pd-codes" title="Link to this heading">#</a></h1>
+  <section id="notation">
+<h1>Notation<a class="headerlink" href="#notation" title="Link to this heading">#</a></h1>
 <p>Description of two key diagram encodings that KnotPy supports natively for knots, links, and spatial graphs:
 - <strong>EM code</strong> (Ewing–Millett code) [1]
 - <strong>PD code</strong> (Planar Diagram code) [2]</p>
@@ -399,12 +399,38 @@
 <section id="definitions-and-examples">
 <h2>Definitions and Examples<a class="headerlink" href="#definitions-and-examples" title="Link to this heading">#</a></h2>
 <p>###  EM Code</p>
-<p>The <strong>Ewing–Millett (EM) code</strong> denotes how arcs connect at each crossing using adjacency lists:</p>
+</section>
+<section id="ewingmillett-em-encoding-informal-specification">
+<h2>Ewing–Millett (EM) encoding — informal specification<a class="headerlink" href="#ewingmillett-em-encoding-informal-specification" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p><strong>Crossings.</strong> Enumerate every crossing by any hashable, totally ordered key
+(commonly letters <cite>a, b, c, …</cite>, but any comparable objects are fine).</p></li>
+<li><p><strong>Half-arcs.</strong> At each crossing <cite>x</cite>, index the four incident half-arcs by
+integers <cite>0, 1, 2, 3</cite> in counterclockwise order, with the <strong>undercrossing</strong>
+half-arcs assigned the <strong>even</strong> indices (<cite>0</cite> and <cite>2</cite>).</p></li>
+<li><p><strong>Endpoints.</strong> An <strong>endpoint</strong> is a pair <cite>(x, i)</cite> where <cite>x</cite> is a crossing and
+<cite>i ∈ {0,1,2,3}</cite> is a half-arc index. Thus crossing <cite>a</cite> is incident to
+<cite>(a, 0), (a, 1), (a, 2), (a, 3)</cite>.</p></li>
+<li><p><strong>Local connection data (the EM record).</strong> For each crossing <cite>x</cite>, record an
+ordered 4-tuple of endpoints giving, in order, where <cite>(x, 0), (x, 1),
+(x, 2), (x, 3)</cite> continue to (i.e., which endpoints they connect to along
+the same arc).</p>
+<p>Example mapping (your data, normalized):</p>
 <ul class="simple">
-<li><p>Represented as a dictionary where each node’s value is a list of tuples in CCW order: <cite>(adjacent_node, position)</cite>.</p></li>
-<li><p>Condensed string format example:
-A graph <cite>C / A—B—D</cite> yields:</p></li>
+<li><p><cite>a → ((b, 3), (b, 2), (c, 3), (c, 2))</cite></p></li>
+<li><p><cite>b → ((d, 3), (e, 0), (a, 1), (a, 0))</cite></p></li>
+<li><p><cite>c → ((e, 3), (d, 0), (a, 3), (a, 2))</cite></p></li>
+<li><p><cite>d → ((c, 1), (e, 2), (e, 1), (b, 0))</cite></p></li>
+<li><p><cite>e → ((b, 1), (d, 2), (d, 1), (c, 0))</cite></p></li>
 </ul>
+</li>
+<li><p><strong>Arcs.</strong> An (unoriented) <strong>arc</strong> is the unordered pair of endpoints that
+are connected. For the example above, the arcs are:</p>
+<p><cite>{(a, 0), (b, 3)}, {(a, 1), (b, 2)}, {(a, 2), (c, 3)}, {(a, 3), (c, 2)},</cite>
+<cite>{(b, 0), (d, 3)}, {(b, 1), (e, 0)}, {(c, 0), (e, 3)}, {(c, 1), (d, 0)},</cite>
+<cite>{(d, 1), (e, 2)}, {(d, 2), (e, 1)}</cite></p>
+</li>
+</ol>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
@@ -449,6 +475,7 @@ A graph <cite>C / A—B—D</cite> yields:</p></li>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions-and-examples">Definitions and Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ewingmillett-em-encoding-informal-specification">Ewing–Millett (EM) encoding — informal specification</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>

@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="bridges" href="knotpy.algorithms.topology.bridges.html" />
-    <link rel="prev" title="test_topology___" href="knotpy.algorithms.tests.test_topology___.html" />
+    <link rel="prev" title="test_adjacent" href="knotpy.algorithms.tests.test_topology___.test_adjacent.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -150,7 +150,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -273,7 +273,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -528,14 +528,19 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_tangle_.test_tangle_63.html">test_tangle_63</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.tests.test_topology___.html">test_topology___</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.algorithms.tests.test_topology___.html">test_topology___</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.algorithms.tests.test_topology___.test_adjacent.html">test_adjacent</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">topology</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.bridges.html">bridges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.edges.html">edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_adjacent.html">is_adjacent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_bridge.html">is_bridge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_empty_diagram.html">is_empty_diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_incident.html">is_incident</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html">is_kink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html">is_knot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html">is_knotoid</a></li>
@@ -687,6 +692,17 @@
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_knotoid.html">test_draw_knotoid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_draw_theta.html">test_draw_theta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw.test_thetas_sums.html">test_thetas_sums</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.html">test_draw_cases</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_connected_sum.html">test_connected_sum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_disjoint_union.html">test_disjoint_union</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks.html">test_kinks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_same_arc.html">test_kinks_same_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_oriented.html">test_oriented</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial.html">test_trivial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_disjoint_union.html">test_trivial_disjoint_union</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_oriented.html">test_trivial_oriented</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_export.html">test_export</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1208,11 +1224,17 @@
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.edges.html#knotpy.algorithms.topology.edges" title="knotpy.algorithms.topology.edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edges</span></code></a>(k, **endpoint_attributes)</p></td>
 <td><p>Return ordered strands (“edges”) of the diagram.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_bridge.html#knotpy.algorithms.topology.is_bridge" title="knotpy.algorithms.topology.is_bridge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_bridge</span></code></a>(k, arc_or_endpoint)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_adjacent.html#knotpy.algorithms.topology.is_adjacent" title="knotpy.algorithms.topology.is_adjacent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_adjacent</span></code></a>(k, obj1, obj2)</p></td>
+<td><p>Return True if <cite>obj1</cite> and <cite>obj2</cite> are adjacent to each other in the diagram.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_bridge.html#knotpy.algorithms.topology.is_bridge" title="knotpy.algorithms.topology.is_bridge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_bridge</span></code></a>(k, arc_or_endpoint)</p></td>
 <td><p>Return True if the given arc/endpoint is a bridge (a size-1 arc cut-set).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_empty_diagram.html#knotpy.algorithms.topology.is_empty_diagram" title="knotpy.algorithms.topology.is_empty_diagram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty_diagram</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_empty_diagram.html#knotpy.algorithms.topology.is_empty_diagram" title="knotpy.algorithms.topology.is_empty_diagram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty_diagram</span></code></a>(k)</p></td>
 <td><p>Return True if the diagram has no nodes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_incident.html#knotpy.algorithms.topology.is_incident" title="knotpy.algorithms.topology.is_incident"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_incident</span></code></a>(k, obj1, obj2)</p></td>
+<td><p>Return True if <cite>obj1</cite> and <cite>obj2</cite> are incident to each other in the diagram.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html#knotpy.algorithms.topology.is_kink" title="knotpy.algorithms.topology.is_kink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_kink</span></code></a>(k, endpoint)</p></td>
 <td><p>Return True if <cite>endpoint</cite> forms a kink at a crossing (CCW neighbor is itself).</p></td>
@@ -1583,6 +1605,18 @@ filtered by attributes via keyword arguments (e.g., <cite>color=”red”</cite>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.topology.is_adjacent">
+<span class="sig-name descname"><span class="pre">is_adjacent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.topology.is_adjacent" title="Link to this definition">#</a></dt>
+<dd><p>Return True if <cite>obj1</cite> and <cite>obj2</cite> are adjacent to each other in the diagram.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.topology.is_incident">
+<span class="sig-name descname"><span class="pre">is_incident</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.topology.is_incident" title="Link to this definition">#</a></dt>
+<dd><p>Return True if <cite>obj1</cite> and <cite>obj2</cite> are incident to each other in the diagram.</p>
+</dd></dl>
+
 </section>
 
 
@@ -1628,6 +1662,8 @@ filtered by attributes via keyword arguments (e.g., <cite>color=”red”</cite>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.is_bridge"><code class="docutils literal notranslate"><span class="pre">is_bridge()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.edges"><code class="docutils literal notranslate"><span class="pre">edges()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.overstrands"><code class="docutils literal notranslate"><span class="pre">overstrands()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.is_adjacent"><code class="docutils literal notranslate"><span class="pre">is_adjacent()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.is_incident"><code class="docutils literal notranslate"><span class="pre">is_incident()</span></code></a></li>
 </ul>
   </nav></div>
 

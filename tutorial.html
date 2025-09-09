@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorial';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Notation (knot, links, and knotted graphs encoding via EM and PD codes)" href="notation.html" />
+    <link rel="next" title="Notation" href="notation.html" />
     <link rel="prev" title="Install" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -151,7 +151,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -274,7 +274,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="notation.html">
-    Notation (knot, links, and knotted graphs encoding via EM and PD codes)
+    Notation
   </a>
 </li>
 
@@ -553,65 +553,6 @@ kp.identify(kp.reverse(K))
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+9_32&quot;)
 K = kp.mirror(kp.reverse(K))
 kp.identify(K)
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
-
-TypeError                                 Traceback (most recent call last)
-
-Cell In[23], line 3
-      1 K = kp.knot(&quot;+9_32&quot;)
-      2 K = kp.mirror(kp.reverse(K))
-----&gt; 3 kp.identify(K)
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:340, in identify(k)
-    337 def identify(k: Diagram) -&gt; str | list | None:
-    339     if is_knot(k):
---&gt; 340         return identify_knot(k)
-    341     elif is_link(k):
-    342         return None
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:317, in identify_knot(k)
-    315 # find by homflypt
-    316 result = []
---&gt; 317 homflypt_polynomial = homflypt(k, &quot;xyz&quot;)
-    319 # check knots
-    320 for n_ in range(0, n + 1):
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/invariants/homflypt.py:233, in homflypt(k, variables)
-    230 variables = str(variables).lower()
-    232 # try to get the HOMFLYPT polynomial from the precomputed data
---&gt; 233 polynomial = knot_precomputed_homflypt(k)
-    234 # otherwise, compute it
-    235 if polynomial is None:
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/tables/knot.py:263, in knot_precomputed_homflypt(k)
-    261 k_candidate = knot(name)
-    262 # the input PD diagram must be the same as in the knot table
---&gt; 263 if canonical(k) != k_candidate:
-    264     return None
-    266 # we have found the knot in the table, now retrieve the precomputed homflypt polynomial
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/utils/decorators.py:45, in total_ordering_from_compare.&lt;locals&gt;.__ne__(self, other)
-     44 def __ne__(self, other):
----&gt; 45     return self._compare(other) != 0
-
-
-File ~/Library/CloudStorage/Dropbox/Code/knotpy/knotpy/classes/planardiagram.py:207, in PlanarDiagram._compare(self, other, compare_attributes)
-    204 # 1) type
-    205 if type(self) is not type(other):
-    206     # REVIEW: original returned a TypeError object, which breaks ordering.
---&gt; 207     raise TypeError(f&quot;Cannot compare {type(self)} with {type(other)}.&quot;)
-    209 # 2) number of nodes
-    210 s_nn, o_nn = len(self._nodes), len(other._nodes)
-
-
-TypeError: Cannot compare &lt;class &#39;knotpy.classes.planardiagram.OrientedPlanarDiagram&#39;&gt; with &lt;class &#39;knotpy.classes.planardiagram.PlanarDiagram&#39;&gt;.
 </pre></div>
 </div>
 </section>
