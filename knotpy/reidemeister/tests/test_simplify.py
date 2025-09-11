@@ -1,4 +1,4 @@
-from knotpy import canonical, find_reidemeister_1_remove_kink
+from knotpy import canonical, find_reidemeister_1_remove_kink, to_knotpy_notation
 from knotpy.invariants.jones import jones
 from knotpy.notation.pd import from_pd_notation
 from knotpy.algorithms.sanity import sanity_check
@@ -352,8 +352,37 @@ knotoids = 2 (depth=2,flype) 520.7462918758392
 
     """
 
+def do_not_test_goeritz_unknot():
+
+    print(to_knotpy_notation(canonical(from_pd_notation(
+        "[[2,15,3,16],[6,4,7,3],[14,6,15,5],[5,13,4,14],[1,13,2,12],[1,8,0,7],[9,0,8,19],[16,9,17,10],[10,17,11,18],[19,12,18,11]]"))))
+
+
+    k = from_pd_notation("[[11,1,12,0],[1,13,2,12],[13,3,14,2],[3,15,4,14],[4,21,5,0],[20,5,21,6],[15,11,16,10],[10,16,9,17],[6,17,7,18],[18,7,19,8],[8,19,9,20]]")
+    print(len(k))
+    a = simplify(k, depth=2, flype=True)
+    print(len(a))
+
+    # depth=2, 11 -> 9
 
 if __name__ == '__main__':
+
+
+    culprit_unknot = from_pd_notation("[[2,15,3,16],[6,4,7,3],[14,6,15,5],[5,13,4,14],[1,13,2,12],[1,8,0,7],[9,0,8,19],[16,9,17,10],[10,17,11,18],[19,12,18,11]]")
+    culprit_unknot = canonical(culprit_unknot)
+    culprit_unknot.name = "culprit"
+    print(to_knotpy_notation(culprit_unknot))
+
+    goeritz_unknot = from_pd_notation("[[11,1,12,0],[1,13,2,12],[13,3,14,2],[3,15,4,14],[4,21,5,0],[20,5,21,6],[15,11,16,10],[10,16,9,17],[6,17,7,18],[18,7,19,8],[8,19,9,20]]")
+    goeritz_unknot = canonical(goeritz_unknot)
+    goeritz_unknot.name = "goeritz"
+    print(to_knotpy_notation(goeritz_unknot))
+    exit()
+
+
+
+    do_not_test_goeritz_unknot()
+    exit()
 
     test_smart()
 

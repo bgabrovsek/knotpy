@@ -639,12 +639,14 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             # add the leaf
             leaf_arc = k.arcs[ep]
             opposite_ep = k.endpoint_from_pair((node, (ep.position + 2) % 4))  # endpoint opposite to the leaf endpoint
-            if _debug_leafs: print("opposite ep" , opposite_ep)
             opposite_g_arc = layout[opposite_ep]
 
             point = opposite_g_arc.A  # position of the crossing
             # compute the intersection of the leaf arc endpoint and the crossing circle
-            leaf_boundary_point = circles[node] * Circle(opposite_g_arc.center, opposite_g_arc.radius)
+            if isinstance(opposite_g_arc, Segment):
+                leaf_boundary_point = circles[node] * Line(opposite_g_arc.A, opposite_g_arc.B)
+            else:
+                leaf_boundary_point = circles[node] * Circle(opposite_g_arc.center, opposite_g_arc.radius)
             leaf_boundary_point = sorted(leaf_boundary_point, key=lambda _: -abs(opposite_g_arc.B - _))[0]  # intersection of the crossing circle and the leaf endpoint arc
 
             leaf_g_arc = perpendicular_arc_through_point(circles[node], leaf_boundary_point, point)  # arc of the leaf endpoint
@@ -656,7 +658,9 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             adj_ep = preprocessed_k.endpoint_from_pair((node, (ep.position)  % preprocessed_k.degree(node)))
             face = [face for face in preprocessed_k.faces if adj_ep in face][0]
             # enlenghten the endpoint for 1/3 of the face circle radius
+            #leaf_length = circles[face].radius / 2 if face in circles else mean([circles[face].radius/2 for face in preprocessed_k.faces if face in circles])#external_arc_radius / 2
             leaf_length = circles[face].radius / 2 if face in circles else external_arc_radius / 2
+            print(leaf_length, face in circles)
 
             leaf_ep_segment = Segment(leaf_boundary_point + (leaf_boundary_point - circles[node].center) / abs(leaf_boundary_point - circles[node].center) * leaf_length, leaf_boundary_point)
 

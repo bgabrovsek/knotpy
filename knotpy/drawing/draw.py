@@ -16,6 +16,7 @@ Notes
 
 import math
 
+from knotpy import sanity_check
 from knotpy.classes.endpoint import IngoingEndpoint
 from knotpy.classes.node import Crossing
 from knotpy.algorithms.disjoint_union import disjoint_union_decomposition
@@ -790,6 +791,10 @@ def draw(
             - show (bool): If True, call `plt.show()` at the end. Default False.
     """
     #TODO: minimize the number of arguments by adding **kwargs with non-essential arguments (alpha,...)
+
+    if not sanity_check(k):
+        raise ValueError("Diagram is not a valid knotted diagram.")
+
     if arrow_color is None:
         arrow_color = arc_color
     args = dict(locals())

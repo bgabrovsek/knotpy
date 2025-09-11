@@ -22,6 +22,8 @@ from knotpy.tables.invariant_reader import _eval_diagram, _eval_poly
 from knotpy.tables.name import safe_clean_and_parse_name, _named
 from knotpy.algorithms.orientation import unorient
 from knotpy.algorithms.orientation import reverse
+from knotpy.invariants.homflypt import homflypt, _homflypt_xyz_mirror
+from knotpy.reidemeister.simplify import simplify_decreasing
 
 
 _DATA_DIR = Path(__file__).parent / "data"
@@ -29,17 +31,17 @@ _LINK_TABLE_CROSSINGS = [2, 4, 5, 6, 7, 8]
 
 # Per-crossing lazy stores
 _link_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
-_link_homflypt_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
-_link_kauffman_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
-_link_multivariable_alexander_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
-_link_components_table: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
+_link_precomputed_homflypt: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
+_link_precomputed_kauffman: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
+_link_precomputed_multivariable_alexander: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
+_link_precomputed_components: list[dict] = [{} for _ in range(max(_LINK_TABLE_CROSSINGS) + 1)]
 
-_loaded = False
+_loaded_link_table = False
 
 def _load_link_table() -> None:
     """Populate lazy tables for links and selected invariants."""
-    global _loaded
-    if _loaded:
+    global _loaded_link_table
+    if _loaded_link_table:
         return
 
     for n in _LINK_TABLE_CROSSINGS:
@@ -50,21 +52,21 @@ def _load_link_table() -> None:
             eval_function=_eval_diagram,
         )
 
-        _link_homflypt_table[n] = LazyDict(
+        _link_precomputed_homflypt[n] = LazyDict(
             load_function=partial(
                 load_invariant_table, filename=_DATA_DIR / f"links_homflypt_{n}.csv.gz", evaluate=False, only_field_name="homflypt"
             ),
             eval_function=_eval_poly,
         )
 
-        _link_kauffman_table[n] = LazyDict(
+        _link_precomputed_kauffman[n] = LazyDict(
             load_function=partial(
                 load_invariant_table, filename=_DATA_DIR / f"links_kauffman_{n}.csv.gz", evaluate=False, only_field_name="kauffman"
             ),
             eval_function=_eval_poly,
         )
 
-        _link_multivariable_alexander_table[n] = LazyDict(
+        _link_precomputed_multivariable_alexander[n] = LazyDict(
             load_function=partial(
                 load_invariant_table,
                 filename=_DATA_DIR / f"links_multivariable_alexander_{n}.csv.gz", evaluate=False, only_field_name="alexander"
@@ -72,14 +74,14 @@ def _load_link_table() -> None:
             eval_function=_eval_poly,
         )
 
-        _link_components_table[n] = LazyDict(
+        _link_precomputed_components[n] = LazyDict(
             load_function=partial(
                 load_invariant_table, filename=_DATA_DIR / f"links_components_{n}.csv.gz", evaluate=False, only_field_name="components"
             ),
             eval_function=int  #_eval_components_dict,
         )
 
-    _loaded = True
+    _loaded_link_table = True
 
 
 def link(name: str) -> PlanarDiagram | OrientedPlanarDiagram:
@@ -113,7 +115,7 @@ def link(name: str) -> PlanarDiagram | OrientedPlanarDiagram:
     # reconstruct the link name and retrieve the link
     base_name = f"L{number_of_crossings}{'' if not alt_type else alt_type}_{index}"
 
-    number_of_components = _link_components_table[number_of_crossings][base_name]  # TODO: let _link_components only be int, not dict
+    number_of_components = _link_precomputed_components[number_of_crossings][base_name]  # TODO: let _link_components only be int, not dict
     if not orientation:
         orientation = "+" * number_of_components
     elif len(orientation) > number_of_components:
@@ -194,6 +196,41 @@ def links_generator(
                     yield canonical(mirror_diagram(k, inplace=False))
 
 
+
 def links(crossings=None, mirror: bool = False, oriented: bool = False) -> list:
     """Return a list of links with the given number(s) of crossings."""
     return list(links_generator(crossings=crossings, mirror=mirror, oriented=oriented))
+
+
+
+
+def _identify_oriented_link(k: OrientedPlanarDiagram) -> str | list:
+    """Try to get the knot name, e.g. '3_1' of 'k'."""
+    #print("--", k)
+    from knotpy.tables.knot import _knot_precomputed_homflypt
+    from knotpy.tables.knot import _candidates
+
+    # find the exact oriented link (or the mirror) in the link table
+    for k_, _ in _candidates(k):
+        u_ = k_
+        print(u_)
+        for key, v in _link_table[k.number_of_crossings].items():
+            print(key, v, v == u_)
+        if (knot_name := next((key for key, v in _link_table[k.number_of_crossings].items() if v == u_), None)) is not None:
+            print("YAY!")
+            base_name, signs_str = "".join([c for c in knot_name if c not in "+-"]), "".join([c for c in knot_name if c in "+-"])
+            return knot_name + _ + signs_str
+
+    # searching the link table failed, find candidates by homflypt polynomial
+    link_name_candidates = []
+    k = simplify_decreasing(k, inplace=False)
+    homflypt_polynomial = homflypt(k, "xyz")
+    # check knots
+    for n_ in range(0, k.number_of_crossings + 1):
+        link_name_candidates += [key for key, p in _knot_precomputed_homflypt[n_].items() if p == homflypt_polynomial]
+    # check mirrors
+    for n_ in range(0, k.number_of_crossings + 1):
+        link_name_candidates += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
+
+    return link_name_candidates
+    #return _remove_symmetry_duplicates([s + name for name in knot_name_candidates for s in "+-"])

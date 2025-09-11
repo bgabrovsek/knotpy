@@ -1,0 +1,3 @@
+name,native notation
+L5a_1++,a=X(b3i b2i c3o d0o) b=X(d3i e0i a1o a0o) c=X(e3i e2o d1o a2i) d=X(a3i c2i e1o b0o) e=X(b1o d2i c1i c0o) ['name'='L5a_1++']
+L5a_1+-,a=X(b3i b2o c3o d0i) b=X(d3o e0i a1i a0o) c=X(e3o e2o d1i a2i) d=X(a3o c2o e1i b0i) e=X(b1o d2o c1i c0i) ['name'='L5a_1+-']

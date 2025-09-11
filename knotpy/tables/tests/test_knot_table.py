@@ -202,9 +202,23 @@ def test_oriented():
     K2 = kp.mirror(K, inplace=False)
     assert kp.identify(K2) == "+9_32*" or kp.identify(K2) == ['+9_32*', '-9_32*']
 
+def test_symmetry_identification():
+
+    assert kp.symmetry_type("3_1") == "reversible"
+    assert kp.symmetry_type(kp.knot("3_1")) == "reversible"
+
+    assert kp.symmetry_type("0_1") == "fully amphicheiral"
+    assert kp.symmetry_type(kp.knot("0_1")) == "fully amphicheiral"
+
+    k = kp.knot("culprit")
+    assert kp.identify(k) == "0_1"
 
 if __name__ == "__main__":
+
+    print([k.name for k in kp.knots(range(11)) if kp.symmetry_type(k) == "chiral"])
     # Run test
+    test_symmetry_identification()
+    exit()
     test_oriented()
     test_unoriented()
 

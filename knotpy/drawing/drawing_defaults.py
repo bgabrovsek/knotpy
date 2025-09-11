@@ -45,7 +45,7 @@ _DEFAULT_TITLE_ALPHA = None
 _DEFAULT_SHOW_CIRCLE_PACKING = False  # visualize circle-packing circles
 _DEFAULT_PADDING_FRACTION = 0.05
 _DEFAULT_SHOW_AXIS = False
-_DEFAULT_SHOW = True
+_DEFAULT_SHOW = False
 
 # Z-order (stacking) for plot elements; lower values are drawn first.
 _Z_CIRCLES = 0

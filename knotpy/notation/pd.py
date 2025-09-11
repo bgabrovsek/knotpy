@@ -34,7 +34,7 @@ _node_abbreviations = {
 _node_abbreviations_inv = {val: key for key, val in _node_abbreviations.items()}
 
 
-def from_pd_notation(text: str, node_type: type | Any = str, oriented: bool = False, **attr: Any) -> PlanarDiagram:
+def from_pd_notation(text: str | list | tuple, node_type: type | Any = str, oriented: bool = False, **attr: Any) -> PlanarDiagram:
     """Create a planar diagram from PD notation.
 
     Supports Mathematica, KnotInfo, and Topoly variants. Nodes default to ``'a','b','c',...``
@@ -59,8 +59,11 @@ def from_pd_notation(text: str, node_type: type | Any = str, oriented: bool = Fa
         >>> isinstance(d, PlanarDiagram)
         True
     """
-    if oriented:
-        raise NotImplementedError("Oriented PD import not implemented yet.")
+    if not isinstance(text, str):
+        text = str(text)
+
+    # if oriented:
+    #     raise NotImplementedError("Oriented PD import not implemented yet.")
 
     s = text.strip()
     # normalize separators/spacing across styles (relies on multi_replace helper)

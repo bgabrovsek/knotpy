@@ -10,7 +10,7 @@ from collections import Counter
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram, DiagramCollection
 
 
-def sanity_check(k: Diagram | DiagramCollection) -> bool:
+def sanity_check_raise_exception(k: Diagram | DiagramCollection) -> bool:
     """
     Run structural sanity checks on a planar (or oriented) diagram.
 
@@ -132,6 +132,29 @@ def sanity_check(k: Diagram | DiagramCollection) -> bool:
         if k.degree(node) != count:
             raise ValueError(f"Face incidence count {count} for node {node} != degree {k.degree(node)}")
 
+    return True
+
+
+
+def sanity_check(k: Diagram | DiagramCollection) -> bool:
+    """
+    Run structural sanity checks on a planar (or oriented) diagram.
+
+    Validates node/endpoint consistency, arc–endpoint counts, twin relationships,
+    Euler characteristic (per component), face coherence, and (for oriented
+    diagrams) endpoint orientations.
+
+    Args:
+        k: A single diagram or a collection of diagrams.
+
+    Returns:
+        True if all checks pass, false otherwise.
+    """
+    # Allow collections
+    try:
+       sanity_check_raise_exception(k)
+    except ValueError:
+       return False
     return True
 
 if __name__ == "__main__":

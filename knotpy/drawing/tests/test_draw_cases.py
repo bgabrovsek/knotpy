@@ -63,7 +63,11 @@ def test_kinks_same_arc():
         a = kp.reidemeister_1_add_kink(a, (ep,1))
     #kp.draw(a, show=True, label_endpoints=True, label_nodes=True)
 
-
+def draw_knotoid_simple():
+    k = kp.from_pd_notation("V[1],X[3,2,4,1],X[2,5,3,4],V[5]")
+    assert kp.sanity_check(k)
+    kp.draw(k, show=True, show_circle_packing=True)
+    print("ok.")
 
 if __name__ == '__main__':
     test_oriented()
@@ -74,3 +78,4 @@ if __name__ == '__main__':
     test_trivial_disjoint_union()
     test_kinks()
     test_kinks_same_arc()
+    draw_knotoid_simple()

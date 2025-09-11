@@ -114,6 +114,8 @@ def kauffman_bracket_skein_module(
         expression *= (-_A**-3) ** original_framing
 
     settings.load(settings_dump)
+    for r, s in expression.to_tuple():
+        s.name = None
     return [(sp.expand(r), s) for r, s in expression.to_tuple()]
 
 def bracket_from_homflypt(polynomial_xyz) -> sp.Expr:

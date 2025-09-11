@@ -7,13 +7,14 @@ The knot table PD codes were obtained from:
 
 from __future__ import annotations
 
-__all__ = ["knot", "knots", "identify", "knots_generator"]
+__all__ = ["knot", "knots", "identify", "knots_generator", "symmetry_type"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
 
 from pathlib import Path
 from functools import partial
 
+from knotpy import from_knotpy_notation
 from knotpy.classes.planardiagram import Diagram, PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.dict_utils import LazyDict
 from knotpy.tables.invariant_reader import load_invariant_table
@@ -39,12 +40,12 @@ _knot_table: list[dict] = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 _knot_precomputed_homflypt: list[dict] = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 _knot_precomputed_kauffman: list[dict] = [{} for _ in range(max(_KNOT_TABLE_CROSSINGS) + 1)]
 
-_loaded = False  # Tracks whether tables are already loaded
+_loaded_knot_table = False  # Tracks whether tables are already loaded
 
 def _load_knot_table() -> None:
     """Populate lazy tables for diagrams and selected invariants."""
-    global _loaded
-    if _loaded:
+    global _loaded_knot_table
+    if _loaded_knot_table:
         return  # Already loaded, skip
 
     for n in _KNOT_TABLE_CROSSINGS:
@@ -77,7 +78,7 @@ def _load_knot_table() -> None:
             eval_function=_eval_poly,
         )
 
-    _loaded = True
+    _loaded_knot_table = True
 
 
 
@@ -99,11 +100,80 @@ positive amphicheiral, K = K*
 reversible K, K*
 """
 
+def symmetry_type(knot_or_name: str | Diagram):
+    _load_knot_table()  # Lazy load here
+
+    if isinstance(knot_or_name, Diagram):
+        knot_or_name = identify(knot_or_name)
+        if knot_or_name is None:
+            return None
+    elif not isinstance(knot_or_name, str):
+        raise TypeError("Input must be a string or a Diagram")
+
+    if (res := safe_clean_and_parse_name(knot_or_name)) is None:
+        raise ValueError(f"Invalid knot name: {knot_or_name}")
+    type_name, number_of_crossings, alt_type, index, mirror, orientation = res
+    if type_name != "knot":
+        return None
+
+    base_name = f"{number_of_crossings}{'' if not alt_type else alt_type}_{index}"
+    try:
+        return _knot_table[number_of_crossings][base_name]["symmetry"]
+    except KeyError:
+        return None
+
+
+
+def _knot_variations(name: str):
+    """
+    For a given knot name, return all possible variations of the name (mirror/reverse) up to isotopy.
+    Oriented
+    chiral K, K*, -K, -K*
+    fully amphicheiral K = K* = -K = -K*
+    negative amphicheiral K = -K*, K* = -K
+    positive amphicheiral K = K*, -K = -K*
+    reversible K = -K. *K = -*K
+
+
+    Non-oriented
+    chiral K, K*
+    fully amphicheiral, K = K*
+    negative amphicheiral, K = K*
+    positive amphicheiral, K = K*
+    reversible K, K*
+    """
+    _load_knot_table()  # Lazy load here
+
+
+    if (sym := symmetry_type(name)) is None:
+        return None
+
+    type_name, number_of_crossings, alt_type, index, mirror, orientation = safe_clean_and_parse_name(name)
+    base_name = f"{number_of_crossings}{'' if not alt_type else alt_type}_{index}"
+    if orientation == "":
+        return [base_name, base_name + "*"] if sym in ("chiral", "reversible") else [base_name]
+    else:
+        if sym == "chiral":
+            return ["+" + base_name, "+" + base_name + "*", "-" + base_name, "-" + base_name + "*"]
+        elif sym == "fully amphicheiral":
+            return ["+" + base_name]
+        elif sym == "negative amphicheiral" or sym == "positive amphicheiral":
+            return ["+" + base_name, "-" + base_name]
+        elif sym == "reversible":
+            return ["+" + base_name, "+" + base_name + "*"]
+        else:
+            return None
+
 def knot(name: str) -> Diagram:
     """
     Return the (unfrozen) diagram for a knot by name.
     """
     _load_knot_table()  # Lazy load
+
+    if "culprit" in name.lower():
+        return from_knotpy_notation("a=X(b3 b2 c3 c2) b=X(d3 e0 a1 a0) c=X(e3 f3 a3 a2) d=X(f2 g0 h3 b0) e=X(b1 i0 i3 c0) f=X(i2 j3 d0 c1) g=X(d1 j2 j1 h0) h=X(g3 j0 i1 d2) i=X(e1 h2 f0 e2) j=X(h1 g2 g1 f1) ['name'='culprit']")
+    if "goeritz" in name.lower():
+        return from_knotpy_notation("a=X(b3 b2 c3 c2) b=X(d0 e0 a1 a0) c=X(e3 d1 a3 a2) d=X(b0 c1 f3 f2) e=X(b1 g0 g3 c0) f=X(h3 i0 d3 d2) g=X(e1 i3 h0 e2) h=X(g2 j0 j3 f0) i=X(f1 k0 k3 g1) j=X(h1 k2 k1 h2) k=X(i1 j2 j1 i2) ['name'='goeritz']")
 
     if (res := safe_clean_and_parse_name(name)) is None:
         raise ValueError(f"Invalid knot name: {name}")
@@ -287,8 +357,20 @@ def _candidates(k: Diagram):
     #print("sk*", canonical(mirror_diagram(k, inplace=False)))
     yield canonical(mirror_diagram(k, inplace=False)), "*"
 
+def _remove_symmetry_duplicates(list_of_knot_names: list):
+    # clean up the results based on symmetry
+    #print("rsd", list_of_knot_names)
+    result = []
+    for name in list_of_knot_names:
+        #print("vars", _knot_variations(name))
+        if name in _knot_variations(name):
+            result.append(name)
+    return result[0] if len(result) == 1 else result
+
+
 def _identify_unoriented_knot(k: PlanarDiagram) -> str | list:
     """Try to get the knot name, e.g. '3_1' of 'k'."""
+    # TODO: do not return mirror if it is not fully amphicheiral
 
     # find the exact knot (or the mirror) in the knot table
     for k_, _ in _candidates(k):
@@ -306,7 +388,8 @@ def _identify_unoriented_knot(k: PlanarDiagram) -> str | list:
     for n_ in range(0, k.number_of_crossings + 1):
         knot_name_candidates += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
 
-    return knot_name_candidates[0] if len(knot_name_candidates) == 1 else knot_name_candidates
+    # clean up the results based on symmetry
+    return _remove_symmetry_duplicates(knot_name_candidates)
 
 
 def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
@@ -323,7 +406,7 @@ def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
                 return "+" + knot_name + _
             if knot("-" + knot_name) == k_:
                 return "-" + knot_name + _
-            return ["+" + knot_name + _, "-" + knot_name + _]
+            return _remove_symmetry_duplicates(["+" + knot_name + _, "-" + knot_name + _])
 
     # searching the knot table failed, find candidates by homflypt polynomial
     knot_name_candidates = []
@@ -336,7 +419,7 @@ def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
     for n_ in range(0, k.number_of_crossings + 1):
         knot_name_candidates += [key + "*" for key, p in _knot_precomputed_homflypt[n_].items() if _homflypt_xyz_mirror(p) == homflypt_polynomial]
 
-    return [s + name for name in knot_name_candidates for s in "+-"]
+    return _remove_symmetry_duplicates([s + name for name in knot_name_candidates for s in "+-"])
 
 
 # def identify_knot(k: Diagram) -> str | list | None:
@@ -412,9 +495,11 @@ def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
 def identify(k: Diagram) -> str | list | None:
 
     if is_knot(k):
+        _load_knot_table()
         return _identify_oriented_knot(k) if k.is_oriented() else _identify_unoriented_knot(k)
     elif is_link(k):
-        return None
+        from knotpy.tables.link import _identify_oriented_link
+        return _identify_oriented_link(k) if k.is_oriented() else None
     else:
         return None
 

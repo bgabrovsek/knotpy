@@ -87,7 +87,18 @@ def test_link_table():
     assert len(links_1)*1.5 < len(links_3)
     assert len(links_2)*1.5 < len(links_4)
 
+def test_link_identification():
+    k = kp.link("L2a1++")
+    print(k)
+    for x in range(10):
+        print(kp.canonical(k))
+        print(kp.canonical(kp.canonical(k)))
+    #l = kp.canonical(k)
+    # print(k, "<<<<")
+    # print(kp.identify(k))
+
 
 if __name__ == "__main__":
+    test_link_identification()
     test_link_table_names()
     test_link_table()
