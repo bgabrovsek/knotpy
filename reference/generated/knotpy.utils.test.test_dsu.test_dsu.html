@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.utils.test.test_dsu.test_dsu';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="test_find_unknown_and_known" href="knotpy.utils.test.test_dsu.test_find_unknown_and_known.html" />
+    <link rel="next" title="test_find_class" href="knotpy.utils.test.test_dsu.test_find_class.html" />
     <link rel="prev" title="test_dsu" href="knotpy.utils.test.test_dsu.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -426,6 +426,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check_raise_exception.html">sanity_check_raise_exception</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -543,6 +544,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_incident.html">is_incident</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html">is_kink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html">is_knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot_like_knotoid.html">is_knot_like_knotoid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html">is_knotoid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_leaf.html">is_leaf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_link.html">is_link</a></li>
@@ -556,6 +558,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.leafs.html">leafs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.open_arc.html">open_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
@@ -696,10 +699,14 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.html">test_draw_cases</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.force_tests.html">force_tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.draw_knotoid_simple.html">draw_knotoid_simple</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_connected_sum.html">test_connected_sum</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_disjoint_union.html">test_disjoint_union</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks.html">test_kinks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_different_arc.html">test_kinks_different_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_same_arc.html">test_kinks_same_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_knot.html">test_knot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_one_kink.html">test_one_kink</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_oriented.html">test_oriented</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial.html">test_trivial</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_disjoint_union.html">test_trivial_disjoint_union</a></li>
@@ -761,6 +768,10 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_affine_index.html">test_affine_index</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_affine_index.test_affine_index.html">test_affine_index</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.html">test_alexander_minors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.test_alexander_minors_functions.html">test_alexander_minors_functions</a></li>
 </ul>
@@ -832,11 +843,7 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tutte.html">tutte</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.deletion_contraction.html">deletion_contraction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.tutte.html">tutte</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.tutte.html">tutte</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.unplugging.html">unplugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.writhe.html">writhe</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.yamada.html">yamada</a></li>
@@ -946,7 +953,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.what_sdsu.html">what_sdsu</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.SymmetryDSU.html">SymmetryDSU</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.geometry.html">geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1058,6 +1067,7 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="knotpy.utils.test.test_dsu.html">test_dsu</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">test_dsu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_class.html">test_find_class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_unknown_and_known.html">test_find_unknown_and_known</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iadd_and_setitem_shortcuts.html">test_iadd_and_setitem_shortcuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_init_and_add.html">test_init_and_add</a></li>

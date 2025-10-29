@@ -426,6 +426,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.sanity.html">sanity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check.html">sanity_check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.sanity.sanity_check_raise_exception.html">sanity_check_raise_exception</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.algorithms.subdivide.html">subdivide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -543,6 +544,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_incident.html">is_incident</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_kink.html">is_kink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html">is_knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knot_like_knotoid.html">is_knot_like_knotoid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html">is_knotoid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_leaf.html">is_leaf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.is_link.html">is_link</a></li>
@@ -556,6 +558,7 @@
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.leafs.html">leafs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.loops.html">loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html">number_of_unknots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.open_arc.html">open_arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html">overstrands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.algorithms.topology.path_from_endpoint.html">path_from_endpoint</a></li>
 </ul>
@@ -696,10 +699,14 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.html">test_draw_cases</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.force_tests.html">force_tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.draw_knotoid_simple.html">draw_knotoid_simple</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_connected_sum.html">test_connected_sum</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_disjoint_union.html">test_disjoint_union</a></li>
-<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks.html">test_kinks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_different_arc.html">test_kinks_different_arc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_kinks_same_arc.html">test_kinks_same_arc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_knot.html">test_knot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_one_kink.html">test_one_kink</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_oriented.html">test_oriented</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial.html">test_trivial</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.drawing.tests.test_draw_cases.test_trivial_disjoint_union.html">test_trivial_disjoint_union</a></li>
@@ -761,6 +768,10 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tests.html">tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_affine_index.html">test_affine_index</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_affine_index.test_affine_index.html">test_affine_index</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.html">test_alexander_minors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.invariants.tests.test_alexander_minors.test_alexander_minors_functions.html">test_alexander_minors_functions</a></li>
 </ul>
@@ -832,11 +843,7 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.invariants.tutte.html">tutte</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.deletion_contraction.html">deletion_contraction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="knotpy.invariants.tutte.tutte.html">tutte</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.tutte.html">tutte</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.unplugging.html">unplugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.writhe.html">writhe</a></li>
 <li class="toctree-l2"><a class="reference internal" href="knotpy.invariants.yamada.html">yamada</a></li>
@@ -946,7 +953,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.disjoint_union_set.html">disjoint_union_set</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.what_sdsu.html">what_sdsu</a></li>
 <li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.DisjointSetUnion.html">DisjointSetUnion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="knotpy.utils.disjoint_union_set.SymmetryDSU.html">SymmetryDSU</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="knotpy.utils.geometry.html">geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1058,6 +1067,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="knotpy.utils.test.test_dsu.html">test_dsu</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_dsu.html">test_dsu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_class.html">test_find_class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_find_unknown_and_known.html">test_find_unknown_and_known</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_iadd_and_setitem_shortcuts.html">test_iadd_and_setitem_shortcuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="knotpy.utils.test.test_dsu.test_init_and_add.html">test_init_and_add</a></li>
@@ -1243,44 +1253,50 @@
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_knot.html#knotpy.algorithms.topology.is_knot" title="knotpy.algorithms.topology.is_knot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_knot</span></code></a>(k)</p></td>
 <td><p>Return True if all nodes are crossings and the diagram has a single link component.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html#knotpy.algorithms.topology.is_knotoid" title="knotpy.algorithms.topology.is_knotoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_knotoid</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_knot_like_knotoid.html#knotpy.algorithms.topology.is_knot_like_knotoid" title="knotpy.algorithms.topology.is_knot_like_knotoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_knot_like_knotoid</span></code></a>(knot)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_knotoid.html#knotpy.algorithms.topology.is_knotoid" title="knotpy.algorithms.topology.is_knotoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_knotoid</span></code></a>(k)</p></td>
 <td><p>Return True if the diagram is a (multi)-knotoid (exactly two degree-1 vertices, rest crossings).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_leaf.html#knotpy.algorithms.topology.is_leaf" title="knotpy.algorithms.topology.is_leaf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_leaf</span></code></a>(k, node)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_leaf.html#knotpy.algorithms.topology.is_leaf" title="knotpy.algorithms.topology.is_leaf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_leaf</span></code></a>(k, node)</p></td>
 <td><p>Return True if <cite>node</cite> is a degree-1 vertex.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_link.html#knotpy.algorithms.topology.is_link" title="knotpy.algorithms.topology.is_link"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_link</span></code></a>(k)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_link.html#knotpy.algorithms.topology.is_link" title="knotpy.algorithms.topology.is_link"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_link</span></code></a>(k)</p></td>
 <td><p>Return True if all nodes are crossings (possibly multiple components).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_linkoid.html#knotpy.algorithms.topology.is_linkoid" title="knotpy.algorithms.topology.is_linkoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_linkoid</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_linkoid.html#knotpy.algorithms.topology.is_linkoid" title="knotpy.algorithms.topology.is_linkoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_linkoid</span></code></a>(k)</p></td>
 <td><p>Return True if the diagram is a multi-linkoid (even number of leaf vertices; others crossings).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_loop.html#knotpy.algorithms.topology.is_loop" title="knotpy.algorithms.topology.is_loop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_loop</span></code></a>(k, arc_or_endpoint)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_loop.html#knotpy.algorithms.topology.is_loop" title="knotpy.algorithms.topology.is_loop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_loop</span></code></a>(k, arc_or_endpoint)</p></td>
 <td><p>Return True if an arc/endpoint forms a loop (an arc whose ends are on the same node which is a Vertex).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_planar_graph.html#knotpy.algorithms.topology.is_planar_graph" title="knotpy.algorithms.topology.is_planar_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_planar_graph</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_planar_graph.html#knotpy.algorithms.topology.is_planar_graph" title="knotpy.algorithms.topology.is_planar_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_planar_graph</span></code></a>(k)</p></td>
 <td><p>Return True if all nodes are vertices (no crossings).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_unknot.html#knotpy.algorithms.topology.is_unknot" title="knotpy.algorithms.topology.is_unknot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_unknot</span></code></a>(k)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_unknot.html#knotpy.algorithms.topology.is_unknot" title="knotpy.algorithms.topology.is_unknot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_unknot</span></code></a>(k)</p></td>
 <td><p>Return True if the diagram is a single unknot component.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_unlink.html#knotpy.algorithms.topology.is_unlink" title="knotpy.algorithms.topology.is_unlink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_unlink</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.is_unlink.html#knotpy.algorithms.topology.is_unlink" title="knotpy.algorithms.topology.is_unlink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_unlink</span></code></a>(k)</p></td>
 <td><p>Return True if the diagram is empty or all nodes are unknots (isolated looped vertices).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.kink_region_iterator.html#knotpy.algorithms.topology.kink_region_iterator" title="knotpy.algorithms.topology.kink_region_iterator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kink_region_iterator</span></code></a>(k[, of_node])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.kink_region_iterator.html#knotpy.algorithms.topology.kink_region_iterator" title="knotpy.algorithms.topology.kink_region_iterator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kink_region_iterator</span></code></a>(k[, of_node])</p></td>
 <td><p>Yield singleton “regions” (lists with one endpoint) representing kinks at crossings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.kinks.html#knotpy.algorithms.topology.kinks" title="knotpy.algorithms.topology.kinks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kinks</span></code></a>(k[, crossing])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.kinks.html#knotpy.algorithms.topology.kinks" title="knotpy.algorithms.topology.kinks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kinks</span></code></a>(k[, crossing])</p></td>
 <td><p>Return the set of kink endpoints; optionally restrict to a given <cite>crossing</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.leafs.html#knotpy.algorithms.topology.leafs" title="knotpy.algorithms.topology.leafs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leafs</span></code></a>(k)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.leafs.html#knotpy.algorithms.topology.leafs" title="knotpy.algorithms.topology.leafs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leafs</span></code></a>(k)</p></td>
 <td><p>Return the set of degree-1 vertices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.loops.html#knotpy.algorithms.topology.loops" title="knotpy.algorithms.topology.loops"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loops</span></code></a>(k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.loops.html#knotpy.algorithms.topology.loops" title="knotpy.algorithms.topology.loops"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loops</span></code></a>(k)</p></td>
 <td><p>Return a list of arcs (each a 2-endpoint container) that are loops.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html#knotpy.algorithms.topology.number_of_unknots" title="knotpy.algorithms.topology.number_of_unknots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_unknots</span></code></a>(k)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.number_of_unknots.html#knotpy.algorithms.topology.number_of_unknots" title="knotpy.algorithms.topology.number_of_unknots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_unknots</span></code></a>(k)</p></td>
 <td><p>Return the number of degree-2 looped vertices (unknots).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="knotpy.algorithms.topology.open_arc.html#knotpy.algorithms.topology.open_arc" title="knotpy.algorithms.topology.open_arc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_arc</span></code></a>(k, arc[, inplace])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="knotpy.algorithms.topology.overstrands.html#knotpy.algorithms.topology.overstrands" title="knotpy.algorithms.topology.overstrands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overstrands</span></code></a>(k)</p></td>
 <td><p>Return a partition of endpoints into sets that belong to the same overstrand.</p></td>
@@ -1618,6 +1634,16 @@ filtered by attributes via keyword arguments (e.g., <cite>color=”red”</cite>
 <dd><p>Return True if <cite>obj1</cite> and <cite>obj2</cite> are incident to each other in the diagram.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="knotpy.algorithms.topology.open_arc">
+<span class="sig-name descname"><span class="pre">open_arc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.algorithms.topology.open_arc" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><em>PlanarDiagram</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1665,6 +1691,7 @@ filtered by attributes via keyword arguments (e.g., <cite>color=”red”</cite>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.overstrands"><code class="docutils literal notranslate"><span class="pre">overstrands()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.is_adjacent"><code class="docutils literal notranslate"><span class="pre">is_adjacent()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.is_incident"><code class="docutils literal notranslate"><span class="pre">is_incident()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.algorithms.topology.open_arc"><code class="docutils literal notranslate"><span class="pre">open_arc()</span></code></a></li>
 </ul>
   </nav></div>
 
