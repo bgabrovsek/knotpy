@@ -104,7 +104,7 @@ def draw_knotoid_simple():
 if __name__ == '__main__':
     test_oriented()
     test_disjoint_union()
-    test_connected_sum() 
+    test_connected_sum()  
     test_trivial()
     test_trivial_oriented()
     test_trivial_disjoint_union()
