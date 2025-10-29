@@ -90,6 +90,11 @@ def _compute_and_write_row(diagram) -> tuple[str, list[str]]:
     row = {"name": name, "diagram": diag_str}
     row.update(values)
 
+    print("\n[[", row, "]]\n", flush=True)
+
+    with open("parallel_results.txt", "a", encoding="utf-8") as f:
+        f.write(str(row) + "\n")
+            
     with _LOCK:
         mode = "at" if _is_gz(_FILENAME) else "a"
         with _open_text(_FILENAME, mode) as f:
@@ -125,7 +130,7 @@ def save_invariants_parallel(
     out_path = Path(filename)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    fieldnames = ["name", "diagram"] + list(invariants.keys())
+    fieldnames = ["name", "knotpy notation"] + list(invariants.keys())
 
     # Create/overwrite file and write header
     mode_header = "wt" if _is_gz(out_path) else "w"
@@ -168,7 +173,7 @@ def save_invariants_parallel(
                             diag_str = to_knotpy_notation(k_obj)
                         except Exception:
                             diag_str = str(k_obj)
-                        row = {"name": k_name, "diagram": diag_str}
+                        row = {"name": k_name, "knotpy notation": diag_str}
                         for inv in invariants:
                             row[inv] = None
                         writer.writerow(row)

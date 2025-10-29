@@ -215,6 +215,237 @@ class DisjointSetUnion:
             result[rep] = set(comp) - {rep}
         return result
 
+class SymmetryDSU:
+    """Symmetry-aware union–find on top of a base DSU.
+
+    Layers:
+      1) A Disjoint Set Union for true equality.
+      2) A labeled, undirected multigraph between DSU components for symmetry relations.
+
+    You can later "promote" a symmetry to equivalence via `collapse(sym)`, which
+    unions all components linked by that symmetry.
+
+    Notes:
+      - The graph is on DSU representatives (components).
+      - `relate(a, b, sym)` records that class(a) ~ class(b) by symmetry label `sym`.
+      - `orbit_items(item, allowed=...)` returns the components in the symmetry orbit.
+      - Self-mirror edges are ignored by default (no-op if a and b are same class).
+    """
+
+    def __init__(self, dsu=None, *, iterable=None):
+        # Use provided DSU or create one
+        self.dsu = dsu if dsu is not None else DisjointSetUnion()
+        if iterable is not None and dsu is None:
+            for x in iterable:
+                self.dsu.add(x)
+
+        # adjacency: rep -> sym_label -> set(rep)
+        self._adj = {}
+
+    # ---------- basic DSU passthroughs ----------
+    def add(self, item):
+        self.dsu.add(item)
+        self._ensure_node(self.dsu.find(item))
+
+    def union(self, a, b):
+        """Merge DSU classes for a and b; relabel symmetry-graph nodes accordingly."""
+        ra, rb = self.dsu.find(a), self.dsu.find(b)
+        if ra is None or rb is None or ra == rb:
+            return
+        # Keep both reps before union; DSU decides survivor
+        self.dsu.union(ra, rb)
+        r_new = self.dsu.find(ra)  # new representative after union
+        r_old = rb if r_new == ra else ra
+        self._relabel_node(r_old, r_new)
+
+    def find(self, item):
+        return self.dsu.find(item)
+
+    def classes(self):
+        return self.dsu.classes()
+
+    def __len__(self):
+        return len(self.dsu)
+
+    # ---------- symmetry graph operations ----------
+    def relate(self, a, b, sym):
+        """Declare that class(a) is related to class(b) by symmetry `sym` (undirected)."""
+        ra, rb = self.dsu.find(a), self.dsu.find(b)
+        if ra is None or rb is None or ra == rb:
+            # Already same component or unknowns -> nothing to add
+            return
+        self._ensure_node(ra)
+        self._ensure_node(rb)
+        self._adj[ra].setdefault(sym, set()).add(rb)
+        self._adj[rb].setdefault(sym, set()).add(ra)
+
+    def edges(self):
+        """Iterate over edges as (rep_u, rep_v, sym)."""
+        seen = set()
+        for u, labels in self._adj.items():
+            for sym, nbrs in labels.items():
+                for v in nbrs:
+                    key = (u, v, sym)
+                    rkey = (v, u, sym)
+                    if key in seen or rkey in seen:
+                        continue
+                    seen.add(key)
+                    yield (u, v, sym)
+
+    def orbit_reps(self, item, allowed=None):
+        """Return the set of DSU representatives reachable from class(item)
+        via symmetry edges whose labels are in `allowed` (or all if None)."""
+        start = self.dsu.find(item)
+        if start is None:
+            return set()
+        start = self._canonical_rep(start)
+
+        def ok(label):
+            return True if allowed is None else label in allowed
+
+        visited, stack = {start}, [start]
+        while stack:
+            u = stack.pop()
+            for sym, nbrs in self._adj.get(u, {}).items():
+                if not ok(sym):
+                    continue
+                for v in nbrs:
+                    v = self._canonical_rep(v)
+                    if v not in visited:
+                        visited.add(v)
+                        stack.append(v)
+        return visited
+
+    def orbit_items(self, item, allowed=None):
+        """Return the list of DSU components (as sets of items) in the symmetry orbit."""
+        reps = self.orbit_reps(item, allowed=allowed)
+        comp_map = {r: set() for r in reps}
+        for x in self.dsu.parent:
+            r = self.dsu.find(x)
+            if r is not None:
+                r = self._canonical_rep(r)
+                if r in comp_map:
+                    comp_map[r].add(x)
+        return list(comp_map.values())
+
+    def collapse(self, sym):
+        """Promote symmetry `sym` to equivalence: union pairs of components linked by this label."""
+        pairs = [(u, v) for u, v, s in self.edges() if s == sym]
+        for u, v in pairs:
+            ru = self._canonical_rep(u)
+            rv = self._canonical_rep(v)
+            if ru != rv:
+                # Union the classes represented by ru and rv (use reps directly)
+                self.union(ru, rv)
+        self._prune_self_loops(sym)
+
+    # ---------- helpers ----------
+    def _ensure_node(self, r):
+        if r is None:
+            return
+        r = self._canonical_rep(r)
+        self._adj.setdefault(r, {})
+
+    def _canonical_rep(self, r):
+        """Map any representative to its current DSU representative."""
+        cr = self.dsu.find(r)
+        return r if cr is None else cr
+
+    def _relabel_node(self, old, new):
+        """When DSU merges old->new, merge adjacency and relabel references."""
+        if old == new:
+            return
+        old = self._canonical_rep(old)
+        new = self._canonical_rep(new)
+        if old not in self._adj:
+            self._ensure_node(new)
+            return
+
+        self._ensure_node(new)
+        # Merge label maps
+        for sym, nbrs in self._adj[old].items():
+            tgt = self._adj[new].setdefault(sym, set())
+            for v in nbrs:
+                v2 = self._canonical_rep(v)
+                if v2 != new:
+                    tgt.add(v2)
+
+        # Redirect neighbors pointing to old -> new
+        for _u, nbrs in list(self._adj.items()):
+            for lab, vs in nbrs.items():
+                if old in vs:
+                    vs.discard(old)
+                    vs.add(new)
+
+        # Drop old node
+        del self._adj[old]
+
+        # Clean accidental self-loops
+        for sym in list(self._adj[new].keys()):
+            if new in self._adj[new][sym]:
+                self._adj[new][sym].discard(new)
+                if not self._adj[new][sym]:
+                    del self._adj[new][sym]
+
+    def _prune_self_loops(self, sym):
+        for u in list(self._adj.keys()):
+            vs = self._adj[u].get(sym)
+            if not vs:
+                continue
+            cu = self._canonical_rep(u)
+            new_vs = {self._canonical_rep(v) for v in vs if self._canonical_rep(v) != cu}
+            if new_vs:
+                self._adj[u][sym] = new_vs
+            else:
+                del self._adj[u][sym]
+
+def  what_sdsu():
+
+    def show_classes(S):
+        print(f"\n== classes ==")
+        comps = sorted([sorted(c) for c in S.classes()])
+        for i, comp in enumerate(comps, 1):
+            print(f"  C{i}: {comp}")
+
+    def show_orbit(S, item, allowed=None, title=None):
+        print("Orbit")
+        tag = f"(allowed={sorted(allowed)})" if allowed is not None else "(all symmetries)"
+
+        orbit = S.orbit_items(item, allowed=allowed)
+        for i, comp in enumerate(sorted([sorted(g) for g in orbit]), 1):
+            print(f"  O{i}: {comp}")
+
+    base = DisjointSetUnion(["a", "ma", "b", "mb", "c", "mc", "d", "md"])
+    s = SymmetryDSU(base)
+    s.relate("a", "ma", "mirror")
+    s.relate("b", "mb", "mirror")
+    s.relate("c", "mc", "mirror")
+    s.relate("d", "md", "mirror")
+
+    show_classes(s)
+
+    print("ORBITS (MIRROR)")
+    for x in base.representatives():
+        print("Element:", x, end="   ")
+        o = s.orbit_items(x, "mirror")
+        print("  orbit", o)
+
+    base["a"] = "ma"
+
+    print("ORBITS (MIRROR)")
+    for x in base.representatives():
+        print("Element:", x, end="   ")
+        o = s.orbit_items(x, "mirror")
+        print("  orbit", o)
+
+    base["a"] = "mb"
+
+    print("ORBITS (MIRROR)")
+    for x in base.representatives():
+        print("Element:", x, end="   ")
+        o = s.orbit_items(x, "mirror")
+        print("  orbit", o)
 
 if __name__ == "__main__":
+    what_sdsu()
     pass

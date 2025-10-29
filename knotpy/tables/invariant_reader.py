@@ -119,6 +119,9 @@ def _evaluate_value(field_name: str | None, unevaluated_value: str) -> Any:
           * else try to parse as a SymPy expression,
           * else fall back to the original string.
     """
+
+    # print("VAL", field_name, "->", unevaluated_value)
+
     unevaluated_value = unevaluated_value.strip()
 
     # Diagram fields: e.g. "native notation", "dowker notation", "gauss notation", ...
@@ -126,14 +129,19 @@ def _evaluate_value(field_name: str | None, unevaluated_value: str) -> Any:
         from_notation = from_notation_dispatcher(field_name.split()[0].lower())
         return lock(from_notation(unevaluated_value))
 
+    if unevaluated_value.lower() == "none":
+        return None
+
     # Otherwise, invariant / property value
     if unevaluated_value.replace(" ", "").isalpha() and len(unevaluated_value) > 1:
         return unevaluated_value  # plain descriptor like "chiral"
 
-    try:
+
+    if "_" in unevaluated_value:
+        return unevaluated_value
+
+    if unevaluated_value.lstrip("-").isdigit():
         return int(unevaluated_value)
-    except ValueError:
-        pass
 
     try:
         return sp.sympify(unevaluated_value)
@@ -147,6 +155,9 @@ def _evaluate_dictionary(unevaluated_dict: dict[str, str]) -> dict[str, Any]:
     Evaluate a CSV row dict, converting any ``* notation`` column to key ``'diagram'``
     and parsing other fields via :func:`_evaluate_value`.
     """
+
+    #print("EVAL", unevaluated_dict)
+
     return {
         ("diagram" if "notation" in key else key): _evaluate_value(key, value)
         for key, value in unevaluated_dict.items()
@@ -223,6 +234,9 @@ def load_invariant_table(
 
         # Load rows
         for row in reader:
+
+            #print("ROW", row)
+
             key = row.pop("name") if name_is_key else _evaluate_value(
                 notation_column_name, row.pop(notation_column_name)  # type: ignore[arg-type]
             )

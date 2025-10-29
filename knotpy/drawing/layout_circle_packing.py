@@ -1,23 +1,24 @@
 """Layout functions for drawing a planar graph.
 """
 
-from itertools import chain
+from itertools import chain, product
 from collections import defaultdict
 import math
 from statistics import mean
 
-from knotpy.algorithms.topology import leafs
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.classes.node import Vertex, Crossing
-from knotpy.utils.circlepack import circle_pack
-from knotpy.algorithms.topology import loops, kinks, bridges, is_unknot
+from knotpy.algorithms.topology import loops, kinks, bridges, is_unknot, leafs
 from knotpy.algorithms.disjoint_union import number_of_disjoint_components
 from knotpy.drawing._support import _visible
 from knotpy.utils.geometry import (Circle, CircularArc, Line, Segment, perpendicular_arc, is_angle_between, antipode,
                                    tangent_line, middle, bisector, bisect, split, angle_between,
                                    perpendicular_arc_through_point, BoundingBox, weighted_circle_center_mean, orient_arc, arc_from_circle_and_points, arc_from_diameter)
+from knotpy.utils.circlepack import circle_pack
+from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.drawing.alignment import canonically_rotate_circles
 from knotpy.algorithms.sanity import sanity_check
+
 from knotpy.drawing._support import drawable, _add_support_arcs
 
 
@@ -351,6 +352,20 @@ def _layout_endpoints(k: PlanarDiagram | OrientedPlanarDiagram, circles: dict, l
                 layout[ep] = orient_arc(layout[ep], start_point=layout[v])
 
 
+def _removable_kinks(k: PlanarDiagram | OrientedPlanarDiagram):
+    """Compute kinks that lie on a single arc, or select one kink if there are two or more kinks on the same arc."""
+    kinks_ep = kinks(k)
+    kinks_crossings = set(ep.node for ep in kinks_ep)
+    dsu = DisjointSetUnion(kinks(k))  # contains kinks that lie on the same arc
+    for ep1, ep2 in k.arcs:
+        if ep1.node != ep2.node and ep1.node in kinks_crossings and ep2.node in kinks_crossings:
+            kinks_1 = kinks(k, ep1.node)  # get kinks attached to first arc crossing
+            kinks_2 = kinks(k, ep2.node)  # get kinks attached to second arc crossing
+            for kink_ep_1, kink_ep_2 in product(kinks_1, kinks_2):
+                dsu[kink_ep_1] = kink_ep_2
+    return dsu.representatives()
+
+
 def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     Processes a given planar diagram or oriented planar diagram by identifying and removing kinks
@@ -370,14 +385,18 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
 
     # Remove the kinks.
     removed_kinks = []
-    while _kinks := kinks(k):
-        ep = next(iter(_kinks))
-        c_inst = k.nodes[ep.node]
-        removed_kinks.append((ep, c_inst))
-        del k._nodes[ep.node]
-        # TODO: if we need a bigger space for kinks, we can insert additional bivertices
-        ep1 = c_inst[(ep.position + 1) % 4]
+    while _kinks := [ep for ep in kinks(k) if "_fixed" in k.nodes[ep.node].attr]:  # recompute kinks each time (they change during the loop)
+        ep = next(iter(_kinks))  # get a kink
+        c_inst = k.nodes[ep.node]  # get the crossing instance
+        ep1 = c_inst[(ep.position + 1) % 4] # get the kink's adjacent endpoints
         ep2 = c_inst[(ep.position + 2) % 4]
+
+        # if "_kink" in ep1.attr or "_link" in ep2.attr:  # do not remove the kink if it has a removed kink neighbor
+        #     c_inst.attr["_fixed"] = True
+        #     continue
+
+        removed_kinks.append((ep, c_inst))  # remember removed kinks
+        del k._nodes[ep.node]  # remove the kink (why not pop?)
         k.set_arc((ep1, ep2), _kink=ep.node)
 
     # Split connected sums.
@@ -709,7 +728,7 @@ def unknot_packing(k):
         face1: Circle(complex(0.0), 0.25),
     }
     k.nodes[node].attr["_support"] = True
-    print(k)
+    #print(k)
     return layout, circles
 
 

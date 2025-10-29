@@ -154,7 +154,7 @@ def insert_new_leaf(k: PlanarDiagram, target_endpoint: tuple, new_node_name: str
     return new_node_name
 
 
-def parallelize_arc(k: PlanarDiagram, arc: tuple[tuple, tuple], **attr) -> None:
+def parallelize_arc(k: PlanarDiagram, arc: tuple[tuple, tuple], inplace=True, **attr) -> PlanarDiagram:
     """Insert a new arc parallel to an existing arc (on the first endpoint's side).
 
     The new arc is inserted at position ``pos_a + 1`` at the first endpoint and
@@ -169,6 +169,9 @@ def parallelize_arc(k: PlanarDiagram, arc: tuple[tuple, tuple], **attr) -> None:
         NotImplementedError: If the arc is a loop.
         ValueError: If either endpoint node is not a Vertex.
     """
+    if not inplace:
+        k = k.copy()
+
     (node_a, pos_a), (node_b, pos_b) = arc
 
     if node_a == node_b:
@@ -179,6 +182,8 @@ def parallelize_arc(k: PlanarDiagram, arc: tuple[tuple, tuple], **attr) -> None:
 
     # Insert a new arc adjacent to the first endpoint (at pos_a+1)
     insert_arc(k, ((node_a, pos_a + 1), (node_b, pos_b)), **attr)
+
+    return k
 
 
 def _insert_none_at_node_position(k: PlanarDiagram, node, position: int, count: int = 1) -> None:

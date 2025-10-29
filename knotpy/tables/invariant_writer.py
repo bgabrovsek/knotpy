@@ -87,7 +87,7 @@ class InvariantTableWriter:
                 f"Invalid key type ({type(key)}); expected str or (Oriented)PlanarDiagram"
             )
 
-        self.writer.writerow(row)
+        self.writer.writerow({k: (v if v is not None else "None") for k, v in row.items()})
 
 
 def save_invariant_table(

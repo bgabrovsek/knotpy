@@ -9,7 +9,7 @@ __all__ = [
     "is_kink", "kinks", "kink_region_iterator",
     "bridges", "is_bridge",
     "edges", "overstrands",
-    "is_adjacent", "is_incident"
+    "is_adjacent", "is_incident", "open_arc"
 ]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
@@ -22,6 +22,8 @@ from knotpy.algorithms.cut_set import _is_arc_cut_set
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, Diagram
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.algorithms.components_link import number_of_link_components
+from knotpy.algorithms.naming import multiple_unique_new_node_names, unique_new_node_name
+
 
 
 def _is_vertex_an_unknot(k: PlanarDiagram, vertex) -> bool:
@@ -313,6 +315,28 @@ def is_incident(k, obj1, obj2):
     """Return True if `obj1` and `obj2` are incident to each other in the diagram."""
     pass
 
+def is_knot_like_knotoid(knot):
+    _leafs = leafs(knot)
+    leafs_faces = [face for face in knot.faces if any(leaf in [ep.node for ep in face] for leaf in _leafs)]
+    return len(leafs_faces) == 1 and len(leafs_faces[0]) == 2
+
+def open_arc(k: PlanarDiagram, arc, inplace=False):
+    if not inplace:
+        k = k.copy()
+    ep1, ep2 = arc
+    node1 = unique_new_node_name(k)
+    k.add_node(node1, create_using=Vertex, degree=1)
+    node2 = unique_new_node_name(k)
+    k.add_node(node2, create_using=Vertex, degree=1)
+    #print("endpoints", ep1, ep2)
+    #print(type(ep1), type(ep2))
+
+    k.set_endpoint(ep1, (node2, 0), create_using=type(ep2))
+    k.set_endpoint((node2, 0), ep1, create_using=type(ep1))
+    k.set_endpoint(ep2, (node1, 0), create_using=type(ep1))
+    k.set_endpoint((node1, 0), ep2, create_using=type(ep2))
+
+    return k
 
 if __name__ == "__main__":
     pass

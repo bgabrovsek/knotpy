@@ -112,8 +112,22 @@ def test_dsu():
     assert {5,6} in classes
     assert {7} in classes
 
+def test_find_class():
+    dsu = DisjointSetUnion([0,1,2,3,4,5,6])
+    dsu[0] = 1
+    dsu[2] = 3
+    dsu[4] = 5
+    dsu[5] = 1
+    assert dsu.find(0) == dsu.find(1) == dsu.find(5)
+
+    print(dsu.find(5))
+
 
 if __name__ == "__main__":
+    test_find_class()
+    exit()
+
+
     # Manual runner: invoke all tests directly (handy without pytest)
     for name, func in list(globals()).items():
         if name.startswith("test_") and callable(func):

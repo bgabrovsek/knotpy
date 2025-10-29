@@ -379,6 +379,7 @@ def save_drawing(
     ):
     args = dict(locals())
     from matplotlib import pyplot as plt
-    draw(k, **args, show=False)
+    args = {k: v for k, v in args.items() if k not in ("filename")}
+    draw(**args, show=False)
     plt.savefig(filename, bbox_inches="tight", pad_inches=0.05, dpi=plt.gcf().dpi)
     plt.close()

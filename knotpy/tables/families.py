@@ -5,7 +5,7 @@ Generation of graph and knot/link families fo diagrams.
 from __future__ import annotations
 
 __all__ = ["bouquet", "cycle_graph", "generate_knot_diagrams", "generate_simple_graphs", "path_graph", "star_graph",
-           "unknot", "unlink", "vertices_to_crossings", "wheel_graph"]
+           "unknot", "unlink", "vertices_to_crossings", "project", "wheel_graph"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
 
@@ -26,6 +26,7 @@ from knotpy.algorithms.topology import number_of_link_components
 from knotpy.algorithms.naming import unique_new_node_name
 from knotpy.classes.endpoint import Endpoint, IngoingEndpoint, OutgoingEndpoint
 from knotpy.classes.node.crossing import Crossing
+from knotpy.classes.node.vertex import Vertex
 from knotpy.utils.set_utils import powerset
 from knotpy.algorithms.symmetry import mirror
 
@@ -209,6 +210,10 @@ def vertices_to_crossings(
         )
         return g_copies
 
+def project(k: PlanarDiagram):
+    k_copy = k.copy()
+    k_copy.convert_nodes(nodes_for_converting=list(k.crossings), node_type=Vertex)
+    return k_copy
 
 def unknot(oriented: bool = False):
     """
@@ -318,10 +323,10 @@ def generate_simple_graphs(
     max_degree = max(degrees)
 
     # Expand current frontier until no new graphs appear.
-    while ls[-1]:
+    while ls.iter_level(-1):
         ls.new_level()
 
-        for graph in ls[-2]:
+        for graph in ls.iter_level(-2):
             l = len(graph)
 
             # 1) Add a new vertex incident to a face edge (respect degree cap).

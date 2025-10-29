@@ -14,6 +14,7 @@ Notes
   over/under information.
 """
 
+
 import math
 
 from knotpy import sanity_check
