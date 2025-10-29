@@ -3,7 +3,7 @@ PlanarDiagram is data Python package for knot theory.
 See ... for complete documentation.
 """
 
-__version__ = "0.0"
+__version__ = "0.0" 
 
 from knotpy import utils
 from knotpy.utils import *
