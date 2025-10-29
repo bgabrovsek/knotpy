@@ -43,13 +43,35 @@ def _clean_allowed_moves(allowed_moves) -> list:
 # Use descriptors
 class SettingProxyBool:
 
+    """Setting proxy bool.
+    """
     def __init__(self, default_value):
+        """Initialize the instance.
+        
+        Args:
+            default_value: The default_value parameter.
+        """
         self._value = default_value
 
     def __get__(self, obj, objtype=None):
+        """Retrieve the descriptor value.
+        
+        Args:
+            obj: The obj parameter.
+            objtype: The objtype parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._value
 
     def __set__(self, obj, value):
+        """Set the descriptor value.
+        
+        Args:
+            obj: The obj parameter.
+            value: The value parameter.
+        """
         if value not in [True, False]:
             raise ValueError("Value must be True or False")
         self._value = value
@@ -57,17 +79,41 @@ class SettingProxyBool:
 
 class SettingProxyReidemeisterMoves:
 
+    """Setting proxy reidemeister moves.
+    """
     def __init__(self, default_value):
+        """Initialize the instance.
+        
+        Args:
+            default_value: The default_value parameter.
+        """
         self._value = _clean_allowed_moves(default_value)
 
     def __get__(self, obj, objtype=None):
+        """Retrieve the descriptor value.
+        
+        Args:
+            obj: The obj parameter.
+            objtype: The objtype parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._value
 
     def __set__(self, obj, value):
+        """Set the descriptor value.
+        
+        Args:
+            obj: The obj parameter.
+            value: The value parameter.
+        """
         self._value = _clean_allowed_moves(value)
 
 
 class Settings:
+    """Settings.
+    """
     allowed_moves = SettingProxyReidemeisterMoves(_DEFAULT_ALLOWED_MOVES)
     trace_moves = SettingProxyBool(_DEFAULT_TRACE_MOVES)
     r5_only_trivalent = SettingProxyBool(_DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES)
@@ -77,10 +123,20 @@ class Settings:
     use_precomputed_invariants = SettingProxyBool(_DEFAULT_USE_PRECOMPUTED_INVARIANTS)
 
     def add_allowed_move(self, move):
+        """Add allowed move.
+        
+        Args:
+            move: The move parameter.
+        """
         self.allowed_moves.extend(_clean_allowed_moves(move))
 
     def dump(self) -> dict:
         # return settings in form of a dictionary
+        """Dump.
+        
+        Returns:
+            The return value.
+        """
         return {
             "allowed_moves": self.allowed_moves,
             "trace_moves": self.trace_moves,
@@ -93,6 +149,11 @@ class Settings:
 
     def update(self, data: dict):
         # update the settings
+        """Update.
+        
+        Args:
+            data: The data parameter.
+        """
         if "allowed_moves" in data:
             self.allowed_moves = data["allowed_moves"]
         if "trace_moves" in data:
@@ -111,6 +172,11 @@ class Settings:
 
     def load(self, data: dict):
         # load settings (default + update data)
+        """Load.
+        
+        Args:
+            data: The data parameter.
+        """
         self.allowed_moves = data["allowed_moves"] if "allowed_moves" in data else _DEFAULT_ALLOWED_MOVES
         self.trace_moves = data["trace_moves"] if "trace_moves" in data else _DEFAULT_TRACE_MOVES
         self.r5_only_trivalent = data["r5_only_trivalent"] if "r5_only_trivalent" in data else _DEFAULT_ALLOW_R4_ONLY_ON_TRIVALENT_VERTICES

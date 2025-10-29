@@ -115,6 +115,17 @@ class ProgressBar(Iterator[T]):
         update_interval: float = 0.5,
         shared_counter: Any = None,
     ) -> None:
+        """Initialize the instance.
+        
+        Args:
+            iterable: The iterable parameter.
+            total: The total parameter.
+            comment: The comment parameter.
+            width: The width parameter.
+            alpha: The alpha parameter.
+            update_interval: The update_interval parameter.
+            shared_counter: The shared_counter parameter.
+        """
         self.iterable = iter(iterable) if iterable is not None else None
 
         # Resolve total
@@ -180,12 +191,25 @@ class ProgressBar(Iterator[T]):
     # Internal helpers
 
     def _current_index(self) -> int:
+        """Current index.
+        
+        Returns:
+            The return value.
+        """
         if self._use_shared:
             return int(self._shared.value)
         return self.index
 
     def _progress_bar(self, percent: float) -> str:
         # Reserve right side text; use the rest for blocks
+        """Progress bar.
+        
+        Args:
+            percent: The percent parameter.
+        
+        Returns:
+            The return value.
+        """
         blocks = max(1, self.width - 45)
         full = int(percent * blocks)
         frac = percent * blocks - full
@@ -204,9 +228,19 @@ class ProgressBar(Iterator[T]):
         return f"|{self.BLUE}{s}{self.RESET}|"
 
     def _format_time(self, seconds: float) -> str:
+        """Format time.
+        
+        Args:
+            seconds: The seconds parameter.
+        
+        Returns:
+            The return value.
+        """
         return "<1s" if seconds < 1 else _human_time(seconds)
 
     def _update_stats(self) -> None:
+        """Update stats.
+        """
         now = time.time()
         idx = self._current_index()
         self._history.append((idx, now))
@@ -228,12 +262,16 @@ class ProgressBar(Iterator[T]):
             self.smoothed_speed = self.alpha * raw_speed + (1 - self.alpha) * self.smoothed_speed
 
     def _maybe_print(self) -> None:
+        """Maybe print.
+        """
         now = time.time()
         if now - self.last_update_time >= self.update_interval or self._current_index() >= self.total:
             self._print_progress()
             self.last_update_time = now
 
     def _print_progress(self) -> None:
+        """Print progress.
+        """
         idx = self._current_index()
         percent = 1.0 if self.total == 0 else min(1.0, idx / max(1, self.total))
         speed = self.smoothed_speed or 0.0
@@ -262,11 +300,21 @@ class ProgressBar(Iterator[T]):
     # Iterator protocol
 
     def __iter__(self) -> "ProgressBar[T]":
+        """Return an iterator over the object.
+        
+        Returns:
+            The return value.
+        """
         if self.iterable is None:
             raise TypeError("ProgressBar: no iterable provided; use tick() or pass an iterable.")
         return self
 
     def __next__(self) -> T:
+        """Return the next item from the iterator.
+        
+        Returns:
+            The return value.
+        """
         if self.iterable is None:
             raise StopIteration
         item = next(self.iterable)  # can raise StopIteration

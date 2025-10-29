@@ -4,6 +4,8 @@ import sympy as sp
 from knotpy.invariants.alexander import clear_denominators_by_columns
 
 def test_alexander_minors_functions():
+    """Test alexander minors functions.
+    """
     t1, t2 = sp.symbols('t1 t2')
     variables = [t1, t2]
 

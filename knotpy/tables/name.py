@@ -15,6 +15,15 @@ Name normalization and parsing utilities for knots, links, theta-curves, and han
 """
 
 def _named(k, name:str):
+    """Named.
+    
+    Args:
+        k: The k parameter.
+        name: The name parameter.
+    
+    Returns:
+        The return value.
+    """
     k.name = name
     return k
 
@@ -156,6 +165,14 @@ def parse_name(name: str):
     return type_name, number_of_crossings, alt_type, index, mirror, orientation
 
 def safe_clean_and_parse_name(name):
+    """Safe clean and parse name.
+    
+    Args:
+        name: The name parameter.
+    
+    Returns:
+        The return value.
+    """
     try:
         return parse_name(clean_name(name))
     except ValueError:

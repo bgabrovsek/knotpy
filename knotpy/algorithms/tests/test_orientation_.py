@@ -3,6 +3,8 @@ from knotpy import sanity_check
 
 
 def test_orientation():
+    """Test orientation.
+    """
     k = kp.PlanarDiagram("3_1")
     o = kp.orient(k)
     u = kp.unorient(o)

@@ -54,9 +54,25 @@ def bridge_join(a: Diagram, b: Diagram, arcs: tuple | None) -> Diagram:
     map_a, map_b = relabel_dicts
 
     def relabel_from_a(ep: Endpoint) -> tuple:
+        """Relabel from a.
+        
+        Args:
+            ep: The ep parameter.
+        
+        Returns:
+            The return value.
+        """
         return map_a[ep.node], ep.position
 
     def relabel_from_b(ep: Endpoint) -> tuple:
+        """Relabel from b.
+        
+        Args:
+            ep: The ep parameter.
+        
+        Returns:
+            The return value.
+        """
         return map_b[ep.node], ep.position
 
     # internal bridge vertices
@@ -124,9 +140,25 @@ def crossing_join(a: Diagram, b: Diagram, arcs: tuple | None) -> Diagram:
     map_a, map_b = relabel_dicts
 
     def relabel_from_a(ep: Endpoint) -> tuple:
+        """Relabel from a.
+        
+        Args:
+            ep: The ep parameter.
+        
+        Returns:
+            The return value.
+        """
         return map_a[ep.node], ep.position
 
     def relabel_from_b(ep: Endpoint) -> tuple:
+        """Relabel from b.
+        
+        Args:
+            ep: The ep parameter.
+        
+        Returns:
+            The return value.
+        """
         return map_b[ep.node], ep.position
 
     # add the crossing

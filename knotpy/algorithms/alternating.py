@@ -50,6 +50,14 @@ def is_alternating(k: Diagram) -> bool:
 
     def _edge_is_alternating(edge: list) -> bool:
         # An edge is a list of endpoints; use their .position modulo 2.
+        """Edge is alternating.
+        
+        Args:
+            edge: The edge parameter.
+        
+        Returns:
+            The return value.
+        """
         starts_at_crossing = (
             isinstance(k.nodes[edge[0].node], Crossing)
             and isinstance(k.nodes[edge[-1].node], Crossing)

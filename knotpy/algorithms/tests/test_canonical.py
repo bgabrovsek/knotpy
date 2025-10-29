@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_canonical():
+    """Test canonical.
+    """
     native_a = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
     native_b = "x=X(y1 m0 w1 w0) y=V(m1 x0 w3) w=X(x3 x2 m2 y2) m=V(x1 y0 w2)"
     native_c = "a=V(b0 c3 d3) b=V(a0 d2 c0) c=X(b2 d1 d0 a1) d=X(c2 c1 b1 a2)"  # different
@@ -20,6 +22,8 @@ def test_canonical():
     assert not c_a == c_c
 
 def test_canonical_oriented():
+    """Test canonical oriented.
+    """
     native_a = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
     native_b = "w=X(m1 y2 x1 x0) y=V(m0 x2 w1) x=X(w3 w2 y1 m2) m=V(y0 w0 x3)"
     native_c = "a=V(b0 c3 d3) b=V(a0 d2 c0) c=X(b2 d1 d0 a1) d=X(c2 c1 b1 a2)"  # different
@@ -47,6 +51,8 @@ def test_canonical_oriented():
     assert not c_a == c_c
 
 def test_canonical_degenerate():
+    """Test canonical degenerate.
+    """
     a = kp.from_knotpy_notation("a=V(a1 a0 a3 a2)")
     b = kp.from_knotpy_notation("a=V(a3 a2 a1 a0)")
     ka = kp.canonical(a)
@@ -58,6 +64,8 @@ def test_canonical_degenerate():
     assert ka == kb
 
 def test_canonical_degenerate_oriented():
+    """Test canonical degenerate oriented.
+    """
     a = kp.orient(kp.from_knotpy_notation("a=V(a1 a0 a3 a2)"))
     b = kp.orientations(kp.from_knotpy_notation("a=V(a3 a2 a1 a0)"))
     ka = kp.canonical(a)
@@ -67,6 +75,8 @@ def test_canonical_degenerate_oriented():
     assert ka in kb
 
 def test_canonical_knots():
+    """Test canonical knots.
+    """
     pd1 = "X[0,1,2,3],X[4,5,3,2],X[5,4,1,0]"
     pd2 = "X[0,1,2,3],X[4,5,1,0],X[5,4,3,2]"
     k1 = kp.from_pd_notation(pd1)
@@ -78,6 +88,8 @@ def test_canonical_knots():
     assert c1 == c2
 
 def test_canonical_knots_oriented():
+    """Test canonical knots oriented.
+    """
     pd1 = "X[0,1,2,3],X[4,5,3,2],X[5,4,1,0]"
     pd2 = "X[0,1,2,3],X[4,5,1,0],X[5,4,3,2]"
     k1 = kp.orient(kp.from_pd_notation(pd1))

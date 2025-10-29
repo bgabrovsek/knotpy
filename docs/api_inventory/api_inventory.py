@@ -5,9 +5,25 @@ pkg_name = sys.argv[1]
 pkg = importlib.import_module(pkg_name)
 
 def is_public(name): 
+    """Is public.
+    
+    Args:
+        name: The name parameter.
+    
+    Returns:
+        The return value.
+    """
     return not name.startswith("_")
 
 def obj_info(obj):
+    """Obj info.
+    
+    Args:
+        obj: The obj parameter.
+    
+    Returns:
+        The return value.
+    """
     kind = ("class" if inspect.isclass(obj) else
             "function" if inspect.isfunction(obj) else
             "module" if inspect.ismodule(obj) else
@@ -21,6 +37,14 @@ def obj_info(obj):
     return {"kind": kind, "signature": sig, "doc1": doc1}
 
 def walk_modules(root):
+    """Walk modules.
+    
+    Args:
+        root: The root parameter.
+    
+    Returns:
+        The return value.
+    """
     seen = set()
     results = {}
     stack = [root]

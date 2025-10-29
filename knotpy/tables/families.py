@@ -211,6 +211,14 @@ def vertices_to_crossings(
         return g_copies
 
 def project(k: PlanarDiagram):
+    """Project.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     k_copy = k.copy()
     k_copy.convert_nodes(nodes_for_converting=list(k.crossings), node_type=Vertex)
     return k_copy

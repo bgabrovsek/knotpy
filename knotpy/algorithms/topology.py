@@ -237,6 +237,15 @@ def edges(k: PlanarDiagram, **endpoint_attributes) -> list[list[Endpoint]]:
     terminals = [node for node in k.nodes if isinstance(k.nodes[node], Vertex)]
 
     def _endpoints_have_attribute(eps: list[Endpoint], attr: dict) -> bool:
+        """Endpoints have attribute.
+        
+        Args:
+            eps: The eps parameter.
+            attr: The attr parameter.
+        
+        Returns:
+            The return value.
+        """
         if not attr:
             return True
         for ept in eps:
@@ -316,11 +325,29 @@ def is_incident(k, obj1, obj2):
     pass
 
 def is_knot_like_knotoid(knot):
+    """Is knot like knotoid.
+    
+    Args:
+        knot: The knot parameter.
+    
+    Returns:
+        The return value.
+    """
     _leafs = leafs(knot)
     leafs_faces = [face for face in knot.faces if any(leaf in [ep.node for ep in face] for leaf in _leafs)]
     return len(leafs_faces) == 1 and len(leafs_faces[0]) == 2
 
 def open_arc(k: PlanarDiagram, arc, inplace=False):
+    """Open arc.
+    
+    Args:
+        k: The k parameter.
+        arc: The arc parameter.
+        inplace: The inplace parameter.
+    
+    Returns:
+        The return value.
+    """
     if not inplace:
         k = k.copy()
     ep1, ep2 = arc

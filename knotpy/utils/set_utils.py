@@ -78,6 +78,13 @@ class LeveledSet(Generic[T, I]):
         to_string: Callable[[T], I] | None = None,
         from_string: Callable[[I], T] | None = None,
     ) -> None:
+        """Initialize the instance.
+        
+        Args:
+            items: The items parameter.
+            to_string: The to_string parameter.
+            from_string: The from_string parameter.
+        """
         self._use_conversion = to_string is not None and from_string is not None
         self._to_string = to_string  # type: ignore[assignment]
         self._from_string = from_string  # type: ignore[assignment]
@@ -137,9 +144,25 @@ class LeveledSet(Generic[T, I]):
     # ---- Conversion helpers ------------------------------------------------
 
     def _in(self, item: T | I) -> T | I:
+        """In.
+        
+        Args:
+            item: The item parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._to_string(item) if self._use_conversion else item  # type: ignore[misc]
 
     def _out(self, item: T | I) -> T:
+        """Out.
+        
+        Args:
+            item: The item parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._from_string(item) if self._use_conversion else item  # type: ignore[return-value]
 
     # ---- Content manipulation ----------------------------------------------

@@ -10,6 +10,8 @@ from knotpy.utils.set_utils import powerset, LeveledSet
 
 
 def test_powerset_basic():
+    """Test powerset basic.
+    """
     ps = list(powerset([1, 2, 3]))
     assert ps == [
         (),
@@ -24,6 +26,8 @@ def test_powerset_basic():
 
 
 def test_leveledset_no_conversion_basic_levels_and_counts():
+    """Test leveledset no conversion basic levels and counts.
+    """
     ls = LeveledSet[int, int]([1, 2])
     assert ls.number_of_levels() == 1
     assert ls.level_sizes() == (2,)
@@ -42,6 +46,8 @@ def test_leveledset_no_conversion_basic_levels_and_counts():
 
 
 def test_leveledset_iter_level_indexing_and_errors():
+    """Test leveledset iter level indexing and errors.
+    """
     ls = LeveledSet[int, int]([1, 2])
     ls.new_level([3, 4])
 
@@ -54,6 +60,8 @@ def test_leveledset_iter_level_indexing_and_errors():
 
 
 def test_leveledset_remove_empty_levels_trailing_only():
+    """Test leveledset remove empty levels trailing only.
+    """
     ls = LeveledSet[int, int]([1])
     ls.new_level([2])
     ls.new_level()  # creates an empty level because previous level is non-empty
@@ -66,6 +74,8 @@ def test_leveledset_remove_empty_levels_trailing_only():
 
 
 def test_leveledset_contains_and_extend():
+    """Test leveledset contains and extend.
+    """
     ls = LeveledSet[str, str]()
     assert not ls.contains("a")
     ls.extend(["a", "b", "a"])
@@ -76,6 +86,8 @@ def test_leveledset_contains_and_extend():
 
 def test_leveledset_with_conversion_roundtrip_and_ops():
     # store externally as tuples, internally as strings
+    """Test leveledset with conversion roundtrip and ops.
+    """
     to_s = lambda t: f"{t[0]}:{t[1]}"
     from_s = lambda s: tuple(s.split(":"))  # type: ignore[return-value]
 
@@ -102,6 +114,8 @@ def test_leveledset_with_conversion_roundtrip_and_ops():
 
 def test_leveled_set():
     # level 0
+    """Test leveled set.
+    """
     ls = LeveledSet([1, 2, 3])
 
     ls.new_level()
@@ -130,6 +144,8 @@ def test_leveled_set():
 
 
 def test_leveled_set_reidemeister():
+    """Test leveled set reidemeister.
+    """
     k = kp.knot("3_1")
 
 

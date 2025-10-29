@@ -6,6 +6,8 @@ from knotpy.algorithms.attributes import clear_attributes
 
 def test_deletion_contraction_parallel_edges():
 
+    """Test deletion contraction parallel edges.
+    """
     g = parallel_edges(3)
     result = deletion_contraction(g, contract_bridges=False)
     result = sorted([canonical(g) for g in result])
@@ -19,6 +21,8 @@ def test_deletion_contraction_parallel_edges():
 
 
 def test_deletion_contraction_cycle():
+    """Test deletion contraction cycle.
+    """
     N = 5
     g = cycle_graph(N)
     result = deletion_contraction(g, contract_bridges=False)
@@ -35,6 +39,8 @@ def test_deletion_contraction_cycle():
 
 def test_deletion_contraction_square_with_diagonal():
 
+    """Test deletion contraction square with diagonal.
+    """
     g = from_knotpy_notation("a=V(c0 d1 b0) b=V(a2 d0) c=V(a0 d2) d=V(b1 a1 c1)")
 
     result = deletion_contraction(g, contract_bridges=False)

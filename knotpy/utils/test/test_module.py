@@ -7,6 +7,8 @@ from knotpy.utils.module import Module
 
 
 def test_construct_and_basic_ops():
+    """Test construct and basic ops.
+    """
     m = Module(2, "c") + Module(15, "a") - Module(3, "x")
     assert m["c"] == 2
     assert m["a"] == 15
@@ -19,6 +21,8 @@ def test_construct_and_basic_ops():
 
 
 def test_append_combines_like_terms():
+    """Test append combines like terms.
+    """
     m = Module()
     m.append(2, "a")
     m.append(3, "a")
@@ -30,6 +34,8 @@ def test_append_combines_like_terms():
 
 
 def test_add_sub_extend():
+    """Test add sub extend.
+    """
     m1 = Module(1, "a") + Module(2, "b")
     m2 = Module(3, "a") - Module(5, "c")
     s = m1 + m2
@@ -39,6 +45,8 @@ def test_add_sub_extend():
 
 
 def test_scalar_multiply_divide():
+    """Test scalar multiply divide.
+    """
     m = Module.from_tuples([(2, "a"), (-3, "b")])
     assert (m * 2).to_tuple() == [(4, "a"), (-6, "b")]
     assert (2 * m).to_tuple() == [(4, "a"), (-6, "b")]
@@ -52,6 +60,8 @@ def test_scalar_multiply_divide():
 
 
 def test_radd_sum_zero_seed():
+    """Test radd sum zero seed.
+    """
     m1 = Module(1, "a")
     m2 = Module(2, "b")
     total = sum([m1, m2], 0)   # relies on __radd__
@@ -60,6 +70,8 @@ def test_radd_sum_zero_seed():
 
 def test_setitem_substitution():
     # m = 2[c] + 15[a] - 3[x]
+    """Test setitem substitution.
+    """
     m = Module(2, "c") + Module(15, "a") - Module(3, "x")
     # substitute c := 4[b] + (-3)[z]  (i.e., replace basis 'c' by that module)
     m["c"] = Module(4, "b") + Module(-3, "z")
@@ -72,6 +84,8 @@ def test_setitem_substitution():
 
 
 def test_filter_and_sort_and_equality():
+    """Test filter and sort and equality.
+    """
     m = Module.from_tuples([(3, "c"), (1, "a"), (2, "b")])
     assert m.filter(lambda s: s in {"a", "c"}) == ["c", "a"] or ["a", "c"]
 
@@ -85,6 +99,8 @@ def test_filter_and_sort_and_equality():
 
 
 def test_sympy_coefficients():
+    """Test sympy coefficients.
+    """
     x = sp.symbols("x")
     m = Module(x + 1, "u") + Module(2*x, "v")
     # arithmetic w/ sympy Expr
@@ -96,6 +112,8 @@ def test_sympy_coefficients():
     assert v.equals(6*x)
 
 def test_module():
+    """Test module.
+    """
     m = Module(2, "c") + Module(15, "a") - Module(3, "x")
 
     assert set(m.to_tuple()) == {(-3, 'x'), (15, 'a'), (2, 'c')}

@@ -4,6 +4,8 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.algorithms.remove import remove_unknots
 from knotpy.algorithms.topology import number_of_unknots
 def test_unknots():
+    """Test unknots.
+    """
     pd_K_8_13 = "X[1,9,2,8],X[3,14,4,15],X[5,12,6,13],X[7,11,8,10],X[9,3,10,2],X[11,16,12,1],X[13,4,14,5],X[15,6,16,7]"
 
     k = from_pd_notation(pd_K_8_13)
@@ -28,6 +30,8 @@ def test_unknots():
 
 
 def test_disjoint_sum():
+    """Test disjoint sum.
+    """
     pd_a = "X[1,5,2,4], X[3,1,4,6], X[5,3,6,2]"
     pd_b = "X[1,9,2,8],X[3,14,4,15],X[5,12,6,13],X[7,11,8,10],X[9,3,10,2],X[11,16,12,1],X[13,4,14,5],X[15,6,16,7]"
     pd_ab = "X[1,9,2,8],X[3,14,4,15],X[5,12,6,13],X[7,11,8,10],X[9,3,10,2],X[11,16,12,1],X[13,4,14,5],X[15,6,16,7],X[21,25,22,24],X[23,21,24,26],X[25,23,26,22]"

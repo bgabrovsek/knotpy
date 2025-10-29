@@ -10,6 +10,11 @@ from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
 def _get_examples():
+    """Get examples.
+    
+    Returns:
+        The return value.
+    """
     knots = {
         # trefoil
         from_knotpy_notation("a=X(b3 c0 c3 b0) b=X(a3 c2 c1 a0) c=X(a1 b2 b1 a2) ['name'='k31']"): sympify("-t**4 + t**3 + t"),
@@ -35,6 +40,8 @@ def _get_examples():
     return diagrams
 
 def test_r1_find_moves():
+    """Test r1 find moves.
+    """
     diagrams = _get_examples()
 
     # make a reidemeister move
@@ -43,6 +50,8 @@ def test_r1_find_moves():
         assert len(r1_locations) == 4 * len(k.arcs)
 
 def test_make_reidemeister_1_move():
+    """Test make reidemeister 1 move.
+    """
     diagrams = _get_examples()
     for k, polynomial in diagrams.items():
         r1_locations = list(find_reidemeister_1_add_kink(k))
@@ -57,6 +66,8 @@ def test_make_reidemeister_1_move():
                 assert yamada(k_) == polynomial
 
 def test_make_undo_reidemeister_1_move():
+    """Test make undo reidemeister 1 move.
+    """
     diagrams = _get_examples()
     for k, polynomial in diagrams.items():
         r1_locations = list(find_reidemeister_1_add_kink(k))

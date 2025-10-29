@@ -5,6 +5,8 @@ from knotpy.algorithms.canonical import canonical
 
 
 def test_remove_edge():
+    """Test remove edge.
+    """
     N = 6
 
     # If we remove an edge from a path P(n) it becomes P(n-1)

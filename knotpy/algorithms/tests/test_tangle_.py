@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_decompose():
+    """Test decompose.
+    """
     for name in ("6_3", "5_2", "8_10", "8_16", "9_2", "9_21", "10_114"):
         k = kp.knot(name)
 
@@ -14,6 +16,8 @@ def test_decompose():
             assert kp.canonical(k) == kp.canonical(k_reconstructed)
 
 def test_tangle_63():
+    """Test tangle 63.
+    """
     k = kp.knot("6_3")
 
     assert len(kp.arc_cut_sets(k, 4, minimum_partition_nodes=2)) == 3

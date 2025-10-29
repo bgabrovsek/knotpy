@@ -7,6 +7,8 @@ from knotpy.algorithms import sanity_check
 
 def test_reidemeister_5():
 
+    """Test reidemeister 5.
+    """
     theta_codes = [
         # Theta curves (Moriuchi)
         "a=V(b0 b2 b1) b=V(a0 a2 a1) ['name'='t0_1']",
@@ -111,6 +113,8 @@ def test_reidemeister_5():
             #     print(".  ", k_2, location_2)
 
 def test_framing_5():
+    """Test framing 5.
+    """
     from knotpy import settings
     settings.allowed_moves = "r1, r2, r3, r4, r5"
     # settings.trace_moves = False
@@ -124,6 +128,8 @@ def test_framing_5():
     # print(yamada(t))
 
 def test_simple_5():
+    """Test simple 5.
+    """
     k = from_knotpy_notation("a → V(a1 a0 c2), b → V(c3 c1 c0), c → X(b2 b1 a2 b0)")
     print(k)
     l = list(find_reidemeister_5_untwists(k))

@@ -3,6 +3,8 @@ from sympy import symbols, simplify, gcd, fraction
 
 def test1():
     # Define variables
+    """Test 1.
+    """
     t1, t2 = symbols('t1 t2')
 
     # Define the rational expressions
@@ -38,6 +40,8 @@ def test1():
 
 def test2():
     # Define symbols
+    """Test 2.
+    """
     t1, t2 = symbols('t1 t2')
 
     # Define the rational expressions from the second set
@@ -72,6 +76,8 @@ def test2():
     print("GCD of numerators:", simplify(gcd_poly))
 
 def check_expressions():
+    """Check expressions.
+    """
     t1, t2 = symbols('t1 t2')
 
     expressions1 = [

@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_affine_index():
+    """Test affine index.
+    """
     s = "a=V(b3) b=X(c0 c2 c1 a0) c=X(b0 b2 b1 d0) d=V(c3)"
     k = kp.from_knotpy_notation(s)
     assert kp.sanity_check(k)

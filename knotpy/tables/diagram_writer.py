@@ -73,9 +73,21 @@ class _BaseDiagramWriter(ABC):
 
     # Context manager protocol
     def __enter__(self):
+        """Enter the runtime context.
+        
+        Returns:
+            The return value.
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
+        """Exit the runtime context.
+        
+        Args:
+            exc_type: The exc_type parameter.
+            exc_value: The exc_value parameter.
+            traceback: The traceback parameter.
+        """
         self.close()
 
 

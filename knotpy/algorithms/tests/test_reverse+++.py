@@ -6,6 +6,8 @@ def test_reverse():
 
     # test reverible knot
 
+    """Test reverse.
+    """
     print("a")
     ko = kp.orientations(kp.knot("3_1"))
     assert len(ko) == 2

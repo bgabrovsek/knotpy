@@ -3,6 +3,8 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.invariants.skein import crossing_to_vertex, smoothen_crossing
 
 def test_skein():
+    """Test skein.
+    """
     trefoil = "a=X(b3 c0 c3 b0) b=X(a3 c2 c1 a0) c=X(a1 b2 b1 a2)"
     trefoil_A = "b=X(c3 c2 c1 c0) c=X(b3 b2 b1 b0)"
     trefoil_B = "b=X(b3 c2 c1 b0) c=X(c3 b2 b1 c0)"

@@ -3,6 +3,8 @@ import knotpy as kp
 from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def test_export():
+    """Test export.
+    """
     s = """
     a=V(b0) b=X(a0 c3 d3 c0) c=X(b3 d2 d1 b1) d=X(e0 c2 c1 b2) e=X(d0 f0 f3 g3) f=X(e1 g2 g0 e2) g=X(f2 h0 f1 e3) h=V(g1)
     a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 e3 e1 b2) d=X(f3 g0 e0 b3) e=X(d2 c2 h0 c1) f=X(i3 i2 g1 d0) g=X(d1 f2 i1 i0) h=V(e2) i=X(g3 g2 f1 f0)

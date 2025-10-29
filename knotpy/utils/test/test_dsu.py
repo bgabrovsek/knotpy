@@ -4,6 +4,8 @@ from knotpy.utils.disjoint_union_set import DisjointSetUnion
 
 
 def test_init_and_add():
+    """Test init and add.
+    """
     dsu = DisjointSetUnion([1, 2, 3])
     assert set(dsu.elements) == {1, 2, 3}
     dsu.add(2)  # no-op
@@ -12,6 +14,8 @@ def test_init_and_add():
 
 
 def test_find_unknown_and_known():
+    """Test find unknown and known.
+    """
     dsu = DisjointSetUnion()
     assert dsu.find("x") is None
     dsu.add("x")
@@ -19,6 +23,8 @@ def test_find_unknown_and_known():
 
 
 def test_union_and_connectivity():
+    """Test union and connectivity.
+    """
     dsu = DisjointSetUnion([1, 2, 3, 4])
     dsu.union(1, 2)
     assert dsu.find(1) == dsu.find(2)
@@ -29,6 +35,8 @@ def test_union_and_connectivity():
 
 
 def test_iadd_and_setitem_shortcuts():
+    """Test iadd and setitem shortcuts.
+    """
     dsu = DisjointSetUnion()
     dsu += "a"
     assert "a" in set(dsu.elements)
@@ -37,6 +45,8 @@ def test_iadd_and_setitem_shortcuts():
 
 
 def test_iter_components_and_len():
+    """Test iter components and len.
+    """
     dsu = DisjointSetUnion([1, 2, 3, 4, 5])
     dsu.union(1, 2)
     dsu.union(3, 4)
@@ -48,6 +58,8 @@ def test_iter_components_and_len():
 
 
 def test_to_set_and_unknown():
+    """Test to set and unknown.
+    """
     dsu = DisjointSetUnion([1, 2, 3])
     dsu.union(1, 2)
     assert dsu.to_set(1) == {1, 2}
@@ -55,6 +67,8 @@ def test_to_set_and_unknown():
 
 
 def test_representatives_and_classes():
+    """Test representatives and classes.
+    """
     dsu = DisjointSetUnion([10, 20, 30, 40])
     dsu.union(10, 30)
     reps = list(dsu.representatives())
@@ -67,6 +81,8 @@ def test_representatives_and_classes():
 
 
 def test_to_dict_rep_map():
+    """Test to dict rep map.
+    """
     dsu = DisjointSetUnion([1, 2, 3, 4])
     dsu.union(1, 2)
     d = dsu.to_dict()
@@ -77,6 +93,8 @@ def test_to_dict_rep_map():
 
 
 def test_path_compression_idempotence():
+    """Test path compression idempotence.
+    """
     dsu = DisjointSetUnion(range(6))
     # chain unions to form a tall-ish tree
     dsu.union(0, 1)
@@ -94,6 +112,8 @@ def test_path_compression_idempotence():
 
 def test_dsu():
     # Example usage
+    """Test dsu.
+    """
     dsu = DisjointSetUnion([0, 1, 2, 3, 4])
     dsu.add(7)
     dsu[0] = 0
@@ -113,6 +133,8 @@ def test_dsu():
     assert {7} in classes
 
 def test_find_class():
+    """Test find class.
+    """
     dsu = DisjointSetUnion([0,1,2,3,4,5,6])
     dsu[0] = 1
     dsu[2] = 3

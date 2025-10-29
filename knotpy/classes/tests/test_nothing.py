@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_nothing():
+    """Test nothing.
+    """
     f = kp.PlanarDiagram
     g = kp.OrientedPlanarDiagram
     assert f != g

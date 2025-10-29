@@ -4,17 +4,32 @@ _loaded = False
 _evaluated = []
 
 def _data_loader():
+    """Data loader.
+    
+    Returns:
+        The return value.
+    """
     global _loaded
     _loaded = True
     return {"a": "100-99", "b": "100-98", "c": "100-97", "d": "100-96"}
 
 def _eval(s: str):
+    """Eval.
+    
+    Args:
+        s: The s parameter.
+    
+    Returns:
+        The return value.
+    """
     global _evaluated
     #print("[evaluating {}]".format(s))
     _evaluated.append(s)
     return eval(s)
 
 def test_lazy_load():
+    """Test lazy load.
+    """
     global _loaded
 
     _loaded = False
@@ -33,6 +48,8 @@ def test_lazy_load():
     assert value
 
 def test_lazy_eval():
+    """Test lazy eval.
+    """
     global _evaluated
     _evaluated = []
 
@@ -50,6 +67,8 @@ def test_lazy_eval():
     assert v == 2
 
 def test_lazy_load_eval():
+    """Test lazy load eval.
+    """
     global _loaded, _evaluated
     _evaluated = []
     _loaded = False

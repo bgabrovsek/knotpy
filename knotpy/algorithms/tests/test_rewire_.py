@@ -5,6 +5,8 @@ from knotpy.algorithms.rewire import pull_and_plug_endpoint
 
 
 def test_pull_and_plug_endpoint_sanity():
+    """Test pull and plug endpoint sanity.
+    """
     k = PlanarDiagram()
     # initial diagram
     k.set_arcs_from("x0a0,x1y2,x2d0,y0e0,y1f0,y3g0,y4h0,f1d1")

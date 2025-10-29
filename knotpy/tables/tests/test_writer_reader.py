@@ -3,6 +3,8 @@ from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def test_writer_table_diagram():
 
+    """Test writer table diagram.
+    """
     diagrams = [
         kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'=1]"),
         kp.from_knotpy_notation("a=V(b0) b=V(a0) ['name'=2]"),
@@ -29,6 +31,8 @@ def test_writer_table_diagram():
 
 def test_writer_dict_diagram():
 
+    """Test writer dict diagram.
+    """
     diagrams = [
         kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'=1]"),
         kp.from_knotpy_notation("a=V(b0) b=V(a0) ['name'=2]"),
@@ -50,6 +54,8 @@ def test_writer_dict_diagram():
 
 def test_writer_table_name():
 
+    """Test writer table name.
+    """
     diagrams = [
         kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'=1]"),
         kp.from_knotpy_notation("a=V(b0) b=V(a0) ['name'=2]"),
@@ -76,6 +82,8 @@ def test_writer_table_name():
 
 def test_writer_dict_name():
 
+    """Test writer dict name.
+    """
     diagrams = [
         kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 d3 c1) c=X(b1 b3 e3 f0) d=X(f3 f2 e1 b2) e=X(g0 d2 f1 c2) f=X(c3 e2 d1 d0) g=V(e0) ['name'=1]"),
         kp.from_knotpy_notation("a=V(b0) b=V(a0) ['name'=2]"),

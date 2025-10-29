@@ -248,6 +248,16 @@ def _find_leaf_adjacent_pairs(endpoints: list):
     return [tuple(group) for group in color_groups.values() if len(group) == 2]
 
 def _find_big_angle_pairs(k, endpoints: list, circles: dict):
+    """Find big angle pairs.
+    
+    Args:
+        k: The k parameter.
+        endpoints: The endpoints parameter.
+        circles: The circles parameter.
+    
+    Returns:
+        The return value.
+    """
     if len(endpoints) != 3:
         return []
     z = [circles[k.arcs[endpoints[i]]].center for i in range(3)]
@@ -431,10 +441,23 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
 
 
 def _debug(*args):
+    """Debug.
+    
+    Args:
+        *args: Additional positional arguments.
+    """
     print(*args)
 
 
 def _shorter_arc(arc: CircularArc):
+    """Shorter arc.
+    
+    Args:
+        arc: The arc parameter.
+    
+    Returns:
+        The return value.
+    """
     _arc = - arc
     return _arc if _arc.length() < arc.length() else arc
 
@@ -526,6 +549,15 @@ def _insert_kink(k: PlanarDiagram | OrientedPlanarDiagram,
     layout[k.arcs[ep]] = arc_arc
 
 def _face_with_endpoints(k, endpoints):
+    """Face with endpoints.
+    
+    Args:
+        k: The k parameter.
+        endpoints: The endpoints parameter.
+    
+    Returns:
+        The return value.
+    """
     for face in k.faces:
         if all(ep in face for ep in endpoints):
             return face
@@ -710,6 +742,14 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             pass
 
 def unknot_packing(k):
+    """Unknot packing.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     node, = k.nodes
     ep1, ep2 = k.endpoints
     arc, = k.arcs

@@ -2,6 +2,8 @@ from knotpy.utils.parsing import universal_list_of_lists_parser
 
 def test_universal_list_of_lists_parser():
     # Test examples
+    """Test universal list of lists parser.
+    """
     examples = [
         "[[1,2,3],[4,5,0],[1,3,5,8]]",
         "(1,2,3),(4,5,0),(1,3,5,8)",

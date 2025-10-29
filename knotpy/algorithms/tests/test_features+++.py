@@ -4,6 +4,8 @@ from knotpy import bridges, is_bridge
 from time import time
 
 def test_bridges():
+    """Test bridges.
+    """
     N = 10
     g = kp.path_graph(N)
     assert len(bridges(g)) == N-1

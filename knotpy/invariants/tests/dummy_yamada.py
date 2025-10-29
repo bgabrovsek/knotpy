@@ -2,6 +2,14 @@ def __yamada_rec(k: PlanarDiagram):
     # basic recursive yamada for testing purposes
 
     # we have a crossing
+    """Yamada rec.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     if k.crossings:
         crossing = next(iter(k.crossings))
         return (_A * __yamada_rec(smoothen_crossing(k, crossing_for_smoothing=crossing, method="A")) +
@@ -29,6 +37,15 @@ def __yamada_rec(k: PlanarDiagram):
         return Integer(1)
 
 def _yamada_rec(k: PlanarDiagram, normalize=True):
+    """Yamada rec.
+    
+    Args:
+        k: The k parameter.
+        normalize: The normalize parameter.
+    
+    Returns:
+        The return value.
+    """
     polynomial = expand(__yamada_rec(k.copy()))
 
     if normalize:

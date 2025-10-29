@@ -4,6 +4,14 @@ from sympy import expand
 
 def helper_test_connected_sum_on_knots(a, b, arcs=None, test_jones=True):
 
+    """Helper test connected sum on knots.
+    
+    Args:
+        a: The a parameter.
+        b: The b parameter.
+        arcs: The arcs parameter.
+        test_jones: The test_jones parameter.
+    """
     ab = kp.connected_sum(a, b, arcs)
     assert kp.sanity_check(ab)
     if test_jones:
@@ -29,10 +37,14 @@ def helper_test_connected_sum_on_knots(a, b, arcs=None, test_jones=True):
 
 
 def test_connected_sum():
+    """Test connected sum.
+    """
     helper_test_connected_sum_on_knots(kp.knot("3_1"), kp.knot("4_1"))
 
 
 def test_disjoint_sum():
+    """Test disjoint sum.
+    """
     a = kp.knot("3_1")
     b = kp.knot("4_1")
 
@@ -65,6 +77,8 @@ def test_disjoint_sum():
 
 
 def test_all_connected_sums():
+    """Test all connected sums.
+    """
     a = kp.knot("3_1")
     b = kp.knot("4_1")
 

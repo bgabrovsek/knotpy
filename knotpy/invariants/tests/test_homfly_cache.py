@@ -2,6 +2,8 @@ from collections import OrderedDict
 
 import knotpy as kp
 def test():
+    """Test.
+    """
     k = kp.knot("8_9")
     p = kp.homflypt(k.copy())
     for i in range(1000):

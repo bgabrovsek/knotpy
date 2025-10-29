@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_adjacent():
+    """Test adjacent.
+    """
     k = kp.knot("6_2")
     assert kp.is_adjacent(k, "a", "b")
     assert not kp.is_adjacent(k, "a", "e")

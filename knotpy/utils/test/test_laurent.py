@@ -13,6 +13,8 @@ from knotpy.utils.laurent import (
 
 
 def test_reciprocal_roundtrip():
+    """Test reciprocal roundtrip.
+    """
     x, y = sp.symbols("x y")
     expr = x**2 + x*y + 3
     r = reciprocal(expr, x)
@@ -24,6 +26,8 @@ def test_reciprocal_roundtrip():
 
 
 def test_normalize_laurent_basic():
+    """Test normalize laurent basic.
+    """
     x, y = sp.symbols("x y")
     poly = sp.Poly(x**3*y**2 + 2*x**2*y**5, x, y)
     norm = normalize_laurent(poly)
@@ -32,6 +36,8 @@ def test_normalize_laurent_basic():
 
 
 def test_normalize_laurent_polynomial_make_nonnegative():
+    """Test normalize laurent polynomial make nonnegative.
+    """
     x, y = sp.symbols("x y")
     expr = x**-3 * y**2 + 2*x**-1
     norm = normalize_laurent(expr, variables=[x, y])
@@ -45,6 +51,8 @@ def test_normalize_laurent_polynomial_make_nonnegative():
 
 
 def test_normalize_symmetric_centering_and_sign():
+    """Test normalize symmetric centering and sign.
+    """
     t = sp.symbols("t")
     # Already symmetric w.r.t. t ↔ 1/t, but with a potential shift
     expr = t**-2 + 3 + 2*t**2
@@ -58,6 +66,8 @@ def test_normalize_symmetric_centering_and_sign():
 
 
 def test_extract_variables_with_and_without_prefix():
+    """Test extract variables with and without prefix.
+    """
     t1, t2, t10 = sp.symbols("t1 t2 t10")
     x2, a3 = sp.symbols("x2 a3")
     expr = 2*t2 + t10 + 5*x2 + a3
@@ -79,6 +89,8 @@ def _poly_repr_for_compare(expr, vars_):
 
 def test_canonicalize_under_variable_permutation_minimal_rep():
     # Intentionally asymmetric to force a choice
+    """Test canonicalize under variable permutation minimal rep.
+    """
     t1, t2 = sp.symbols("t1 t2")
     expr = 3*t1**2 + 2*t1*t2 + t2  # asymmetric in t1, t2
     vars_ = (t1, t2)
@@ -101,6 +113,8 @@ def test_canonicalize_under_variable_permutation_minimal_rep():
 
 
 def test_canonicalize_under_permutation_with_sign_change():
+    """Test canonicalize under permutation with sign change.
+    """
     t1, t2 = sp.symbols("t1 t2")
     expr = t1 - 2*t2
     vars_ = (t1, t2)
@@ -111,6 +125,8 @@ def test_canonicalize_under_permutation_with_sign_change():
 
 
 def test_normalize_laurent_polynomial():
+    """Test normalize laurent polynomial.
+    """
     from sympy import symbols, simplify
     x, y = symbols("x y")
 
@@ -151,6 +167,8 @@ def test_normalize_laurent_polynomial():
 
 
 def test_laurent_tuples():
+    """Test laurent tuples.
+    """
     p1 = sp.sympify("-t1*t2*(t3**-1) - t1 + 2*t2**2*t3 - t3 + 1")
     p2 = sp.Integer(9)
     p3 = sp.Rational(8,7)
@@ -186,6 +204,8 @@ def test_laurent_tuples():
 
 
 def test_alexander_cases():
+    """Test alexander cases.
+    """
     p1 = sp.sympify("-t1*t2*t3 + t1*t2 - t1 + t2*t3 - t3 + 1")
     p2 = sp.sympify("-t1*t2*t3 + t1*t2 + t1*t3 - t2 - t3 + 1")
     p3 = sp.sympify("-t1*t2*t3 + t1*t3 - t1 + t2*t3 - t2 + 1")
@@ -198,6 +218,8 @@ def test_alexander_cases():
 
 
 def test_laurent_div_2():
+    """Test laurent div 2.
+    """
     t1, t2 = sp.symbols("x y")
     expr = 2*t1*t2 - 2*t1 - 2*t2 + 2
     result = normalize_laurent(expr, [t1, t2])

@@ -120,6 +120,8 @@ a=V(b0) b=X(a0 c0 d0 e3) c=X(b1 e2 f3 d1) d=X(b2 c3 f2 g0) e=X(f1 f0 c1 b3) f=X(
 knotoids = [line.strip() for line in raw.strip().splitlines() if line.strip()]
 
 def NOTtest_knotoids():
+    """Nottest knotoids.
+    """
     import knotpy as kp
 
     kp.settings.allowed_moves = "r1,r2,r3"

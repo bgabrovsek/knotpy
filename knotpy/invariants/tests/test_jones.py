@@ -61,6 +61,8 @@ def test_jones():
 
 
 def test_jones_vs_homflypt():
+    """Test jones vs homflypt.
+    """
     from knotpy.invariants.jones import jones_from_homflypt
     kp.settings.use_precomputed_invariants = True
 

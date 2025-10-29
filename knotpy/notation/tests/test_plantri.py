@@ -1,6 +1,8 @@
 from knotpy.notation.plantri import from_plantri_notation, to_plantri_notation
 from knotpy.algorithms.sanity import sanity_check
 def test_from_plantri():
+    """Test from plantri.
+    """
     plantris = [
         ["5 bcde,aedc,abd,acbe,adb", "bcde, aedc, abd,acbe,adb "],
         ["7: 1[2 3 4 5] 2[1 5 6 3] 3[1 2 6 4] 4[1 3 6 5] 5[1 4 6 2] 6[2 5 4 3]",

@@ -10,6 +10,11 @@ from knotpy.algorithms.topology import is_knot
 from knotpy.algorithms.sanity import sanity_check
 
 def _get_examples():
+    """Get examples.
+    
+    Returns:
+        The return value.
+    """
     knots = {
         # trefoil
         from_knotpy_notation("a=X(b3 c0 c3 b0) b=X(a3 c2 c1 a0) c=X(a1 b2 b1 a2) ['name'='k31']"): sympify("-t**4 + t**3 + t"),
@@ -36,6 +41,8 @@ def _get_examples():
 
 def test_r2_find_moves():
     # test if all r2 moves are found
+    """Test r2 find moves.
+    """
     diagrams = _get_examples()
     # make a reidemeister move
     for k, polynomial in diagrams.items():
@@ -44,6 +51,8 @@ def test_r2_find_moves():
         assert len(r2_locations) == 2* nr2
 
 def test_make_reidemeister_1_move():
+    """Test make reidemeister 1 move.
+    """
     diagrams = _get_examples()
     for k, polynomial in diagrams.items():
         r1_locations = list(find_reidemeister_2_poke(k))
@@ -58,6 +67,8 @@ def test_make_reidemeister_1_move():
                 assert yamada(k_) == polynomial
 
 def test_make_undo_reidemeister_1_move():
+    """Test make undo reidemeister 1 move.
+    """
     diagrams = _get_examples()
     for k, polynomial in diagrams.items():
         r2_locations = list(find_reidemeister_2_poke(k))
@@ -71,6 +82,8 @@ def test_make_undo_reidemeister_1_move():
 
 
 def test_theta_r3():
+    """Test theta r3.
+    """
     k = from_knotpy_notation("a → V(a1 a0 c2), b → V(c3 c1 c0), c → X(b2 b1 a2 b0)")
     locations = list(find_reidemeister_2_unpoke(k))
     assert len(locations) == 0, f"There should be no moves for this diagram, but these were found: {locations}"

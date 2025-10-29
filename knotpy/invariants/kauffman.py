@@ -53,6 +53,14 @@ from knotpy.invariants._symbols import _a, _z, _KAUFFMAN_2_VARIABLE_SUM
 
 
 def _compute_kauffman(k: PlanarDiagram) -> sp.Expr:
+    """Compute kauffman.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     stack = deque([k.copy(_coefficient=sp.Integer(1), _unknots=0)])
     polynomial = sp.Integer(0)
 
@@ -93,6 +101,14 @@ def _compute_kauffman(k: PlanarDiagram) -> sp.Expr:
 
 
 def kauffman(k: PlanarDiagram | OrientedPlanarDiagram) -> sp.Expr:
+    """Kauffman.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     original_knot = k
     k = unorient(k) if k.is_oriented() else k.copy()
     if not k.is_framed():

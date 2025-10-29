@@ -3,6 +3,8 @@ import knotpy as kp
 from knotpy.algorithms.cut_set import arc_cut_sets
 
 def test_order_2():
+    """Test order 2.
+    """
     a = kp.knot("3_1")
     b = kp.knot("4_1")
     ab = kp.connected_sum(a, b)
@@ -42,6 +44,8 @@ def test_order_2():
     # assert len(kp.arc_cut_sets(ab, 2, skip_isolating_cuts=True)) == 1
 
 def  test_arc_cut_set():
+    """Test arc cut set.
+    """
     N = 4
     w = kp.wheel_graph(N)  # "a" is the center node
 
@@ -76,15 +80,21 @@ def test_find_cut_sets():
     # cs3 = arc_cut_sets(w, 3)
     # assert len(cs3) == 4
 
+    """Test find cut sets.
+    """
     w = kp.wheel_graph(5)  # "a" is the center node
     cs3 = arc_cut_sets(w, 3)
     assert len(cs3) == 4
 
 def test_cut_set_knotoid():
+    """Test cut set knotoid.
+    """
     k = kp.from_knotpy_notation("a=V(b0) b=X(a0 c0 c2 d0) c=X(b1 d1 b2 e0) d=X(b3 c1 f0 g3) e=V(c3) f=X(d2 g2 h3 h2) g=X(h1 h0 f1 d3) h=X(g1 g0 f3 f2)")
     cs = kp.cut_nodes(k)
 
 def test_cut_set_new():
+    """Test cut set new.
+    """
     k = kp.knot("3_1")
     acs = kp.arc_cut_sets(k, order = 4, minimum_partition_nodes=1)
     print(acs)

@@ -256,6 +256,18 @@ def normalize_laurent(
 
     #print("laurent", expr, variables)
 
+    """Normalize laurent.
+    
+    Args:
+        expr: The expr parameter.
+        variables: The variables parameter.
+        allow_variable_sign_change: The allow_variable_sign_change parameter.
+        allow_variable_permutation: The allow_variable_permutation parameter.
+        allow_polynomial_sign_change: The allow_polynomial_sign_change parameter.
+    
+    Returns:
+        The return value.
+    """
     tuples, variables = laurent_to_tuples(expr, variables)
     vars_seq = tuple(variables)
     n = len(vars_seq)

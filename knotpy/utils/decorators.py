@@ -39,21 +39,69 @@ def total_ordering_from_compare(cls: type[T]) -> type[T]:
     """
 
     def __eq__(self, other):
+        """Eq.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) == 0
 
     def __ne__(self, other):
+        """Ne.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) != 0
 
     def __lt__(self, other):
+        """Lt.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) < 0
 
     def __le__(self, other):
+        """Le.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) <= 0
 
     def __gt__(self, other):
+        """Gt.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) > 0
 
     def __ge__(self, other):
+        """Ge.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return self._compare(other) >= 0
 
     setattr(cls, "__eq__", __eq__)

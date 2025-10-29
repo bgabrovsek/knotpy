@@ -4,6 +4,8 @@ from knotpy.tables.name import clean_name, parse_name, safe_clean_and_parse_name
 import knotpy as kp
 
 def test_clean_name():
+    """Test clean name.
+    """
     assert clean_name("3_1") == "3_1"
     assert clean_name("trefoil") == "3_1"
     assert clean_name("31") == "3_1"
@@ -32,6 +34,8 @@ def test_clean_name():
 
 def test_parse_name():
     # (type, crossing number, alt/nalt/None, index, mirror, orientation)
+    """Test parse name.
+    """
     assert parse_name("3_1") == ("knot", 3, None, 1, False, "")
     assert parse_name("11a_5") == ("knot", 11, "a", 5, False, "")
     assert parse_name("11n_7*") == ("knot", 11, "n", 7, True, "")
@@ -47,6 +51,8 @@ def test_parse_name():
 def test_knot_symmetry():
 
 
+    """Test knot symmetry.
+    """
     k1 = kp.knot("9_32")
     k2 = kp.knot("9_32*")
     k3 = kp.knot("9_32+")
@@ -82,6 +88,8 @@ def test_knot_symmetry_count():
 
 
     # unoriented
+    """Test knot symmetry count.
+    """
     knots_a = kp.knots(range(10), oriented=False, mirror=False)
     knots_b = kp.knots(range(10), oriented=False, mirror=True)
     assert len(knots_a) == len(set(knots_a))
@@ -102,6 +110,8 @@ def test_knot_symmetry_count():
 
 
 def test_safe_parse_name():
+    """Test safe parse name.
+    """
     assert safe_clean_and_parse_name("3_1") is not None
     assert safe_clean_and_parse_name("3_1*") is not None
     assert safe_clean_and_parse_name("+3_1*") is not None
@@ -123,6 +133,8 @@ def test_safe_parse_name():
     assert safe_clean_and_parse_name(range(3)) is None
 
 def test_precomputed_homflypt():
+    """Test precomputed homflypt.
+    """
     from knotpy.tables.knot import knot_precomputed_homflypt
     # unoriented
     for k in kp.knots(range(0, 7)):
@@ -146,6 +158,8 @@ def test_precomputed_homflypt():
         assert h1 == h2
 
 def test_identify():
+    """Test identify.
+    """
     pd_code = "PD[X[1,9,2,8], X[3,10,4,11], X[5,3,6,2],X[7,1,8,12], X[9,4,10,5], X[11,7,12,6]]"
     k = kp.from_pd_notation(pd_code)
     assert kp.identify(k) == "6_2"
@@ -157,6 +171,8 @@ def test_identify():
     assert ident == "-9_32" or ident == "+9_32"
 
 def test_same_polys():
+    """Test same polys.
+    """
     from collections import defaultdict
     groups = defaultdict(list)
     for k in kp.knots(range(1, 11), mirror=True):
@@ -170,11 +186,15 @@ def test_same_polys():
                          ('10_132*', '5_1'), ('9_42', '9_42*'), ('10_71', '10_71*'), ('10_156', '8_16')}
 
 def test_unknot():
+    """Test unknot.
+    """
     k = kp.knot("unknot")
     assert kp.identify(k) == "0_1"
 
 def test_unoriented():
 
+    """Test unoriented.
+    """
     K = kp.knot("9_32")
     assert kp.identify(K) == "9_32"
 
@@ -184,6 +204,8 @@ def test_unoriented():
 def test_oriented():
 
 
+    """Test oriented.
+    """
     K = kp.knot("+9_32")
     assert kp.identify(K) == "+9_32"
     K1 = kp.reverse(K, inplace=False)
@@ -204,6 +226,8 @@ def test_oriented():
 
 def test_symmetry_identification():
 
+    """Test symmetry identification.
+    """
     assert kp.symmetry_type("3_1") == "reversible"
     assert kp.symmetry_type(kp.knot("3_1")) == "reversible"
 

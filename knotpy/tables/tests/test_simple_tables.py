@@ -4,6 +4,8 @@ import knotpy as kp
 def test_get_knots():
 
     # get one knot
+    """Test get knots.
+    """
     k = kp.knot("3_1")
     assert k.name == "3_1" and len(k) == 3 and isinstance(k, kp.PlanarDiagram)
     q = kp.knot("trefoil")
@@ -18,6 +20,8 @@ def test_get_knots():
 
 def test_get_thetas():
     # get one knot
+    """Test get thetas.
+    """
     k = kp.theta("T3_1")
     print(k, len(k), k.name)
     print(k.name == "T3_1", len(k) == 5 , isinstance(k, kp.PlanarDiagram))

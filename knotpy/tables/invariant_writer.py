@@ -35,6 +35,11 @@ class InvariantTableWriter:
                 self.write_comment(line)
 
     def write_comment(self, comment: str) -> None:
+        """Write comment.
+        
+        Args:
+            comment: The comment parameter.
+        """
         self.file.write(f"# {comment}\n")
 
     def write_invariant(
@@ -42,6 +47,12 @@ class InvariantTableWriter:
         key: str | int | PlanarDiagram | OrientedPlanarDiagram,
         invariant_dictionary: dict,
     ) -> None:
+        """Write invariant.
+        
+        Args:
+            key: The key parameter.
+            invariant_dictionary: The invariant_dictionary parameter.
+        """
         if self.field_names is None:
             self.field_names = list(invariant_dictionary)
             if isinstance(key, int):

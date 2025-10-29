@@ -41,6 +41,8 @@ def test_equivalence_knots():
         assert k not in result
 
 def test_equivalence_theta_curves():
+    """Test equivalence theta curves.
+    """
     t1 = PlanarDiagram("t0_1")
     t2 = PlanarDiagram("t3_1")
     t3 = PlanarDiagram("t4_1")

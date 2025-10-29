@@ -7,6 +7,8 @@ from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 
 def test_read_write_diagram():
+    """Test read write diagram.
+    """
     knots = [
         "a=X(b1 c0 c3 b2) b=X(c1 a0 a3 c2) c=X(a1 b0 b3 a2)",
         "a=X(c1 d0 d3 c2) b=X(d1 e0 e3 d2) c=X(e1 a0 a3 e2) d=X(a1 b0 b3 a2) e=X(b1 c0 c3 b2)",
@@ -26,6 +28,8 @@ def test_read_write_diagram():
 
 def test_read_write_diagram_sets():
 
+    """Test read write diagram sets.
+    """
     knots = [
         [
         "a=X(b1 c0 c3 b2) b=X(c1 a0 a3 c2) c=X(a1 b0 b3 a2)",
@@ -50,6 +54,8 @@ def test_read_write_diagram_sets():
 
     _safe_delete_file(f"{_unique}_knot_sets.csv")
 def test_read():
+    """Test read.
+    """
     pass
 
 

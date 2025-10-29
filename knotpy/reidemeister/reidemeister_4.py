@@ -143,6 +143,14 @@ def find_reidemeister_4_slide(
         return
 
     def _satisfied(loc: tuple[Hashable, list[int]]) -> bool:
+        """Satisfied.
+        
+        Args:
+            loc: The loc parameter.
+        
+        Returns:
+            The return value.
+        """
         if change == "any":
             return True
         ci = _crossing_increase_reidemeister_4_slide(k, loc)

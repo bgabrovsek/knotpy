@@ -9,6 +9,8 @@ from knotpy.utils.cache import Cache
 
 
 def test_cache_insertion_and_length_limits():
+    """Test cache insertion and length limits.
+    """
     cache = Cache(max_cache_size=2, max_key_length=3)
     cache['a'] = 1
     cache['bb'] = 2
@@ -18,6 +20,8 @@ def test_cache_insertion_and_length_limits():
     assert cache['bb'] == 2
 
 def test_key_too_long_is_ignored():
+    """Test key too long is ignored.
+    """
     cache = Cache(max_cache_size=2, max_key_length=3)
     cache['abcd'] = 11  # Too long, should be ignored
     assert 'abcd' not in cache
@@ -25,6 +29,8 @@ def test_key_too_long_is_ignored():
     assert 'abc' in cache
 
 def test_cache_eviction_on_full():
+    """Test cache eviction on full.
+    """
     cache = Cache(max_cache_size=2, max_key_length=5)
     cache['ab'] = 1
     cache['abc'] = 2
@@ -36,6 +42,8 @@ def test_cache_eviction_on_full():
     # The evicted one should be 'abc' since d is shorter than abc
 
 def test_eviction_prefers_longest_key():
+    """Test eviction prefers longest key.
+    """
     cache = Cache(max_cache_size=2, max_key_length=5)
     cache['short'] = 1  # len=5
     cache['mid'] = 2    # len=3
@@ -45,6 +53,8 @@ def test_eviction_prefers_longest_key():
     assert 'a' in cache
 
 def test_refuse_replace_when_key_not_shorter():
+    """Test refuse replace when key not shorter.
+    """
     cache = Cache(max_cache_size=2, max_key_length=4)
     cache['abc'] = 1
     cache['de'] = 2

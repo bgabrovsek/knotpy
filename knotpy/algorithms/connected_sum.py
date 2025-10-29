@@ -89,6 +89,16 @@ def is_connected_sum_third_order(g: PlanarDiagram) -> bool:
 
 def connected_sum(a: Diagram, b: Diagram, arcs:None | list | tuple = None) -> Diagram:
 
+    """Connected sum.
+    
+    Args:
+        a: The a parameter.
+        b: The b parameter.
+        arcs: The arcs parameter.
+    
+    Returns:
+        The return value.
+    """
     if type(a) != type(b):
         raise TypeError("The two diagrams must be of the same type.")
 

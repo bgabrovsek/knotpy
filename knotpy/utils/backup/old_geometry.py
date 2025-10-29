@@ -106,11 +106,26 @@ class Circle:
         return CircularArc(self.center, self.radius, angle1, angle2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Circle at {self.center:.5f} with radius {self.radius:.5f}"
 
 class CircularArc(Circle):
 
+    """Circular arc.
+    """
     def __init__(self, center, radius, theta1, theta2):
+        """Initialize the instance.
+        
+        Args:
+            center: The center parameter.
+            radius: The radius parameter.
+            theta1: The theta1 parameter.
+            theta2: The theta2 parameter.
+        """
         self.theta1 = theta1 % (2 * math.pi)
         self.theta2 = theta2 % (2 * math.pi)
         super().__init__(center, radius)
@@ -123,9 +138,19 @@ class CircularArc(Circle):
         return is_angle_between(self.theta1, cmath.phase(point - self.center), self.theta2)
 
     def angle(self):
+        """Angle.
+        
+        Returns:
+            The return value.
+        """
         return ((self.theta2 % (2 * math.pi)) - (self.theta1 % (2 * math.pi))) % (2 * math.pi)
 
     def length(self):
+        """Length.
+        
+        Returns:
+            The return value.
+        """
         return self.angle() * self.radius  # arc length is angle * radius
 
     def __call__(self, angle1, angle2=None):
@@ -139,21 +164,52 @@ class CircularArc(Circle):
             raise ValueError(f"The angle {angle1} does not lie on the circular arc {self}")
 
     def __neg__(self):
+        """Neg.
+        
+        Returns:
+            The return value.
+        """
         return CircularArc(self.center, self.radius, self.theta2, self.theta1)
 
     @property
     def A(self):
+        """A.
+        
+        Returns:
+            The return value.
+        """
         return self(self.theta1)
     @property
     def B(self):
+        """B.
+        
+        Returns:
+            The return value.
+        """
         return self(self.theta2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Circular arc at {self.center:.5f} with radius {self.radius:.5f} and angles {self.theta1:.5f} and {self.theta2:.5f}"
 
 class OrientedCircularArc(CircularArc):
 
+    """Oriented circular arc.
+    """
     def __init__(self, center, radius, theta1, theta2, reversed=False):
+        """Initialize the instance.
+        
+        Args:
+            center: The center parameter.
+            radius: The radius parameter.
+            theta1: The theta1 parameter.
+            theta2: The theta2 parameter.
+            reversed: The reversed parameter.
+        """
         self.reversed = reversed
         super().__init__(center, radius, theta1, theta2)
 
@@ -215,16 +271,39 @@ class OrientedCircularArc(CircularArc):
 
     @property
     def A(self):
+        """A.
+        
+        Returns:
+            The return value.
+        """
         return self(self.theta2) if self.reversed else self(self.theta1)
     @property
     def B(self):
+        """B.
+        
+        Returns:
+            The return value.
+        """
         return self(self.theta1) if self.reversed else self(self.theta2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Oriented Circular arc at {self.center:.5f} with radius {self.radius:.5f} and angles {self.theta1:.5f} and {self.theta2:.5f}" + (" reversed" if self.reversed else "")
 
 class Line:
+    """Line.
+    """
     def __init__(self, A, B):
+        """Initialize the instance.
+        
+        Args:
+            A: The A parameter.
+            B: The B parameter.
+        """
         self.A = A
         self.B = B
         if abs(self.B - self.A) < MIN_SEGMENT_SIZE:
@@ -256,10 +335,20 @@ class Line:
         return t.real
 
     def __neg__(self):
+        """Neg.
+        
+        Returns:
+            The return value.
+        """
         return Line(self.B, self.A)
 
     @staticmethod
     def length(self):
+        """Length.
+        
+        Returns:
+            The return value.
+        """
         return float("inf")
 
     def __call__(self, t):
@@ -267,10 +356,17 @@ class Line:
         return self.A + t * (self.B - self.A)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Line through points {self.A:.5f} and {self.B:.5f}"
 
 class Segment(Line):
 
+    """Segment.
+    """
     def __contains__(self, point):
         """Does the point lie on the line segment?
         The point lies on the line through A and B if the complex number point-A is a (real) multiple of
@@ -280,6 +376,11 @@ class Segment(Line):
         return abs(t.imag) <= DIAMETER_ERROR and 0 <= t.real <= 1
 
     def length(self):
+        """Length.
+        
+        Returns:
+            The return value.
+        """
         return abs(self.B - self.A)  # |B-A|
 
     def set_orientation(self, start_point, end_point):
@@ -336,11 +437,21 @@ class Segment(Line):
         return [self.A + (self.B - self.A) * i / (n - 1) for i in range(n)]
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Segment through points {self.A:.5f} and {self.B:.5f}"
 
 class PolySegment:
     """A polyline segment defined by a list of complex points."""
     def __init__(self, points):
+        """Initialize the instance.
+        
+        Args:
+            points: The points parameter.
+        """
         self.points = [complex(p) for p in points]
 
     def length(self):
@@ -348,6 +459,14 @@ class PolySegment:
         return sum(abs(self.points[i + 1] - self.points[i]) for i in range(len(self.points) - 1))
 
     def sample(self, n):
+        """Sample.
+        
+        Args:
+            n: The n parameter.
+        
+        Returns:
+            The return value.
+        """
         if n < 2:
             raise ValueError("n must be at least 2")
 
@@ -386,6 +505,11 @@ class PolySegment:
         return result
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"PolySegment through points {', '.join(str(p) for p in self.points)}"
 
 ##### BOUNDING BOX ####
@@ -525,6 +649,15 @@ def tangent_line(c: Circle, p: complex):
 
 def antipode(circle, point):
     # TODO: this is a duplicate of the class method
+    """Antipode.
+    
+    Args:
+        circle: The circle parameter.
+        point: The point parameter.
+    
+    Returns:
+        The return value.
+    """
     return circle.center - (point - circle.center)
 
 def inverse_point_through_circle(circle, point):
@@ -797,10 +930,17 @@ def circle_through_points(A, B, C):
 class BoundingBox:
     # TODO: obsolete
 
+    """Bounding box.
+    """
     def __init__(self, g=None):
 
         #print("bb")
 
+        """Initialize the instance.
+        
+        Args:
+            g: The g parameter.
+        """
         if g is None:
             self.bottom_left = 0  # bottom left
             self.top_right = 0  # top right
@@ -831,6 +971,8 @@ class BoundingBox:
         #print(self)
 
     def make_square(self):
+        """Make square.
+        """
         size_x = self.top_right.real - self.bottom_left.real
         size_y = self.top_right.imag - self.bottom_left.imag
         size = max(size_x, size_y)
@@ -848,6 +990,12 @@ class BoundingBox:
         """
 
     def add_padding(self, units=None, fraction=None):
+        """Add padding.
+        
+        Args:
+            units: The units parameter.
+            fraction: The fraction parameter.
+        """
         if units is None and fraction is None:
             raise ValueError("no padding")
         if units is not None:
@@ -859,6 +1007,11 @@ class BoundingBox:
             self.top_right += padding
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Bounding box from bottom left: {self.bottom_left} to top right{self.top_right}))"
     def __ior__(self, other):
         """join two bounding boxes"""
@@ -867,6 +1020,15 @@ class BoundingBox:
         return self
 
 def translate(element, displacement):
+    """Translate.
+    
+    Args:
+        element: The element parameter.
+        displacement: The displacement parameter.
+    
+    Returns:
+        The return value.
+    """
     if type(element) is Segment:
         return Segment(element.A + displacement, element.B + displacement)
     if type(element) is Line:
@@ -888,6 +1050,14 @@ def translate(element, displacement):
 def bounding_box(g):
     # TODO: also consider angles 0, 90, 180, 270 for arcs
 
+    """Bounding box.
+    
+    Args:
+        g: The g parameter.
+    
+    Returns:
+        The return value.
+    """
     if isinstance(g, CircularArc):
         min_x, max_x = min(g.A.real, g.B.real), max(g.A.real, g.B.real)
         min_y, max_y = min(g.A.imag, g.B.imag), max(g.A.imag, g.B.imag)
@@ -910,6 +1080,16 @@ def bounding_box(g):
         return complex(min(_.real for _, __ in bb), min(_.imag for _, __ in bb)), complex(max(__.real for _, __ in bb), max(__.imag for _, __ in bb))
 
 def angle_between(z1, z2, z3):
+    """Angle between.
+    
+    Args:
+        z1: The z1 parameter.
+        z2: The z2 parameter.
+        z3: The z3 parameter.
+    
+    Returns:
+        The return value.
+    """
     v1 = z1 - z2
     v2 = z3 - z2
     angle_rad = cmath.phase(v2 / v1)

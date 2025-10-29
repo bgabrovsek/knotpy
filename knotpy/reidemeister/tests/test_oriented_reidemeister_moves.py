@@ -4,6 +4,8 @@ from knotpy.reidemeister.space import crossing_preserving_space
 
 def test_r1():
 
+    """Test r1.
+    """
     for knot in ["3_1", "4_1", "5_2"]:
         k = kp.orient(kp.PlanarDiagram(knot))
         assert kp.sanity_check(k)
@@ -22,6 +24,8 @@ def test_r1():
 
 def test_r2():
 
+    """Test r2.
+    """
     for knot in ["3_1",  "5_2"]:
         k = kp.orient(kp.PlanarDiagram(knot))
         assert kp.sanity_check(k)
@@ -38,6 +42,8 @@ def test_r2():
         assert all(kp.sanity_check(_) for _ in k_)
 
 def test_r3():
+    """Test r3.
+    """
     from knotpy.utils.set_utils import powerset
     from knotpy import mirror
 

@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_closure():
+    """Test closure.
+    """
     k = kp.from_knotpy_notation("a → V(b0), b → X(a0 c0 c3 d0), c → X(b1 d3 e3 b2), d → X(b3 e2 f3 c1), e → X(f2 f0 d1 c2), f → X(e1 g0 e0 d2), g → V(f1)")
     assert kp.sanity_check(k)
 

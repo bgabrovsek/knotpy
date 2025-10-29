@@ -4,6 +4,8 @@ from knotpy.utils.circlepack import circle_pack, invert_packing, normalize_packi
 
 
 def test_basic_circle_pack():
+    """Test basic circle pack.
+    """
     internal = {'A': ['B', 'C', 'D']}
     external = {'B': 1.0, 'C': 1.0, 'D': 1.0}
     packing = circle_pack(internal, external)
@@ -16,6 +18,8 @@ def test_basic_circle_pack():
 
 
 def test_disjoint_key_check():
+    """Test disjoint key check.
+    """
     try:
         circle_pack({'A': ['B']}, {'A': 1.0})
         assert False, "Expected ValueError for overlapping keys"
@@ -24,6 +28,8 @@ def test_disjoint_key_check():
 
 
 def test_negative_radius_check():
+    """Test negative radius check.
+    """
     try:
         circle_pack({'A': ['B']}, {'B': -1.0})
         assert False, "Expected ValueError for negative radius"
@@ -32,6 +38,8 @@ def test_negative_radius_check():
 
 
 def test_inversion_preserves_count():
+    """Test inversion preserves count.
+    """
     internal = {'A': ['B', 'C', 'D']}
     external = {'B': 1.0, 'C': 1.0, 'D': 1.0}
     packing = circle_pack(internal, external)
@@ -41,6 +49,8 @@ def test_inversion_preserves_count():
 
 
 def test_normalization():
+    """Test normalization.
+    """
     internal = {'A': ['B', 'C', 'D']}
     external = {'B': 1.0, 'C': 1.0, 'D': 1.0}
     packing = circle_pack(internal, external)
@@ -52,6 +62,8 @@ def test_normalization():
 
 
 def test_invert_around():
+    """Test invert around.
+    """
     internal = {'A': ['B', 'C', 'D']}
     external = {'B': 1.0, 'C': 1.0, 'D': 1.0}
     packing = circle_pack(internal, external)

@@ -246,15 +246,47 @@ def homflypt(k: PlanarDiagram | OrientedPlanarDiagram, variables: str="vz") -> s
     raise ValueError(f"Invalid variable choice: {variables}")
 
 def _homflypt_xyz_mirror(polynomial: sp.Expr) -> sp.Expr:
+    """Homflypt xyz mirror.
+    
+    Args:
+        polynomial: The polynomial parameter.
+    
+    Returns:
+        The return value.
+    """
     return sp.expand(polynomial.xreplace({_x: _tmp, _y: _x}).xreplace({_tmp: _y}))
 
 def _xyz_to_lm(polynomial: sp.Expr) -> sp.Expr:
+    """Xyz to lm.
+    
+    Args:
+        polynomial: The polynomial parameter.
+    
+    Returns:
+        The return value.
+    """
     return sp.expand(polynomial.subs({_x: _l, _y: _l ** -1, _z: _m}))
 
 def _xyz_to_vz(polynomial: sp.Expr) -> sp.Expr:
+    """Xyz to vz.
+    
+    Args:
+        polynomial: The polynomial parameter.
+    
+    Returns:
+        The return value.
+    """
     return sp.expand(polynomial.subs({_x: _v ** -1, _y: -_v, _z: -_z}))
 
 def _xyz_to_az(polynomial: sp.Expr) -> sp.Expr:
+    """Xyz to az.
+    
+    Args:
+        polynomial: The polynomial parameter.
+    
+    Returns:
+        The return value.
+    """
     return sp.expand(polynomial.subs({_x: _a, _y: -_a ** -1, _z: -_z}))
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ import knotpy as kp
 
 def test_link_table_names():
 
+    """Test link table names.
+    """
     l = kp.link("L2a1++")
     assert len(l) == 2
     assert type(l) == kp.OrientedPlanarDiagram
@@ -69,6 +71,8 @@ def test_link_table_names():
 
 def test_link_table():
 
+    """Test link table.
+    """
     links_1 = kp.links(range(0, 8), mirror=False)
     assert all(type(_) == kp.PlanarDiagram for _ in links_1)
 
@@ -88,6 +92,8 @@ def test_link_table():
     assert len(links_2)*1.5 < len(links_4)
 
 def test_link_identification():
+    """Test link identification.
+    """
     k = kp.link("L2a1++")
     print(k)
     for x in range(10):

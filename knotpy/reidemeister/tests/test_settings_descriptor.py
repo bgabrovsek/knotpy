@@ -2,6 +2,8 @@ import knotpy as kp
 
 def test_settings_descriptor():
 
+    """Test settings descriptor.
+    """
     old_arm = list(kp.settings.allowed_moves)
     kp.settings.allowed_moves = "r1,r2"
     assert set(kp.settings.allowed_moves) == {"R1", "R2"}

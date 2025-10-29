@@ -2,6 +2,8 @@ from knotpy.tables.knot import knot
 
 def DO_NOT_test_get_link_from_name():
     # test links
+    """Do not test get link from name.
+    """
     k = link("L4a1{0}")
     assert len(k) == 4
     k = link("L10a174{0;0;0;1}")
@@ -18,6 +20,8 @@ def DO_NOT_test_get_link_from_name():
 
 def DO_NOTtest_get_theta_from_name():
     #test thetas, handcuffs
+    """Do nottest get theta from name.
+    """
     k = theta("+t5_6")
     assert len(k) == 7
     k = theta("t6_15.2")
@@ -33,6 +37,8 @@ def test_get_knot_from_name():
 
 
     # test knots
+    """Test get knot from name.
+    """
     k = knot("3_1")
     assert len(k) == 3
     k = knot("10_136")

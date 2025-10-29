@@ -9,6 +9,8 @@ from functools import partial
 from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def helper_test_save_diagram_table():
+    """Helper test save diagram table.
+    """
     table = {
         "3_1": {
             "diagram": from_condensed_em_notation("b1c0c3b2,c1a0a3c2,a1b0b3a2"),
@@ -65,6 +67,11 @@ def helper_test_save_diagram_table():
     # t.close()
 
 def helper_load_diagram_table():
+    """Helper load diagram table.
+    
+    Returns:
+        The return value.
+    """
     table1 = load_invariant_table(_unique + "_knot_table.csv")
     table2 = load_invariant_table(_unique + "_knot_table2.csv")
 
@@ -76,6 +83,11 @@ def helper_load_diagram_table():
 
 def helper_lazy_load_diagram_table():
 
+    """Helper lazy load diagram table.
+    
+    Returns:
+        The return value.
+    """
     lazy1 = LazyDict(load_function=partial(load_invariant_table, filename="test_knot_table.csv", lazy=True),
                      eval_function=_evaluate_dictionary)
 
@@ -96,6 +108,8 @@ def helper_lazy_load_diagram_table():
 
 
 def test_compare_lazy_non_lazy():
+    """Test compare lazy non lazy.
+    """
     helper_test_save_diagram_table()
     t1, t2 = helper_load_diagram_table()
     l1, l2 = helper_lazy_load_diagram_table()

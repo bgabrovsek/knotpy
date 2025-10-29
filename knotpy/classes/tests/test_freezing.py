@@ -2,6 +2,8 @@ from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.classes.freezing import freeze
 
 def test_freeze():
+    """Test freeze.
+    """
     k = PlanarDiagram("3_1")
 
     assert not k.is_frozen()

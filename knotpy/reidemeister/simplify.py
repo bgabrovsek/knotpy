@@ -128,6 +128,16 @@ _DEBUG_SIMPLIFY = False
 
 def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = False):
 
+    """Simplify.
+    
+    Args:
+        k: The k parameter.
+        depth: The depth parameter.
+        flype: The flype parameter.
+    
+    Returns:
+        The return value.
+    """
     greediness = 1
 
     # If multiple diagrams are given, perform steps on each diagram first.

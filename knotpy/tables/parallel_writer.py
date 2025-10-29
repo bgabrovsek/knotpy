@@ -19,6 +19,14 @@ _INVARIANTS: dict[str, Callable] | None = None
 
 
 def _is_gz(path: str | Path) -> bool:
+    """Is gz.
+    
+    Args:
+        path: The path parameter.
+    
+    Returns:
+        The return value.
+    """
     return str(path).endswith(".gz")
 
 

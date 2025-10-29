@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_number_of_link_components():
+    """Test number of link components.
+    """
     k31 = kp.knot("3_1")
     k813 = kp.knot("8_13")
     l2a1 = kp.link("L2a_1++")

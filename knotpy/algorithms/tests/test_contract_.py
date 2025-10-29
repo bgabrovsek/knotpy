@@ -11,6 +11,8 @@ from knotpy.algorithms.contract import contract_arc
 
 def test_contract_edge():
 
+    """Test contract edge.
+    """
     N = 6
 
     # If we contract an edge from a path P(n) it becomes P(n-1)
@@ -61,6 +63,8 @@ frozenset({d1, e2})
 
 def test_contract_arc():
     # 1) Contract where the removed vertex has a loop
+    """Test contract arc.
+    """
     k, r = PlanarDiagram(), PlanarDiagram()
     k.set_arcs_from("x0a0,x1x2,x4d0,x3y2,y0e0,y1f0,y3g0,y4h0")
     r.set_arcs_from("y0e0,y1f0,y2d0,y3a0,y4y5,y6g0,y7h0")

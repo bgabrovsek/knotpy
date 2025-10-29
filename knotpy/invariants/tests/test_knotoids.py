@@ -3,6 +3,8 @@ from knotpy import export_pdf
 
 
 def test_affine_index_polynomial():
+    """Test affine index polynomial.
+    """
     kp.settings.allowed_moves = "r1,r2,r3"
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
 
@@ -21,6 +23,8 @@ def test_affine_index_polynomial():
 
 
 def test_arrow_polynomial():
+    """Test arrow polynomial.
+    """
     kp.settings.allowed_moves = "r1,r2,r3"
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
@@ -38,6 +42,8 @@ def test_arrow_polynomial():
 
 
 def test_mock_polynomial():
+    """Test mock polynomial.
+    """
     kp.settings.allowed_moves = "r1,r2,r3"
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
@@ -56,6 +62,8 @@ def test_mock_polynomial():
 
 
 def test_kauffman_polynomial():
+    """Test kauffman polynomial.
+    """
     kp.settings.allowed_moves = "r1,r2,r3"
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
@@ -73,6 +81,8 @@ def test_kauffman_polynomial():
 
 def test_yamada_polynomial():
 
+    """Test yamada polynomial.
+    """
     k = kp.from_pd_notation("X[0,4,1,5],X[5,1,6,2],X[2,6,3,7],X[8,4,7,3],V[0],V[8]")
     #export_pdf(k, "knotoids.pdf")
 

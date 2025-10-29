@@ -32,6 +32,11 @@ class DisjointSetUnion:
     """
 
     def __init__(self, iterable: Optional[Iterable[Hashable]] = None) -> None:
+        """Initialize the instance.
+        
+        Args:
+            iterable: The iterable parameter.
+        """
         self.parent: dict[Hashable, Hashable] = {}
         self.rank: dict[Hashable, int] = {}
         if iterable:
@@ -195,9 +200,19 @@ class DisjointSetUnion:
         return len(reps)
 
     def __repr__(self) -> str:
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"DisjointSetUnion({self.parent}, {self.rank})"
 
     def __str__(self) -> str:
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return str(self.classes())
 
     def to_dict(self) -> dict[Hashable, set[Hashable]]:
@@ -234,6 +249,12 @@ class SymmetryDSU:
 
     def __init__(self, dsu=None, *, iterable=None):
         # Use provided DSU or create one
+        """Initialize the instance.
+        
+        Args:
+            dsu: The dsu parameter.
+            iterable: The iterable parameter.
+        """
         self.dsu = dsu if dsu is not None else DisjointSetUnion()
         if iterable is not None and dsu is None:
             for x in iterable:
@@ -244,6 +265,11 @@ class SymmetryDSU:
 
     # ---------- basic DSU passthroughs ----------
     def add(self, item):
+        """Add.
+        
+        Args:
+            item: The item parameter.
+        """
         self.dsu.add(item)
         self._ensure_node(self.dsu.find(item))
 
@@ -259,12 +285,30 @@ class SymmetryDSU:
         self._relabel_node(r_old, r_new)
 
     def find(self, item):
+        """Find.
+        
+        Args:
+            item: The item parameter.
+        
+        Returns:
+            The return value.
+        """
         return self.dsu.find(item)
 
     def classes(self):
+        """Classes.
+        
+        Returns:
+            The return value.
+        """
         return self.dsu.classes()
 
     def __len__(self):
+        """Return the number of items.
+        
+        Returns:
+            The return value.
+        """
         return len(self.dsu)
 
     # ---------- symmetry graph operations ----------
@@ -301,6 +345,14 @@ class SymmetryDSU:
         start = self._canonical_rep(start)
 
         def ok(label):
+            """Ok.
+            
+            Args:
+                label: The label parameter.
+            
+            Returns:
+                The return value.
+            """
             return True if allowed is None else label in allowed
 
         visited, stack = {start}, [start]
@@ -341,6 +393,11 @@ class SymmetryDSU:
 
     # ---------- helpers ----------
     def _ensure_node(self, r):
+        """Ensure node.
+        
+        Args:
+            r: The r parameter.
+        """
         if r is None:
             return
         r = self._canonical_rep(r)
@@ -388,6 +445,11 @@ class SymmetryDSU:
                     del self._adj[new][sym]
 
     def _prune_self_loops(self, sym):
+        """Prune self loops.
+        
+        Args:
+            sym: The sym parameter.
+        """
         for u in list(self._adj.keys()):
             vs = self._adj[u].get(sym)
             if not vs:
@@ -401,13 +463,28 @@ class SymmetryDSU:
 
 def  what_sdsu():
 
+    """What sdsu.
+    """
     def show_classes(S):
+        """Show classes.
+        
+        Args:
+            S: The S parameter.
+        """
         print(f"\n== classes ==")
         comps = sorted([sorted(c) for c in S.classes()])
         for i, comp in enumerate(comps, 1):
             print(f"  C{i}: {comp}")
 
     def show_orbit(S, item, allowed=None, title=None):
+        """Show orbit.
+        
+        Args:
+            S: The S parameter.
+            item: The item parameter.
+            allowed: The allowed parameter.
+            title: The title parameter.
+        """
         print("Orbit")
         tag = f"(allowed={sorted(allowed)})" if allowed is not None else "(all symmetries)"
 

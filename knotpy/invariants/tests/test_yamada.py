@@ -200,6 +200,8 @@ def test_yamada_moriuchi():
     """
 
 def test_yamada_reidemeister():
+    """Test yamada reidemeister.
+    """
     from knotpy.reidemeister.space import all_reidemeister_moves_space
 
     t31 = from_knotpy_notation("a=V(b0 c0 d3) b=V(a0 d2 e3) d=X(c3 e0 b1 a2) c=X(a1 e2 e1 d0) e=X(d1 c2 c1 b2)")
@@ -214,6 +216,8 @@ def test_yamada_reidemeister():
 
 def test_thetas_recursive():
     # errros: a → V(b0 c0 d3), b → X(a0 e0 e3 c1), c → V(a1 b3 d0), d → X(c2 f0 f3 a2), e → X(b1 g0 g3 b2), f → X(d1 g2 g1 d2), g → X(e1 f2 f1 e2)
+    """Test thetas recursive.
+    """
     from knotpy.tables.theta import thetas
     import knotpy as kp
     all_thetas = list(thetas())

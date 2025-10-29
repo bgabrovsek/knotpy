@@ -8,6 +8,8 @@ L9n27{1,1};diagram_display.php?L9n27{1,1};linkL9n27{1,1}-50.png;diagram_display.
 """
 import knotpy as kp
 def test_link():
+    """Test link.
+    """
     k = kp.from_pd_notation("PD[X[6, 1, 7, 2], X[12, 7, 13, 8], X[4, 13, 1, 14], X[9, 18, 10, 15], X[8, 4, 9, 3], X[5, 17, 6, 16], X[17, 5, 18, 14], X[15, 10, 16, 11], X[2, 12, 3, 11]]")
     a = kp.multivariable_alexander(k)
     assert a == 0, f"got {a} instead of 0"

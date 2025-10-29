@@ -35,6 +35,12 @@ def cycles(g: PlanarDiagram, n: int) -> set[tuple]:
     found: set[tuple] = set()
 
     def dfs(path: list, visited: set) -> None:
+        """Dfs.
+        
+        Args:
+            path: The path parameter.
+            visited: The visited parameter.
+        """
         curr = path[-1]
         start = path[0]
 

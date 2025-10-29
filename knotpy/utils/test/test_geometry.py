@@ -32,6 +32,8 @@ from knotpy.utils.geometry import (
 
 
 def test_circle_contains_and_length():
+    """Test circle contains and length.
+    """
     c = Circle(0+0j, 2.0)
     p_on = 2+0j
     p_off = 3+0j
@@ -41,6 +43,8 @@ def test_circle_contains_and_length():
 
 
 def test_line_param_and_contains():
+    """Test line param and contains.
+    """
     l = Line(0+0j, 2+0j)
     assert 1+0j in l
     assert (0+1j) not in l
@@ -48,6 +52,8 @@ def test_line_param_and_contains():
 
 
 def test_segment_contains_and_length():
+    """Test segment contains and length.
+    """
     s = Segment(0+0j, 2+0j)
     assert 1+0j in s
     assert (-0.1+0j) not in s
@@ -55,6 +61,8 @@ def test_segment_contains_and_length():
 
 
 def test_line_circle_intersection_two_points():
+    """Test line circle intersection two points.
+    """
     c = Circle(0+0j, 5.0)
     l = Line(-10+0j, 10+0j)
     pts = c * l
@@ -65,6 +73,8 @@ def test_line_circle_intersection_two_points():
 
 
 def test_circle_circle_intersection_two_points():
+    """Test circle circle intersection two points.
+    """
     c1 = Circle(0+0j, 5.0)
     c2 = Circle(6+0j, 5.0)
     pts = c1 * c2
@@ -74,6 +84,8 @@ def test_circle_circle_intersection_two_points():
 
 
 def test_circle_circle_tangent_one_point():
+    """Test circle circle tangent one point.
+    """
     c1 = Circle(0+0j, 5.0)
     c2 = Circle(10+0j, 5.0)
     pts = c1 * c2
@@ -82,6 +94,8 @@ def test_circle_circle_tangent_one_point():
 
 
 def test_circular_arc_contains_and_length():
+    """Test circular arc contains and length.
+    """
     c = Circle(0+0j, 2.0)
     a = CircularArc(c.center, c.radius, 0.0, math.pi/2)
     # point at 45 degrees
@@ -91,6 +105,8 @@ def test_circular_arc_contains_and_length():
 
 
 def test_oriented_circular_arc_shorten():
+    """Test oriented circular arc shorten.
+    """
     a = OrientedCircularArc(0+0j, 2.0, 0.0, math.pi)  # half circle
     half_len = a.length()
     shorter = a.shorten(half_len/2, side="A", inplace=False)
@@ -99,6 +115,8 @@ def test_oriented_circular_arc_shorten():
 
 
 def test_perpendicular_line_and_tangent_line():
+    """Test perpendicular line and tangent line.
+    """
     l = Line(0+0j, 1+0j)
     p = 0+1j
     perp = perpendicular_line(l, p)
@@ -113,6 +131,8 @@ def test_perpendicular_line_and_tangent_line():
 
 
 def test_antipode_and_inversion():
+    """Test antipode and inversion.
+    """
     c = Circle(1+1j, 2.0)
     p = 3+1j
     ap = antipode(c, p)
@@ -125,6 +145,8 @@ def test_antipode_and_inversion():
 
 
 def test_perpendicular_arc_through_point_and_perpendicular_arc():
+    """Test perpendicular arc through point and perpendicular arc.
+    """
     c = Circle(0+0j, 5.0)
     cp = 5+0j
     q = 5 + 5j
@@ -136,6 +158,8 @@ def test_perpendicular_arc_through_point_and_perpendicular_arc():
 
 
 def test_arc_from_circle_and_points_and_diameter():
+    """Test arc from circle and points and diameter.
+    """
     c = Circle(0+0j, 3.0)
     p1 = 3+0j
     p2 = 0+3j
@@ -147,6 +171,8 @@ def test_arc_from_circle_and_points_and_diameter():
 
 
 def test_weighted_center_and_orient_arc():
+    """Test weighted center and orient arc.
+    """
     c1 = Circle(0+0j, 2.0)
     c2 = Circle(10+0j, 1.0)
     w = weighted_circle_center_mean(c1, c2)
@@ -156,6 +182,8 @@ def test_weighted_center_and_orient_arc():
 
 
 def test_split_and_bisect_segment_and_arc():
+    """Test split and bisect segment and arc.
+    """
     s = Segment(0+0j, 2+0j)
     mid = 1+0j
     s1, s2 = split(s, mid)
@@ -174,6 +202,8 @@ def test_split_and_bisect_segment_and_arc():
 
 
 def test_bisector_and_middle():
+    """Test bisector and middle.
+    """
     s = Segment(0+0j, 2+0j)
     b = bisector(s)
     # bisector at midpoint should be vertical line at x=1
@@ -187,6 +217,8 @@ def test_bisector_and_middle():
 
 
 def test_circle_through_points():
+    """Test circle through points.
+    """
     A = 1+0j
     B = 0+1j
     C = -1+0j
@@ -196,6 +228,8 @@ def test_circle_through_points():
 
 
 def test_polysegment_length_and_sample():
+    """Test polysegment length and sample.
+    """
     ps = PolySegment([0+0j, 3+0j, 3+4j])
     assert math.isclose(ps.length(), 7.0, rel_tol=1e-12)
     pts = ps.sample(5)
@@ -208,6 +242,8 @@ def test_polysegment_length_and_sample():
 
 def test_angles_helpers():
     # is_angle_between
+    """Test angles helpers.
+    """
     assert is_angle_between(0, math.pi/4, math.pi/2)
     assert not is_angle_between(math.pi/2, 0, math.pi)
     # angle_between (unsigned)

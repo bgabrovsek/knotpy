@@ -111,6 +111,11 @@ class Circle:
         return CircularArc(self.center, self.radius, angle1, angle2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Circle at {self.center:.5f} with radius {self.radius:.5f}"
 
 
@@ -118,6 +123,14 @@ class CircularArc(Circle):
     """A circular arc defined by a center, radius, and two angles (theta1 → theta2)."""
 
     def __init__(self, center, radius, theta1, theta2):
+        """Initialize the instance.
+        
+        Args:
+            center: The center parameter.
+            radius: The radius parameter.
+            theta1: The theta1 parameter.
+            theta2: The theta2 parameter.
+        """
         self.theta1 = theta1 % (2 * math.pi)
         self.theta2 = theta2 % (2 * math.pi)
         super().__init__(center, radius)
@@ -164,6 +177,11 @@ class CircularArc(Circle):
         return self(self.theta2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return (
             f"Circular arc at {self.center:.5f} with radius {self.radius:.5f} "
             f"and angles {self.theta1:.5f} and {self.theta2:.5f}"
@@ -174,6 +192,15 @@ class OrientedCircularArc(CircularArc):
     """Circular arc with an orientation flag for start/end selection."""
 
     def __init__(self, center, radius, theta1, theta2, reversed=False):
+        """Initialize the instance.
+        
+        Args:
+            center: The center parameter.
+            radius: The radius parameter.
+            theta1: The theta1 parameter.
+            theta2: The theta2 parameter.
+            reversed: The reversed parameter.
+        """
         self.reversed = reversed
         super().__init__(center, radius, theta1, theta2)
 
@@ -230,6 +257,11 @@ class OrientedCircularArc(CircularArc):
         return self(self.theta1) if self.reversed else self(self.theta2)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return (
             f"Oriented Circular arc at {self.center:.5f} with radius {self.radius:.5f} "
             f"and angles {self.theta1:.5f} and {self.theta2:.5f}" + (" reversed" if self.reversed else "")
@@ -240,6 +272,12 @@ class Line:
     """An infinite line determined by two points A and B."""
 
     def __init__(self, A, B):
+        """Initialize the instance.
+        
+        Args:
+            A: The A parameter.
+            B: The B parameter.
+        """
         self.A = A
         self.B = B
         if abs(self.B - self.A) < MIN_SEGMENT_SIZE:
@@ -282,6 +320,11 @@ class Line:
         return self.A + t * (self.B - self.A)
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Line through points {self.A:.5f} and {self.B:.5f}"
 
 
@@ -356,6 +399,11 @@ class Segment(Line):
         return [self.A + (self.B - self.A) * i / (n - 1) for i in range(n)]
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Segment through points {self.A:.5f} and {self.B:.5f}"
 
 
@@ -363,6 +411,11 @@ class PolySegment:
     """A polyline segment defined by a list of complex points."""
 
     def __init__(self, points):
+        """Initialize the instance.
+        
+        Args:
+            points: The points parameter.
+        """
         self.points = [complex(p) for p in points]
 
     def length(self):
@@ -412,6 +465,11 @@ class PolySegment:
         return result
 
     def __str__(self):
+        """Return the string representation.
+        
+        Returns:
+            The return value.
+        """
         return f"PolySegment through points {', '.join(str(p) for p in self.points)}"
 
 
@@ -724,6 +782,11 @@ class BoundingBox:
     # TODO: obsolete
 
     def __init__(self, g=None):
+        """Initialize the instance.
+        
+        Args:
+            g: The g parameter.
+        """
         if g is None:
             self.bottom_left = 0
             self.top_right = 0
@@ -773,6 +836,11 @@ class BoundingBox:
             self.top_right += padding
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Bounding box from bottom left: {self.bottom_left} to top right{self.top_right}))"
 
     def __ior__(self, other):

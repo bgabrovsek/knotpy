@@ -4,6 +4,8 @@ from knotpy.reidemeister.reidemeister_4 import reidemeister_4_slide, find_reidem
 from knotpy.invariants.yamada import yamada
 def test_reidemeister_4():
 
+    """Test reidemeister 4.
+    """
     theta_codes = [
         # Theta curves (Moriuchi)
         "a=V(b0 b2 b1) b=V(a0 a2 a1) ['name'='t0_1']",
@@ -116,6 +118,8 @@ def test_reidemeister_4():
                 assert y == y_2 == y_3
 
 def test_case_4():
+    """Test case 4.
+    """
     k = from_knotpy_notation("a → V(b0 c0 d3), b → V(a0 d2 e3), c → X(a1 e2 e1 d0), d → X(c3 e0 b1 a2), e → X(d1 c2 c1 b2)")
     q = from_knotpy_notation("a → V(b0 c0 d3), b → X(a0 d2 e0 f3), c → X(a1 f2 f1 d0), d → X(c3 e1 b1 a2), e → V(b2 d1 f0), f → X(e2 c2 c1 b3)")
 
@@ -147,6 +151,8 @@ def test_case_4():
 
 def test_all_strands_over():
 
+    """Test all strands over.
+    """
     k = from_knotpy_notation("a=V(c3 e3 d3) b=V(e1 c1 d1) c=X(d2 b1 e0 a0) d=X(e2 b2 c0 a2) e=X(c2 b0 d0 a1)")
     k_ = reidemeister_4_slide(k, ('a', [0, 1, 2]), inplace=False)
 

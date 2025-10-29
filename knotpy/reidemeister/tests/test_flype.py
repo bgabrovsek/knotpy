@@ -3,6 +3,8 @@ from knotpy import export_pdf
 
 
 def test_flype():
+    """Test flype.
+    """
     for k in kp.knots((4, 8)):
         h = kp.homflypt(k)
         for f in kp.find_flypes(k):
@@ -13,6 +15,8 @@ def test_flype():
             assert k != fk
 
 def test_flype_case():
+    """Test flype case.
+    """
     k = kp.knot("6_2")
 
     for i, f in enumerate(kp.find_flypes(k)):

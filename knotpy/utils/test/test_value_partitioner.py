@@ -1,13 +1,31 @@
 from knotpy.utils.dict_utils import ClassifierDict
 
 def mod2(a):
+    """Mod 2.
+    
+    Args:
+        a: The a parameter.
+    
+    Returns:
+        The return value.
+    """
     return a % 2
 
 def mod3(a):
+    """Mod 3.
+    
+    Args:
+        a: The a parameter.
+    
+    Returns:
+        The return value.
+    """
     return a % 3
 
 def test_value_partitioner():
 
+    """Test value partitioner.
+    """
     v = ClassifierDict({"mod2": mod2, "mod3": mod3})
 
     for i in range(18):

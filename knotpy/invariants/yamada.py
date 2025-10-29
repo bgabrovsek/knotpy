@@ -234,6 +234,8 @@ def _remove_loops_isolated_and_bivalent_vertices(g: PlanarDiagram) -> None:
 
 
 def _print_cache() -> None:
+    """Print cache.
+    """
     import sys
 
     print("Knotted cache size:", len(_yamada_knotted_cache), "items", f"({sys.getsizeof(_yamada_knotted_cache)/1024} KB)")
@@ -250,6 +252,14 @@ def _print_cache() -> None:
 def _yamada_rec(k: PlanarDiagram) -> sp.Expr:
     # basic recursive yamada for testing purposes
 
+    """Yamada rec.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     if k.crossings:
         crossing = next(iter(k.crossings))
         return (
@@ -280,6 +290,15 @@ def _yamada_rec(k: PlanarDiagram) -> sp.Expr:
 
 
 def _naive_yamada_polynomial(k: PlanarDiagram, normalize: bool = True) -> sp.Expr:
+    """Naive yamada polynomial.
+    
+    Args:
+        k: The k parameter.
+        normalize: The normalize parameter.
+    
+    Returns:
+        The return value.
+    """
     polynomial = sp.expand(_yamada_rec(k.copy()))
     if normalize:
         lowest_exponent = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())

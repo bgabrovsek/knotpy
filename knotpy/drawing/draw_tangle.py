@@ -67,15 +67,42 @@ class TangleExpr:
     """
 
     def __init__(self, term1, term2):
+        """Initialize the instance.
+        
+        Args:
+            term1: The term1 parameter.
+            term2: The term2 parameter.
+        """
         self.terms = (term1, term2)
 
     def __add__(self, other):
+        """Add.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return TangleSum(self, other)
 
     def __mul__(self, other):
+        """Mul.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return TangleProduct(self, other)
 
     def __iter__(self):
+        """Return an iterator over the object.
+        
+        Returns:
+            The return value.
+        """
         return iter(self.terms)
 
 
@@ -83,6 +110,11 @@ class TangleSum(TangleExpr):
     """Formal sum of tangles."""
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"({self.terms[0]} + {self.terms[1]})"
 
 
@@ -90,6 +122,11 @@ class TangleProduct(TangleExpr):
     """Formal product of tangles."""
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"({self.terms[0]} * {self.terms[1]})"
 
 
@@ -142,32 +179,64 @@ class ZigZag:
     """
 
     def __init__(self):
+        """Initialize the instance.
+        """
         self.lines: list[list[complex]] = []
         self.set_compass(0j, 0j, 0j, 0j)
 
     # Bounding box corners computed from the compass
     @property
     def N(self) -> complex:  # north y-position as complex (0 + yi)
+        """N.
+        
+        Returns:
+            The return value.
+        """
         return 1j * max(self.NE.imag, self.NW.imag)
 
     @property
     def S(self) -> complex:  # south y-position
+        """S.
+        
+        Returns:
+            The return value.
+        """
         return 1j * min(self.SW.imag, self.SE.imag)
 
     @property
     def W(self) -> float:  # west x-position
+        """W.
+        
+        Returns:
+            The return value.
+        """
         return min(self.NW.real, self.SW.real)
 
     @property
     def E(self) -> float:  # east x-position
+        """E.
+        
+        Returns:
+            The return value.
+        """
         return max(self.NE.real, self.SE.real)
 
     @property
     def height(self) -> float:
+        """Height.
+        
+        Returns:
+            The return value.
+        """
         return (self.N - self.S).imag
 
     @property
     def width(self) -> float:
+        """Width.
+        
+        Returns:
+            The return value.
+        """
         return (self.E - self.W).real
 
     def bounding_box(self, compass: str) -> complex | float:
@@ -183,6 +252,11 @@ class ZigZag:
         raise ValueError(f"Unknown direction {compass}")
 
     def __bool__(self):
+        """Return whether the object is truthy.
+        
+        Returns:
+            The return value.
+        """
         return bool(self.lines)
 
     def add_line(self, line: list[complex]):
@@ -272,9 +346,19 @@ class ZigZag:
         self.lines = new_lines
 
     def __iter__(self):
+        """Return an iterator over the object.
+        
+        Returns:
+            The return value.
+        """
         return iter(self.lines)
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return f"Zig-zag {self.NW}, {self.SW}, {self.SE}, {self.NE}"
 
 
@@ -296,6 +380,14 @@ def connect(z: complex, w: complex, pos: str) -> list[complex]:
         return []
 
     def sign(i):
+        """Sign.
+        
+        Args:
+            i: The i parameter.
+        
+        Returns:
+            The return value.
+        """
         return 1 if i > 0 else (-1 if i < 0 else 0)
 
     d = w - z

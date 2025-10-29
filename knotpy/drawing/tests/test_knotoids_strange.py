@@ -322,6 +322,8 @@ a=V(b0) b=X(a0 c0 d0 c1) c=X(b1 b3 e0 f3) d=X(b2 g0 h3 f0) e=V(c2) f=X(d3 h2 g1 
 """
 
 def test_draw_all():
+    """Test draw all.
+    """
     k = [kp.from_knotpy_notation(_) for _ in codes.split("\n") if _][::40]
     export_pdf(k, _unique + "_export_strange.pdf")
 

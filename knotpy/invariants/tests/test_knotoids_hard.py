@@ -322,6 +322,8 @@ a=V(b0) b=X(a0 c0 d0 c1) c=X(b1 b3 e0 f3) d=X(b2 g0 h3 f0) e=V(c2) f=X(d3 h2 g1 
 
 
 def test_bracket():
+    """Test bracket.
+    """
     kp.settings.allowed_moves="r1,r2,r3,flype"
 
     knotoids = [kp.from_knotpy_notation(_) for _ in knotoid_codes.split("\n") if _][::80]
@@ -340,6 +342,8 @@ def test_bracket():
 
 
 def test_mock():
+    """Test mock.
+    """
     kp.settings.allowed_moves="r1,r2,r3,flype"
 
     knotoids = [kp.from_knotpy_notation(_) for _ in knotoid_codes.split("\n") if _][::80]
@@ -359,6 +363,8 @@ def test_mock():
 
 
 def test_arrow():
+    """Test arrow.
+    """
     kp.settings.allowed_moves="r1,r2,r3,flype"
 
     knotoids = [kp.from_knotpy_notation(_) for _ in knotoid_codes.split("\n") if _][::100]
@@ -379,6 +385,8 @@ def test_arrow():
 
 
 def test_affine():
+    """Test affine.
+    """
     kp.settings.allowed_moves="r1,r2,r3,flype"
 
     knotoids = [kp.from_knotpy_notation(_) for _ in knotoid_codes.split("\n") if _][::80]

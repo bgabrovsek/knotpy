@@ -1,6 +1,8 @@
 import knotpy as kp
 
 def test_normalize_laurent():
+    """Test normalize laurent.
+    """
     import sympy as sp
 
     x, y, z = sp.symbols("x y z")

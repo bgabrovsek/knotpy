@@ -7,6 +7,11 @@ from knotpy.reidemeister.space import crossing_preserving_space, crossing_decrea
 
 
 def _get_examples():
+    """Get examples.
+    
+    Returns:
+        The return value.
+    """
     diagram1 = from_knotpy_notation("a=X(c0 b0 b3 e0) b=X(a1 c3 f0 a2) c=X(a0 e3 d3 b1) d=X(e2 g0 f1 c2) e=X(a3 g1 d0 c1) f=X(b2 d2 g3 g2) g=X(d1 e1 f3 f2)")
     #diagram2 = from_knotpy_notation("a=X(b0 c3 a3 a2) b=X(a0 c2 c1 c0) c=X(b3 b2 b1 a1)")
     diagram3 = from_knotpy_notation("a=X(b0 c3 c2 b1) b=X(a0 a3 c1 c0) c=X(b3 b2 a2 a1)")
@@ -15,6 +20,8 @@ def _get_examples():
 
 
 def test_r3_space():
+    """Test r3 space.
+    """
     for diagram in _get_examples():
         j = jones(diagram)
         r3s = crossing_preserving_space(diagram, assume_canonical=False)
@@ -25,6 +32,8 @@ def test_r3_space():
 
 
 def test_crossing_reducing_space():
+    """Test crossing reducing space.
+    """
     for diagram in _get_examples():
         j = jones(diagram)
         r3s = crossing_decreasing_space(diagram, assume_canonical=False)
@@ -34,6 +43,8 @@ def test_crossing_reducing_space():
             assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 def test_non_increasing_space():
+    """Test non increasing space.
+    """
     for g in [0,1]:
         for diagram in _get_examples():
             j = jones(diagram)
@@ -44,6 +55,8 @@ def test_non_increasing_space():
                 assert j == jd, "Jones polynomials are not equal. Expected {}, got {}. Diagram: {}".format(j, jd, to_knotpy_notation(diagram))
 
 def test_detour_space():
+    """Test detour space.
+    """
     for diagram in _get_examples():
         j = jones(diagram)
         r3s = detour_space(diagram, assume_canonical=False)
@@ -54,6 +67,8 @@ def test_detour_space():
 
 
 def test_empty_space():
+    """Test empty space.
+    """
     assert crossing_preserving_space(set(), assume_canonical=True) == set()
     assert crossing_decreasing_space(set(), assume_canonical=True) == set()
     assert crossing_non_increasing_space(set(), greediness=1,assume_canonical=True) == set()

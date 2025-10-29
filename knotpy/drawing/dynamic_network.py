@@ -98,6 +98,12 @@ class Network:
     """
 
     def __init__(self, ideal_bond_length, force_constants=None):
+        """Initialize the instance.
+        
+        Args:
+            ideal_bond_length: The ideal_bond_length parameter.
+            force_constants: The force_constants parameter.
+        """
         self.names = {}  # external name -> index
         self.positions = []  # list[complex]
         self.connections = []  # list[tuple[int,int]]
@@ -327,7 +333,20 @@ class Network:
         self.frame += 1
 
     def __repr__(self):
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         def _r(z):
+            """R.
+            
+            Args:
+                z: The z parameter.
+            
+            Returns:
+                The return value.
+            """
             return f"{z.real:.2f} {'+' if z.imag >= 0 else '-'} {abs(z.imag):.2f}j"
 
         d = {i: _r(p) for i, p in enumerate(self.positions)}
@@ -421,6 +440,11 @@ def animate_simulation(network, dt=0.1, show=True):
     plt.tight_layout()
 
     def update(_frame):
+        """Update.
+        
+        Args:
+            _frame: The _frame parameter.
+        """
         network.step(dt)
         plot_bead_frame(ax_network, network)
         plot_force_history(ax_force, network)

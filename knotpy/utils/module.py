@@ -106,11 +106,27 @@ class Module(Generic[CoefT, BasisT]):
         return self
 
     def __add__(self, other: "Module[CoefT, BasisT]" | tuple[CoefT, BasisT]) -> "Module[CoefT, BasisT]":
+        """Add.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         m = self.copy()
         m += other
         return m
 
     def __sub__(self, other: "Module[CoefT, BasisT]" | tuple[CoefT, BasisT]) -> "Module[CoefT, BasisT]":
+        """Sub.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         m = self.copy()
         m -= other
         return m
@@ -122,6 +138,14 @@ class Module(Generic[CoefT, BasisT]):
         return self.__add__(other)
 
     def __rsub__(self, other) -> "Module[CoefT, BasisT]":
+        """Rsub.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         return (-self).__add__(other)
 
     def __imul__(self, r: CoefT) -> "Module[CoefT, BasisT]":
@@ -132,6 +156,14 @@ class Module(Generic[CoefT, BasisT]):
         return self
 
     def __mul__(self, r: CoefT) -> "Module[CoefT, BasisT]":
+        """Mul.
+        
+        Args:
+            r: The r parameter.
+        
+        Returns:
+            The return value.
+        """
         if isinstance(r, Module):
             raise ValueError("Module can only be multiplied by scalars.")
         m = self.copy()
@@ -139,6 +171,14 @@ class Module(Generic[CoefT, BasisT]):
         return m
 
     def __rmul__(self, r: CoefT) -> "Module[CoefT, BasisT]":
+        """Rmul.
+        
+        Args:
+            r: The r parameter.
+        
+        Returns:
+            The return value.
+        """
         if isinstance(r, Module):
             raise ValueError("Module can only be multiplied by scalars.")
         return self * r
@@ -151,6 +191,14 @@ class Module(Generic[CoefT, BasisT]):
         return self
 
     def __truediv__(self, r: CoefT) -> "Module[CoefT, BasisT]":
+        """Truediv.
+        
+        Args:
+            r: The r parameter.
+        
+        Returns:
+            The return value.
+        """
         if isinstance(r, Module):
             raise ValueError("Module can only be divided by scalars.")
         m = self.copy()
@@ -162,12 +210,28 @@ class Module(Generic[CoefT, BasisT]):
     __div__ = __truediv__        # type: ignore[assignment]
 
     def __ifloordiv__(self, r: CoefT) -> "Module[CoefT, BasisT]":
+        """Ifloordiv.
+        
+        Args:
+            r: The r parameter.
+        
+        Returns:
+            The return value.
+        """
         if isinstance(r, Module):
             raise ValueError("Module can only be divided by scalars.")
         self.terms = [(coef // r, s) for coef, s in self.terms]
         return self
 
     def __floordiv__(self, r: CoefT) -> "Module[CoefT, BasisT]":
+        """Floordiv.
+        
+        Args:
+            r: The r parameter.
+        
+        Returns:
+            The return value.
+        """
         if isinstance(r, Module):
             raise ValueError("Module can only be divided by scalars.")
         m = self.copy()
@@ -175,6 +239,11 @@ class Module(Generic[CoefT, BasisT]):
         return m
 
     def __neg__(self) -> "Module[CoefT, BasisT]":
+        """Neg.
+        
+        Returns:
+            The return value.
+        """
         m = self.copy()
         m.terms = [(-r, s) for r, s in m.terms]
         return m
@@ -187,6 +256,11 @@ class Module(Generic[CoefT, BasisT]):
         return self
 
     def __next__(self) -> tuple[CoefT, BasisT]:
+        """Return the next item from the iterator.
+        
+        Returns:
+            The return value.
+        """
         if self._current_index >= len(self.terms):
             raise StopIteration
         self._current_index += 1
@@ -237,14 +311,35 @@ class Module(Generic[CoefT, BasisT]):
     # ---- comparison / repr ----
 
     def __eq__(self, other: object) -> bool:
+        """Eq.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         if not isinstance(other, Module):
             return NotImplemented
         return self.to_tuple() == other.to_tuple()
 
     def __ne__(self, other: object) -> bool:
+        """Ne.
+        
+        Args:
+            other: The other parameter.
+        
+        Returns:
+            The return value.
+        """
         if not isinstance(other, Module):
             return NotImplemented
         return self.to_tuple() != other.to_tuple()
 
     def __repr__(self) -> str:
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         return (" + ".join(f"{r} [{s}]" for r, s in self.terms)).replace(" + -", " -")

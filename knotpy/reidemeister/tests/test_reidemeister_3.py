@@ -20,6 +20,11 @@ E               assert -1/t**2 - 1/t**4 == -1/sqrt(t) - 1/t**(5/2)
 """
 
 def _get_examples():
+    """Get examples.
+    
+    Returns:
+        The return value.
+    """
     diagram1 = from_knotpy_notation("a=X(c0 b0 b3 e0) b=X(a1 c3 f0 a2) c=X(a0 e3 d3 b1) d=X(e2 g0 f1 c2) e=X(a3 g1 d0 c1) f=X(b2 d2 g3 g2) g=X(d1 e1 f3 f2)")
     diagram2 = from_knotpy_notation("a=X(b0 c3 a3 a2) b=X(a0 c2 c1 c0) c=X(b3 b2 b1 a1)")
     diagram3 = from_knotpy_notation("a=X(b0 c3 c2 b1) b=X(a0 a3 c1 c0) c=X(b3 b2 a2 a1)")
@@ -27,6 +32,8 @@ def _get_examples():
     return diagram1, diagram2, diagram3, diagram4
 
 def test_r3_find_moves():
+    """Test r3 find moves.
+    """
     diagram1, diagram2, diagram3, diagram4 = _get_examples()
 
     r3_locations_1 = list(find_reidemeister_3_triangle(diagram1))
@@ -44,6 +51,8 @@ def test_make_reidemeister_3_move():
 
     # -1/sqrt(t) - 1/t**(5/2) == -1/t**2 - 1/t**4
 
+    """Test make reidemeister 3 move.
+    """
     for diagram in _get_examples():
         j = jones(diagram)
         b = bracket(diagram, normalize=True)
@@ -63,6 +72,8 @@ def test_make_reidemeister_3_move():
 
 
 def test_strange_case():
+    """Test strange case.
+    """
     import knotpy as kp
 
 

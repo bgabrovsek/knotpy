@@ -101,9 +101,21 @@ class _BaseDiagramReader(ABC):
 
     # Context manager protocol
     def __enter__(self):
+        """Enter the runtime context.
+        
+        Returns:
+            The return value.
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
+        """Exit the runtime context.
+        
+        Args:
+            exc_type: The exc_type parameter.
+            exc_value: The exc_value parameter.
+            traceback: The traceback parameter.
+        """
         self.close()
 
 
@@ -112,6 +124,14 @@ class DiagramReader(_BaseDiagramReader):
 
     def _parse_line(self, line: str):
         # Strip trailing comments and whitespace
+        """Parse line.
+        
+        Args:
+            line: The line parameter.
+        
+        Returns:
+            The return value.
+        """
         line = line.split("#", 1)[0].strip()
         if not line:
             return None
@@ -122,6 +142,14 @@ class LazyDiagramReader(_BaseDiagramReader):
     """Reader that returns raw (unparsed) diagram strings."""
 
     def _parse_line(self, line: str) -> Optional[str]:
+        """Parse line.
+        
+        Args:
+            line: The line parameter.
+        
+        Returns:
+            The return value.
+        """
         line = line.split("#", 1)[0].strip()
         if not line:
             return None
@@ -132,6 +160,14 @@ class DiagramSetReader(_BaseDiagramReader):
     """Reader that returns a list of parsed diagrams per line, split by ``" & "``."""
 
     def _parse_line(self, line: str):
+        """Parse line.
+        
+        Args:
+            line: The line parameter.
+        
+        Returns:
+            The return value.
+        """
         line = line.split("#", 1)[0].strip()
         if not line:
             return None
@@ -142,6 +178,14 @@ class LazyDiagramSetReader(_BaseDiagramReader):
     """Reader that returns a list of raw (unparsed) diagram strings per line."""
 
     def _parse_line(self, line: str):
+        """Parse line.
+        
+        Args:
+            line: The line parameter.
+        
+        Returns:
+            The return value.
+        """
         line = line.split("#", 1)[0].strip()
         if not line:
             return None
@@ -219,6 +263,14 @@ def load_diagrams_as_dict(filename: str | Path, notation: Optional[str] = None, 
 
     def _name_from_str(s: str) -> Optional[str]:
         # Extract name from a trailing attribute like "['name'='...']"
+        """Name from str.
+        
+        Args:
+            s: The s parameter.
+        
+        Returns:
+            The return value.
+        """
         if match := re.search(r"\['name'='([^']+)'\]", s):
             return match.group(1)
         return None

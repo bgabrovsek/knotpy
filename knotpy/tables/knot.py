@@ -101,6 +101,14 @@ reversible K, K*
 """
 
 def symmetry_type(knot_or_name: str | Diagram):
+    """Symmetry type.
+    
+    Args:
+        knot_or_name: The knot_or_name parameter.
+    
+    Returns:
+        The return value.
+    """
     _load_knot_table()  # Lazy load here
 
     if isinstance(knot_or_name, Diagram):
@@ -346,6 +354,14 @@ def knot_precomputed_homflypt(k: Diagram):
 
 def _candidates(k: Diagram):
     # generator for candidates in the knot table
+    """Candidates.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     k = canonical(k)
     #print("k", k)
     yield k, ""
@@ -360,6 +376,14 @@ def _candidates(k: Diagram):
 def _remove_symmetry_duplicates(list_of_knot_names: list):
     # clean up the results based on symmetry
     #print("rsd", list_of_knot_names)
+    """Remove symmetry duplicates.
+    
+    Args:
+        list_of_knot_names: The list_of_knot_names parameter.
+    
+    Returns:
+        The return value.
+    """
     result = []
     for name in list_of_knot_names:
         #print("vars", _knot_variations(name))
@@ -494,6 +518,14 @@ def _identify_oriented_knot(k: OrientedPlanarDiagram) -> str | list:
 
 def identify(k: Diagram) -> str | list | None:
 
+    """Identify.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     if is_knot(k):
         _load_knot_table()
         return _identify_oriented_knot(k) if k.is_oriented() else _identify_unoriented_knot(k)

@@ -6,6 +6,8 @@ from knotpy.algorithms.sanity import sanity_check
 def test_simplify_thetas():
     # Take a minimal diagram, make random Reidemeister moves and simplify it to the original
 
+    """Test simplify thetas.
+    """
     theta = kp.PlanarDiagram("t3_1")
 
     for i in range(5):
@@ -39,6 +41,8 @@ def test_simplify_thetas():
 
 def test_reduce_thetas():
 
+    """Test reduce thetas.
+    """
     theta1 = kp.PlanarDiagram("t3_1")
     theta2 = kp.PlanarDiagram("t4_1")
 
@@ -69,6 +73,8 @@ def test_reduce_thetas():
     assert len(reduced) == 2
 
 def test_wanda():
+    """Test wanda.
+    """
     groups = {}
     groups["Unknown"] = ['V[0,1,2],V[3,4,5],V[6,5,7],V[1,8,9],X[0,3,6,8],X[4,2,9,7]',
                          'V[0,1,2],V[0,3,4],V[3,5,6],V[2,7,5],X[4,8,9,1],X[8,6,7,9]']
@@ -95,6 +101,8 @@ def test_wanda():
 
 
 def test_reduce_groups_bonded():
+    """Test reduce groups bonded.
+    """
     groups = {}
     groups["Unknown"] = ['V[0,1,2],V[3,4,5],V[6,5,7],V[1,8,9],X[0,3,6,8],X[4,2,9,7]',
                          'V[0,1,2],V[0,3,4],V[3,5,6],V[2,7,5],X[4,8,9,1],X[8,6,7,9]']
@@ -112,6 +120,8 @@ def test_reduce_groups_bonded():
         #print("**")
 
 def test_theta_r4():
+    """Test theta r4.
+    """
     pass
     # from knotpy.reidemeister.reidemeister import r4_generator
     #

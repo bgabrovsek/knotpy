@@ -3,6 +3,8 @@ from knotpy.notation.native import from_knotpy_notation
 from knotpy.algorithms.insert import insert_endpoint
 
 def test_insert_attr():
+    """Test insert attr.
+    """
     k = from_knotpy_notation("a=V(b0 a2 a1 c0) b=V(a0) c=V(a3)")
     k.add_vertex("f", degree=1)
     k.nodes["a"]._inc[1].attr = {"color":1}

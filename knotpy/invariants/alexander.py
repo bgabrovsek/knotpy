@@ -64,6 +64,11 @@ def alexander(k: PlanarDiagram | OrientedPlanarDiagram, symmetric: bool = False)
 
 
 def _check_component_consistency(k:OrientedPlanarDiagram):
+    """Check component consistency.
+    
+    Args:
+        k: The k parameter.
+    """
     comp = link_components_endpoints(k)
     for c in comp:
         enum = {ep.attr["component"] for ep in c}
@@ -184,6 +189,15 @@ def collapse_generators_by_components(
 
 
 def _monomial_power_in_den(expr, v):
+    """Monomial power in den.
+    
+    Args:
+        expr: The expr parameter.
+        v: The v parameter.
+    
+    Returns:
+        The return value.
+    """
     den = sp.together(expr).as_numer_denom()[1]
     return int(den.as_powers_dict().get(v, 0))
 
@@ -520,6 +534,14 @@ def minors(
 
 
 def multivariable_alexander(k: "PlanarDiagram | OrientedPlanarDiagram") -> sp.Expr:
+    """Multivariable alexander.
+    
+    Args:
+        k: The k parameter.
+    
+    Returns:
+        The return value.
+    """
     k = k.copy() if k.is_oriented() else orient(k)
     G, eps_gen_dict = fundamental_group(k, return_dict=True)
     A = alexander_fox_matrix(G)

@@ -22,6 +22,10 @@ __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 @runtime_checkable
 class _Hashable(Protocol):
+        """Hash.
+        """
+    """Hashable.
+    """
     def __hash__(self) -> int: ...
 
 
@@ -51,6 +55,12 @@ class Cache(Generic[K, V]):
     """
 
     def __init__(self, max_number_of_nodes: int, cache_size: int | None = None) -> None:
+        """Initialize the instance.
+        
+        Args:
+            max_number_of_nodes: The max_number_of_nodes parameter.
+            cache_size: The cache_size parameter.
+        """
         self.cache_size = cache_size
         self.cache: dict[K, V] = {}
         self.usage_count: dict[K, int] = {}
@@ -89,9 +99,22 @@ class Cache(Generic[K, V]):
 
     # Small quality-of-life helpers (don’t change existing API)
     def __contains__(self, key: K) -> bool:
+        """Return whether the item exists in the container.
+        
+        Args:
+            key: The key parameter.
+        
+        Returns:
+            The return value.
+        """
         return key in self.cache
 
     def __len__(self) -> int:
+        """Return the number of items.
+        
+        Returns:
+            The return value.
+        """
         return len(self.cache)
 
     def clear(self) -> None:

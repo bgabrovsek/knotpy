@@ -2,12 +2,30 @@ from knotpy import group_by_invariants
 from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def first_letter(s):
+    """First letter.
+    
+    Args:
+        s: The s parameter.
+    
+    Returns:
+        The return value.
+    """
     return s[0]
 
 def last_letter(s):
+    """Last letter.
+    
+    Args:
+        s: The s parameter.
+    
+    Returns:
+        The return value.
+    """
     return s[-1]
 
 def test_group_by_invariants():
+    """Test group by invariants.
+    """
     diagrams = [
         "alpha", "beta", "gamma", "delta",     # common
         "albino", "azzura", "avilda",          # start/end with "a"
@@ -50,6 +68,8 @@ def test_group_by_invariants():
 
 
 def test_saver():
+    """Test saver.
+    """
     import knotpy as kp
     codes = ["a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 e0 f3 b2) d=X(g0 g2 e1 b3) e=X(c1 d2 f1 f0) f=X(e3 e2 g1 c2) g=X(d0 f2 d1 h0) h=V(g3)",
      "a=V(b0) b=X(a0 c0 d3 d2) c=X(b1 e3 f3 d0) d=X(c3 f2 b3 b2) e=X(f1 f0 g0 c1) f=X(e1 e0 d1 c2) g=V(e2)",

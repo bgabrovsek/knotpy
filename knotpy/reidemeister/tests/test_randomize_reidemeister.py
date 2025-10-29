@@ -39,6 +39,8 @@ def test_randomize_theta():
     settings.load(dump)
 
 def test_randomize_theta_direct():
+    """Test randomize theta direct.
+    """
     from knotpy.reidemeister import choose_reidemeister_1_add_kink, choose_reidemeister_1_remove_kink
     from knotpy.reidemeister import choose_reidemeister_2_unpoke, choose_reidemeister_2_poke
     from knotpy.reidemeister import choose_reidemeister_3_triangle, choose_reidemeister_4_slide, choose_reidemeister_5_twist, choose_reidemeister_5_untwist
@@ -75,6 +77,8 @@ def test_randomize_theta_direct():
     settings.load(dump)
 
 def test_randomize_theta_3_1_direct():
+    """Test randomize theta 3 1 direct.
+    """
     from knotpy.reidemeister import choose_reidemeister_1_add_kink, choose_reidemeister_1_remove_kink
     from knotpy.reidemeister import choose_reidemeister_2_unpoke, choose_reidemeister_2_poke
     from knotpy.reidemeister import choose_reidemeister_3_triangle, choose_reidemeister_4_slide, choose_reidemeister_5_twist, choose_reidemeister_5_untwist

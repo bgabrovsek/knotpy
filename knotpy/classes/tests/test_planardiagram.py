@@ -16,6 +16,8 @@ def make_simple_diagram():
 
 
 def test_add_vertices_and_arcs():
+    """Test add vertices and arcs.
+    """
     d = make_simple_diagram()
 
     assert d.number_of_nodes == 2
@@ -32,6 +34,8 @@ def test_add_vertices_and_arcs():
 
 
 def test_copy_shallow_and_attr_independence():
+    """Test copy shallow and attr independence.
+    """
     d = make_simple_diagram()
     d.attr["name"] = "original"
     d.attr["framing"] = 2
@@ -49,6 +53,8 @@ def test_copy_shallow_and_attr_independence():
 
 
 def test_remove_arc_and_endpoints():
+    """Test remove arc and endpoints.
+    """
     d = make_simple_diagram()
     assert d.number_of_arcs == 1
 
@@ -59,6 +65,8 @@ def test_remove_arc_and_endpoints():
 
 
 def test_relabel_nodes_updates_endpoints():
+    """Test relabel nodes updates endpoints.
+    """
     d = make_simple_diagram()
     d.relabel_nodes({"a": "x"})
 
@@ -74,6 +82,8 @@ def test_relabel_nodes_updates_endpoints():
 
 
 def test_compare_ordering_by_size_and_degree():
+    """Test compare ordering by size and degree.
+    """
     a = make_simple_diagram()
     b = make_simple_diagram()
     assert a == b
@@ -85,6 +95,8 @@ def test_compare_ordering_by_size_and_degree():
 
 
 def test_orientation_constraints_in_oriented_diagram():
+    """Test orientation constraints in oriented diagram.
+    """
     d = OrientedPlanarDiagram()
     d.add_vertices_from(["p", "q"])
     # In an oriented diagram, trying to create a plain Endpoint should error
@@ -94,6 +106,8 @@ def test_orientation_constraints_in_oriented_diagram():
 
 def test_planar_diagram_from_data_with_instance():
     # Build a source diagram
+    """Test planar diagram from data with instance.
+    """
     src = PlanarDiagram()
     src.attr["name"] = "src"
     src.add_vertices_from(["u", "v"])
@@ -110,6 +124,8 @@ def test_planar_diagram_from_data_with_instance():
 
 
 def test_add_crossings_from_and_degree_sequence():
+    """Test add crossings from and degree sequence.
+    """
     d = PlanarDiagram()
     d.add_crossings_from(["c1", "c2"], color="red")
 

@@ -2,6 +2,8 @@ import knotpy as kp
 
 
 def test_bracket():
+    """Test bracket.
+    """
     kp.settings.allowed_moves = "r1,r2,r3,flype"
     for k in kp.knots((3,7)):
         p = kp.bracket(k)
@@ -11,6 +13,8 @@ def test_bracket():
             assert p == pp, f"{k.name} {p} {pp}"
 
 def test_bracket_vs_homflypt():
+    """Test bracket vs homflypt.
+    """
     from knotpy.invariants.bracket import bracket_from_homflypt
 
 
@@ -25,6 +29,8 @@ def test_bracket_vs_homflypt():
 def test_bracket_precomputed():
 
 
+    """Test bracket precomputed.
+    """
     for k in kp.knots(range(0, 8), mirror=True, oriented=False):
         kp.settings.use_precomputed_invariants = False
         h = kp.bracket(k)

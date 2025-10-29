@@ -9,9 +9,20 @@ from knotpy.algorithms.attributes import clear_endpoint_attributes
 
 
 def tricolorable(k:Diagram) -> int:
+    """Tricolorable.
+    
+    Args:
+        k: The k parameter.
+    """
     pass
 
 def colorings(k:Diagram, n:int):
+    """Colorings.
+    
+    Args:
+        k: The k parameter.
+        n: The n parameter.
+    """
     k = k.copy()
     clear_endpoint_attributes(k, "color")
     stack = deque([k])

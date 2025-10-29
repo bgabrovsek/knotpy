@@ -4,6 +4,8 @@ from time import time
 def test_homflypt():
 
     # unoriented
+    """Test homflypt.
+    """
     for k in kp.knots(range(0, 8), mirror=True, oriented=False):
         kp.settings.use_precomputed_invariants = False
         h = kp.homflypt(k, variables="xyz")
@@ -24,6 +26,8 @@ def test_homflypt():
 
 def test_precomputed_speed():
 
+    """Test precomputed speed.
+    """
     N = 12
 
     kp.settings.use_precomputed_invariants = False

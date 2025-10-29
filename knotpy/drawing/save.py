@@ -377,6 +377,53 @@ def save_drawing(
         padding_fraction=DEFAULTS._DEFAULT_PADDING_FRACTION,
         show_axis=DEFAULTS._DEFAULT_SHOW_AXIS
     ):
+    """Save drawing.
+    
+    Args:
+        k: The k parameter.
+        filename: The filename parameter.
+        ax: The ax parameter.
+        rotation: The rotation parameter.
+        arc_color: The arc_color parameter.
+        arc_width: The arc_width parameter.
+        arc_style: The arc_style parameter.
+        arc_alpha: The arc_alpha parameter.
+        arc_stroke_color: The arc_stroke_color parameter.
+        arc_stroke_width: The arc_stroke_width parameter.
+        arc_stroke_alpha: The arc_stroke_alpha parameter.
+        gap: The gap parameter.
+        cmap: The cmap parameter.
+        vertex_color: The vertex_color parameter.
+        vertex_size: The vertex_size parameter.
+        vertex_alpha: The vertex_alpha parameter.
+        vertex_stroke_color: The vertex_stroke_color parameter.
+        vertex_stroke_width: The vertex_stroke_width parameter.
+        vertex_stroke_alpha: The vertex_stroke_alpha parameter.
+        arrow_color: The arrow_color parameter.
+        arrow_width: The arrow_width parameter.
+        arrow_length: The arrow_length parameter.
+        arrow_style: The arrow_style parameter.
+        arrow_cap_style: The arrow_cap_style parameter.
+        arrow_position: The arrow_position parameter.
+        arrow_alpha: The arrow_alpha parameter.
+        label_endpoints: The label_endpoints parameter.
+        label_arcs: The label_arcs parameter.
+        label_nodes: The label_nodes parameter.
+        label_color: The label_color parameter.
+        label_font_size: The label_font_size parameter.
+        label_font_family: The label_font_family parameter.
+        label_horizontal_alignment: The label_horizontal_alignment parameter.
+        label_vertical_alignment: The label_vertical_alignment parameter.
+        label_alpha: The label_alpha parameter.
+        title: The title parameter.
+        title_color: The title_color parameter.
+        title_font_size: The title_font_size parameter.
+        title_font_family: The title_font_family parameter.
+        title_alpha: The title_alpha parameter.
+        show_circle_packing: The show_circle_packing parameter.
+        padding_fraction: The padding_fraction parameter.
+        show_axis: The show_axis parameter.
+    """
     args = dict(locals())
     from matplotlib import pyplot as plt
     args = {k: v for k, v in args.items() if k not in ("filename")}

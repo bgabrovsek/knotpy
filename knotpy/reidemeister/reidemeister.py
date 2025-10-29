@@ -258,6 +258,16 @@ def random_reidemeister_move(k: PlanarDiagram | OrientedPlanarDiagram, allow_inc
                 raise ValueError(f"Unknown move type {move}")
 
 def randomize_diagram(k, number_of_moves=5, max_crossings_increase=2):
+    """Randomize diagram.
+    
+    Args:
+        k: The k parameter.
+        number_of_moves: The number_of_moves parameter.
+        max_crossings_increase: The max_crossings_increase parameter.
+    
+    Returns:
+        The return value.
+    """
     max_nodes = len(k) + max_crossings_increase
 
     k = k.copy()

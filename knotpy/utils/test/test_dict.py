@@ -1,5 +1,7 @@
 import knotpy as kp
 def test_dict():
+    """Test dict.
+    """
     d = {
         'a': {1, 2},
         'b': {2, 3},

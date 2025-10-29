@@ -11,11 +11,15 @@ Todo:
 show_drawing = False
 
 def test_oriented():
+    """Test oriented.
+    """
     if not force_tests: return
     a = kp.knot("+3_1")
     kp.draw(a, show=show_drawing)
 
 def test_connected_sum():
+    """Test connected sum.
+    """
     if not force_tests: return
     a = kp.knot("3_1")
     b = kp.knot("4_1")
@@ -23,6 +27,8 @@ def test_connected_sum():
     kp.draw(c, show=show_drawing)
 
 def test_disjoint_union():
+    """Test disjoint union.
+    """
     if not force_tests: return
     a = kp.knot("3_1")
     b = kp.knot("4_1")
@@ -30,6 +36,8 @@ def test_disjoint_union():
     kp.draw(c, show=show_drawing)
 
 def test_trivial():
+    """Test trivial.
+    """
     if not force_tests: return
     a = kp.knot("unknot")
     # ep = get_endpoints(a)
@@ -38,6 +46,8 @@ def test_trivial():
     pass
 
 def test_trivial_oriented():
+    """Test trivial oriented.
+    """
     if not force_tests: return
     a = kp.knot("unknot")
     a = kp.orient(a)
@@ -45,6 +55,8 @@ def test_trivial_oriented():
     pass
 
 def test_trivial_disjoint_union():
+    """Test trivial disjoint union.
+    """
     if not force_tests: return
     a = kp.knot("unknot")
     b = kp.knot("unknot")
@@ -58,6 +70,8 @@ def test_trivial_disjoint_union():
 
 
 def test_knot():
+    """Test knot.
+    """
     a = kp.knot("6_2")
     kp.draw(a, show=show_drawing, label_endpoints=True, label_nodes=True)
 
@@ -71,6 +85,8 @@ def test_knot():
 
 
 def test_kinks_same_arc():
+    """Test kinks same arc.
+    """
     return
     a = kp.knot("6_2")
     for epp in [("f", 3), ("g", 3)]:
@@ -80,6 +96,8 @@ def test_kinks_same_arc():
 
 
 def do_not_test_one_kink():
+    """Do not test one kink.
+    """
     a = kp.knot("6_2")
     for epp in [("f", 3)]:
         ep = a.endpoint_from_pair(epp)
@@ -87,6 +105,8 @@ def do_not_test_one_kink():
     kp.draw(a, show=show_drawing, label_endpoints=True, label_nodes=True)
 
 def do_not_test_kinks_different_arc():
+    """Do not test kinks different arc.
+    """
     a = kp.knot("6_2")
     for epp in [("f", 3)]:
         ep = a.endpoint_from_pair(epp)
@@ -95,6 +115,8 @@ def do_not_test_kinks_different_arc():
 
 
 def draw_knotoid_simple():
+    """Draw knotoid simple.
+    """
     if not force_tests: return
     k = kp.from_pd_notation("V[1],X[3,2,4,1],X[2,5,3,4],V[5]")
     assert kp.sanity_check(k)

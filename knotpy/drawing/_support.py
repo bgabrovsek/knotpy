@@ -100,6 +100,11 @@ def _add_support_arcs_for_cut_vertices(k: PlanarDiagram) -> None:
     """
 
     def _cut_nodes_not_leaf_adjacent_or_kink():
+        """Cut nodes not leaf adjacent or kink.
+        
+        Returns:
+            The return value.
+        """
         cn = cut_nodes(k)
         leaf_adj = [k.twin((l, 0)).node for l in leafs(k)]
         kink_crossings = [ep.node for ep in kinks(k)]

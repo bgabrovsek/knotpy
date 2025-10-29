@@ -10,6 +10,11 @@ _DISPLAY_TIME = True
 
 def _get_hard_knot_examples():
 
+    """Get hard knot examples.
+    
+    Returns:
+        The return value.
+    """
     nasty_unknot = from_pd_notation("[[0,3,1,4],[3,10,2,9],[9,2,8,1],[6,10,5,11],[11,7,12,6],[7,13,8,12],[0,4,13,5]]")
     culprit_unknot = from_pd_notation("[[2,15,3,16],[6,4,7,3],[14,6,15,5],[5,13,4,14],[1,13,2,12],[1,8,0,7],[9,0,8,19],[16,9,17,10],[10,17,11,18],[19,12,18,11]]")
     simple_unknot = from_pd_notation("[[8,10,7,1],[7,2,6,1],[5,3,6,2],[4,9,5,10],[4,8,3,9]]")
@@ -29,6 +34,8 @@ def _get_hard_knot_examples():
 
 def test_simplify_hard_unknots_reducing():
 
+    """Test simplify hard unknots reducing.
+    """
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase, goeritz_unknot, reducible_unknot = _get_hard_knot_examples()
 
     j = jones(simple_unknot)
@@ -80,6 +87,8 @@ def test_simplify_hard_unknots_reducing():
 
 def test_simplify_hard_unknots_nonincreasing():
 
+    """Test simplify hard unknots nonincreasing.
+    """
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones(simple_unknot)
@@ -140,6 +149,8 @@ def test_simplify_hard_unknots_nonincreasing():
 
 def test_simplify_hard_unknots_nonincreasing_greedy():
 
+    """Test simplify hard unknots nonincreasing greedy.
+    """
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones(simple_unknot)
@@ -191,6 +202,8 @@ def test_simplify_hard_unknots_nonincreasing_greedy():
 
 def test_simplify_hard_unknots_smart():
 
+    """Test simplify hard unknots smart.
+    """
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones(simple_unknot)
@@ -236,6 +249,8 @@ def test_simplify_hard_unknots_smart():
 
 def test_simplify_hard_unknots_smart_string():
 
+    """Test simplify hard unknots smart string.
+    """
     simple_unknot, nasty_unknot, culprit_unknot, culprit_after_increase,goeritz_unknot,reducible_unknot = _get_hard_knot_examples()
 
     j = jones(simple_unknot)
@@ -274,6 +289,8 @@ def test_simplify_hard_unknots_smart_string():
 
 
 def test_smart():
+    """Test smart.
+    """
     import knotpy as kp
     from time import time
     return
@@ -354,6 +371,8 @@ knotoids = 2 (depth=2,flype) 520.7462918758392
 
 def do_not_test_goeritz_unknot():
 
+    """Do not test goeritz unknot.
+    """
     print(to_knotpy_notation(canonical(from_pd_notation(
         "[[2,15,3,16],[6,4,7,3],[14,6,15,5],[5,13,4,14],[1,13,2,12],[1,8,0,7],[9,0,8,19],[16,9,17,10],[10,17,11,18],[19,12,18,11]]"))))
 

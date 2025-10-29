@@ -4,6 +4,8 @@ import knotpy.algorithms.remove
 
 def test_remove_bivalent_vertex():
 
+    """Test remove bivalent vertex.
+    """
     k = kp.from_pd_notation("V(0,1),X(0,3,2,4),X(3,1,4,2)", create_using=kp.PlanarDiagram)
 
     assert k.nodes["b"][0].node == "a"

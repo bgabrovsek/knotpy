@@ -18,33 +18,45 @@ from knotpy.utils.dict_utils import (
 # --- compare_dicts -----------------------------------------------------------
 
 def test_compare_dicts_equal_simple():
+    """Test compare dicts equal simple.
+    """
     a = {"x": 1, "y": 2}
     b = {"x": 1, "y": 2}
     assert compare_dicts(a, b) == 0
 
 def test_compare_dicts_ordering_by_keys():
+    """Test compare dicts ordering by keys.
+    """
     a = {"a": 1}
     b = {"b": 1}
     assert compare_dicts(a, b) == -1
     assert compare_dicts(b, a) == 1
 
 def test_compare_dicts_exclude_and_include():
+    """Test compare dicts exclude and include.
+    """
     a = {"a": 1, "b": 2, "_tmp": 999}
     b = {"a": 1, "b": 3, "_tmp": 111}
     assert compare_dicts(a, b, include_only_keys=["a"]) == 0
     assert compare_dicts(a, b, include_only_keys=["b"]) == -1
 
 def test_compare_dicts_nested():
+    """Test compare dicts nested.
+    """
     a = {"meta": {"u": 1, "v": 2}, "z": 0}
     b = {"meta": {"u": 1, "v": 3}, "z": 0}
     assert compare_dicts(a, b) == -1
 
 def test_compare_dicts_sets():
+    """Test compare dicts sets.
+    """
     a = {"s": {3, 1, 2}}
     b = {"s": {1, 2, 3}}
     assert compare_dicts(a, b) == 0
 
 def test_compare_dicts_type_mismatch():
+    """Test compare dicts type mismatch.
+    """
     a = {"x": 1}
     b = {"x": "1"}
     with pytest.raises(TypeError):
@@ -53,26 +65,36 @@ def test_compare_dicts_type_mismatch():
 # --- invert_* ---------------------------------------------------------------
 
 def test_invert_dict_unique_values():
+    """Test invert dict unique values.
+    """
     d = {"a": 1, "b": 2}
     inv = invert_dict(d)
     assert inv == {1: "a", 2: "b"}
 
 def test_invert_dict_duplicate_value_raises():
+    """Test invert dict duplicate value raises.
+    """
     d = {"a": 1, "b": 1}
     with pytest.raises(ValueError):
         invert_dict(d)
 
 def test_invert_multi_dict_groups():
+    """Test invert multi dict groups.
+    """
     d = {"a": 1, "b": 2, "c": 1}
     inv = invert_multi_dict(d)
     assert inv == {1: {"a", "c"}, 2: {"b"}}
 
 def test_invert_dict_of_sets():
+    """Test invert dict of sets.
+    """
     d = {"x": {1, 2}, "y": {2, 3}}
     inv = invert_dict_of_sets(d)
     assert inv == {1: {"x"}, 2: {"x", "y"}, 3: {"y"}}
 
 def test_invert_nested_dict():
+    """Test invert nested dict.
+    """
     d = {
         "A": {"p": 1, "q": 2},
         "B": {"p": 1, "q": 2},
@@ -85,6 +107,8 @@ def test_invert_nested_dict():
 # --- IdentityDict -----------------------------------------------------------
 
 def test_identity_dict_missing_returns_key():
+    """Test identity dict missing returns key.
+    """
     d = IdentityDict()
     assert d["alpha"] == "alpha"
     assert d["alpha"] == "alpha"
@@ -92,13 +116,31 @@ def test_identity_dict_missing_returns_key():
 # --- LazyDict ---------------------------------------------------------------
 
 def test_lazydict_loads_on_access_and_evaluates_once():
+    """Test lazydict loads on access and evaluates once.
+    
+    Returns:
+        The return value.
+    """
     calls = {"load": 0, "eval": 0}
 
     def load():
+        """Load.
+        
+        Returns:
+            The return value.
+        """
         calls["load"] += 1
         return {"a": "2 + 2", "b": "40 + 2"}
 
     def evaluate(expr: str) -> int:
+        """Evaluate.
+        
+        Args:
+            expr: The expr parameter.
+        
+        Returns:
+            The return value.
+        """
         calls["eval"] += 1
         return eval(expr)
 
@@ -113,10 +155,28 @@ def test_lazydict_loads_on_access_and_evaluates_once():
     assert calls["eval"] == 2
 
 def test_lazydict_reload():
+    """Test lazydict reload.
+    
+    Returns:
+        The return value.
+    """
     def load():
+        """Load.
+        
+        Returns:
+            The return value.
+        """
         return {"x": "10"}
 
     def evaluate(expr: str) -> int:
+        """Evaluate.
+        
+        Args:
+            expr: The expr parameter.
+        
+        Returns:
+            The return value.
+        """
         return int(expr)
 
     d = LazyDict(load, evaluate)
@@ -129,6 +189,8 @@ def test_lazydict_reload():
 # --- ClassifierDict ---------------------------------------------------------
 
 def test_classifier_dict_groups_by_functions():
+    """Test classifier dict groups by functions.
+    """
     funcs = {
         "parity": lambda x: x % 2,
         "sign": lambda x: (x > 0) - (x < 0),
@@ -147,12 +209,16 @@ def test_classifier_dict_groups_by_functions():
 # --- common_dict ------------------------------------------------------------
 
 def test_common_dict_intersection():
+    """Test common dict intersection.
+    """
     a = {"x": 1, "y": 2}
     b = {"x": 1, "y": 999, "z": 0}
     c = {"x": 1}
     assert common_dict(a, b, c) == {"x": 1}
 
 def test_common_dict_empty_input():
+    """Test common dict empty input.
+    """
     assert common_dict() == {}
 
 # ---------------------------------------------------------------------------

@@ -11,6 +11,8 @@ from knotpy.algorithms.canonical import canonical
 from knotpy.tables.tests._helper import _safe_delete_file, _unique
 
 def test_draw_knot():
+    """Test draw knot.
+    """
     knots_and_links = [
         "a=X(b1 c0 c3 b2) b=X(c1 a0 a3 c2) c=X(a1 b0 b3 a2) ['name'='3_1']",
         "a=X(c3 d0 b3 b2) b=X(d3 c0 a3 a2) c=X(b1 d2 d1 a0) d=X(a1 c2 c1 b0) ['name'='4_1']",
@@ -72,6 +74,8 @@ def test_draw_knot():
 
 def test_draw_theta():
 
+    """Test draw theta.
+    """
     theta_curves = [
         "a=V(b0 b2 b1) b=V(a0 a2 a1) ['name'='t0_1']",
         "a=V(b0 c0 d3) b=V(a0 d2 e3) c=X(a1 e2 e1 d0) d=X(c3 e0 b1 a2) e=X(d1 c2 c1 b2) ['name'='+t3_1']",
@@ -131,11 +135,15 @@ def test_draw_theta():
 
 
 def DO_NOTtest_draw_bridges():
+    """Do nottest draw bridges.
+    """
     graph_with_bridge = from_pd_notation("[[0,1,2],[0,3,4],[5,6,7,2],[1,7,6,5],[4,8,9,10],[8,3,10,9]]")
     print(graph_with_bridge)
 
 
 def test_draw_bonded():
+    """Test draw bonded.
+    """
     bonded_knots = [
         "a=X(b0 b3 c3 d3) b=X(a0 d2 e0 a1) c=X(e3 e2 d0 a2) d=X(c2 e1 b1 a3) e=X(b2 d1 c1 c0)",
         "a=V(b0 c0 d3) b=V(a0 d2 e3) c=X(a1 e2 e1 d0) d=X(c3 e0 b1 a2) e=X(d1 c2 c1 b2)",
@@ -186,6 +194,8 @@ def test_draw_bonded():
     _safe_delete_file(filename)
 
 def test_thetas_sums():
+    """Test thetas sums.
+    """
     theta_codes = [
         "a=V(b0 b2 c0) b=V(a0 d3 a1) c=X(a2 e0 f3 d0) d=X(c3 g0 e1 b1) e=X(c1 d2 g3 h0) f=X(h3 i0 i3 c2) g=X(d1 i2 h1 e2) h=X(e3 g2 i1 f0) i=X(f1 h2 g1 f2)",
         "a=V(b0 c0 d3) b=V(a0 e0 f3) c=X(a1 g0 e3 d0) d=X(c3 e2 e1 a2) e=X(b1 d2 d1 c2) f=X(g3 h0 h3 b2) g=X(c1 h2 h1 f0) h=X(f1 g2 g1 f2)",
@@ -218,6 +228,8 @@ def test_thetas_sums():
     _safe_delete_file(filename)
 
 def test_draw_knotoid():
+    """Test draw knotoid.
+    """
     knotoid_codes = [
         "a=V(b0) b=X(a0 c3 d3 c0) c=X(b3 d2 e3 b1) d=X(f3 e0 c1 b2) e=X(d1 f2 f0 c2) f=X(e2 g0 e1 d0) g=V(f1) ['name'='26']",
         "a=V(b0) b=X(a0 c0 c3 d3) c=X(b1 d2 e3 b2) d=X(e2 f0 c1 b3) e=X(g3 g2 d0 c2) f=X(d1 g1 h0 g0) g=X(f3 f1 e1 e0) h=V(f2) ['name'='31']",

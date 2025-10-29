@@ -167,9 +167,19 @@ class IdentityDict(defaultdict[K, K]):
     """
 
     def __init__(self) -> None:
+        """Initialize the instance.
+        """
         super().__init__(None)  # type: ignore[arg-type]
 
     def __missing__(self, key: K) -> K:  # type: ignore[override]
+        """Missing.
+        
+        Args:
+            key: The key parameter.
+        
+        Returns:
+            The return value.
+        """
         return key
 
 
@@ -195,6 +205,14 @@ class LazyDict(dict[K, V], Generic[K, V]):
         *args: Any,
         **kwargs: Any,
     ) -> None:
+        """Initialize the instance.
+        
+        Args:
+            load_function: The load_function parameter.
+            eval_function: The eval_function parameter.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         self._load_function = load_function
         self._eval_function = eval_function
@@ -205,6 +223,8 @@ class LazyDict(dict[K, V], Generic[K, V]):
             raise TypeError("eval_function must be callable or None")
 
     def _ensure_loaded(self) -> None:
+        """Ensure loaded.
+        """
         if not self._data_loaded:
             loaded = self._load_function()
             if isinstance(loaded, dict):
@@ -215,6 +235,11 @@ class LazyDict(dict[K, V], Generic[K, V]):
             self._data_loaded = True
 
     def _maybe_evaluate(self, key: K) -> None:
+        """Maybe evaluate.
+        
+        Args:
+            key: The key parameter.
+        """
         if self._eval_function and key not in self._evaluated_keys:
             raw_value = super().__getitem__(key)
             evaluated = self._eval_function(raw_value)
@@ -222,27 +247,64 @@ class LazyDict(dict[K, V], Generic[K, V]):
             self._evaluated_keys.add(key)
 
     def __getitem__(self, key: K) -> V:  # type: ignore[override]
+        """Return the item at the given index.
+        
+        Args:
+            key: The key parameter.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         self._maybe_evaluate(key)
         return super().__getitem__(key)
 
     def __setitem__(self, key: K, value: V) -> None:  # type: ignore[override]
+        """Set the item at the given index.
+        
+        Args:
+            key: The key parameter.
+            value: The value parameter.
+        """
         self._ensure_loaded()
         super().__setitem__(key, value)
 
     def __contains__(self, key: object) -> bool:  # type: ignore[override]
+        """Return whether the item exists in the container.
+        
+        Args:
+            key: The key parameter.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         return super().__contains__(key)
 
     def __iter__(self):  # type: ignore[override]
+        """Return an iterator over the object.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         return super().__iter__()
 
     def __len__(self) -> int:  # type: ignore[override]
+        """Return the number of items.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         return super().__len__()
 
     def __repr__(self) -> str:  # type: ignore[override]
+        """Return the representation.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         if self._eval_function:
             # Trigger evaluation for a stable, fully-resolved repr
@@ -251,10 +313,20 @@ class LazyDict(dict[K, V], Generic[K, V]):
         return f"LazyDict({dict(self)!r})"
 
     def keys(self):  # type: ignore[override]
+        """Keys.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         return super().keys()
 
     def values(self):  # type: ignore[override]
+        """Values.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         if self._eval_function:
             for key in list(self.keys()):
@@ -262,6 +334,11 @@ class LazyDict(dict[K, V], Generic[K, V]):
         return super().values()
 
     def items(self):  # type: ignore[override]
+        """Items.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         if self._eval_function:
             for key in list(self.keys()):
@@ -269,6 +346,15 @@ class LazyDict(dict[K, V], Generic[K, V]):
         return super().items()
 
     def get(self, key: K, default: V | None = None) -> V | None:  # type: ignore[override]
+        """Get.
+        
+        Args:
+            key: The key parameter.
+            default: The default parameter.
+        
+        Returns:
+            The return value.
+        """
         self._ensure_loaded()
         if super().__contains__(key):
             return self[key]
@@ -293,6 +379,11 @@ class ClassifierDict(dict[tuple[Any, ...], list[T]], Generic[T]):
     """
 
     def __init__(self, functions: dict[str, Callable[[T], Any]]) -> None:
+        """Initialize the instance.
+        
+        Args:
+            functions: The functions parameter.
+        """
         super().__init__()
         self.functions = functions
 

@@ -4,6 +4,8 @@ from knotpy.notation.native import to_knotpy_notation, from_knotpy_notation
 
 def test_native_notation_to_from():
 
+    """Test native notation to from.
+    """
     k = PlanarDiagram()
     k.add_vertices_from("ab")
     k.add_crossings_from("cd")
@@ -23,6 +25,8 @@ def test_native_notation_to_from():
 
 def test_native_notation_from():
 
+    """Test native notation from.
+    """
     notation_a = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
     notation_b = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2) "
     notation_c = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2) ['name'='my diagram','framing'=3]"
@@ -77,6 +81,8 @@ def test_native_notation_from():
 
 def test_native_notation_to():
 
+    """Test native notation to.
+    """
     notation_a = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2)"
     notation_c = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2) ['name'='my diagram','framing'=3]"
     notation_d = "a=V(b0 c0 d3) b=V(a0 d2 c1) c=X(a1 b2 d1 d0) d=X(c3 c2 b1 a2) ['name'='my diagram','framing'=3; a:{'color'=3} b:{'color'=7}]"
