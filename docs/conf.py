@@ -16,12 +16,26 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
+"myst_nb",
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx_gallery.gen_gallery',
+    #'sphinx_gallery.gen_gallery',
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
 ]
+
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".ipynb": "myst-nb",
+    ".md": "markdown",
+}
+
+nb_execution_mode = "cache"
+nb_execution_timeout = 120
+nb_execution_mode = "off"
+
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**/.ipynb_checkpoints']
+
 # -- Docstring style & autosummary -------------------------------------------------
 autosummary_generate = True
 autosummary_generate_overwrite = True
@@ -63,20 +77,24 @@ html_theme_options = {
     ],
 }
 
-# Don't show sidebar on the index, installation and tutorial pages.
 html_sidebars = {
     "**": ["sidebar-nav-bs"],
     "index": [],
     "install": [],
-    "tutorial": [],
+    "tutorial/**": [],
 }
 
-sphinx_gallery_conf = {
-    'examples_dirs': 'examples',
-    'gallery_dirs': 'auto_examples',
-    'image_scrapers': ('matplotlib',),
-    'matplotlib_animations': True,
-}
+html_sidebars.update({
+    "examples/**": [],
+})
+
+
+# sphinx_gallery_conf = {
+#     'examples_dirs': 'examples',
+#     'gallery_dirs': 'auto_examples',
+#     'image_scrapers': ('matplotlib',),
+#     'matplotlib_animations': True,
+# }
 
 html_logo = "_static/logo.png"
 # html_favicon = "_static/logo.ico"

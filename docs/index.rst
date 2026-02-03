@@ -25,7 +25,7 @@ grant J1-4031.
    :hidden:
 
    install
-   tutorial
-   notation
+   tutorial/index
+   notation/index
    reference/index
    examples/index
