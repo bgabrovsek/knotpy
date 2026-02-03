@@ -28,4 +28,4 @@ grant J1-4031.
    tutorial
    notation
    reference/index
-   auto_examples/index
+   examples/index
