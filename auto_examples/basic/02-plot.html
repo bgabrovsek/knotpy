@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Drawing example &#8212; KnotPy  documentation</title>
+    <title>Knot example &#8212; KnotPy  documentation</title>
   
   
   
@@ -43,13 +43,13 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/basic/plot_drawing';</script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/basic/02-plot';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Notation" href="../notation/index.html" />
-    <link rel="prev" title="Knot example" href="example.html" />
+    <link rel="prev" title="Knot example" href="01-print.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -227,10 +227,6 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
 </div>
 
     </header>
@@ -336,8 +332,8 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Basic</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="example.html">Knot example</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Drawing example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-print.html">Knot example</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Knot example</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../notation/index.html">Notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -390,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Basic</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Drawing example</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Knot example</span></li>
   </ul>
 </nav>
 </div>
@@ -409,45 +405,33 @@
                   
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-drawing-py"><span class="std std-ref">Go to the end</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-basic-02-plot-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="drawing-example">
-<span id="sphx-glr-auto-examples-basic-plot-drawing-py"></span><h1>Drawing example<a class="headerlink" href="#drawing-example" title="Link to this heading">#</a></h1>
-<p>Draw the trefoil knot.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<section class="sphx-glr-example-title" id="knot-example">
+<span id="sphx-glr-auto-examples-basic-02-plot-py"></span><h1>Knot example<a class="headerlink" href="#knot-example" title="Link to this heading">#</a></h1>
+<p>Draw the diagram of the trefoil knot (oriented/non-oriented)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">knotpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kp</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">knotpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kp</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;3_1&quot;</span><span class="p">)</span>
+<span class="n">kp</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;+3_1&quot;</span><span class="p">)</span>
+<span class="n">kp</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="parsing-knotpy-notation">
-<h2>Parsing knotpy notation<a class="headerlink" href="#parsing-knotpy-notation" title="Link to this heading">#</a></h2>
-<p>Load the knot from internal representation.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">PlanarDiagram</span><span class="p">(</span><span class="s2">&quot;3_1&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="drawing-the-knot">
-<h2>Drawing the knot<a class="headerlink" href="#drawing-the-knot" title="Link to this heading">#</a></h2>
-<p>Draw the know using matplotlib and show it.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">kp</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_drawing_001.png" srcset="../../_images/sphx_glr_plot_drawing_001.png" alt="plot drawing" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.006 seconds)</p>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-drawing-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-02-plot-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/643c503d973b0376756b18ecec7475f6/plot_drawing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_drawing.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/e8b6b505c6b9be69e36f8325cbfe97d5/02-plot.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02-plot.ipynb</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/36a99ebebe6b6a87dc50a14359275b12/plot_drawing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_drawing.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/671fda9c191a1ea1dae21aa369248dbc/02-plot.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">02-plot.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-zip docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/ad20c0818b2331fe8473bc62639ffc58/plot_drawing.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_drawing.zip</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/d583e5ea402464e1b9272c6cc3ba288c/02-plot.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">02-plot.zip</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</section>
 </section>
 
 
@@ -460,25 +444,6 @@ to download the full example code.</p>
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parsing-knotpy-notation">Parsing knotpy notation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drawing-the-knot">Drawing the knot</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
@@ -512,7 +477,7 @@ to download the full example code.</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>

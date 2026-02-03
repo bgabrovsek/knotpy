@@ -43,12 +43,12 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/basic/example';</script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/basic/01-print';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Drawing example" href="plot_drawing.html" />
+    <link rel="next" title="Knot example" href="02-plot.html" />
     <link rel="prev" title="Basic" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -333,7 +333,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Basic</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Knot example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_drawing.html">Drawing example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-plot.html">Knot example</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../notation/index.html">Notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -405,27 +405,30 @@
                   
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="#sphx-glr-download-auto-examples-basic-example-py"><span class="std std-ref">Go to the end</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-basic-01-print-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="knot-example">
-<span id="sphx-glr-auto-examples-basic-example-py"></span><h1>Knot example<a class="headerlink" href="#knot-example" title="Link to this heading">#</a></h1>
-<p>Draw the trefoil knot.</p>
+<span id="sphx-glr-auto-examples-basic-01-print-py"></span><h1>Knot example<a class="headerlink" href="#knot-example" title="Link to this heading">#</a></h1>
+<p>Print the diagram of the trefoil knot (oriented/non-oriented)</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">knotpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kp</span>
 
+<span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;3_1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
 <span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;+3_1&quot;</span><span class="p">)</span>
-<span class="n">kp</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-example-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-01-print-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/45f6e80223d669c794ac872e561e93f3/example.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">example.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/4f65f3d02e7da45ece5ccccd9458a6f7/01-print.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01-print.ipynb</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/d099d566509375c8c81a3b3f433fdda6/example.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">example.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/a467d325c00c35cbb5af47170412e3cb/01-print.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01-print.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-zip docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/a9c7dcc6d11f9e74257c8fbea2a64d50/example.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">example.zip</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/83228dcd3aa27956855d2299e8e1b62c/01-print.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">01-print.zip</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -474,7 +477,7 @@ to download the full example code.</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>

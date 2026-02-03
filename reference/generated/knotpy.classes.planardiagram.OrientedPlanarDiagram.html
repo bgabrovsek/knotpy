@@ -43,8 +43,8 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/generated/knotpy.classes.planardiagram.OrientedPlanarDiagram';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -1231,14 +1231,14 @@
 <h1>OrientedPlanarDiagram<a class="headerlink" href="#orientedplanardiagram" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrientedPlanarDiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_diagram_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">OrientedPlanarDiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_diagram_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="knotpy.classes.planardiagram.PlanarDiagram.html#knotpy.classes.planardiagram.PlanarDiagram" title="knotpy.classes.planardiagram.PlanarDiagram"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanarDiagram</span></code></a></p>
 <p>Planar diagram with orientation enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>incoming_diagram_data</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>attr</strong> (<em>Any</em>)</p></li>
+<li><p><strong>attr</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1416,7 +1416,7 @@ is populated from the provided input.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_oriented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.is_oriented" title="Link to this definition">#</a></dt>
 <dd><p>Return whether the diagram is oriented.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1577,7 +1577,7 @@ is populated from the provided input.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.arcs">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.ArcView.html#knotpy.classes.views.ArcView" title="knotpy.classes.views.ArcView"><span class="pre">ArcView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.arcs" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">arcs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.ArcView.html#knotpy.classes.views.ArcView" title="knotpy.classes.views.ArcView"><span class="pre">ArcView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.arcs" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of arcs (pairs of endpoints).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1655,7 +1655,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.crossings">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.crossings" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">crossings</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.crossings" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of all classical crossings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1705,7 +1705,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.endpoints">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">endpoints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.EndpointView.html#knotpy.classes.views.EndpointView" title="knotpy.classes.views.EndpointView"><span class="pre">EndpointView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.endpoints" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">endpoints</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.EndpointView.html#knotpy.classes.views.EndpointView" title="knotpy.classes.views.EndpointView"><span class="pre">EndpointView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.endpoints" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1716,7 +1716,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.faces">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">faces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FaceView.html#knotpy.classes.views.FaceView" title="knotpy.classes.views.FaceView"><span class="pre">FaceView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.faces" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">faces</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FaceView.html#knotpy.classes.views.FaceView" title="knotpy.classes.views.FaceView"><span class="pre">FaceView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.faces" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of faces (regions enclosed by arcs).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1727,7 +1727,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.framing">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">framing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.framing" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">framing</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.framing" title="Link to this definition">#</a></dt>
 <dd><p>Return the blackboard framing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1780,7 +1780,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.name">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.name" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.name" title="Link to this definition">#</a></dt>
 <dd><p>Return the diagram name identifier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1791,7 +1791,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.nodes">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><span class="pre">NodeView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.nodes" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">nodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.NodeView.html#knotpy.classes.views.NodeView" title="knotpy.classes.views.NodeView"><span class="pre">NodeView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.nodes" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of the diagram’s nodes, providing adjacency information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1802,7 +1802,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_arcs">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_arcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_arcs" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_arcs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_arcs" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of arcs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1813,7 +1813,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_crossings">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_crossings" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_crossings</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_crossings" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of classical crossings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1824,7 +1824,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_endpoints">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_endpoints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_endpoints" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_endpoints</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_endpoints" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1835,7 +1835,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_nodes">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_nodes" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_nodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_nodes" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1846,7 +1846,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_vertices">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_vertices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_vertices" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_vertices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_vertices" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of vertices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1857,7 +1857,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">type(se
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_virtual_crossings">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_virtual_crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_virtual_crossings" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">number_of_virtual_crossings</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.number_of_virtual_crossings" title="Link to this definition">#</a></dt>
 <dd><p>Return the number of virtual crossings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2031,7 +2031,7 @@ and the CCW endpoints are <code class="docutils literal notranslate"><span class
 
 <dl class="py method">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.set_endpoint">
-<span class="sig-name descname"><span class="pre">set_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_for_setting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjacent_endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_using=&lt;class</span> <span class="pre">'knotpy.classes.endpoint.Endpoint'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.set_endpoint" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_for_setting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjacent_endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_using</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'knotpy.classes.endpoint.Endpoint'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.set_endpoint" title="Link to this definition">#</a></dt>
 <dd><p>Set an endpoint to the specified adjacent endpoint, updating attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2091,7 +2091,7 @@ its concrete type is used and attributes copied.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.vertices">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vertices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.vertices" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vertices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.vertices" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of all vertices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2102,7 +2102,7 @@ its concrete type is used and attributes copied.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.virtual_crossings">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">virtual_crossings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></em><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.virtual_crossings" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">virtual_crossings</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="knotpy.classes.views.FilteredNodeView.html#knotpy.classes.views.FilteredNodeView" title="knotpy.classes.views.FilteredNodeView"><span class="pre">FilteredNodeView</span></a></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.virtual_crossings" title="Link to this definition">#</a></dt>
 <dd><p>Return a view of all virtual crossings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2110,6 +2110,11 @@ its concrete type is used and attributes copied.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="knotpy.classes.planardiagram.OrientedPlanarDiagram.attr">
+<span class="sig-name descname"><span class="pre">attr</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.attr" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -2186,6 +2191,7 @@ its concrete type is used and attributes copied.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.twin"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.twin()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.vertices"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.vertices</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.virtual_crossings"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.virtual_crossings</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotpy.classes.planardiagram.OrientedPlanarDiagram.attr"><code class="docutils literal notranslate"><span class="pre">OrientedPlanarDiagram.attr</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -2225,7 +2231,7 @@ its concrete type is used and attributes copied.</p></li>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>
