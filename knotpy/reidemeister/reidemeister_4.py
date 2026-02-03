@@ -385,6 +385,10 @@ def reidemeister_4_slide(
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R4 "
 
+    # remove "_temp"
+    for ep in k.endpoints:
+        ep.attr.pop("_temp", None)
+
     return k
 
 

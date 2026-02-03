@@ -8,7 +8,7 @@ through faces in the dual planar diagram.
 
 from __future__ import annotations
 
-__all__ = ["closure"]
+__all__ = ["closure", "open_end_distance"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
 
@@ -149,6 +149,22 @@ def _over_and_under_closure(k: PlanarDiagram, A, B, arcs):
         raise ValueError("The leaves should have degree 3 after double-sided closure.")
     return k
 
+def open_end_distance(k: PlanarDiagram):
+    # returns distance between two open endpoints (leaf) - number of intersecting arcs for the closure, f-distance (?) for knotoids.
+    leafs = [v for v in k.vertices if k.degree(v) == 1]
+    if len(leafs) != 2:
+        raise ValueError("Can only close a diagram with exactly two leaves.")
+    A, B = leafs
+
+    dual = dual_planar_diagram(k)
+
+    A_ep = k.endpoint_from_pair((A, 0))
+    B_ep = k.endpoint_from_pair((B, 0))
+    A_face = next(f for f in dual.vertices if A_ep in f)
+    B_face = next(f for f in dual.vertices if B_ep in f)
+
+    path = _bfs_shortest_path(dual, A_face, B_face)
+    return len(path)
 
 def closure(k: PlanarDiagram, over: bool = False, under: bool = False) -> PlanarDiagram:
     """Close a knotoid by routing through the dual graph between its two degree-1 vertices.

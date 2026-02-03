@@ -30,6 +30,8 @@ from knotpy.reidemeister.reidemeister import (
     detour_generator,
     reidemeister_decreasing_moves_generator,
     flype_generator,
+    r5_twist_generator,
+    r4_generator
 )
 from knotpy.utils.disjoint_union_set import DisjointSetUnion
 from knotpy.algorithms.symmetry import flip
@@ -187,8 +189,20 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
         ls.new_level()
         for lvl in (ls.iter_level(start - 2), ls.iter_level(start - 1)):
             for k in lvl:
+                #print("detour")
                 for _ in detour_generator(k):
+                    #print(_)
                     ls.add(canonical(_))
+                #print("twist")
+                # TODO: do we always need a twist to simplify?
+                for _ in r5_twist_generator(k):
+                    #print("_")
+                    ls.add(canonical(_))
+                #print("r4")
+                for _ in r4_generator(k):
+                    #print("_")
+                    ls.add(canonical(_))
+
 
         if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after detour)", ls.level_sizes())
 
@@ -197,8 +211,15 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
         # Explore the new space and reduce the diagrams.
         from knotpy.reidemeister.space import crossing_preserving_space, crossing_decreasing_space  # TODO: push this to top
 
+
+
         ls.new_level()
+
+        if _DEBUG_SIMPLIFY: print(f"Crossing preserving lvl -2 =", len(ls._levels) -2, "of length", len(list(ls.iter_level(-2))))
+
         ls.extend(crossing_preserving_space(ls.iter_level(-2), assume_canonical=True))  # may be empty if R3 not allowed
+        ls.remove_empty_levels()
+
 
         if _DEBUG_SIMPLIFY: print(f"Depth {depth_index} (after preserving)", ls.level_sizes())
 

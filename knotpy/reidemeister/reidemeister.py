@@ -102,6 +102,7 @@ def detour_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable)
             yield detour_move(k, location, inplace=False)
 
 
+
 def flype_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
     """Generate all flypes and returns new diagrams."""
     if isinstance(diagrams, PlanarDiagram):

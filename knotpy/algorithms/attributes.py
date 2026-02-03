@@ -102,11 +102,20 @@ def clear_diagram_attributes(k: Diagram | DiagramCollection, attr: str | list[st
                 d.attr.pop(key, None)
 
 
-def clear_attributes(k: Diagram | DiagramCollection) -> None:
-    """Clear all attributes (nodes, endpoints, diagram-level)."""
-    clear_node_attributes(k)
-    clear_endpoint_attributes(k)
-    clear_diagram_attributes(k)
+def clear_attributes(k: Diagram | DiagramCollection, exceptions: list | tuple | set = ()) -> None:
+    """Clear all attributes (nodes, endpoints, diagram-level).
+    exceptions only refer to diagram attributes"""
+    clear_node_attributes(k, exceptions)
+    clear_endpoint_attributes(k, exceptions)
+
+    for d in _iter_diagrams(k):
+        old_diagram_attr = {}
+        for e in exceptions:
+            if e in d.attr:
+                old_diagram_attr[e] = d.attr[e]
+
+        clear_diagram_attributes(d, exceptions)
+        d.attr.update(old_diagram_attr)
 
 
 def clear_temporary_node_attributes(k: Diagram | DiagramCollection, attr: str | list[str] | set[str] | tuple[str, ...] | None = None) -> None:

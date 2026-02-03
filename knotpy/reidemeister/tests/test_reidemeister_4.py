@@ -160,7 +160,30 @@ def test_all_strands_over():
     assert yamada(k_) == yamada(k)
 
 
+def test_bonded():
+    from knotpy.reidemeister.simplify import simplify
+    k1 = from_knotpy_notation("a=V(b0 c0 d0) b=V(a0 d2 c1) c=V(a1 b2 d1) d=V(a2 c2 b1)")
+    k2 = from_knotpy_notation("a=V(b0 c0 d0) b=V(a0 d3 e0) c=V(a1 e2 d1) d=X(a2 c2 e1 b1) e=V(b2 d2 c1)")
+    #
+    print(k2)
+    # print("---")
+    # candidates = []
+    # for r in find_reidemeister_4_slide(k2):
+    #     k2_r4 = reidemeister_4_slide(k2, r, inplace=False)
+    #     print(k2_r4)
+    #     s = simplify(k2_r4)
+    #     print(s)
+    #     print()
+
+
+    print("Simplified:")
+    print(simplify(k2, depth=1))
+
+
+    print(k1 < k2)
+
 if __name__ == "__main__":
-    test_all_strands_over()
-    test_case_4()
-    test_reidemeister_4()
+    test_bonded()
+    # test_all_strands_over()
+    # test_case_4()
+    # test_reidemeister_4()
