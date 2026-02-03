@@ -33,10 +33,11 @@ extensions = [
     "sphinx.ext.mathjax",
 ]
 
+
 source_suffix = {
     ".rst": "restructuredtext",
     ".ipynb": "myst-nb",
-    ".md": "markdown",
+    #".md": "markdown",
 }
 
 nb_execution_mode = "cache"
