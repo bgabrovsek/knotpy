@@ -1,7 +1,7 @@
 #python >=3.9
 sphinx
 myst-nb
-myst-parser
+#myst-parser
 pydata-sphinx-theme
 
 sympy >=1.8
