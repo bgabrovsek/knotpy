@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Knot example &#8212; KnotPy  documentation</title>
+    <title>Notation &#8212; KnotPy  documentation</title>
   
   
   
@@ -45,11 +45,9 @@
     <script src="../../_static/documentation_options.js?v=7f41d439"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/basic/01-print';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/notation/README';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Knot example" href="02-plot.html" />
-    <link rel="prev" title="Basic" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -162,8 +160,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
     Examples
   </a>
 </li>
@@ -237,8 +235,10 @@
       
       
       
+        
+      
       <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -281,8 +281,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
     Examples
   </a>
 </li>
@@ -325,26 +325,6 @@
     
   </div>
   
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Basic</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Knot example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02-plot.html">Knot example</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../notation/index.html">Notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../notation/example_notations.html">Parsing knots</a></li>
-</ul>
-</details></li>
-</ul>
-</div>
-</nav></div>
-    </div>
-  
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
       <div class="sidebar-primary-item">
@@ -380,13 +360,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Examples</a></li>
-    
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Basic</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Knot example</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Notation</span></li>
   </ul>
 </nav>
 </div>
@@ -403,35 +377,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="sphx-glr-download-link-note admonition note">
-<p class="admonition-title">Note</p>
-<p><a class="reference internal" href="#sphx-glr-download-auto-examples-basic-01-print-py"><span class="std std-ref">Go to the end</span></a>
-to download the full example code.</p>
-</div>
-<section class="sphx-glr-example-title" id="knot-example">
-<span id="sphx-glr-auto-examples-basic-01-print-py"></span><h1>Knot example<a class="headerlink" href="#knot-example" title="Link to this heading">#</a></h1>
-<p>Print the diagram of the trefoil knot (oriented/non-oriented)</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">knotpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kp</span>
-
-<span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;3_1&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-
-<span class="n">k</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">knot</span><span class="p">(</span><span class="s2">&quot;+3_1&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-01-print-py">
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/4f65f3d02e7da45ece5ccccd9458a6f7/01-print.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01-print.ipynb</span></code></a></p>
-</div>
-<div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/a467d325c00c35cbb5af47170412e3cb/01-print.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01-print.py</span></code></a></p>
-</div>
-<div class="sphx-glr-download sphx-glr-download-zip docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/83228dcd3aa27956855d2299e8e1b62c/01-print.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">01-print.zip</span></code></a></p>
-</div>
-</div>
-<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+  <section id="notation">
+<h1>Notation<a class="headerlink" href="#notation" title="Link to this heading">#</a></h1>
 </section>
 
 
