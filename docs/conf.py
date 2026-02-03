@@ -15,11 +15,20 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 
 # -- General configuration ---------------------------------------------------
+# extensions = [
+# "myst_nb",
+#     'sphinx.ext.autodoc',
+#     'sphinx.ext.autosummary',
+#     #'sphinx_gallery.gen_gallery',
+#     "sphinx.ext.napoleon",
+#     "sphinx.ext.mathjax",
+# ]
+
 extensions = [
-"myst_nb",
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    #'sphinx_gallery.gen_gallery',
+    "myst_nb",
+    "myst_parser",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
 ]
