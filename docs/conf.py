@@ -72,7 +72,7 @@ html_sidebars = {
 }
 
 sphinx_gallery_conf = {
-    'examples_dirs': '../examples',
+    'examples_dirs': 'examples',
     'gallery_dirs': 'auto_examples',
     'image_scrapers': ('matplotlib',),
     'matplotlib_animations': True,
