@@ -15,18 +15,11 @@ author = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
 
 # -- General configuration ---------------------------------------------------
-# extensions = [
-# "myst_nb",
-#     'sphinx.ext.autodoc',
-#     'sphinx.ext.autosummary',
-#     #'sphinx_gallery.gen_gallery',
-#     "sphinx.ext.napoleon",
-#     "sphinx.ext.mathjax",
-# ]
+
 
 extensions = [
     "myst_nb",
-    "myst_parser",
+    #"myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
@@ -98,13 +91,6 @@ html_sidebars.update({
     "examples/**": [],
 })
 
-
-# sphinx_gallery_conf = {
-#     'examples_dirs': 'examples',
-#     'gallery_dirs': 'auto_examples',
-#     'image_scrapers': ('matplotlib',),
-#     'matplotlib_animations': True,
-# }
 
 html_logo = "_static/logo.png"
 # html_favicon = "_static/logo.ico"
