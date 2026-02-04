@@ -1,0 +1,1389 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Tutorial (test) &#8212; KnotPy  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorial/tutorial';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Tutorial" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="KnotPy  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="KnotPy  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Install
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Install
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/bgabrovsek/knotpy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial (test)</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorial</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tutorial (test)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="tutorial-test">
+<h1>Tutorial (test)<a class="headerlink" href="#tutorial-test" title="Link to this heading">#</a></h1>
+<p>Step-by-step tutorial introducing KnotPy, from installation to constructing knots, links, and computing invariants.</p>
+<section id="your-first-knot">
+<h2>Your first knot<a class="headerlink" href="#your-first-knot" title="Link to this heading">#</a></h2>
+<p>Create the (unoriented) trefoil knot and draw it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import knotpy as kp
+k = kp.knot(&quot;3_1&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a24ef0211e64396a893f7f67da69bb2b1e6a1017e4e6294ef72fefae426da6f9.png" src="../_images/a24ef0211e64396a893f7f67da69bb2b1e6a1017e4e6294ef72fefae426da6f9.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k.name
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.jones(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle - t^{4} + t^{3} + t\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;trefoil&quot;)
+kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;+3_1&quot;)
+kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;+3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="input-output">
+<h2>Input/Output<a class="headerlink" href="#input-output" title="Link to this heading">#</a></h2>
+<section id="pd-code">
+<h3>PD code<a class="headerlink" href="#pd-code" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;X(4,2,5,1),X(8,6,1,5),X(6,3,7,4),X(2,7,3,8)&quot;)
+kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;4_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;PD[X[4, 2, 5, 1], X[8, 6, 1, 5], X[6, 3, 7, 4], X[2, 7, 3, 8]]&quot;)
+kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;4_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation([[4,2,5,1],[8,6,1,5],[6,3,7,4],[2,7,3,8]])
+kp.identify(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;4_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.to_pd_notation(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;X[0,1,2,3],X[4,5,3,2],X[5,6,7,0],X[1,7,6,4]&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1,2,3],V[1,4,5],X[2,6,7,8],X[8,9,4,3],X[9,7,6,5]&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fefa8cf7a7455ae359ccf445bc31cf3f05cb3d4307ce78926adbebd9cd6ae78f.png" src="../_images/fefa8cf7a7455ae359ccf445bc31cf3f05cb3d4307ce78926adbebd9cd6ae78f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1,2,3],V[1,4,5],X[2,6,7,8],X[8,9,4,3],X[9,7,6,5]&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fefa8cf7a7455ae359ccf445bc31cf3f05cb3d4307ce78926adbebd9cd6ae78f.png" src="../_images/fefa8cf7a7455ae359ccf445bc31cf3f05cb3d4307ce78926adbebd9cd6ae78f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1],X[1,5,2,4],X[3,7,4,6],X[5,3,6,2],V[7]&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.25 False
+0.25 False
+</pre></div>
+</div>
+<img alt="../_images/75284672ba20060b653f115bb6bccf59de8782ee1e5652f97fce4c4051a5db06.png" src="../_images/75284672ba20060b653f115bb6bccf59de8782ee1e5652f97fce4c4051a5db06.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;X[4,1,3,2],X[1,4,2,3]&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/90c78a053f204b5bfdf538a8836a0b39ce0a753b7d7d9ea12a209eb8a21be01a.png" src="../_images/90c78a053f204b5bfdf538a8836a0b39ce0a753b7d7d9ea12a209eb8a21be01a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;X[4,1,3,2],X[1,4,2,3]&quot;)
+kp.sanity_check(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;X[4,1,3,2],X[1,3,2,4]&quot;)
+kp.sanity_check(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="em-code">
+<h3>EM code<a class="headerlink" href="#em-code" title="Link to this heading">#</a></h3>
+</section>
+<section id="id1">
+<h3>EM code<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+</section>
+<section id="id2">
+<h3>EM code<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+</section>
+<section id="plantri-code">
+<h3>Plantri code<a class="headerlink" href="#plantri-code" title="Link to this heading">#</a></h3>
+</section>
+<section id="native-knotpy-code">
+<h3>Native KnotPy code<a class="headerlink" href="#native-knotpy-code" title="Link to this heading">#</a></h3>
+</section>
+<section id="canonical-form">
+<h3>Canonical form<a class="headerlink" href="#canonical-form" title="Link to this heading">#</a></h3>
+</section>
+<section id="inport-export">
+<h3>Inport/Export<a class="headerlink" href="#inport-export" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="drawing">
+<h2>Drawing<a class="headerlink" href="#drawing" title="Link to this heading">#</a></h2>
+</section>
+<section id="operations">
+<h2>Operations<a class="headerlink" href="#operations" title="Link to this heading">#</a></h2>
+<section id="connected-sum">
+<h3>Connected sum<a class="headerlink" href="#connected-sum" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k31 = kp.knot(&quot;3_1&quot;)
+k41 = kp.knot(&quot;4_1&quot;)
+k_sum = kp.connected_sum(k31, k41)
+kp.is_connected_sum(k_sum)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>a, b = kp.connected_sum_decomposition(k_sum)
+kp.identify(a), kp.identify(b)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(&#39;3_1&#39;, &#39;4_1&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="disjoint-union">
+<h3>Disjoint union<a class="headerlink" href="#disjoint-union" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k_union = kp.disjoint_union(k31, k41)
+kp.is_disjoint_union(k_union)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>a, b = kp.disjoint_union_decomposition(k_union)
+kp.identify(a), kp.identify(b)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(&#39;3_1&#39;, &#39;4_1&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="symmetry">
+<h2>Symmetry<a class="headerlink" href="#symmetry" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;3_1&quot;)
+kp.symmetry_type(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;reversible&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.symmetry_type(&quot;9_32&quot;)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;chiral&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>[k.name for k in kp.knots(range(10)) if kp.symmetry_type(k) == &quot;chiral&quot;]
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;9_32&#39;, &#39;9_33&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for n in range(9, 12):
+    print(&quot;There are&quot;, len([k for k in kp.knots(n) if kp.symmetry_type(k) == &quot;chiral&quot;]), &quot;chiral knots with&quot;, n, &quot;crossings.&quot;)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>There are 2 chiral knots with 9 crossings.
+There are 27 chiral knots with 10 crossings.
+There are 187 chiral knots with 11 crossings.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="mirror">
+<h2>Mirror<a class="headerlink" href="#mirror" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;3_1&quot;)
+k_mirror = kp.mirror(k)
+kp.identify(k_mirror)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;3_1*&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;4_1&quot;)
+k_mirror = kp.mirror(k)
+kp.identify(k_mirror)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;4_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<section id="orientation">
+<h3>Orientation<a class="headerlink" href="#orientation" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;3_1&quot;)
+k_oriented = kp.orient(k)
+kp.identify(k_oriented)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;+3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k_unoriented = kp.unorient(k)
+kp.identify(k_unoriented)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;+3_1&quot;)
+k_reversed = kp.reverse(k)
+kp.identify(k_reversed)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;+3_1&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;+8_17&quot;)
+k_reversed = kp.reverse(k)
+kp.identify(k_reversed)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;-8_17&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;L6a5&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5754745f82ce515b3fc6db686cf154f763432f1805e1fa3118bc7fa325cd4884.png" src="../_images/5754745f82ce515b3fc6db686cf154f763432f1805e1fa3118bc7fa325cd4884.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;L6a5+--&quot;)
+kp.draw(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/08e4c3fd7d1baef484894ab337eb4f9be247eedd2670e9eb749fb6f8dd5ff65a.png" src="../_images/08e4c3fd7d1baef484894ab337eb4f9be247eedd2670e9eb749fb6f8dd5ff65a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;L6a5&quot;)
+kp.number_of_link_components(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k_orientations = kp.orientations(k)
+len(k_orientations)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>8
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="flip">
+<h3>Flip<a class="headerlink" href="#flip" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1],X[1,5,2,4],X[3,7,4,6],X[5,3,6,2],V[7]&quot;)
+k_flipped = kp.flip(k)
+kp.canonical(k) == kp.canonical(k_flipped)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="invariants">
+<h2>Invariants<a class="headerlink" href="#invariants" title="Link to this heading">#</a></h2>
+<section id="knot-and-link-invariants">
+<h3>Knot and link invariants<a class="headerlink" href="#knot-and-link-invariants" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;3_1&quot;)
+print(&quot;Knot:&quot;, k.name)
+print(&quot;Jones polynomial:&quot;, kp.jones(k))
+print(&quot;Alexander polynomial:&quot;, kp.alexander(k))
+print(&quot;Bracket polynomial:&quot;, kp.bracket(k, normalize=True))
+print(&quot;HOMFLYPT polynomial:&quot;, kp.homflypt(k))
+print(&quot;HOMFLYPT polynomial (az):&quot;, kp.homflypt(k, variables=&quot;az&quot;))
+print(&quot;HOMFLYPT polynomial (lm):&quot;, kp.homflypt(k, variables=&quot;lm&quot;))
+print(&quot;HOMFLYPT polynomial (xyz):&quot;, kp.homflypt(k, variables=&quot;xyz&quot;))
+print(&quot;Kauffman 2-variable polynomial:&quot;, kp.kauffman(k))
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Knot: 3_1
+Jones polynomial: -t**4 + t**3 + t
+Alexander polynomial: t**2 - t + 1
+Bracket polynomial: A**(-4) + A**(-12) - 1/A**16
+HOMFLYPT polynomial: -v**4 + v**2*z**2 + 2*v**2
+HOMFLYPT polynomial (az): z**2/a**2 + 2/a**2 - 1/a**4
+HOMFLYPT polynomial (lm): m**2/l**2 - 2/l**2 - 1/l**4
+HOMFLYPT polynomial (xyz): -2*y/x - y**2/x**2 + z**2/x**2
+Kauffman 2-variable polynomial: a**5*z + a**4*z**2 - a**4 + a**3*z + a**2*z**2 - 2*a**2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;3_1&quot;)
+print(&quot;Knot:&quot;, k.name)
+print(&quot;Writhe:&quot;, kp.writhe(k))
+print(&quot;Bracket polynomial:&quot;, kp.bracket(k, normalize=True))
+print(&quot;Jones polynomial:&quot;, kp.jones(k))
+print(&quot;Conway polynomial:&quot;, kp.conway(k))
+print(&quot;Alexander polynomial:&quot;, kp.alexander(k))
+print(&quot;HOMFLYPT polynomial:&quot;, kp.homflypt(k))
+print(&quot;HOMFLYPT polynomial (az):&quot;, kp.homflypt(k, variables=&quot;az&quot;))
+print(&quot;HOMFLYPT polynomial (lm):&quot;, kp.homflypt(k, variables=&quot;lm&quot;))
+print(&quot;HOMFLYPT polynomial (xyz):&quot;, kp.homflypt(k, variables=&quot;xyz&quot;))
+print(&quot;Kauffman 2-variable polynomial:&quot;, kp.kauffman(k))
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Knot: 3_1
+Writhe: 3
+Bracket polynomial: A**(-4) + A**(-12) - 1/A**16
+Jones polynomial: -t**4 + t**3 + t
+Conway polynomial: z**2 + 1
+Alexander polynomial: t**2 - t + 1
+HOMFLYPT polynomial: -v**4 + v**2*z**2 + 2*v**2
+HOMFLYPT polynomial (az): z**2/a**2 + 2/a**2 - 1/a**4
+HOMFLYPT polynomial (lm): m**2/l**2 - 2/l**2 - 1/l**4
+HOMFLYPT polynomial (xyz): -2*y/x - y**2/x**2 + z**2/x**2
+Kauffman 2-variable polynomial: a**5*z + a**4*z**2 - a**4 + a**3*z + a**2*z**2 - 2*a**2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;+3_1&quot;)
+g = kp.fundamental_group(k)
+g.generators, g.relators
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((x0, x1, x2), [x0*x1*x2**-1*x1**-1, x1*x2*x0**-1*x2**-1, x2*x0*x1**-1*x0**-1])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.knot(&quot;L6a_1++&quot;)
+kp.multivariable_alexander(k)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle 2 t_{1} t_{2} - t_{1} - t_{2} + 2\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>.....
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">41</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+    <span class="o">.....</span>
+        <span class="o">^</span>
+<span class="ne">SyntaxError</span>: invalid syntax
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="spatial-knotted-graph-invariants">
+<h3>Spatial (knotted) graph invariants<a class="headerlink" href="#spatial-knotted-graph-invariants" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1,2,3],V[1,4,5],X[2,6,7,8],X[8,9,4,3],X[9,7,6,5]&quot;)
+#kp.unplugging()
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.yamada(k)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k_oriented = kp.orient(k)
+g = kp.fundamental_group(k_oriented)
+g.generators, g.relators
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>g = kp.wheel_graph(5)
+kp.tutte(g)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="knotoid-and-linkoid-invariants">
+<h3>Knotoid and linkoid invariants<a class="headerlink" href="#knotoid-and-linkoid-invariants" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.from_pd_notation(&quot;V[1],X[1,5,2,4],X[3,7,4,6],X[5,3,6,2],V[7]&quot;)
+k.name = &quot;k3_1&quot;
+print(&quot;Knotoid:&quot;, k.name)
+print(&quot;Affine index polynomial:&quot;, kp.affine_index_polynomial(k))
+print(&quot;Arrow polynomial:&quot;, kp.arrow_polynomial(k))
+print(&quot;Mock Alexander polynomial&quot;, kp.mock_alexander_polynomial(k))
+print(&quot;Kauffman bracket skein module:&quot;, kp.kauffman_bracket_skein_module(k, normalize=True))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k_closure = kp.closure(k, over=True, under=True)
+kp.yamada(k_closure)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="reidemesiter-moves">
+<h2>Reidemesiter moves<a class="headerlink" href="#reidemesiter-moves" title="Link to this heading">#</a></h2>
+<section id="simplifying-a-diagram">
+<h3>Simplifying a diagram<a class="headerlink" href="#simplifying-a-diagram" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>culprit_unknot =kp.knot(&quot;culprit&quot;)
+kp.draw(culprit_unknot)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.identify(culprit_unknot)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.simplify(culprit_unknot)
+len(k.crossings)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.is_unknot(k)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>goeritz_unknot = kp.knot(&quot;goeritz&quot;)
+kp.draw(goeritz_unknot)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.identify(goeritz_unknot)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.simplify(goeritz_unknot)
+len(k.crossings)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>k = kp.simplify(goeritz_unknot, depth=2, flype=True)
+len(k.crossings)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="reidemeister-moves">
+<h3>Reidemeister moves<a class="headerlink" href="#reidemeister-moves" title="Link to this heading">#</a></h3>
+</section>
+<section id="id3">
+<h3>Reidemeister moves<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="diagram-attributes">
+<h2>Diagram attributes<a class="headerlink" href="#diagram-attributes" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.is_knot(K)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>%%sql
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;unknot&quot;)
+K.name
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+3_1&quot;)
+K.is_oriented()
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K_ = kp.knot(&quot;-3_1&quot;)
+kp.identify(kp.knot(&quot;-3_1&quot;))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+print(&quot;Knot:&quot;, K.name)
+print(&quot;Jones polynomial:&quot;, kp.jones(K))
+print(&quot;Alexander polynomial:&quot;, kp.alexander(K))
+print(&quot;Bracket polynomial:&quot;, kp.bracket(K, normalize=True))
+print(&quot;HOMFLYPT polynomial:&quot;, kp.homflypt(K))
+print(&quot;HOMFLYPT polynomial (az):&quot;, kp.homflypt(K, variables=&quot;az&quot;))
+print(&quot;HOMFLYPT polynomial (lm):&quot;, kp.homflypt(K, variables=&quot;lm&quot;))
+print(&quot;HOMFLYPT polynomial (xyz):&quot;, kp.homflypt(K, variables=&quot;xyz&quot;))
+print(&quot;Kauffman 2-variable polynomial:&quot;, kp.kauffman(K))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+3_1&quot;)
+G = kp.fundamental_group(K)
+G.generators, G.relators
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.from_pd_notation(&quot;[[1,5,2,4],[3,1,4,6],[5,3,6,2]]&quot;)
+kp.identify(K)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.from_pd_notation(&quot;PD[X[1,9,2,8], X[3,10,4,11], X[5,3,6,2],X[7,1,8,12], X[9,4,10,5], X[11,7,12,6]]&quot;)
+kp.identify(K)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>kp.to_pd_notation(kp.knot(&quot;3_1&quot;))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span># EM, CONDENSED EM,... PLANTRI
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+kp.identify(kp.orient(K))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>[kp.identify(K) for K in kp.orientations(kp.knot(&quot;9_32&quot;))]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;3_1&quot;)
+kp.identify(kp.mirror(K))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+9_32&quot;)
+kp.identify(kp.reverse(K))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>K = kp.knot(&quot;+9_32&quot;)
+K = kp.mirror(kp.reverse(K))
+kp.identify(K)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-first-knot">Your first knot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input-output">Input/Output</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pd-code">PD code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#em-code">EM code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">EM code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">EM code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plantri-code">Plantri code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#native-knotpy-code">Native KnotPy code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#canonical-form">Canonical form</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inport-export">Inport/Export</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drawing">Drawing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operations">Operations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connected-sum">Connected sum</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#disjoint-union">Disjoint union</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetry">Symmetry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mirror">Mirror</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#orientation">Orientation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flip">Flip</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#invariants">Invariants</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knot-and-link-invariants">Knot and link invariants</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spatial-knotted-graph-invariants">Spatial (knotted) graph invariants</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#knotoid-and-linkoid-invariants">Knotoid and linkoid invariants</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reidemesiter-moves">Reidemesiter moves</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplifying-a-diagram">Simplifying a diagram</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reidemeister-moves">Reidemeister moves</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Reidemeister moves</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagram-attributes">Diagram attributes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Boštjan Gabrovšek.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
