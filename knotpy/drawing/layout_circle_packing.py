@@ -679,7 +679,7 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             # enlenghten the endpoint for 1/3 of the face circle radius
             #leaf_length = circles[face].radius / 2 if face in circles else mean([circles[face].radius/2 for face in preprocessed_k.faces if face in circles])#external_arc_radius / 2
             leaf_length = circles[face].radius / 2 if face in circles else external_arc_radius / 2
-            print(leaf_length, face in circles)
+            #print(leaf_length, face in circles)
 
             leaf_ep_segment = Segment(leaf_boundary_point + (leaf_boundary_point - circles[node].center) / abs(leaf_boundary_point - circles[node].center) * leaf_length, leaf_boundary_point)
 

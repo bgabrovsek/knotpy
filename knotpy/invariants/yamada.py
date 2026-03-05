@@ -12,7 +12,7 @@ Optimizations:
 
 from __future__ import annotations
 
-__all__ = ["yamada"]
+__all__ = ["yamada", "yamada_mirror"]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
@@ -46,6 +46,15 @@ _yamada_graph_cache = Cache(max_cache_size=10000, max_key_length=6)
 # The global cache storing precomputed Yamada polynomials of knotted graphs (≈7KB per diagram).
 # 'max_key_length' limits the number of vertices for caching.
 _yamada_knotted_cache = Cache(max_cache_size=1000, max_key_length=5)
+
+def yamada_mirror(expr, normalize: bool = True) -> PlanarDiagram:
+    """Return the yamada of the mirror diagram."""
+    polynomial = expr.subs(_A, _A ** -1)
+    if normalize:
+        # Normalize so the lowest A-exponent term becomes constant (handles R1/R4 framing effects).
+        lowest = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())
+        polynomial = sp.expand(polynomial * (-_A) ** (-lowest))
+    return polynomial
 
 
 def yamada(k: PlanarDiagram, normalize: bool = True) -> sp.Expr:

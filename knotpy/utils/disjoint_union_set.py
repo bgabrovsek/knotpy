@@ -215,6 +215,12 @@ class DisjointSetUnion:
             result[rep] = set(comp) - {rep}
         return result
 
+    def connected(self, a: Hashable, b: Hashable) -> bool:
+        """Return ``True`` if ``a`` is in the same equivalence class as ``b``."""
+        ra = self.find(a)
+        rb = self.find(b)
+        return ra is not None and ra == rb
+
 class SymmetryDSU:
     """Symmetry-aware union–find on top of a base DSU.
 

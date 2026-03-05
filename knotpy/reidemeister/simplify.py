@@ -358,6 +358,17 @@ def reduce_equivalent_diagrams(diagrams: set | list, depth: int = 1, flype: bool
                 for k in lvl:
                     for _ in detour_generator(k):
                         ls.add(canonical(_))
+                        #print("detour")
+
+                    for _ in r5_twist_generator(k):
+                        #print("twist")
+                        # print("_")
+                        ls.add(canonical(_))
+                        # print("r4")
+                    for _ in r4_generator(k):
+                        # print("_")
+                        #print("r4")
+                        ls.add(canonical(_))
 
             if _DEBUG_RED: print(f"Depth {depth_index} (after detour) [{ls_index}]:", ls.level_sizes())
 
