@@ -86,6 +86,7 @@ def yamada(k: PlanarDiagram, normalize: bool = True) -> sp.Expr:
     if normalize:
         # Normalize so the lowest A-exponent term becomes constant (handles R1/R4 framing effects).
         lowest = min(term.as_coeff_exponent(_A)[1] for term in polynomial.as_ordered_terms())
+        #polynomial = sp.expand(polynomial * (-_A) ** (-lowest))
         polynomial = sp.expand(polynomial * (-_A) ** (-lowest))
 
     settings.load(settings_dump)

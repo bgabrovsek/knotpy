@@ -20,9 +20,12 @@ import warnings
 from knotpy.algorithms.insert import insert_endpoint, insert_arc
 from knotpy.classes.planardiagram import PlanarDiagram
 from knotpy.algorithms.topology import bridges, leafs, kinks, loops
-from knotpy.algorithms.cut_set import cut_nodes
+from knotpy.algorithms.cut_set import cut_nodes, cut_nodes_components
 from knotpy.algorithms.subdivide import subdivide_endpoint
 from knotpy.notation.native import to_knotpy_notation
+from knotpy.algorithms.topology import adjacent_leafs
+from knotpy.algorithms.disjoint_union import number_of_disjoint_components
+
 
 __all__ = ["non_leaf_bridges", "_add_support_arcs", "drawable"]
 __version__ = "0.2"
@@ -40,6 +43,7 @@ def non_leaf_bridges(k: PlanarDiagram) -> list:
         degree-1 vertices.
     """
     return [b for b in bridges(k) if all(k.degree(ep.node) > 1 for ep in b)]
+
 
 
 def _visible(__obj) -> bool:
@@ -86,6 +90,38 @@ def _subdivide_two_adjacent_arcs(k: PlanarDiagram, endpoint) -> tuple:
     return node_left, node_right, k.endpoint_from_pair((node_left, 0)), k.endpoint_from_pair((node_right, 0))
 
 
+def _add_support_arc_for_neighbour_leafs(k: PlanarDiagram) -> None:
+    """Add invisible support arcs around two incident leaf nodes.
+    If there is a leaf next to another leaf, it closes them by adding an edge to the two leaf nodes.
+    """
+
+    #print("adding sup")
+    #print(k)
+
+    for v in k.nodes:
+        node_inst = k.nodes[v]
+        node_deg = k.degree(v)
+        if node_deg < 2:
+            continue
+
+        for pos in range(node_deg):
+            # check that they are distinct neighbour leafs
+            leaf_node_a, leaf_node_b = node_inst[pos].node, node_inst[(pos + 1) % node_deg].node
+            if leaf_node_a != leaf_node_b and leaf_node_a != v and leaf_node_b != v and k.degree(leaf_node_a) == 1 and k.degree(leaf_node_b) == 1:
+
+                k.set_endpoint(endpoint_for_setting=(leaf_node_a, 1),
+                                adjacent_endpoint=(leaf_node_b, 1),
+                                _support=True)
+
+                k.set_endpoint(endpoint_for_setting=(leaf_node_b, 1),
+                                adjacent_endpoint=(leaf_node_a, 1),
+                                _support=True)
+
+    #print("added support arcs for neighbour leafs", k)
+
+
+
+
 def _add_support_arcs_for_cut_vertices(k: PlanarDiagram) -> None:
     """Add invisible support arcs around cut-vertices (excluding leaf/kink adjacencies).
 
@@ -99,14 +135,47 @@ def _add_support_arcs_for_cut_vertices(k: PlanarDiagram) -> None:
         k: Planar diagram (modified in place).
     """
 
+
     def _cut_nodes_not_leaf_adjacent_or_kink():
+        # take all cut-nodes
         cn = cut_nodes(k)
+
+        # remove cut-nodes that have only one adjacent leaf
+        cn = [node for node in cn if len(adjacent_leafs(k, node)) != 1]
+
+        return set(cn)
+
+        #print("diagram", k)
+        #print("cutting nodes:", cn)
         leaf_adj = [k.twin((l, 0)).node for l in leafs(k)]
         kink_crossings = [ep.node for ep in kinks(k)]
-        return set(cn) - set(leaf_adj) - set(kink_crossings)
+        # TODO: we removed kinks here !!!
+        return set(cn) - set(leaf_adj) #- set(kink_crossings)
 
-    while nodes := _cut_nodes_not_leaf_adjacent_or_kink():
+    def _cut_nodes_multi_leaf():
+        # take only cut nodes with more than 1 leaf
+        return {node for node in cut_nodes(k) if len(adjacent_leafs(k, node)) != 1}
+
+    #print("Cut nodes", cut_nodes(k))
+    #print("Cut multi", _cut_nodes_multi_leaf())
+
+    #print("cut nodes:",  {node for node in cut_nodes(k)})
+    #print("cut multi leaf:", _cut_nodes_multi_leaf())
+    #print("count",  [[node, adjacent_leafs(k, node)] for node in cut_nodes(k)])
+    #while nodes :=  cut_nodes(k): #_cut_nodes_not_leaf_adjacent_or_kink():
+    while nodes := _cut_nodes_multi_leaf():
+
+        #print("Nodes", nodes)
+
+        #print("knot", k)
+        #print("nodes", nodes)
         node = nodes.pop()
+
+        #print(k)
+        #print("Fixing cut-vertex:", nodes, node)
+
+
+
         degree = k.degree(node)
         bivertices = [subdivide_endpoint(k, (node, pos)) for pos in range(degree)]
 
@@ -129,6 +198,8 @@ def _add_support_arcs_for_cut_vertices(k: PlanarDiagram) -> None:
                 adjacent_endpoint=(adj_vert_a, adj_pos_a),
                 _support=True,
             )
+
+
 
 
 def _long_bridges(k: PlanarDiagram):
@@ -157,6 +228,8 @@ def _long_bridges(k: PlanarDiagram):
         _bridges.remove(endpoints[0][2])
         _bridges.remove(endpoints[1][2])
         _bridges.add(frozenset([endpoints[0][0], endpoints[1][0]]))
+
+
 
     return _bridges
 
@@ -252,12 +325,32 @@ def _add_support_arcs(k: PlanarDiagram):
     else:
         name = None
 
+    #print("Before adding support arcs for bridges: ", k)
+
     _add_support_arcs_for_bridges(k)
 
-    if non_leaf_bridges(k):
-        raise ValueError("Diagram has bridges after adding bridge-support arcs.")
+    #print("After adding support arcs for bridges: ", k)
+
+    _add_support_arc_for_neighbour_leafs(k)
+
+    #print("After adding support arcs for neighbour leafs: ", k)
+
+    if nlb := non_leaf_bridges(k):
+        raise ValueError(f"Diagram has bridges after adding bridge-support arcs ({nlb})")
+
+
+    #print("Before adding support arcs for cut vertices: ", k)
+
+    #print("cuts - nodes", cut_nodes_components(k))
+    #print("disjoint components", number_of_disjoint_components(k))
+
 
     _add_support_arcs_for_cut_vertices(k)
+
+    #print("After adding support arcs for cut vertices: ", k)
+
+    if kinks(k):
+        raise ValueError(f"Diagram has cut-vertices after adding bridge-support arcs.\n{k}")
 
     if name:
         k.name = name

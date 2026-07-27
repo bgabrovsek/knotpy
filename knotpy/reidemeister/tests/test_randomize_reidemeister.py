@@ -35,6 +35,7 @@ def test_randomize_theta():
             assert sanity_check(theta_)
             y_ = yamada(theta_)
             n_ = _naive_yamada_polynomial(theta_)
+
             assert y_ == y == n_
     settings.load(dump)
 

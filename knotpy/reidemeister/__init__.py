@@ -7,3 +7,4 @@ from .space import *
 from .detour import *
 from .reidemeister import *
 from .flype import *
+from .isolate import *

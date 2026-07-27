@@ -117,9 +117,11 @@ def _parse_compact(notation: str) -> PlanarDiagram | OrientedPlanarDiagram:
     oriented = "i)" in notation or "o)" in notation
     k = OrientedPlanarDiagram() if oriented else PlanarDiagram()
 
+
     for match in node_pattern.finditer(definition_part):
         node, node_type, endpoints = match.groups()
         endpoints = endpoints.strip().split()
+        #print(node,_node_abbr[node_type],len(endpoints))
         k.add_node(node, create_using=_node_abbr[node_type], degree=len(endpoints))
 
         for pos, ep_str in enumerate(endpoints):

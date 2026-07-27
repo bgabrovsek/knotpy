@@ -21,3 +21,4 @@ from .subdivide import *
 from .symmetry import *
 from .tangle import *
 from .topology import *
+from .bonds import *

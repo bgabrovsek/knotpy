@@ -126,9 +126,15 @@ def simplify_non_increasing(k: Diagram | set | tuple | list, greediness: int = 1
         raise ValueError(f"Invalid greediness level {greediness}.")
 
 
+def _is_colored(k):
+    if isinstance(k, (set, tuple, list, LeveledSet)):
+        return all(_is_colored(_) for _ in k)
+    else:
+        return all("color" in ep.attr for ep in k.endpoints)
+
 _DEBUG_SIMPLIFY = False
 
-def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = False):
+def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = False, keep_attributes=False):
 
     greediness = 1
 
@@ -138,6 +144,10 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
 
     # From here on, k is a single diagram.
     memory_efficient = True if k.number_of_crossings + 2 * depth < 26 * 2 - 2 else False
+
+    if keep_attributes:
+        memory_efficient = False
+
     if _DEBUG_SIMPLIFY: print("Memory efficient:", memory_efficient)
 
     settings_dump = settings.dump()
@@ -156,10 +166,12 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
     if "FLIP" in settings.allowed_moves:
         k |= {canonical(flip(_, inplace=False)) for _ in k}
 
+
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in k):
         settings.load(settings_dump)
         return min(k)
+
 
     # Start off by making non-increasing moves (R3 and similar).
     # TODO: if we take greediness=0, then it takes much longer
@@ -172,12 +184,15 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
     else:
         ls = LeveledSet(crossing_non_increasing_space(k, greediness=0, assume_canonical=True))
 
+
     # If there are no crossings to reduce, we are done.
     if any(_.number_of_crossings == 0 for _ in ls):
         settings.load(settings_dump)
         return min(ls)
 
     if _DEBUG_SIMPLIFY: print("Initial set:", ls.level_sizes())
+
+    #print("Before", _is_colored(ls))
 
     # Crossing-increasing loop
     start = ls.number_of_levels()
@@ -193,6 +208,7 @@ def simplify(k: Diagram | set | list | tuple, depth: int = 1, flype: bool = Fals
                 for _ in detour_generator(k):
                     #print(_)
                     ls.add(canonical(_))
+
                 #print("twist")
                 # TODO: do we always need a twist to simplify?
                 for _ in r5_twist_generator(k):

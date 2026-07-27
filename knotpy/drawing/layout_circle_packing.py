@@ -64,6 +64,11 @@ AUTHORS: ...
 #         return elements[distances[0][1]]
 
 
+def _is_bridge_graph(k: PlanarDiagram):
+    """ Return true if diagram is a path of length 2"""
+    return len(k) == 2 and len(k.arcs) == 1 and set([ep.node for arc in k.arcs for ep in arc]) == set(k.nodes)
+
+
 def _sort_geometric_arcs(garc1: CircularArc | Segment, garc2: CircularArc | Segment, point1: Circle | complex, point2: Circle | complex):
     """Sorts two geometric arcs based on their proximity to two given points.
 
@@ -381,8 +386,6 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
     """
     k = k.copy()
 
-
-
     # Remove the kinks.
     removed_kinks = []
     while _kinks := [ep for ep in kinks(k) if "_fixed" in k.nodes[ep.node].attr]:  # recompute kinks each time (they change during the loop)
@@ -410,9 +413,13 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
         adj_ep = k.nodes[leaf][0]
         if type(k.nodes[adj_ep.node]) is Crossing:
             k.convert_node(node_for_converting=adj_ep.node, node_type=Vertex)
+            #print("adding leaf crossing")
             k.nodes[adj_ep.node].attr["_leaf_crossing_ep"] = adj_ep  # save the original type
         else:
+            #print("adding leaf vertex")
             k.nodes[adj_ep.node].attr["_leaf_vertex_ep"] = adj_ep  # save the original type
+
+
         degree = k.degree(adj_ep.node)
         if 3 <= degree <= 4:
             # mark the arcs that should smoothly connect
@@ -424,6 +431,7 @@ def _preprocess_knot(k: PlanarDiagram | OrientedPlanarDiagram):
         k.remove_node(node_for_removing=leaf, remove_incident_endpoints=True)
 
         if _debug_leafs: print(f"Leaf {leaf} removed from \n{k}\n")
+
 
 
     return k
@@ -633,11 +641,26 @@ def _post_process_layout(k: PlanarDiagram | OrientedPlanarDiagram, preprocessed_
             layout[frozenset({k.twin(c_inst[index_3]), k.twin(c_inst[index_2])})] = kink_garc
 
     if _debug_leafs: print("Leafs")
+
     # Postprocess leafs
     if _debug_leafs: print("circles", circles.keys())
     for node in preprocessed_k.nodes:
+
+
+        leaf_type = None
+        ep = None
         if "_leaf_crossing_ep" in preprocessed_k.nodes[node].attr:
+            leaf_type = Crossing
             ep = preprocessed_k.nodes[node].attr["_leaf_crossing_ep"]
+        if "_leaf_vertex_ep" in preprocessed_k.nodes[node].attr:
+            leaf_type = Vertex
+            ep = preprocessed_k.nodes[node].attr["_leaf_vertex_ep"]
+
+        if leaf_type:
+            #ep = preprocessed_k.nodes[node].attr["_leaf_crossing_ep"]
+
+            #print("Leaf EP", ep)
+
             # fix layout positions (since the 4-valent crossing was convertex fo the 3-valent vertex)
             new_layout, new_circles = {}, {}
             if _debug_leafs: print("LEAF CROSSING NODE", node)
@@ -732,6 +755,35 @@ def unknot_packing(k):
     return layout, circles
 
 
+def bridge_packing(k):
+    node1, node2 = k.nodes
+    ep1, ep2 = k.endpoints
+    arc, = k.arcs
+    face1, = k.faces
+
+    layout = {
+        node1: complex(0.0, 0.0),
+        node2: complex(0.0, 1.0),
+
+        ep1: Segment(complex(0.0, 0.0), complex(0.0, 0.25)),
+        arc: Segment(complex(0.0, 0.25), complex(0.0, 0.75)),
+        ep2: Segment(complex(0.0, 0.75), complex(0.0, 1.0)),
+    }
+
+    circles = {
+        node1: Circle(complex(0.0, 0.0), 1 / 8),
+        node2: Circle(complex(0.0, 1.0), 1 / 8),
+
+        ep1: Circle(complex(0.0, 0.125), 1 / 8),
+        arc: Circle(complex(0.0, 0.5), 1 / 8),
+        ep2: Circle(complex(0.0, 0.875), 1 / 8),
+
+        face1: Circle(complex(0.0, 0.5), 1 / 8),
+    }
+
+    return layout, circles
+
+
 def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0, return_circles: bool = False):
     """
     Computes the layout using circle packing for a given planar or oriented planar diagram. A layout is a dictionary,
@@ -753,17 +805,33 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
     if is_unknot(k):
         return unknot_packing(k)
 
+    if _is_bridge_graph(k):
+        return bridge_packing(k)
 
     original_k = k
     preprocessed_k = _preprocess_knot(original_k)  # remove kinks, leafs
+    #print(preprocessed_k)
     #print('preprocessed_k = {}'.format(preprocessed_k))
 
+    #print("*A", "_leaf_vertex_ep" in str(preprocessed_k))
+
+
+
+    #print("Preprocessed", k)
 
     assert sanity_check(original_k)
     assert sanity_check(preprocessed_k)
 
+    #print("*B", "_leaf_vertex_ep" in str(preprocessed_k))
+
+
     circles = circle_packing(preprocessed_k)
     circles = canonically_rotate_circles(circles, degree=rotation)
+
+    #print("*C", "_leaf_vertex_ep" in str(preprocessed_k))
+
+
+    #print("circles", circles)
 
     layout = {node: None for node in preprocessed_k.nodes}
     layout |= {ep: None for ep in preprocessed_k.endpoints}
@@ -774,7 +842,18 @@ def layout_circle_packing(k: PlanarDiagram | OrientedPlanarDiagram, rotation=0.0
 
     _layout_endpoints(preprocessed_k, circles, layout)
 
+    #print("*D", "_leaf_vertex_ep" in str(preprocessed_k))
+
+
+    #print("Pre-postprocess")
+    #print(layout.keys())
+
+    #print("*E", "_leaf_vertex_ep" in str(preprocessed_k))
+
     _post_process_layout(original_k, preprocessed_k, layout, circles)
+
+    #print("Post-postprocess")
+    #print(layout.keys())
 
     # remove non-visible support vertices
     for v in k.vertices:

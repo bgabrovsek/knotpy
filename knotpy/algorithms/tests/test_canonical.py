@@ -88,6 +88,22 @@ def test_canonical_knots_oriented():
     assert kp.sanity_check(c1)
     assert c1 == c2
 
+
+def test_canonical_disjoint_components_ignore_node_insertion_order():
+    k1 = kp.from_knotpy_notation(
+        "a=V(b0) b=V(a0) "
+        "c=X(d3 d2 e3 f0) d=X(f3 g0 c1 c0) e=X(g3 g2 f1 c2) "
+        "f=X(c3 e2 g1 d0) g=X(d1 f2 e1 e0)"
+    )
+    k2 = kp.from_knotpy_notation(
+        "a=V(b0) b=V(a0) "
+        "c=X(g3 g2 d3 e0) d=X(f3 f2 e1 c2) e=X(c3 d2 f1 g0) "
+        "f=X(g1 e2 d1 d0) g=X(e3 f0 c1 c0)"
+    )
+
+    assert kp.canonical(k1) == kp.canonical(k2)
+
+
 if __name__ == "__main__":
     test_canonical()
     test_canonical_degenerate()

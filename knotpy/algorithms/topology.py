@@ -9,7 +9,8 @@ __all__ = [
     "is_kink", "kinks", "kink_region_iterator",
     "bridges", "is_bridge",
     "edges", "overstrands",
-    "is_adjacent", "is_incident", "open_arc"
+    "is_adjacent", "is_incident", "open_arc",
+    "is_bonded_knot", "adjacent_leafs"
 ]
 __version__ = "0.1"
 __author__ = "Boštjan Gabrovšek"
@@ -23,6 +24,7 @@ from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram, D
 from knotpy.classes.node import Vertex, Crossing
 from knotpy.algorithms.components_link import number_of_link_components
 from knotpy.algorithms.naming import multiple_unique_new_node_names, unique_new_node_name
+from knotpy.algorithms.degree_sequence import degree_sequence
 
 
 
@@ -105,6 +107,9 @@ def is_leaf(k: PlanarDiagram, node) -> bool:
 def leafs(k: PlanarDiagram) -> set:
     """Return the set of degree-1 vertices."""
     return {node for node in k.vertices if k.degree(node) == 1}
+
+def adjacent_leafs(k: PlanarDiagram, node) -> set:
+    return {ep.node for ep in k.nodes[node] if k.degree(ep.node) == 1}
 
 
 def is_loop(k: PlanarDiagram, arc_or_endpoint) -> bool:
@@ -337,6 +342,30 @@ def open_arc(k: PlanarDiagram, arc, inplace=False):
     k.set_endpoint((node1, 0), ep2, create_using=type(ep2))
 
     return k
+
+def is_bonded_knot(k: PlanarDiagram):
+    deg_seq = degree_sequence(k)
+
+    # check that there is an even number of degree 3 vertices
+    bonds = sum(1 for d in deg_seq if d == 3)
+    if bonds % 2 != 0:
+        return False
+    bonds //= 2  # number of bonds
+    # check that there are only degree 3 and degree 4 vetices
+    if any(d not in (3, 4) for d in deg_seq):
+        return False
+
+    # try to color the bonds
+    from itertools import combinations
+
+    found_bond_coloring = False
+
+    for colored in combinations(edges(k), bonds):
+        colored_edges = [_ for __ in colored for _ in __]  # flatten
+        if all(sum(ep in colored_edges for ep in k.nodes[v]) == 1 for v in k.vertices):
+            found_bond_coloring = True
+
+    return found_bond_coloring
 
 if __name__ == "__main__":
     pass

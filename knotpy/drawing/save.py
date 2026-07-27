@@ -141,14 +141,20 @@ def export_pdf(
 
     draw_args = {k:v for k,v in args.items() if k not in ("diagrams", "filename", "show_progress", "ignore_errors")}
 
+
     try:
         iterator = bar(diagrams, comment="exporting to PDF") if show_progress else diagrams
-        for k in iterator:
+
+        for iii, k in enumerate(iterator):
+
+            #print(">>>>>", iii, "of", len(diagrams), ignore_errors)
+
             fig, ax = plt.subplots()
             if ignore_errors:
                 try:
                     draw(k, **draw_args, show=False, ax=ax)
                 except Exception as e:
+                    print("ERROR", e)
                     _draw_error_diagram(k, str(e), ax=ax)
             else:
                 draw(k, **draw_args, show=False, ax=ax)
@@ -157,6 +163,9 @@ def export_pdf(
             #pdf.savefig(bbox_inches="tight", pad_inches=0)
             pdf.savefig(fig, pad_inches=0)
             plt.close()
+    except Exception as e:
+        print("ERROR (MAIN)", e)
+        print(k)
     finally:
         pdf.close()
 

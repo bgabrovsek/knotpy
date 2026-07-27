@@ -134,6 +134,9 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -
         TypeError: If a non-diagram is provided.
         ValueError: If the input diagram is not connected when expected.
     """
+
+    _COPY_ATTRIBUTES = True
+
     from knotpy.algorithms.naming import number_to_alpha
 
     # Handle collections
@@ -153,6 +156,7 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -
         letters = list(ascii_letters[: len(k)])
     else:
         letters = [number_to_alpha(i) for i in range(len(k))]
+    letter_rank = {letter: rank for rank, letter in enumerate(letters)}
 
     # Disconnected case: canonicalize components and merge canonically
     if number_of_disjoint_components(k) >= 2:
@@ -182,11 +186,13 @@ def canonical(k: PlanarDiagram | set | list | tuple | Iterable[PlanarDiagram]) -
         new_g._nodes = {
             node_relabel[old_node]: type(old_inst)(
                 [
-                    type(ep)(node_relabel[ep.node], ep.position)
+                    type(ep)(node_relabel[ep.node], ep.position, **(ep.attr if _COPY_ATTRIBUTES else {}))
                     for ep in old_inst._inc
                 ]
             )
-            for old_node, old_inst in k._nodes.items()
+            for old_node, old_inst in sorted(
+                k._nodes.items(), key=lambda item: letter_rank[node_relabel[item[0]]]
+            )
         }
 
         _canonically_permute_nodes_with_given_first_positions(new_g, node_first_pos)

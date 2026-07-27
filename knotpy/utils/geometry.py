@@ -836,6 +836,8 @@ def bounding_box(g):
         )
     elif isinstance(g, Circle):
         return g.center - (1 + 1j) * g.radius, g.center + (1 + 1j) * g.radius
+    elif isinstance(g, Line):
+        return complex(min(g.A.real, g.B.real), min(g.A.imag, g.B.imag)), complex(max(g.A.real, g.B.real), max(g.A.imag, g.B.imag))
     elif g is None:
         return 0, 0
     elif isinstance(g, complex):

@@ -14,7 +14,7 @@ We need arc cut sets for these operations:
 - tangle decomposition & flyping
 """
 
-__all__ = ["arc_cut_sets", "cut_nodes", "find_arc_cut_set", "cut_decomposition"]
+__all__ = ["arc_cut_sets", "cut_nodes", "find_arc_cut_set", "cut_decomposition", "cut_nodes_components"]
 __version__ = '0.1'
 __author__ = 'Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>'
 
@@ -218,8 +218,6 @@ def cut_decomposition(k: PlanarDiagram | OrientedPlanarDiagram, cut_path: tuple 
 
 
 
-
-
 def cut_nodes(k: PlanarDiagram) -> set:
     """
     Identify the cut vertices (articulation nodes) in a planar diagram.
@@ -241,6 +239,22 @@ def cut_nodes(k: PlanarDiagram) -> set:
 
     return nodes
 
+
+def cut_nodes_components(k: PlanarDiagram, node=None) -> set | dict | list:
+        """Returns a dictionary where keys are nodes and values are partitions of nodes when we cut at the node.
+        If node is given, then only returns the partition of nodes if we remove the node.
+        """
+
+        from knotpy.utils.disjoint_union_set import DisjointSetUnion
+
+        if node is not None:
+            node_dsu = DisjointSetUnion(set(k.nodes) - {node})
+            for ep1, ep2 in k.arcs:
+                if ep1.node != node and ep2.node != node:
+                    node_dsu[ep1.node] = ep2.node
+            return node_dsu.classes()
+
+        return {n: cut_nodes_components(k, n) for n in k.nodes}
 
 
 

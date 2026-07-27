@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from random import shuffle
 
+
 from knotpy._settings import settings
 from knotpy.classes.planardiagram import PlanarDiagram, OrientedPlanarDiagram
 from knotpy.utils.set_utils import LeveledSet
@@ -19,6 +20,9 @@ from knotpy.reidemeister.flype import find_flypes, choose_flype, flype
 from knotpy.reidemeister.detour import detour_move, find_detour_moves
 
 
+def _is_all_colored(k):
+    return all("color" in ep.attr for ep in k.endpoints)
+
 def r1_remove_kink_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
     """Generate all R1 remove kinks and return new diagrams."""
     if isinstance(diagrams, PlanarDiagram):
@@ -26,7 +30,13 @@ def r1_remove_kink_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | I
 
     for k in diagrams:
         for ep in find_reidemeister_1_remove_kink(k):
-            yield reidemeister_1_remove_kink(k, ep, inplace=False)
+            result = reidemeister_1_remove_kink(k, ep, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R1 (remove) {ep}, {k}, {result}")
+                exit()
+
+            yield result
 
 
 def r1_add_kink_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -35,7 +45,13 @@ def r1_add_kink_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iter
         diagrams = (diagrams, )
     for k in diagrams:
         for ep_sign in find_reidemeister_1_add_kink(k):
-            yield reidemeister_1_add_kink(k, ep_sign, inplace=False)
+            result = reidemeister_1_add_kink(k, ep_sign, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R1 (add) {ep_sign}, {k}, {result}")
+
+
+            yield result
 
 
 def r2_poke_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -44,7 +60,12 @@ def r2_poke_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable
         diagrams = (diagrams, )
     for k in diagrams:
         for eps in find_reidemeister_2_poke(k):
-            yield reidemeister_2_poke(k, eps, inplace=False)
+            result = reidemeister_2_poke(k, eps, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R2 (poke) {eps}, {k}, {result}")
+
+            yield result
 
 
 def r2_unpoke_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -53,8 +74,12 @@ def r2_unpoke_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterab
         diagrams = (diagrams, )
     for k in diagrams:
         for face in find_reidemeister_2_unpoke(k):
-            yield reidemeister_2_unpoke(k, face, inplace=False)
+            result = reidemeister_2_unpoke(k, face, inplace=False)
+            if not _is_all_colored(result):
+                print(f"Uncolored R2 (unpoke) {face}, {k}, {result}")
 
+
+            yield result
 
 def r3_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
     """Generate all R3 moves and return new diagrams."""
@@ -63,7 +88,11 @@ def r3_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
     for k in diagrams:
         for face in find_reidemeister_3_triangle(k):
             if any("_r3" not in k.nodes[ep.node].attr for ep in face):
-                yield reidemeister_3(k, face, inplace=False)
+                result = reidemeister_3(k, face, inplace=False)
+                if not _is_all_colored(result):
+                    print(f"Uncolored R3  {face}, {k}, {result}")
+
+                yield result
 
 
 def r4_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable, change="any"):
@@ -72,7 +101,16 @@ def r4_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable, cha
         diagrams = (diagrams, )
     for k in diagrams:
         for v_pos in find_reidemeister_4_slide(k, change):
-            yield reidemeister_4_slide(k, v_pos, inplace=False)
+            result = reidemeister_4_slide(k, v_pos, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R4 (slide) {v_pos}, {k}, {result}")
+                kkk = [k, result]
+                from knotpy.drawing import export_pdf
+                export_pdf([k, result], "x.pdf")
+
+
+            yield result
 
 
 def r5_untwist_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -81,7 +119,13 @@ def r5_untwist_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Itera
         diagrams = (diagrams, )
     for k in  diagrams:
         for face in find_reidemeister_5_untwists(k):
-            yield reidemeister_5_untwist(k, face, inplace=False)
+            result = reidemeister_5_untwist(k, face, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R5 (untwist) {face}, {k}, {result}")
+
+
+            yield result
 
 
 def r5_twist_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -90,7 +134,13 @@ def r5_twist_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterabl
         diagrams = (diagrams, )
     for k in diagrams:
         for eps in find_reidemeister_5_twists(k):
-            yield reidemeister_5_twist(k, eps, inplace=False)
+            result = reidemeister_5_twist(k, eps, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored R5 (twist) {eps}, {k}, {result}")
+
+
+            yield result
 
 
 def detour_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -99,7 +149,13 @@ def detour_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable)
         diagrams = (diagrams, )
     for k in diagrams:
         for location in find_detour_moves(k):
-            yield detour_move(k, location, inplace=False)
+            result = detour_move(k, location, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored Detour {location}, {k}, {result}")
+
+
+            yield result
 
 
 
@@ -109,7 +165,13 @@ def flype_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
         diagrams = (diagrams, )
     for k in diagrams:
         for pair in find_flypes(k):
-            yield flype(k, pair, inplace=False)
+            result = flype(k, pair, inplace=False)
+
+            if not _is_all_colored(result):
+                print(f"Uncolored Flype {pair}, {k}, {result}")
+
+
+            yield result
 
 
 def reidemeister_moves_generator(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable):
@@ -173,12 +235,12 @@ def reidemeister_preserving_moves_generator(diagrams: PlanarDiagram | OrientedPl
     #yield from flype_generator(d)
 
     return None
-    # Iterate over diagrams to avoid exhausting the generator.
-    for k in diagrams:
-        k = (k, )
-        yield from r3_generator(k)
-        yield from r4_generator(k, change="preserve")
-        #yield from flype_generator(k)
+    # # Iterate over diagrams to avoid exhausting the generator.
+    # for k in diagrams:
+    #     k = (k, )
+    #     yield from r3_generator(k)
+    #     yield from r4_generator(k, change="preserve")
+    #     #yield from flype_generator(k)
 
 
 def all_reidemeister_moves(diagrams: PlanarDiagram | OrientedPlanarDiagram | Iterable, depth=1) -> set:

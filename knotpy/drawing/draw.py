@@ -17,16 +17,17 @@ Notes
 
 import math
 
+from classes.node import crossing
 from knotpy import sanity_check
 from knotpy.classes.endpoint import IngoingEndpoint
-from knotpy.classes.node import Crossing
 from knotpy.algorithms.disjoint_union import disjoint_union_decomposition
 from knotpy.classes.planardiagram import Diagram  # alias: PlanarDiagram | OrientedPlanarDiagram
 from knotpy.drawing.layout_circle_packing import layout_circle_packing
 from knotpy.utils.geometry import CircularArc, Segment, middle
 from knotpy.drawing.alignment import align_layouts
-from knotpy.drawing._support import _add_support_arcs
+from knotpy.drawing._support import _add_support_arcs, non_leaf_bridges, _visible
 from knotpy.algorithms.topology import edges
+
 
 __all__ = [
     "draw",
@@ -36,6 +37,10 @@ __version__ = "0.2"
 __author__ = "Boštjan Gabrovšek <bostjan.gabrovsek@pef.uni-lj.si>"
 
 import knotpy.drawing.drawing_defaults as DEFAULTS
+
+_std_colors = [
+    "tab:blue", "tab:orange", "tab:green", "tab:red", "tab:purple",
+    "tab:brown", "tab:pink", "tab:gray", "tab:olive", "tab:cyan"]
 
 def _mpl_axes():
     """Local Matplotlib imports to keep package import time low."""
@@ -82,6 +87,8 @@ def draw_arcs(
         arcs_to_draw (list | None): Subset of arcs to draw. If None, draw all `k.arcs`.
         ax: Optional Matplotlib axes. If None, uses `plt.gca()`.
     """
+
+
     from matplotlib.patches import Arc
     from matplotlib.lines import Line2D
     plt = _mpl_axes()
@@ -100,6 +107,14 @@ def draw_arcs(
             continue
         g_element = layout[arc]
         color = arc_color if colors is None or arc not in colors else colors[arc]
+
+        # are arcs colored?
+        ep1, ep2 = arc
+        ep_color = ep2.attr.get("color", ep1.attr.get("color", color))
+        if isinstance(ep_color, int):
+            ep_color = _std_colors[ep_color % len(_std_colors)]
+
+        #print("arc draw:", arc)
 
         if isinstance(g_element, CircularArc):
 
@@ -127,7 +142,7 @@ def draw_arcs(
                     height=2 * g_element.radius,
                     theta1=math.degrees(g_element.theta1),
                     theta2=math.degrees(g_element.theta2),
-                    color=color,
+                    color=ep_color,#color,
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
@@ -143,7 +158,7 @@ def draw_arcs(
                     Line2D(
                         (g_element.A.real, g_element.B.real),
                         (g_element.A.imag, g_element.B.imag),
-                        color=color,
+                        color=ep_color,
                         linewidth=arc_width + arc_stroke_width * 2,
                         linestyle="solid",
                         alpha=arc_stroke_alpha,
@@ -155,7 +170,7 @@ def draw_arcs(
                 Line2D(
                     (g_element.A.real, g_element.B.real),
                     (g_element.A.imag, g_element.B.imag),
-                    color=color,
+                    color=ep_color,
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
@@ -213,8 +228,18 @@ def draw_endpoints(
         endpoints_to_draw = list(k.endpoints)
 
     for ep in endpoints_to_draw:
+
+        if not _visible(ep):
+            continue
+
+        #print("PLOT", ep)
+
         g_arc = layout[ep]
         color = arc_color if colors is None or ep not in colors else colors[ep]
+
+        ep_color = ep.attr.get("color", color)
+        if isinstance(ep_color, int):
+            ep_color = _std_colors[ep_color % len(_std_colors)]
 
         z, z_stroke = DEFAULTS._Z_ENDPOINT_UNDER, DEFAULTS._Z_ENDPOINT_STROKE_UNDER
         # Shorten at under-passing endpoints of crossings (even positions).
@@ -251,7 +276,7 @@ def draw_endpoints(
                     height=2 * g_arc.radius,
                     theta1=math.degrees(g_arc.theta1),
                     theta2=math.degrees(g_arc.theta2),
-                    color=color,
+                    color=ep_color,
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
@@ -277,7 +302,7 @@ def draw_endpoints(
                 Line2D(
                     (g_arc.A.real, g_arc.B.real),
                     (g_arc.A.imag, g_arc.B.imag),
-                    color=color,
+                    color=ep_color,
                     linewidth=arc_width,
                     linestyle=arc_style,
                     alpha=arc_alpha,
@@ -716,6 +741,20 @@ def draw_from_layout(
 
     autoscale_with_padding(ax, pad_frac=padding_fraction)
 
+    if title:
+        if isinstance(title, str):
+            title_text = title
+        else:
+            title_text = k.name if bool(k.name) else str(k)
+
+        ax.set_title(
+            title_text,
+            color=title_color,
+            fontsize=title_font_size,
+            fontfamily=title_font_family,
+            alpha=title_alpha,
+        )
+
     if not show_axis:
         ax.set_axis_off()
 
@@ -793,6 +832,9 @@ def draw(
     """
     #TODO: minimize the number of arguments by adding **kwargs with non-essential arguments (alpha,...)
 
+
+    from knotpy.algorithms.topology import kinks, loops, bridges
+
     if not sanity_check(k):
         raise ValueError("Diagram is not a valid knotted diagram.")
 
@@ -802,8 +844,29 @@ def draw(
 
     plt = _mpl_axes()
 
+    #print("\n****************************\nDrawing", k)
+
     # add support arcs (bridges/cut-vertices handling for reliable plotting)
     supported_k = _add_support_arcs(k)
+
+    #print("Supported:", supported_k)
+
+    # check for loops and bridges
+    #if bridges(supported_k):
+    if non_leaf_bridges(supported_k):
+        raise ValueError("Diagram contains (non-leaf) bridges, which are not supported for drawing.")
+    if loops_ := loops(supported_k):
+        if any([supported_k.degree(ep1.node) != 2 or supported_k.degree(ep2.node) != 2 for ep1, ep2 in loops_]):  # only count kinks that are not trivial components
+            raise ValueError(f"Diagram contains loops, which are not supported for drawing.\n{supported_k}")
+
+    if kinks_ := kinks(supported_k):
+        raise ValueError("Diagram contains kinks, which are not supported for drawing.")
+
+    #print("start:", k)
+    #print("supported:", supported_k)
+
+
+    #print(kinks(supported_k), bool(kinks(supported_k)))
 
     # decompose into disjoint components
     components = disjoint_union_decomposition(supported_k)
@@ -811,6 +874,8 @@ def draw(
 
     # compute layout per component (and keep the circle packing for alignment)
     layout_circles_pairs = [layout_circle_packing(comp, rotation=rotation, return_circles=True) for comp in components]
+
+
     # align components horizontally
     align_layouts(layout_circles_pairs)
 
@@ -840,7 +905,7 @@ def draw(
         _plot_circles(supported_k, joint_circles, ax=ax)
 
     # render
-    for key in ("show_circle_packing", "rotation", "ax", "k") :
+    for key in ("show_circle_packing", "rotation", "ax", "k", "kinks", "loops", "bridges") :
         del args[key]
     draw_from_layout(k=supported_k, layout=joint_layout, ax=ax, **args)
 
@@ -872,8 +937,6 @@ def _plot_circles(k: Diagram, circles: dict, ax=None):
                 zorder=DEFAULTS._Z_CIRCLES,
             )
         )
-
-
 if __name__ == "__main__":
     import knotpy as kp
     k = kp.knot("3_1")

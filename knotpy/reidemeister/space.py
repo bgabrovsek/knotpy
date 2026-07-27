@@ -333,5 +333,23 @@ def all_reidemeister_moves_space(
     diagrams = _set(diagrams, to_canonical=not assume_canonical)
     ls = LeveledSet(diagrams)
     for _ in range(depth):
-        ls.new_level([canonical(k) for k in reidemeister_moves_generator(ls.iter_level(-1))])
+
+        from knotpy.reidemeister.reidemeister import _is_all_colored
+
+        canonicals = []
+        for k in reidemeister_moves_generator(ls.iter_level(-1)):
+            if not _is_all_colored(k):
+                print("After R, k")
+                print(k)
+                exit(9)
+            c = canonical(k)
+            if not _is_all_colored(k):
+                print("After C, k")
+                print(c)
+                exit(9)
+            canonicals.append(c)
+        ls.new_level(canonicals)
+
+
+        #ls.new_level([canonical(k) for k in reidemeister_moves_generator(ls.iter_level(-1))])
     return set(ls)

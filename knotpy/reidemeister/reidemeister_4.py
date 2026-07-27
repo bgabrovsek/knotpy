@@ -312,7 +312,7 @@ def reidemeister_4_slide(
 
     # get common attributes of old crossings
     crossings = [k.nodes[v][pos].node for pos in positions]
-    common_node_attr = common_dict(*(k.nodes[c].attr for c in crossings))
+    common_node_attr = common_dict(*(k.nodes[c].attr for c in crossings))  # TODO: this does not make sense
 
     # Get endpoint type (in the case we have an orientation)
     ep_first = k.nodes[v][positions[0]]
@@ -321,7 +321,8 @@ def reidemeister_4_slide(
     # first & last from ccw order
     ep_side_first = k.endpoint_from_pair((ep_first.node, (ep_first.position + 1) % 4))
     ep_side_last = k.endpoint_from_pair((ep_last.node, (ep_last.position - 1) % 4))
-    common_ep_side_attr = common_dict(ep_first.attr, ep_last.attr)
+    #common_ep_side_attr = common_dict(ep_first.attr, ep_last.attr)
+    common_ep_side_attr = common_dict(ep_side_first.attr, ep_side_last.attr)
     ep_side_first_type = type(ep_side_first)
     ep_side_last_type = type(ep_side_last)
 
@@ -368,9 +369,9 @@ def reidemeister_4_slide(
     # are there new crossings (there was not a full slide-off)
     if new_crossings:
         k.set_endpoint((new_crossings[0], (parity + 1) % 4), ep_side_last_twin)  # TODO: attributes
-        k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4))  # TODO: attributes
+        k.set_endpoint(ep_side_last_twin, (new_crossings[0], (parity + 1) % 4), **common_ep_side_attr)  # TODO: attributes
         k.set_endpoint((new_crossings[-1], (parity - 1) % 4), ep_side_first_twin)  # TODO: attributes
-        k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4))  # TODO: attributes
+        k.set_endpoint(ep_side_first_twin, (new_crossings[-1], (parity - 1) % 4), **common_ep_side_attr)  # TODO: attributes
     else:
         k.set_endpoint(ep_side_last_twin, ep_side_first_twin)  # TODO: attributes
         k.set_endpoint(ep_side_first_twin, ep_side_last_twin)

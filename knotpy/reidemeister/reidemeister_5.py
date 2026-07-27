@@ -148,39 +148,47 @@ def reidemeister_5_twist(k: Diagram, endpoints: tuple, inplace: bool = False) ->
         warnings.warn("An R5 twist move is being performed, although it is disabled in the global KnotPy settings.")
 
     ep_under, ep_over = endpoints
+    attr_under = ep_under.attr
+    attr_over = ep_over.attr
 
     if not inplace:
         k = k.copy()
 
-    # Add the "twist" crossing beside the under-arc.
-    crossing = subdivide_endpoint_by_crossing(k, ep_under, 0)
+    under_twin = k.twin(ep_under)
+    attr_under_twin = under_twin.attr
 
     over_twin = k.twin(ep_over)
+    attr_over_twin = over_twin.attr
+
+    # Add the "twist" crossing beside the under-arc.
+    crossing = subdivide_endpoint_by_crossing(k, ep_under, 0)
+    k.endpoint_from_pair((crossing, 0)).attr = attr_under_twin
+    k.endpoint_from_pair((crossing, 2)).attr = attr_under
 
     # Insert over-arcs (positions 1 and 3 depend on CCW/CW relation to the under-arc)
     if (ep_under.position + 1) % k.degree(ep_under.node) == ep_over.position:
-        k.set_endpoint(over_twin, (crossing, 3))
-        k.set_endpoint((crossing, 3), over_twin)
-        k.set_endpoint(ep_over, (crossing, 1))
-        k.set_endpoint((crossing, 1), ep_over)
+        k.set_endpoint(over_twin, (crossing, 3), **attr_over)
+        k.set_endpoint((crossing, 3), over_twin, **attr_over_twin)
+        k.set_endpoint(ep_over, (crossing, 1), **attr_over_twin)
+        k.set_endpoint((crossing, 1), ep_over, **attr_over)
         # adjust framing
         if k.is_framed():
             k.framing = k.framing - Fraction(1, 2)
     else:
-        k.set_endpoint(over_twin, (crossing, 1))
-        k.set_endpoint((crossing, 1), over_twin)
-        k.set_endpoint(ep_over, (crossing, 3))
-        k.set_endpoint((crossing, 3), ep_over)
+        k.set_endpoint(over_twin, (crossing, 1), **attr_over)
+        k.set_endpoint((crossing, 1), over_twin, **attr_over_twin)
+        k.set_endpoint(ep_over, (crossing, 3), **attr_over_twin)
+        k.set_endpoint((crossing, 3), ep_over, **attr_over)
         if k.is_framed():
             k.framing = k.framing + Fraction(1, 2)
 
     # switch the endpoints at the vertex (swap the two adjacent incident arcs)
-    ep_under_twin = k.twin(ep_under)
+    ep_under_twin = k.twin(ep_under)  # isn't this done already?
     ep_over_twin = k.twin(ep_over)
-    k.set_endpoint(ep_under, ep_over_twin)
-    k.set_endpoint(ep_over_twin, ep_under)
-    k.set_endpoint(ep_over, ep_under_twin)
-    k.set_endpoint(ep_under_twin, ep_over)
+    k.set_endpoint(ep_under, ep_over_twin, **attr_over_twin)
+    k.set_endpoint(ep_over_twin, ep_under, **attr_over) # needs to be opposite attr
+    k.set_endpoint(ep_over, ep_under_twin, **attr_under_twin)
+    k.set_endpoint(ep_under_twin, ep_over, **attr_under)  # needs to be opposite attr
 
     # backtrack Reidemeister moves
     if settings.trace_moves:

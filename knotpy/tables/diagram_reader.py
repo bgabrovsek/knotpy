@@ -92,6 +92,7 @@ class _BaseDiagramReader(ABC):
                     continue  # skip header line
 
             parsed_line = self._parse_line(line)
+
             if parsed_line is not None:
                 yield parsed_line  # yield only valid parsed lines
 

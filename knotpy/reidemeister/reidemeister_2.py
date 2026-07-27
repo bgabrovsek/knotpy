@@ -255,6 +255,11 @@ def reidemeister_2_poke(k: Diagram, under_over_endpoints, inplace: bool = False)
     ep_o_node, ep_o_pos = ep_o = k.twin(twin_o)  # instance of endpoint_over
     ep_u_node, ep_u_pos = ep_u = k.twin(twin_u)  # instance of endpoint_under
 
+    over_color = {"color": endpoint_over.attr["color"]} if "color" in endpoint_over.attr else {}
+    under_color = {"color": endpoint_under.attr["color"]} if "color" in endpoint_under.attr else {}
+    over_twin_color = {"color": twin_o.attr["color"]} if "color" in twin_o.attr else {}
+    under_twin_color = {"color": twin_u.attr["color"]} if "color" in twin_u.attr else {}
+
     # Endpoint classes (plain vs. oriented).
     type_o, rev_o = type(ep_o), _reversed_endpoint_type(ep_o)
     type_u, rev_u = type(ep_u), _reversed_endpoint_type(ep_u)
@@ -276,8 +281,8 @@ def reidemeister_2_poke(k: Diagram, under_over_endpoints, inplace: bool = False)
             create_using=rev_u,
             **twin_u.attr,
         )
-    k.set_endpoint(endpoint_for_setting=(node_e, 1), adjacent_endpoint=(node_f, 1), create_using=rev_o)
-    k.set_endpoint(endpoint_for_setting=(node_e, 2), adjacent_endpoint=(node_f, 0), create_using=type_u)
+    k.set_endpoint(endpoint_for_setting=(node_e, 1), adjacent_endpoint=(node_f, 1), create_using=rev_o, **over_twin_color)
+    k.set_endpoint(endpoint_for_setting=(node_e, 2), adjacent_endpoint=(node_f, 0), create_using=type_u, **under_color)
     k.set_endpoint(
         endpoint_for_setting=(node_e, 3),
         adjacent_endpoint=(ep_o_node, ep_o_pos),
@@ -286,8 +291,8 @@ def reidemeister_2_poke(k: Diagram, under_over_endpoints, inplace: bool = False)
     )
 
     # Wiring for node "f"
-    k.set_endpoint(endpoint_for_setting=(node_f, 0), adjacent_endpoint=(node_e, 2), create_using=rev_u)
-    k.set_endpoint(endpoint_for_setting=(node_f, 1), adjacent_endpoint=(node_e, 1), create_using=type_o)
+    k.set_endpoint(endpoint_for_setting=(node_f, 0), adjacent_endpoint=(node_e, 2), create_using=rev_u, **under_twin_color)
+    k.set_endpoint(endpoint_for_setting=(node_f, 1), adjacent_endpoint=(node_e, 1), create_using=type_o, **over_color)
     k.set_endpoint(
         endpoint_for_setting=(node_f, 2),
         adjacent_endpoint=(ep_u_node, ep_u_pos),
@@ -303,22 +308,24 @@ def reidemeister_2_poke(k: Diagram, under_over_endpoints, inplace: bool = False)
         )
 
     # Outside nodes
-    k.set_endpoint(endpoint_for_setting=(ep_o_node, ep_o_pos), adjacent_endpoint=(node_e, 3), create_using=rev_o)
-    k.set_endpoint(endpoint_for_setting=(ep_u_node, ep_u_pos), adjacent_endpoint=(node_f, 2), create_using=rev_u)
+    k.set_endpoint(endpoint_for_setting=(ep_o_node, ep_o_pos), adjacent_endpoint=(node_e, 3), create_using=rev_o, **over_twin_color)
+    k.set_endpoint(endpoint_for_setting=(ep_u_node, ep_u_pos), adjacent_endpoint=(node_f, 2), create_using=rev_u, **under_twin_color)
     if not same_arc:
         k.set_endpoint(
             endpoint_for_setting=(twin_o_node, twin_o_pos),
             adjacent_endpoint=(node_f, 3),
             create_using=type_o,
+            **over_color
         )
         k.set_endpoint(
             endpoint_for_setting=(twin_u_node, twin_u_pos),
             adjacent_endpoint=(node_e, 0),
             create_using=type_u,
+            **under_color
         )
     else:
-        k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(node_f, 3), create_using=rev_u)
-        k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(node_e, 0), create_using=rev_o)
+        k.set_endpoint(endpoint_for_setting=(node_e, 0), adjacent_endpoint=(node_f, 3), create_using=rev_u, **under_twin_color)
+        k.set_endpoint(endpoint_for_setting=(node_f, 3), adjacent_endpoint=(node_e, 0), create_using=rev_o, **over_twin_color)
 
     if settings.trace_moves:
         k.attr["_sequence"] = k.attr.setdefault("_sequence", "") + "R2+"
